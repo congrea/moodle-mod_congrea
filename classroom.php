@@ -93,7 +93,7 @@ if($info) {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/jquery.ui.chatbox.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/vceditor.css'));   
 } else {
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/virtualclass/bundle/virtualclass/css/'.$theme.'.min.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'.min.css'));
 }
 
 $whiteboardpath = $CFG->wwwroot . "/mod/congrea/bundle/virtualclass/";
