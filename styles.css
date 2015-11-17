@@ -858,3 +858,18 @@ min-height: none;
 }
 
 #virtualclassCont .ui-chatbox-input-box{margin: 4px 5px !important;}
+
+
+#page-mod-congrea-classroom #virtualclassCont #virtualclassOptionsCont{
+    z-index : 1;
+}
+
+
+.ui-state-default.ui-corner-bottom.ui-tabs-active{
+	background : none !important;
+}
+
+.ui-state-default.ui-corner-bottom.ui-tabs-active.ui-state-highlight{
+    background: #d8e496 !important;
+}
+
