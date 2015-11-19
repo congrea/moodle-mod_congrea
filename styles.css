@@ -865,11 +865,4 @@ min-height: none;
 }
 
 
-.ui-state-default.ui-corner-bottom.ui-tabs-active{
-	background : none !important;
-}
-
-.ui-state-default.ui-corner-bottom.ui-tabs-active.ui-state-highlight{
-    background: #d8e496 !important;
-}
 
