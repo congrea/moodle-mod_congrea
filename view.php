@@ -56,8 +56,11 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
-// Output starts here.
 
+echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
+$PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
+
+// Output starts here.
 
 
 $strdelete = get_string('delete');
