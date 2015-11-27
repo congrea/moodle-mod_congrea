@@ -163,7 +163,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         echo html_writer::end_tag('button');
         echo html_writer::start_tag('div', array('class'=>'clear'));
         echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');  
+         
     } else {
         // Serve online at vidya.io.
         $url = "https://l.vidya.io";  // Online url
@@ -197,7 +197,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     // congrea closed.
     echo $OUTPUT->heading(get_string('sessionclosed', 'congrea'));
 }
-
+echo html_writer::end_tag('div'); 
 echo html_writer::start_tag('div', array('class'=>'wrapper-record-list'));
 //if (has_capability('mod/congrea:addinstance', $context)) {
 if (has_capability('mod/congrea:recordingupload', $context)) {
