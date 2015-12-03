@@ -187,8 +187,8 @@ if($info){
 }
 
 echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => "$cont_class"));
-   
-   if($isplay){
+
+   if ($isplay) {
             ?>
            <div id="playControllerCont">
                 <div id="playController">
@@ -204,7 +204,7 @@ echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => 
            </div>
     <?php
     }
-    
+
     echo html_writer::start_tag('div', array('id' => 'virtualclassWhiteboard', 'class' => 'vmApp virtualclass'));
         echo html_writer::start_tag('div', array('id' => 'vcanvas', 'class' => 'canvasMsgBoxParent'));
             echo html_writer::tag('div', '', array('id' => 'containerWb'));
@@ -215,7 +215,6 @@ echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => 
             echo html_writer::tag('div', '', array('class' => 'clear'));
         echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
-
 
     echo html_writer::start_tag('div', array('id' => 'audioWidget'));
         echo html_writer::start_tag('div', array('id' => 'mainAudioPanel'));
@@ -232,17 +231,15 @@ echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => 
     //            echo html_writer::start_tag('div', array('id' => 'silenceDetect', 'class' => 'audioTool', 'data-silence-detect' => 'stop'));
                     //echo "sd";
             echo html_writer::end_tag('div');
-        
-        
+
             echo html_writer::start_tag('div', array('id' => 'alwaysPress'));
                 echo html_writer::start_tag('div', array('id' => 'speakerPressing', 'class' => $classes));
                     echo html_writer::start_tag('a', array('id' => 'speakerPressingAnch', 'name' => 'speakerPressingAnch'));
                         echo html_writer::start_tag('div', array('id' => 'speakerPressingButton', 'class' => "icon-speakerPressing"));
 
-    //                        echo html_writer::tag('div',  array("class" => 'clear'));     
+    //                        echo html_writer::tag('div',  array("class" => 'clear'));
                         echo html_writer::end_tag('div');
                         echo html_writer::tag('div', '', array('class' => 'clear'));
-
 
                         echo html_writer::start_tag('div', array('id' => 'speakerPressingtext'));
                             echo get_string("pushtotalk", "congrea") ;
@@ -250,11 +247,10 @@ echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => 
                     echo html_writer::end_tag('a');
                 echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
-        
+
          echo html_writer::end_tag('div');
       //  $pressonceimg = $whiteboardpath . "images/speakerpressonce.png";
-    
-    
+
         echo html_writer::start_tag('div', array('id' => 'audioTest-box'));
             echo html_writer::start_tag('div', array('id' => 'audioTest', 'class' => 'audioTool'));
     //            $audioimg = $whiteboardpath . "images/audiotest.png";

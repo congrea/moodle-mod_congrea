@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/mod/congrea/locallib.php');
  * Module instance settings form
  */
 class mod_congrea_upload_file extends moodleform {
-
     /**
      * Constructor.
      * @param moodle_url $submiturl the form action URL.
@@ -49,7 +48,6 @@ class mod_congrea_upload_file extends moodleform {
         $this->congrea = $congrea;
         $this->context = $context;
         parent::__construct($submiturl, null, 'post');
-
     }
 
     /**
@@ -70,7 +68,7 @@ class mod_congrea_upload_file extends moodleform {
         } else {
             $mform->setType('name', PARAM_CLEAN);
         }
-        
+
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         //$mform->addHelpButton('name', 'congreaname', 'congrea');
         //$maxbytes = ini_get('post_max_size')*10000000;
@@ -80,7 +78,7 @@ class mod_congrea_upload_file extends moodleform {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
-    
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

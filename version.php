@@ -22,7 +22,7 @@
  * /admin/index.php
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2015 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -131,12 +131,12 @@ function update_calendar($congrea) {
             $calendarevent->update($event);
         } else {
             unset($event->id);
-            $event->courseid    = $congrea->course;
-            $event->groupid     = 0;
-            $event->userid      = 0;
-            $event->modulename  = 'congrea';
-            $event->instance    = $congrea->id;
-            $event->eventtype   = 'open';
+            $event->courseid = $congrea->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'congrea';
+            $event->instance = $congrea->id;
+            $event->eventtype = 'open';
             $event->timeduration = 0;
             calendar_event::create($event);
         }
@@ -164,27 +164,27 @@ function deleteAll($directory, $empty = false) {
         return false;
     } else {
         $directoryHandle = opendir($directory);
-       
+
         while ($contents = readdir($directoryHandle)) {
             if($contents != '.' && $contents != '..') {
                 $path = $directory . "/" . $contents;
-               
+
                 if(is_dir($path)) {
                     deleteAll($path);
                 } else {
                     unlink($path);
                 }
             }
-        }      
+        }
         closedir($directoryHandle);
         if($empty == false) {
             if(!rmdir($directory)) {
                 return false;
             }
-        }       
+        }
         return true;
     }
-} 
+}
 
 /**
  * Returns the rename action.
@@ -236,7 +236,6 @@ if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
     return '';
 }
 
-
 /**
  * Generate random string of specified length
  *
@@ -253,4 +252,3 @@ function generateRandomString($length = 11) {
     }
     return $randomString;
 }
-

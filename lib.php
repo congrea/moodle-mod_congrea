@@ -82,7 +82,7 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
     $congrea->id = $vclass;
     update_calendar($congrea);
     return $vclass;
-    
+
 }
 
 /**
@@ -126,11 +126,8 @@ function congrea_delete_instance($id) {
     if (! $congrea = $DB->get_record('congrea', array('id' => $id))) {
         return false;
     }
-
     // Delete any dependent records here.
-
     $DB->delete_records('congrea', array('id' => $congrea->id));
-
     return true;
 }
 

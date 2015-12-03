@@ -77,5 +77,3 @@ $mform->set_data($data);
 $mform->display();
 // Finish the page.
 echo $OUTPUT->footer();
-
-

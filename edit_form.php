@@ -61,7 +61,7 @@ class mod_congrea_edit_name extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form;
-        
+
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -72,11 +72,11 @@ class mod_congrea_edit_name extends moodleform {
         } else {
             $mform->setType('name', PARAM_CLEAN);
         }
-        
+
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
-    
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

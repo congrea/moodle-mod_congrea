@@ -28,16 +28,14 @@ $id = required_param('fileBundelId' , PARAM_INT);
 
 $file = $DB->get_record('congrea_files', array('id'=>$id));
 //print_r($file);exit;
-$filepath = $CFG->dataroot."/congrea/".$file->courseid."/".$file->vcid."/".$file->vcsessionkey."/vc.".$filenum;   
+$filepath = $CFG->dataroot."/congrea/".$file->courseid."/".$file->vcid."/".$file->vcsessionkey."/vc.".$filenum;
 //$filepath = $CFG->dataroot."/congrea/2/1/74FzDRhfpAy/user.".$filenum;
-      
-if(file_exists($filepath)){
+
+if (file_exists($filepath)) {
     $data = file_get_contents($filepath);
-}else{
+} else {
     $data = "VCE3";//"filenotfound";
 }
-//echo json_encode($arr);      
+//echo json_encode($arr);
 echo $data;
-
-
 ?>

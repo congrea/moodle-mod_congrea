@@ -30,7 +30,6 @@ require_once(dirname(__FILE__).'/lib.php');
 //require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... Congrea instance ID - it should be named as the first character of the module.
 $delete       = optional_param('delete', 0, PARAM_INT);
@@ -58,13 +57,13 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 require_once('upload_form.php');
 
-$submiturl= new moodle_url('/mod/congrea/upload.php', array('id' => $cm->id));
+$submiturl = new moodle_url('/mod/congrea/upload.php', array('id' => $cm->id));
 
 $mform = new mod_congrea_upload_file($submiturl, $cm, $congrea, $context);
 
 if ($mform->is_cancelled()) {
     // Do nothing.
-} else if ($fromform = $mform->get_data()) { 
+} else if ($fromform = $mform->get_data()) {
     // Redirect($nexturl).
     $vcsession = generateRandomString();
     $name = $mform->get_new_filename('userfile');
@@ -72,7 +71,7 @@ if ($mform->is_cancelled()) {
     if (!file_exists ($filepath) ) {
         mkdir($filepath, 0777, true);
     }
-       
+
     // Object to save file info in db
     $vcfile = new stdClass();
     $vcfile->courseid = $course->id;
@@ -82,48 +81,48 @@ if ($mform->is_cancelled()) {
     if(empty($fromform->name)){
         $vcfile->vcsessionname = 'vc-'.$course->shortname.'-'.$congrea->name.$cm->id.'-'.date("Ymd").'-'.date('Hi');
     } else {
-        $vcfile->vcsessionname =  $fromform->name;
-    }        
+        $vcfile->vcsessionname = $fromform->name;
+    }
     $vcfile->numoffiles = 1;
     $vcfile->timecreated = time();
-    
+
     $content = $mform->get_file_content('userfile');
     $decode_data = json_decode($content);
     $file_length = count($decode_data);
     //print_r($decode_data);exit;
-        
+
     if($file_length > 1) {
         //Break larage file in multiple files
         $filenum = 1;
         for ($i = 0; $i < $file_length; $i++) {
             if (array_key_exists('rdata', $decode_data[$i])) {
-                $filename = "vc.".$filenum;               
+                $filename = "vc.".$filenum;
                 $new_cunk = json_encode($decode_data[$i]);
-                
-                if (file_put_contents($filepath.'/'.$filename, $new_cunk) != false) {            	
-                	if ($filenum > 1) {
-                		// Update file count
-                		$vcfile = $DB->get_record('congrea_files', 
-                			array ('vcid'=> $congrea->id, 'vcsessionkey' => $vcsession));               			
-                		$vcfile->numoffiles = $filenum;               		
-                		$DB->update_record('congrea_files', $vcfile);
-                	} else {
-                		$DB->insert_record('congrea_files', $vcfile);
-                	}
-                	$filenum++;                	                	                 
-                } else { 
-                    print_error('Error occurred during file upload.');               
-                	//echo 'There was an error creating the file name';
-                }                
+
+                if (file_put_contents($filepath.'/'.$filename, $new_cunk) != false) {
+                    if ($filenum > 1) {
+                    // Update file count
+                        $vcfile = $DB->get_record('congrea_files', 
+                        array ('vcid'=> $congrea->id, 'vcsessionkey' => $vcsession));
+                        $vcfile->numoffiles = $filenum;
+                        $DB->update_record('congrea_files', $vcfile);
+                    } else {
+                        $DB->insert_record('congrea_files', $vcfile);
+                    }
+                    $filenum++;
+                } else {
+                    print_error('Error occurred during file upload.');
+                    //echo 'There was an error creating the file name';
+                }
             }
         }
     } else {
         // Upload a single file
         $fullpath = $filepath."/".$name;
         if($success = $mform->save_file('userfile', $fullpath)){
-            //save file record in database        
-            $DB->insert_record('congrea_files', $vcfile);   
-            //redirect( new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));                       
+            //save file record in database
+            $DB->insert_record('congrea_files', $vcfile);
+            //redirect( new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
         }
     }
     redirect( new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));

@@ -21,7 +21,7 @@
  * @copyright 2015 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 header("Access-Control-Allow-Origin: https://l.vidya.io");
 if (isset($_GET['key'])) {
         session_id($_GET['key']);
@@ -39,7 +39,7 @@ if ($cmid) {
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea  = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    echo 'VCE6';exit;//'Course module ID missing.'; 
+    echo 'VCE6';exit;//'Course module ID missing.';
 }
 
 require_login($course, true, $cm);
@@ -48,20 +48,19 @@ $basefilepath = $CFG->dataroot."/congrea"; // Place to save recording files.
 
 if(has_capability('mod/congrea:dorecording', $context)){
 //if(has_capability('mod/congrea:addinstance', $context)){
-    
+
     if ($data) {
         $filepath = $basefilepath."/".$course->id."/".$congrea->id."/".$vmsession;
-    
+
         // Create folder if not exist
         if (!file_exists ($filepath) ) {
             mkdir($filepath, 0777, true);
-        }  
+        }
         $filename = "vc.".$filenum;
-   
-        if (file_put_contents($filepath.'/'.$filename, $data) != false) {      
+        if (file_put_contents($filepath.'/'.$filename, $data) != false) {
             //save file record in database
-            if($filenum > 1){
-                //update record         
+            if ($filenum > 1) {
+                //update record
                 $vcfile = $DB->get_record('congrea_files', array ('vcid'=> $congrea->id, 'vcsessionkey' => $vmsession));
                 $vcfile->numoffiles = $filenum;
                 $DB->update_record('congrea_files', $vcfile);
@@ -76,16 +75,15 @@ if(has_capability('mod/congrea:dorecording', $context)){
                 $vcfile->timecreated = time();
                 //print_r($vcfile);exit;
                 $DB->insert_record('congrea_files', $vcfile);
-            }           
-            echo  "done";
+            }
+            echo "done";
         } else {
             echo 'VCE5';//'Unable to record data.';exit;
-        }       
+        }
     } else {
         echo 'VCE4';//'No data for recording.';
     }
 } else {
      echo 'VCE2';//'Permission denied';
 }
-
 ?>
