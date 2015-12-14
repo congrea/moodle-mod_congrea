@@ -84,7 +84,7 @@ if ($delete and confirm_sesskey()) {
     } else if (data_submitted()) {
         $filepath = $CFG->dataroot."/congrea/".$record->courseid."/".$record->vcid."/".$record->vcsessionkey;
 
-        if (deleteAll($filepath)) {
+        if (mod_congrea_deleteAll($filepath)) {
             $DB->delete_records('congrea_files', array('id'=> $record->id));
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
@@ -146,7 +146,9 @@ $anyonepresenter = empty($congrea->moderatorid) ? 1 :0;
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {    
     $room = $course->id . "_" . $cm->id;
-    if ($CFG->congrea_serve) {
+    
+    //if ($CFG->congrea_serve) {
+    if (get_config('mod_congrea', 'serve')) {
         // Serve local files.
         $url = new moodle_url($CFG->wwwroot.'/mod/congrea/classroom.php', array('id' => $id));
         $vcpopup = js_writer::function_call('congrea_openpopup', Array($url->out(false),
@@ -230,7 +232,7 @@ foreach ($recordings as $record){
                                                    $popupname, $popupoptions,
                                                    $popupwidth, $popupheight));
     // play button
-    if (has_capability('mod/congrea:view', $context)) {
+    if (has_capability('mod/congrea:playrecording', $context)) {
        $buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('e/insert_edit_video'), 'alt' => $strplay, 'class'=>'iconsmall hand', 'onclick' => $playpopup));
     }
 
