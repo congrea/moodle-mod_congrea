@@ -24,7 +24,7 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function mycurlrequest($url, $postdata) {
+function mod_congrea_mycurlrequest($url, $postdata) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -57,7 +57,7 @@ $postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'lic
 $postdata = json_encode($postdata);
 
 if (true) { // False for local server deployment
-    $rid = mycurlrequest("https://c.vidya.io", $postdata); // REMOVE HTTP.
+    $rid = mod_congrea_mycurlrequest("https://c.vidya.io", $postdata); // REMOVE HTTP.
     if (empty($rid) or strlen($rid) > 32) {
         print_error("Chat server is unavailable!");
         exit;

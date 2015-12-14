@@ -80,7 +80,7 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
     $congrea->timecreated = time();
     $vclass = $DB->insert_record('congrea', $congrea);
     $congrea->id = $vclass;
-    update_calendar($congrea);
+    mod_congrea_update_calendar($congrea);
     return $vclass;
 
 }
@@ -106,7 +106,7 @@ function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform 
     $congrea->id = $congrea->instance;
 
     $status = $DB->update_record('congrea', $congrea);
-    update_calendar($congrea);
+    mod_congrea_update_calendar($congrea);
     return $status;
 }
 

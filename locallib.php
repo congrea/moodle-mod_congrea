@@ -100,7 +100,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @return bool
  */
 
-function update_calendar($congrea) {
+function mod_congrea_update_calendar($congrea) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
 
@@ -153,7 +153,7 @@ function update_calendar($congrea) {
  * @return bool
  */
 
-function deleteAll($directory, $empty = false) {
+function mod_congrea_deleteAll($directory, $empty = false) {
     if(substr($directory,-1) == "/") {
         $directory = substr($directory,0,-1);
     }
@@ -170,7 +170,7 @@ function deleteAll($directory, $empty = false) {
                 $path = $directory . "/" . $contents;
 
                 if(is_dir($path)) {
-                    deleteAll($path);
+                    mod_congrea_deleteAll($path);
                 } else {
                     unlink($path);
                 }
@@ -243,7 +243,7 @@ if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
  * @return bool
  */
 
-function generateRandomString($length = 11) {
+function mod_congrea_generateRandomString($length = 11) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';

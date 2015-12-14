@@ -65,7 +65,7 @@ if ($mform->is_cancelled()) {
     // Do nothing.
 } else if ($fromform = $mform->get_data()) {
     // Redirect($nexturl).
-    $vcsession = generateRandomString();
+    $vcsession = mod_congrea_generateRandomString();
     $name = $mform->get_new_filename('userfile');
     $filepath = "{$CFG->dataroot}/congrea/{$course->id}/{$congrea->id}/".$vcsession;
     if (!file_exists ($filepath) ) {
