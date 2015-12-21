@@ -24,20 +24,19 @@
 
 header("Access-Control-Allow-Origin: https://l.vidya.io");
 if (isset($_GET['key'])) {
-        session_id($_GET['key']);
+    session_id($_GET['key']);
 }
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 $cmid = required_param('cmid', PARAM_INT);
-$userid = $_POST['user'];
-$filenum = $_POST['cn'];
-$data = $_POST['record_data'];
-$vmsession = $_POST['sesseionkey'];
-//echo $vmsession;exit;
+$userid = required_param('user', PARAM_INT);
+$filenum = required_param('cn', PARAM_INT);
+$vmsession = required_param('sesseionkey',PARAM_FILE);
+$data = required_param('record_data',PARAM_RAW);
 
 if ($cmid) {
-    $cm         = get_coursemodule_from_id('congrea', $cmid, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $congrea  = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_id('congrea', $cmid, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
     echo 'VCE6';exit;//'Course module ID missing.';
 }
@@ -46,12 +45,9 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $basefilepath = $CFG->dataroot."/congrea"; // Place to save recording files.
 
-if(has_capability('mod/congrea:dorecording', $context)){
-//if(has_capability('mod/congrea:addinstance', $context)){
-
+if (has_capability('mod/congrea:dorecording', $context)) {
     if ($data) {
         $filepath = $basefilepath."/".$course->id."/".$congrea->id."/".$vmsession;
-
         // Create folder if not exist
         if (!file_exists ($filepath) ) {
             mkdir($filepath, 0777, true);
@@ -86,4 +82,3 @@ if(has_capability('mod/congrea:dorecording', $context)){
 } else {
      echo 'VCE2';//'Permission denied';
 }
-?>

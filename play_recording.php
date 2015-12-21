@@ -24,17 +24,14 @@
  
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 $filenum = required_param('prvfile' , PARAM_INT);
-$id = required_param('fileBundelId' , PARAM_INT);
+$fid = required_param('fileBundelId' , PARAM_INT);
+$id = required_param('id' , PARAM_INT); //Course module id 
 
 if ($id) {
     $cm         = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea  = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
-} else if ($n) {
-    $congrea  = $DB->get_record('congrea', array('id' => $n), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $congrea->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('congrea', $congrea->id, $course->id, false, MUST_EXIST);
-} else {
+}  else {
     print_error('You must specify a course_module ID or an instance ID');
 }
 
@@ -42,8 +39,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 if (has_capability('mod/congrea:playrecording', $context)) {
-    $file = $DB->get_record('congrea_files', array('id'=>$id));
-    
+    $file = $DB->get_record('congrea_files', array('id'=>$fid));
     $filepath = $CFG->dataroot."/congrea/".$file->courseid."/".$file->vcid."/".$file->vcsessionkey."/vc.".$filenum;
     //$filepath = $CFG->dataroot."/congrea/2/1/74FzDRhfpAy/user.".$filenum;
 

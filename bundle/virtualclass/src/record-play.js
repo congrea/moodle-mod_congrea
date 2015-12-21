@@ -538,7 +538,7 @@
                 this.waitPopup = true;
             }
         },
-
+        
         /**
          * vcSessionId =  recording session id
          * reqFile = File number (starting from 1)
@@ -547,10 +547,20 @@
             this.displayWaitPopupIfNot(virtualclass.lang.getString("plswaitwhile"));
             var formData = new FormData();
             //formData.append("record_data", "true");
+            debugger;
             formData.append("prvfile", reqFile);
             formData.append("fileBundelId", vcSessionId);
             //formData.append("user", virtualclass.gObj.uid);
-
+            
+            /* Course moudle id is required by Moodle 
+             * for validation and security. In export file path
+             * cmid is attached as query string. Here we extract
+             * name & value of query string and passed to moodle
+             * play_recording file
+             */
+            var urlquery = getUrlVars(exportfilepath);
+            formData.append("id", urlquery.cmid);
+            
             //virtualclass.xhr.send("record_data=true&prvfile="+reqFile+"&user="+virtualclass.gObj.uid, 'export.php', function
             virtualclass.xhr.send(formData, exportfilepath, function
                     (data) {
@@ -869,4 +879,19 @@ function randomString(length) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
     return result;
+}
+
+//function to extract query string 
+// from given URL with name and value
+
+function getUrlVars(url) {
+    var vars = [], hash;
+    var hashes = url.slice(url.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
 }
