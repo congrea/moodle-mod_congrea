@@ -384,24 +384,24 @@
             );
         },
 
-            //tryForReTransmit: function () {
-            //    var that = this;
-            //    setTimeout(
-            //        function () {
-            //            // Show Message "Retring [Retry Number]"
-            //            //console.log("Trying to connnect " + (++virtualclass.recorder.emn));
-            //            if (that.emn <= 1) {
-            //                that.xhrsenddata(virtualclass.recorder.rnum);
-            //                that.emn++;
-            //            } else {
-            //                if(!that.alreadyDownload){
-            //                    that.startDownloadProcess(); //if error occurred and is not downloaded the session yet.
-            //                }
-            //            }
-            //        },
-            //        1000
-            //    );
-            //},
+        //tryForReTransmit: function () {
+        //    var that = this;
+        //    setTimeout(
+        //        function () {
+        //            // Show Message "Retring [Retry Number]"
+        //            //console.log("Trying to connnect " + (++virtualclass.recorder.emn));
+        //            if (that.emn <= 1) {
+        //                that.xhrsenddata(virtualclass.recorder.rnum);
+        //                that.emn++;
+        //            } else {
+        //                if(!that.alreadyDownload){
+        //                    that.startDownloadProcess(); //if error occurred and is not downloaded the session yet.
+        //                }
+        //            }
+        //        },
+        //        1000
+        //    );
+        //},
 
         makeAvailDownloadFile: function () {
             console.log('DOWNLLOAD MESSAGE');
@@ -507,7 +507,7 @@
             if (!!window.Worker) {
                 mvDataWorker.postMessage({
                     rdata: virtualclass.recorder.items,
-                  //  totalStored: virtualclass.storage.totalStore,
+                    //  totalStored: virtualclass.storage.totalStore,
                     makeChunk: true
                 });
 
@@ -538,7 +538,7 @@
                 this.waitPopup = true;
             }
         },
-        
+
         /**
          * vcSessionId =  recording session id
          * reqFile = File number (starting from 1)
@@ -547,11 +547,10 @@
             this.displayWaitPopupIfNot(virtualclass.lang.getString("plswaitwhile"));
             var formData = new FormData();
             //formData.append("record_data", "true");
-            debugger;
             formData.append("prvfile", reqFile);
             formData.append("fileBundelId", vcSessionId);
             //formData.append("user", virtualclass.gObj.uid);
-            
+
             /* Course moudle id is required by Moodle 
              * for validation and security. In export file path
              * cmid is attached as query string. Here we extract
@@ -559,8 +558,10 @@
              * play_recording file
              */
             var urlquery = getUrlVars(exportfilepath);
-            formData.append("id", urlquery.cmid);
-            
+            if(urlquery.hasOwnProperty('cmid')){
+                formData.append("id", urlquery.cmid);
+            }
+
             //virtualclass.xhr.send("record_data=true&prvfile="+reqFile+"&user="+virtualclass.gObj.uid, 'export.php', function
             virtualclass.xhr.send(formData, exportfilepath, function
                     (data) {
