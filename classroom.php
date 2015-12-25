@@ -86,6 +86,21 @@ $info = 0;
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = 1;
 }
+
+$fontface = "";
+
+echo "<style type='text/css'>";
+    $fontface .= "@font-face {";
+        $fontface .= "font-family: 'icomoon';\n";
+        $fontface .= "src:url('".$CFG->wwwroot ."/mod/congrea/bundle/virtualclass/fonts/icomoon.eot?-jjdyd0');\n";
+        $fontface .= "src:url('".$CFG->wwwroot ."/mod/congrea/bundle/virtualclass/fonts/icomoon.eot?#iefix-jjdyd0') format('embedded-opentype'), url('".$CFG->wwwroot ."/mod/congrea/bundle/virtualclass/fonts/icomoon.woff?-jjdyd0') format('woff'), url('".$CFG->wwwroot ."/mod/congrea/bundle/virtualclass/fonts/icomoon.ttf?-jjdyd0') format('truetype'), url('".$CFG->wwwroot ."/mod/congrea/bundle/virtualclass/fonts/icomoon.svg?-jjdyd0#icomoon') format('svg');\n";
+        $fontface .= "font-weight: normal;\n";
+        $fontface .= "font-style: normal;\n";
+    $fontface .= "}\n";
+    echo  $fontface;
+
+echo "</style>";
+
 // File included if debugging on
 if($info) { 
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/styles.css'));
@@ -95,6 +110,7 @@ if($info) {
 } else {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'.min.css'));
 }
+
 
 $whiteboardpath = $CFG->wwwroot . "/mod/congrea/bundle/virtualclass/";
 $sid = $USER->sesskey;

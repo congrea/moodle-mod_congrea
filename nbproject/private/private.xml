@@ -5,11 +5,17 @@
         <group>
             <file>file:/var/www/html/moodle29b/mod/congrea/styles.css</file>
             <file>file:/var/www/html/moodle29b/mod/congrea/lang/en/congrea.php</file>
-            <file>file:/var/www/html/moodle29b/mod/congrea/classroom.php</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/bundle/virtualclass/worker/json-chunks.js</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/bundle/virtualclass/src/utility.js</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/bundle/virtualclass/src/record-play.js</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/bundle/virtualclass/src/storage-array-base64-converter.js</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/bundle/virtualclass/src/indexeddb-storage.js</file>
             <file>file:/var/www/html/moodle29b/mod/congrea/view.php</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/classroom.php</file>
             <file>file:/var/www/html/moodle29b/mod/congrea/recording.php</file>
             <file>file:/var/www/html/moodle29b/mod/congrea/chrome_extension_check.js</file>
-            <file>file:/var/www/html/moodle29b/mod/congrea/locallib.php</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/upload.php</file>
+            <file>file:/var/www/html/moodle29b/mod/congrea/play_recording.php</file>
         </group>
     </open-files>
 </project-private>
