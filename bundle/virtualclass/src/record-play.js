@@ -120,6 +120,7 @@
         },
         
         initMakeAvailDownloadFile : function (){
+            virtualclass.gObj.downloadProgress = true;
             virtualclass.recorder.dataCame = setInterval(
                 function (){
                     if(virtualclass.recorder.hasOwnProperty('recordDone')){
@@ -448,7 +449,7 @@
 
             this.alreadyDownload = true;
 
-            virtualclass.gObj.downloadProgress = true;
+
 
             virtualclass.storage.getAllDataForDownload(['chunkData'], function (data) {
                 // diconnecting with others for prevent to send any unknown packets.
@@ -486,6 +487,7 @@
                     }
                     downloadLink.click();
                     virtualclass.storage.config.endSession();
+                    io.init(virtualclass.uInfo); // During the download session we don't try for new socket connection but here.
                 });
             });
         },
