@@ -17,28 +17,6 @@
 /**
  * Capability definitions for the congrea module
  *
- * The capabilities are loaded into the database table when the module is
- * installed or updated. Whenever the capability definitions are updated,
- * the module version number should be bumped up.
- *
- * The system has four possible values for a capability:
- * CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT, and inherit (not set).
- *
- * It is important that capability names are unique. The naming convention
- * for capabilities that are specific to modules and blocks is as follows:
- *   [mod/block]/<plugin_name>:<capabilityname>
- *
- * component_name should be the same as the directory name of the mod or block.
- *
- * Core moodle capabilities are defined thus:
- *    moodle/<capabilityclass>:<capabilityname>
- *
- * Examples: mod/forum:viewpost
- *           block/recent_activity:view
- *           moodle/site:deleteuser
- *
- * The variable name for the capability definitions array is $capabilities
- *
  * @package    mod_congrea
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,8 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Modify capabilities as needed and remove this comment.
 $capabilities = array(
+    
+    // Ability to add a new quiz to the course.
     'mod/congrea:addinstance' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
@@ -59,6 +38,8 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
+    // Ability to see that the congrea exists, and the basic information
+    // about it, for example the start date and end date.
     'mod/congrea:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -70,6 +51,8 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
+    // Ability to record a congea session to the course.
     'mod/congrea:dorecording' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -80,6 +63,8 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
+
+    // Ability to delete recorded file of congrea session.
     'mod/congrea:recordingdelete' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -89,6 +74,9 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
+    // Ability to upload session file downloaded form congrea
+    // due to inablibliy of direct uploading.
     'mod/congrea:recordingupload' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -99,8 +87,10 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
+
+    // Ability to play recorded session of congrea.
     'mod/congrea:playrecording' => array(
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,
@@ -109,5 +99,4 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
-
 );

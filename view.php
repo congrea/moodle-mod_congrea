@@ -17,9 +17,6 @@
 /**
  * Prints a particular instance of congrea
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
  * @package    mod_congrea
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +25,6 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
-
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... Congrea instance ID - it should be named as the first character of the module.
@@ -134,19 +130,14 @@ $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
 $popupoptions = "toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
 
-/*
-echo '<pre>';
-print_r($congrea);
-echo time();
-exit; */
 $themecolor = $congrea->themecolor;
 $audio = $congrea->audio;
 $pushtotalk = $congrea->pushtotalk;
-$anyonepresenter = empty($congrea->moderatorid) ? 1 :0;
+$anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
 // Check congrea is open.
-if ($congrea->closetime > time() && $congrea->opentime <= time()) {    
+if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $room = $course->id . "_" . $cm->id;
-    
+
     //if ($CFG->congrea_serve) {
     if (get_config('mod_congrea', 'serve')) {
         // Serve local files.
@@ -157,13 +148,11 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
 
         echo html_writer::start_tag('button', array('value' => get_string('joinroom', 'congrea'),
                      'id' => 'vc', 'onclick' => $vcpopup));
-                     
-                   
+
         echo get_string('joinroom', 'congrea');
         echo html_writer::end_tag('button');
         echo html_writer::start_tag('div', array('class'=>'clear'));
         echo html_writer::end_tag('div');
-
     } else {
         // Serve online at vidya.io.
         $url = "https://l.vidya.io";  // Online url
@@ -171,12 +160,11 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $info = false; // Debugging off.
 
         $murl = parse_url($CFG->wwwroot);
-
-    	if($murl['scheme'] == 'https'){
-    	   $sendmurl = $CFG->wwwroot;
-    	} else {
-    	   $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
-    	}
+        if($murl['scheme'] == 'https'){
+            $sendmurl = $CFG->wwwroot;
+        } else {
+            $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
+        }
         $mysession = session_id();
         $upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
         $down = $CFG->wwwroot ."/mod/congrea/play_recording.php?cmid=$cm->id";
@@ -224,7 +212,7 @@ foreach ($recordings as $record){
     $buttons = array();
     $lastcolumn = '';
     $row = array ();
-    $row[] = $record->vcsessionname. ' ' . module_get_rename_action($cm, $record);
+    $row[] = $record->vcsessionname. ' ' . mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->timecreated);    
 
     $playurl = new moodle_url($CFG->wwwroot.'/mod/congrea/classroom.php', array('id' => $id, 'vcSid' =>$record->id, 'play' =>1));
@@ -237,7 +225,7 @@ foreach ($recordings as $record){
     }
 
     // delete button
-    if (has_capability('mod/congrea:addinstance', $context)) {
+    if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
        $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete'=>$record->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'iconsmall')), array('title'=>$strdelete));
     }
 

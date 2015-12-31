@@ -72,7 +72,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
         'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $USER->username));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $USER->firstname.' '.$USER->lastname));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
@@ -96,7 +96,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * Update the calendar entries for this congrea.
  *
  * @param object $congrea - Required to pass this in because it might
- *                              not exist in the database yet.
+ *                          not exist in the database yet.
  * @return bool
  */
 
@@ -193,15 +193,15 @@ function mod_congrea_deleteAll($directory, $empty = false) {
  * @param int $sr The section to link back to (used for creating the links)
  * @return The markup for the rename action, or an empty string if not available.
  */
-function module_get_rename_action($cm, $instance, $sr = null) {
-    global $COURSE, $OUTPUT;
+function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
+    global $COURSE, $OUTPUT, $USER;
 
     static $str;
     static $baseurl;
 
     $modcontext = context_module::instance($cm->id);
-    $hasmanageactivities = has_capability('mod/congrea:recordingupload', $modcontext);
-
+    //$hasmanageactivities = has_capability('mod/congrea:recordingupload', $modcontext);
+    $hasmanageactivities = has_capability('mod/congrea:addinstance', $modcontext);
     if (!isset($str)) {
         $str = get_strings(array('edittitle'));
     }
@@ -219,7 +219,7 @@ function module_get_rename_action($cm, $instance, $sr = null) {
 if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
                 (($mod->course == $COURSE->id) || ($mod->course == SITEID))) {
 */
-    if($hasmanageactivities){
+    if($hasmanageactivities || ($USER->id == $instance->userid)){
         // we will not display link if we are on some other-course page (where we should not see this module anyway)
         return html_writer::span(
             html_writer::link(

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main congrea configuration form
+ * The main congrea recording upload form
  *
  * It uses the standard core Moodle formslib. For more info about them, please
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
@@ -26,24 +26,20 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/congrea/locallib.php');
 /**
- * Module instance settings form
+ * Module instance recording upload form
  */
 class mod_congrea_upload_file extends moodleform {
     /**
      * Constructor.
      * @param moodle_url $submiturl the form action URL.
      * @param object course module object.
-     * @param object the quiz settings object.
-     * @param context the quiz context.
-     * @param bool editing group override (true) or user override (false).
-     * @param object $override the override being edited, if it already exists.
+     * @param object the congrea object.
+     * @param context the congrea context.
      */
     public function __construct($submiturl, $cm, $congrea, $context) {
-
         $this->cm = $cm;
         $this->congrea = $congrea;
         $this->context = $context;

@@ -30,8 +30,8 @@ require_once(dirname(__FILE__).'/lib.php');
 require_once('auth.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // ... congrea instance ID - it should be named as the first character of the module.
-$isplay  = optional_param('play', 0, PARAM_INT);  // Play recording
+$n = optional_param('n', 0, PARAM_INT);  // ... congrea instance ID - it should be named as the first character of the module.
+$isplay = optional_param('play', 0, PARAM_INT);  // Play recording
 $vcSid = optional_param('vcSid', 0, PARAM_INT); // virtual class session record id
 
 if ($id) {
@@ -98,7 +98,6 @@ echo "<style type='text/css'>";
         $fontface .= "font-style: normal;\n";
     $fontface .= "}\n";
     echo  $fontface;
-
 echo "</style>";
 
 // File included if debugging on
@@ -110,7 +109,6 @@ if($info) {
 } else {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'.min.css'));
 }
-
 
 $whiteboardpath = $CFG->wwwroot . "/mod/congrea/bundle/virtualclass/";
 $sid = $USER->sesskey;
@@ -136,10 +134,10 @@ if(empty($congrea->moderatorid)) {
     $anyonepresenter = 0;
 }
 if($isplay){
-	$cont_class .=  " playMode";	
+	$cont_class .= " playMode";	
 }
 // Push to talk
-$cont_class  .=  $congrea->pushtotalk ? ' pt_enable' : ' pt_disable';
+$cont_class .= $congrea->pushtotalk ? ' pt_enable' : ' pt_disable';
 
 // Audio enable/disable
 if($congrea->audio){

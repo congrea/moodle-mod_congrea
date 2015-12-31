@@ -57,7 +57,7 @@ class mod_congrea_mod_form extends moodleform_mod {
         // Adding the standard "intro" and "introformat" fields.
         //$this->add_intro_editor();
         //  $this->standard_intro_elements();
-        if($CFG->version > 2014111008){
+        if ($CFG->version > 2014111008) {
             $this->standard_intro_elements();
         } else {
             $this->add_intro_editor(); //moodle.2.8.9 or earlier
@@ -71,7 +71,6 @@ class mod_congrea_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
-        //$mform->addRule('moderatorid', get_string('error'), 'required', null, 'client');
         $mform->disabledIf('moderatorid', 'anyonepresenter', 'checked');
 
         $mform->addElement('checkbox', 'anyonepresenter', get_string('anyonepresenter', 'congrea'));
@@ -79,7 +78,6 @@ class mod_congrea_mod_form extends moodleform_mod {
         if(empty($teacheroptions)) {
             $mform->setDefault('anyonepresenter', 'checked');
         }
-        //$mform->enabledIf('Anyonepresenter', 'moderatorid', '');
 
         // Schedule fo session
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));

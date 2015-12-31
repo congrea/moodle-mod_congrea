@@ -15,23 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays information about all the assignment modules in the requested course
+ * Play file recorded during congrea session
  *
  * @package   mod_congrea
  * @copyright 2015 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 $filenum = required_param('prvfile' , PARAM_INT);
 $fid = required_param('fileBundelId' , PARAM_INT);
 $id = required_param('id' , PARAM_INT); //Course module id 
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $congrea  = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
-}  else {
+    $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
+} else {
     print_error('You must specify a course_module ID or an instance ID');
 }
 

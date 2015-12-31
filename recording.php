@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays information about all the assignment modules in the requested course
+ * Save file recorded during congrea session when local file is 
+ * serving for virtual class 
  *
  * @package   mod_congrea
  * @copyright 2015 Pinky Sharma
@@ -30,8 +31,8 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 $cmid = required_param('cmid', PARAM_INT);
 $userid = required_param('user', PARAM_INT);
 $filenum = required_param('cn', PARAM_INT);
-$vmsession = required_param('sesseionkey',PARAM_FILE);
-$data = required_param('record_data',PARAM_RAW);
+$vmsession = required_param('sesseionkey', PARAM_FILE);
+$data = required_param('record_data', PARAM_RAW);
 
 if ($cmid) {
     $cm = get_coursemodule_from_id('congrea', $cmid, 0, false, MUST_EXIST);

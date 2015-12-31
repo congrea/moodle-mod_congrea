@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main congrea configuration form
+ * Form to edit uploaded file name
  *
  * It uses the standard core Moodle formslib. For more info about them, please
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
@@ -30,30 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 /**
- * Module instance settings form
+ * File update name form
  */
 
 class mod_congrea_edit_name extends moodleform {
-
-    /**
-     * Constructor.
-     * @param moodle_url $submiturl the form action URL.
-     * @param object course module object.
-     * @param object the quiz settings object.
-     * @param context the quiz context.
-     * @param bool editing group override (true) or user override (false).
-     * @param object $override the override being edited, if it already exists.
-     */
-   /*
- public function __construct($submiturl, $cm, $congreafile, $context) {
-
-        $this->cm = $cm;
-        $this->congreafile = $congreafile;
-        $this->context = $context;
-        parent::__construct($submiturl, null, 'post');
-
-    }
-*/
 
     /**
      * Defines forms elements
@@ -72,7 +52,6 @@ class mod_congrea_edit_name extends moodleform {
         } else {
             $mform->setType('name', PARAM_CLEAN);
         }
-
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }

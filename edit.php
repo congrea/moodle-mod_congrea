@@ -31,7 +31,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/edit_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // ... Congrea instance ID - it should be named as the first character of the module.
+$n = optional_param('n', 0, PARAM_INT); // ... Congrea instance ID - it should be named as the first character of the module.
 $update = optional_param('update', 0, PARAM_INT);
 
 if ($id) {
@@ -54,7 +54,6 @@ $PAGE->set_url('/mod/congrea/edit.php', array('id' => $cm->id, 'update' => $upda
 $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
-//require_once('upload_form.php');
 
 $vc_file = $DB->get_record('congrea_files', array('id' => $update));
 $mform = new mod_congrea_edit_name($CFG->wwwroot.'/mod/congrea/edit.php?id='.$cm->id.'&update='.$update);
@@ -62,10 +61,10 @@ $mform = new mod_congrea_edit_name($CFG->wwwroot.'/mod/congrea/edit.php?id='.$cm
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect( new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
-} else if ($fromform = $mform->get_data()) {   
+} else if ($fromform = $mform->get_data()) {
     $vc_file->vcsessionname = $fromform->name;
     //print_r($vc_file);exit;
-    $DB->update_record('congrea_files', $vc_file);   
+    $DB->update_record('congrea_files', $vc_file);
     redirect( new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
 }
 // Output starts here.

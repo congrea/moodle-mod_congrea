@@ -15,10 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of congrea
- *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
+ * Upload and save recorded file of congrea session 
+ * which is donwloaded, when online files are serving
  *
  * @package    mod_congrea
  * @copyright  2014 Pinky Sharma
@@ -27,7 +25,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
-//require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
@@ -58,7 +55,6 @@ $PAGE->set_context($context);
 require_once('upload_form.php');
 
 $submiturl = new moodle_url('/mod/congrea/upload.php', array('id' => $cm->id));
-
 $mform = new mod_congrea_upload_file($submiturl, $cm, $congrea, $context);
 
 if ($mform->is_cancelled()) {
@@ -89,7 +85,6 @@ if ($mform->is_cancelled()) {
     $content = $mform->get_file_content('userfile');
     $decode_data = json_decode($content);
     $file_length = count($decode_data);
-    //print_r($decode_data);exit;
 
     if($file_length > 1) {
         //Break larage file in multiple files

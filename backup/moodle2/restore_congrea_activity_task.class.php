@@ -52,9 +52,7 @@ class restore_congrea_activity_task extends restore_activity_task {
      */
     static public function define_decode_contents() {
         $contents = array();
-
         $contents[] = new restore_decode_content('congrea', array('intro'), 'congrea');
-
         return $contents;
     }
 
@@ -64,10 +62,8 @@ class restore_congrea_activity_task extends restore_activity_task {
      */
     static public function define_decode_rules() {
         $rules = array();
-
         $rules[] = new restore_decode_rule('CONGREAVIEWBYID', '/mod/congrea/view.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('CONGREAINDEX', '/mod/congrea/index.php?id=$1', 'course');
-
         return $rules;
 
     }
@@ -80,7 +76,6 @@ class restore_congrea_activity_task extends restore_activity_task {
      */
     static public function define_restore_log_rules() {
         $rules = array();
-
         $rules[] = new restore_log_rule('congrea', 'add', 'view.php?id={course_module}', '{congrea}');
         $rules[] = new restore_log_rule('congrea', 'update', 'view.php?id={course_module}', '{congrea}');
         $rules[] = new restore_log_rule('congrea', 'view', 'view.php?id={course_module}', '{congrea}');
@@ -104,7 +99,6 @@ class restore_congrea_activity_task extends restore_activity_task {
         $rules[] = new restore_log_rule('congrea', 'view all', 'index?id={course}', null,
                                         null, null, 'index.php?id={course}');
         $rules[] = new restore_log_rule('congrea', 'view all', 'index.php?id={course}', null);
-
         return $rules;
     }
 }

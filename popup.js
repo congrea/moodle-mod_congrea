@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings used by the congrea module
+ * JavaScript function used by congrea module
  *
  * @package mod_congrea
  * @copyright  2014 Pinky Sharma

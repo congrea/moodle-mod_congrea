@@ -40,6 +40,7 @@ $string['closenotset'] = 'You have to specify a close time.';
 $string['closesameopen'] = 'Session open and close time should not be same';
 $string['closetime'] = 'Sessions closed';
 $string['configactiontolocalrun'] = 'If you select \'Local\' SSL (https://) will be required to use Screen Sharing Features.';
+$string['congrea:playrecording'] = 'Play recording';
 $string['disablespeaker'] = 'Mute';
 $string['downloadsession'] = 'Please wait while recording is downloaded.';
 $string['enableAudio'] = 'Unmute';

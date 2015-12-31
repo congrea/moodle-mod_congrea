@@ -30,11 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/*
- * Example constant:
- * define(' CONGREA_ULTIMATE_ANSWER', 42);
- */
-
 /**
  * Moodle core API
  */
@@ -98,7 +93,6 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
  */
 function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
     global $DB;
-//print_r($congrea);exit;
     if(!empty($congrea->anyonepresenter)) {
         $congrea->moderatorid = 0;
     }
