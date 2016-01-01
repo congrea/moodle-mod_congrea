@@ -166,7 +166,7 @@ if ($USER->id) {
 }
 
 // Javascript variables.
-?> <script type="text/javascript">    
+?> <script type="text/javascript">
     wbUser.virtualclassPlay = '<?php echo $isplay; ?>';
     wbUser.vcSid = '<?php echo $vcSid; ?>';
     wbUser.imageurl =  '<?php echo $src; ?>';
@@ -180,7 +180,7 @@ if ($USER->id) {
     wbUser.lname =  '<?php echo $USER->lastname; ?>';
     wbUser.name =  '<?php echo $USER->firstname; ?>';
     wbUser.anyonepresenter =  '<?php echo $anyonepresenter ?>';
-    
+
     window.whiteboardPath =  '<?php echo $whiteboardpath; ?>';
     window.importfilepath = "<?php echo $CFG->wwwroot."/mod/congrea/recording.php?cmid=".$cm->id ?>";
     window.exportfilepath = "<?php echo $CFG->wwwroot."/mod/congrea/play_recording.php?cmid=".$cm->id ?>";
@@ -188,13 +188,12 @@ if ($USER->id) {
         var sworker = new Worker("<?php echo $whiteboardpath."worker/screenworker.js" ?>");
         var mvDataWorker = new Worker("<?php echo $whiteboardpath."worker/json-chunks.js" ?>");
         var dtConWorker = new Worker("<?php echo $whiteboardpath."worker/storage-array-base64-converter.js" ?>");
-
     }
 </script> <?php
 
-if($info){
+if ($info) {
     require_once('bundle/virtualclass/build/js.debug.php');
-}else{
+} else {
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/bundle/io/build/iolib.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/build/wb.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/index.js');
@@ -277,13 +276,6 @@ echo html_writer::start_tag('div', array('id' => 'virtualclassCont', 'class' => 
         echo html_writer::end_tag('div');
 
     echo html_writer::end_tag('div');
-
-//    echo html_writer::start_tag('div', array('id' => 'chatWidget'));
-//        echo html_writer::tag('div', '', array('id' => 'stickycontainer'));
-//    echo html_writer::end_tag('div');
-//echo html_writer::end_tag('div');
-
-
 
 echo '<div id="chatWidget"> 
         <div id = "stickycontainer"> </div>
