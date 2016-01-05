@@ -52,6 +52,7 @@ $theme = $congrea->themecolor;
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
+/*
 $event = \mod_congrea\event\course_module_viewed::create(array(
     'objectid' => $congrea->id,
     'context' => $PAGE->context,
@@ -59,6 +60,7 @@ $event = \mod_congrea\event\course_module_viewed::create(array(
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot('congrea', $congrea);
 $event->trigger();
+*/
 
 // Print the page header.
 $PAGE->set_url('/mod/congrea/classroom.php', array('id' => $cm->id));
@@ -78,8 +80,8 @@ $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtual
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 
 // Mark viewed by user (if required).
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+//$completion = new completion_info($course);
+//$completion->set_module_viewed($cm);
 
 // Checking moodle deugger is unable or disable.
 $info = 0;

@@ -55,6 +55,20 @@ $PAGE->set_context($context);
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 $PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
 
+// Event log
+$event = \mod_congrea\event\course_module_viewed::create(array(
+'objectid' => $congrea->id,
+'context' => $context,
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('congrea', $congrea);
+$event->trigger();
+
+// Mark viewed by user (if required).
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 // Output starts here.
 
 $strdelete = get_string('delete');
