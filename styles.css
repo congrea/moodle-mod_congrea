@@ -812,10 +812,6 @@ font-size : 11.5px !important;
 	text-shadow: none !important;
 }
 
-.close:hover{
-	color:#fff !important;
-}
-
 #downloadPrgressLabel, #askPlay #askplayMessage{
 	color: #555 !important;
 }
