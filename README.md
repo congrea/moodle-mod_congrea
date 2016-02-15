@@ -15,7 +15,7 @@ Each activity is offered in one or more identical sessions.
 Requirements
 ------------
 
-Moodle 2.8.0+
+Moodle 2.7.2+
 
 Installation
 ------------
