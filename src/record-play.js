@@ -94,14 +94,19 @@
         
         initMakeAvailDownloadFile : function (){
             virtualclass.gObj.downloadProgress = true;
-            virtualclass.recorder.dataCame = setInterval(
+            virtualclass.recorder.dataCame = setTimeout(
                 function (){
                     if(virtualclass.recorder.hasOwnProperty('recordDone')){
                         if(!virtualclass.recorder.alreadyDownload){
                            console.log('Recorder:- From Interval');
                            virtualclass.recorder.makeAvailDownloadFile();
                         }
-                        clearInterval(virtualclass.recorder.dataCame);
+
+                        // clearInterval(virtualclass.recorder.dataCame);
+                        // There was calling fequenlty event after clear the interval, because of which there is trying make file for
+                        // download
+
+                        clearTimeout(virtualclass.recorder.dataCame);
                     }
                 }
 
@@ -338,8 +343,28 @@
         makeAvailDownloadFile: function () {
             console.log('Recorder:- DOWNLLOAD MESSAGE');
             var pbar = document.getElementById('recordingContainer');
-            var downloadLinkCont = document.createElement('div');
-            downloadLinkCont.id = "downloadFileCont";
+            var elemDisp = window.getComputedStyle(pbar).display;
+            if(elemDisp == 'none' || elemDisp != 'block'){
+                // if there is another popup, we displays the download popup
+                // this happens when user is disconnected
+                // and try to reconnect, we do display the popup for download session
+                // set timeout set because there is multiple tries for connection which is a problem
+
+                setTimeout(
+                    function (){
+                        virtualclass.popup.openProgressBar();
+                        io.disconnect();
+                    }, 3000
+                );
+            }
+
+
+            var downloadLinkCont = document.getElementById('downloadFileCont');
+            if(downloadLinkCont == null){
+                downloadLinkCont = document.createElement('div');
+                downloadLinkCont.id = "downloadFileCont";
+            }
+
 
             var downloadMsg = document.createElement('div');
             downloadMsg.id = "errormsessage";
@@ -355,6 +380,7 @@
             this.alreadyDownload = true;
 
             virtualclass.storage.getAllDataForDownload(['chunkData'], function (data) {
+
                 // diconnecting with others for prevent to send any unknown packets.
                 virtualclass.gObj.saveSession = true;
 
@@ -376,7 +402,12 @@
 
                 var textFileAsBlob = new Blob([data], {type: "application/virtualclass"});
 
+                if (virtualclass.hasOwnProperty('prevScreen') && virtualclass.prevScreen.hasOwnProperty('currentStream')) {
+                    virtualclass.prevScreen.unShareScreen();
+                }
+
                 downloadButton.addEventListener('click', function () {
+                    //virtualclass.clearSession();
                     if (window.webkitURL != null) {
                         // Chrome allows the link to be clicked
                         // without actually adding it to the DOM.
@@ -389,8 +420,22 @@
                         document.body.appendChild(downloadLink);
                     }
                     downloadLink.click();
-                    virtualclass.storage.config.endSession();
+
+                    recordingHeaderCont = document.getElementById('recordingHeader');
+                    recordingHeaderCont.innerHTML = virtualclass.lang.getString('uploadsession'); // reset the value for upload message for next time
+                    downloadLinkCont.parentNode.removeChild(downloadLinkCont);
+                    progressContainer.style.display = 'block';
+                    if(virtualclass.recorder.hasOwnProperty('dataCame')){
+                        clearTimeout(virtualclass.recorder.dataCame);
+                    }
+
+
+                    virtualclass.clearSession();
+                    //virtualclass.storage.config.endSession();
+                    delete virtualclass.gObj.saveSession;
+                    io.disconnect(); // there was not completely disconnected
                     io.init(virtualclass.uInfo); // During the download session we don't try for new socket connection but here.
+
                 });
             });
         },
@@ -416,8 +461,7 @@
                 mvDataWorker.onmessage = function (e) {
                     if(e.data.hasOwnProperty('done_problem')){
                         console.log('done problem');
-                    }else if (e.data.hasOwnProperty('sumanrdata')){
-                        console.log('suman rdata');
+                        // TODO this should be removed
                     }else if(e.data.hasOwnProperty('status')){
                         if(e.data.status == 'done'){
                             console.log('Recorder:- done');
