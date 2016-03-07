@@ -318,10 +318,10 @@ echo '<div id="chatWidget">
                         </div>
                     </div>
 
-                      <div id="recordFinishedMessageBox">
-                        <span id="recordFinishedMessage"> '. get_string('uploadedsessionOk', 'congrea').' </span>
+                    <div id="recordFinishedMessageBox">
+                        <span id="recordFinishedMessage"> '.get_string('uploadedsession', 'congrea').'</span>
                         <span id="recordingClose" class="icon-close"></span>
-                        <button id="recordingCloseButton">Ok</button>
+
                     </div>
                     
                 </div>

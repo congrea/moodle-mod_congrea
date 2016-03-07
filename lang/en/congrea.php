@@ -71,7 +71,8 @@ $string['teachername'] = 'Teacher : {$a->firstname} {$a->lastname}';
 $string['totalprogress'] = 'Total Progress';
 $string['tpAudioTest'] = 'Audio Test';
 $string['uploadsession'] = 'Please wait until processing is complete.';
-$string['uploadedsession'] = 'Recording saved successfully.';
+$string['uploadedsession'] = 'Your session has ended, you may now close the window. <br /> Or
+                                  close this popup to start a new session.';
 $string['uploadrecordedfile'] = 'Upload recorded file';
 $string['uploadedsessionOk'] = 'Click "Ok" to start a new Session.';
 $string['congrea'] = 'Congrea';
@@ -97,3 +98,4 @@ $string['selectcolor_help'] = 'Choose your own color for your classroom';
 $string['enableAudio'] = 'Enable audio';
 $string['disableAudio'] = 'Disable audio';
 $string['waitmsgconnect'] = 'Please wait a whlie. Application is trying to connect.';
+
