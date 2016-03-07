@@ -318,10 +318,12 @@ echo '<div id="chatWidget">
                         </div>
                     </div>
 
-                    <div id="recordFinishedMessageBox">
-                        <span id="recordFinishedMessage"> You have uploaded the current session. </span>
+                      <div id="recordFinishedMessageBox">
+                        <span id="recordFinishedMessage"> '. get_string('uploadedsessionOk', 'congrea').' </span>
                         <span id="recordingClose" class="icon-close"></span>
+                        <button id="recordingCloseButton">Ok</button>
                     </div>
+                    
                 </div>
 
             </div>

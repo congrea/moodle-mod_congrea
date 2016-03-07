@@ -73,6 +73,7 @@ $string['tpAudioTest'] = 'Audio Test';
 $string['uploadsession'] = 'Please wait until processing is complete.';
 $string['uploadedsession'] = 'Recording saved successfully.';
 $string['uploadrecordedfile'] = 'Upload recorded file';
+$string['uploadedsessionOk'] = 'Click "Ok" to start a new Session.';
 $string['congrea'] = 'Congrea';
 $string['congreafieldset'] = 'Custom example fieldset';
 $string['congreaname'] = 'Congrea name';
