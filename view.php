@@ -180,7 +180,12 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
             $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
         }
         $mysession = session_id();
-        $upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
+        //$upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
+        // Todo this should be changed with actual server path
+        $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
+       // $upload = "https://local.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
+
+        
         $down = $CFG->wwwroot ."/mod/congrea/play_recording.php?cmid=$cm->id";
 
         if (has_capability('mod/congrea:addinstance', $context)) {
@@ -234,7 +239,7 @@ foreach ($recordings as $record){
                                                    $popupname, $popupoptions,
                                                    $popupwidth, $popupheight));
     // play button
-    if (has_capability('mod/congrea:playrecording', $context)) {
+    if (has_capability('mod/congrea:playrecording', $context)) {    
        $buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('e/insert_edit_video'), 'alt' => $strplay, 'class'=>'iconsmall hand', 'onclick' => $playpopup));
     }
 
