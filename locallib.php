@@ -86,7 +86,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'themecolor', 'value' => $themecolor));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
-    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit',
+    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
          'value' => get_string('joinroom', 'congrea')));
     $form .= html_writer::end_tag('form');
     return $form;

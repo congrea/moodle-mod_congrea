@@ -161,7 +161,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
                                                        $popupwidth, $popupheight));
 
         echo html_writer::start_tag('button', array('value' => get_string('joinroom', 'congrea'),
-                     'id' => 'vc', 'onclick' => $vcpopup));
+                     'id' => 'vc', 'class' => 'vcbutton',  'onclick' => $vcpopup));
 
         echo get_string('joinroom', 'congrea');
         echo html_writer::end_tag('button');

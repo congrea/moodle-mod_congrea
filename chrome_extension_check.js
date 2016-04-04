@@ -8,7 +8,12 @@ function initChromeExtension(){
             setTimeout(
                 function (){
                     if(typeof chromeExt == 'undefined' || !chromeExt){
-                        var joinVcElem = document.querySelector('#vc');
+                        //online form
+                        var joinVcElem = document.querySelector('#overrideform');
+                        if(joinVcElem == null){
+                            joinVcElem = document.querySelector('.vcbutton'); //off line form
+                        }
+                        
                         var chromeExtButton = document.createElement('button');
                         chromeExtButton.id = 'chromeExtTrigger';
                         chromeExtButton.title = "For share screen share" ;
