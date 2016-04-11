@@ -123,7 +123,11 @@ $a->open = userdate($congrea->opentime);
 $a->close = userdate($congrea->closetime);
 $user = $DB->get_record('user', array('id' => $congrea->moderatorid));
  
-echo html_writer::start_tag('div', array('class'=>'wrapper-button'));
+$class_name = 'wrapper-button';
+if (($congrea->closetime > time() && $congrea->opentime <= time()) &&  (!get_config('mod_congrea', 'serve'))){
+    $class_name .=  ' online';
+}
+echo html_writer::start_tag('div', array('class'=> $class_name));
 
 echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $a));
 if (!empty($congrea->moderatorid)) {

@@ -313,11 +313,6 @@ font-size : 11.5px !important;
 	clear: both;
 }
 
-#page-mod-congrea-view .wrapper-button{
-	padding: 20px 15px;
-	border:#ddd 1px solid;
-	border-radius: 5px;
-}
 
 #page-mod-congrea-view .wrapper-record-list{
 	text-align: right;
@@ -688,6 +683,13 @@ font-size : 11.5px !important;
 	clear: both;
 }
 
+/* #page-mod-congrea-view .wrapper-button{
+	//padding: 20px 15px;
+        padding: 20px 5px 5% 5px;
+	border:#ddd 1px solid;
+	border-radius: 5px;
+} */
+
 #page-mod-congrea-view .wrapper-button{
 	padding: 20px 15px;
 	border:#ddd 1px solid;
@@ -859,5 +861,10 @@ min-height: none;
     z-index : 1;
 }
 
+#page-mod-congrea-view .wrapper-button.online #overrideform,  #page-mod-congrea-view .wrapper-button.online #chromeExtTrigger{
+    float:left;
+}
 
-
+#page-mod-congrea-view .wrapper-button.online {
+    padding-bottom :50px;
+}
