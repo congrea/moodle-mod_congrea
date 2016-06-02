@@ -2006,16 +2006,11 @@
 }
 
 #virtualclassCont #errorContainer {
-    position: fixed;
-    bottom: 7%;
-    color: rgb(207, 39, 39);
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    max-width: 33%;
+	position: fixed;
+	bottom: 7%;
+	left: 44%;
+	color : rgba(131, 14, 14, 0.93);
 }
-
-#audioWidget #audioTest-box #audioTest #audiotestAnch{color:#fff !important;}
 
 @media screen and (-webkit-min-device-pixel-ratio:0){
 	#virtualclassCont #chat_div .ui-memblist-usr a.tooltip:hover:after {
@@ -2118,7 +2113,7 @@
 	pointer-events : none;
 }
 
-#virtualclassCont.teacher #virtualclassYts{
+#virtualclassCont.teacher #virtualclassYts, #virtualclassCont.teacher #virtualclassSharePresentation{
 	margin-left : 55px;
 }
 
@@ -2131,15 +2126,16 @@
 }
 
 
-
-#virtualclassCont.student.presenter #virtualclassYts {
+#virtualclassCont.student.presenter #virtualclassYts,  #virtualclassCont.student.presenter #virtualclassSharePresentation{
 	margin-left : 55px;
 }
 
-#virtualclassCont #virtualclassYts {
+#virtualclassCont #virtualclassYts, #virtualclassSharePresentation{
 	border: #ccc 1px solid;
 	border-radius: 5px;
 }
+
+#virtualclassSharePresentation iframe{border:none;}
 
 #virtualclassCont.student #virtualclassYts p{
 	text-align:center;
@@ -2267,7 +2263,6 @@
 }
 
 #virtualclassCont a.vceditor-btn{
-	color: #fff !important;
 	border-bottom-width: 1px !important;
 }
 
@@ -2416,7 +2411,7 @@
 
 
 #virtualclassCont .rv-vanilla-modal-body #recordFinishedMessageBox #recordingClose{
-	top: 20px;
+	top: 13px;
 	right: 15px;
 	position: absolute;
 }
@@ -2453,6 +2448,37 @@
 	text-align: center;
 	top: 25%;
 }
+#virtualclassCont #virtualclassSharePresentation #urlcontainer, #virtualclassCont.student.presenter #virtualclassSharePresentation #urlcontainer {
+	position: absolute;
+	margin-top: 10px;
+	text-align: center;
+	top: 40%;
+	left: 0;
+	right: 0;
+
+}
+#virtualclassCont #virtualclassSharePresentation.pptSharing #urlcontainer, #virtualclassCont.student.presenter #virtualclassSharePresentation.pptSharing #urlcontainer{
+	top:auto;
+	bottom:0%;
+	left: 55px;
+	right: auto;
+}
+
+#virtualclassCont #virtualclassSharePresentation #urlcontainer #presentationurl, #virtualclassCont.student.presenter #virtualclassSharePresentation #urlcontainer #presentationurl{
+	border: #ddd 1px solid;
+    height: 36px;
+    font-size: 13px;
+    padding: 0px 10px 0px 15px;
+    width: 370px;
+    color: #777;
+    font-size: 20px;
+    border-radius: 5px;
+	
+}
+#virtualclassCont #virtualclassSharePresentation #urlcontainer.pptSharing{
+	bottom: 0%;
+	left: 55px;
+}
 
 
 #virtualclassCont .youTubeSharing #youtubeUrlContainer, #virtualclassCont.student.presenter .youTubeSharing #youtubeUrlContainer{
@@ -2480,7 +2506,7 @@
 	border-radius: 5px;
 }
 
-#virtualclassCont #youtubeUrlContainer #submitURL{
+#virtualclassCont #youtubeUrlContainer #submitURL, #virtualclassCont #virtualclassSharePresentation #submitpurl{
 	background: #83c2b2; /* Old browsers */
 	background: -moz-linear-gradient(top,  #83c2b2 0%, #6cad9d 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#83c2b2), color-stop(100%,#6cad9d)); /* Chrome,Safari4+ */
@@ -2489,7 +2515,7 @@
 	background: -ms-linear-gradient(top,  #83c2b2 0%,#6cad9d 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #83c2b2 0%,#6cad9d 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#83c2b2', endColorstr='#6cad9d',GradientType=0 ); /* IE6-9 */
-	padding: 11px;
+	padding: 11px 30px;
 	border: none;
 	color: #fff;
 	font-size: 13px;
@@ -2652,7 +2678,7 @@
 }
 
 #virtualclassCont #playControllerCont #replayFromStart .icon-Replayfromstart{
-	padding: 3px 10px 12px;
+	padding: 5px 10px 12px;
 	border: none;
 	font-size: 13px;
 	border: #ddd 1px solid;
@@ -2762,13 +2788,11 @@
 #virtualclassCont #vcanvas #whiteBoardMsg {
 	position : absolute;
 	top : 40%;
-	left: 0;
-	right: 0;
-	margin: 0 auto;
-	max-width: 30%;
-	text-align: center;
+	left : 40%;
 }
-	
+
+
+
 #virtualclassCont a#contrAudioAll {
 	margin-left: 30px;
 	cursor: pointer;
@@ -2886,7 +2910,7 @@
 	right: 5px;
 	top: 140px;
 }
-#virtualclassCont.teacher.orginalTeacher[data-currapp="Whiteboard"] #audioWidget, #virtualclassCont.teacher.orginalTeacher[data-currapp="Yts"] #audioWidget, #virtualclassCont.teacher.orginalTeacher[data-currapp="ScreenShare"] #audioWidget, #virtualclassCont.teacher.orginalTeacher.educator[data-currapp="EditorRich"] #audioWidget{
+#virtualclassCont.teacher.orginalTeacher[data-currapp="Whiteboard"] #audioWidget, #virtualclassCont.teacher.orginalTeacher[data-currapp="Yts"] #audioWidget, #virtualclassCont.teacher.orginalTeacher[data-currapp="ScreenShare"] #audioWidget, #virtualclassCont.teacher.orginalTeacher.educator[data-currapp="EditorRich"] #audioWidget, #virtualclassCont.teacher.orginalTeacher.pt_enable[data-currapp="SharePresentation"] #audioWidget{
 	right: 0px;
 }
 #virtualclassCont.teacher.orginalTeacher.educator[data-currapp="Yts"] #audioWidget{
@@ -2927,7 +2951,7 @@
 
 #virtualclassCont.playMode.student .writeModeBox{top: -60px;}
 
-#virtualclassCont #messageLayout{
+#virtualclassCont #messageLayout, #virtualclassCont #pptMessageLayout{
 	background-color: #f9f9f9;
 	border: 1px solid #c8ddb8;
 	border-radius: 5px;
@@ -3061,8 +3085,8 @@
 	border-right: 0px;
 }
 
-#virtualclassCont.student.presenter #virtualclassYts {
-	margin-left: 53px;
+#virtualclassCont.student.presenter #virtualclassYts, #virtualclassCont.student.presenter #virtualclassSharePresentation {
+	margin-left: 55px;
 }
 
 /** For fix the bug
@@ -3103,7 +3127,8 @@
 .ui-chatroom-titlebar.ui-dialog-header.ui-state-highlight .icon-minus:before, #virtualclassCont #chatWidget .mySelf span{
 	color:#333;
 }
-#virtualclassCont.playMode.student[data-currapp="Yts"] #virtualclassEditorCode{
+
+#virtualclassCont.playMode.student #virtualclassEditorCode, #virtualclassCont.playMode.student[data-currapp="Yts"] #virtualclassEditorCode{
 	margin-top: 70px;
 }
 
@@ -3129,6 +3154,18 @@
 	border-bottom: none;
 }
 
+/* SharePresentation */
+
+.icon-sharePresentation:before{
+	content: "\e900";
+	font-size: 30px;
+	color:#444;
+	position: relative;
+    top: 2px;
+}
+
+
+
 /* gray color */
 
 
@@ -3153,12 +3190,9 @@
 }
 
 
-.tooltip{color: #fff;}
-
-#virtualclassCont #virtualclassOptionsCont, #virtualclassCont #t_reclaim .icon-educator:before, #virtualclassCont .ui-dialog-header span, #virtualclassCont #chatroom_bt2 .inner_bt, #virtualclassCont #speakerPressing .icon-speakerPressing:before, #virtualclassCont #virtualclassOptionsCont .appOptions a span:before, #virtualclassCont #virtualclassOptionsCont .appOptions a span:before{
-	color:#fff !important;
+#virtualclassCont #virtualclassOptionsCont, .tooltip, #virtualclassCont #t_reclaim .icon-educator:before, #virtualclassCont .ui-dialog-header span, #virtualclassCont #chatroom_bt2 .inner_bt, #virtualclassCont #speakerPressing .icon-speakerPressing:before, #virtualclassCont #virtualclassOptionsCont .appOptions a span:before, #virtualclassCont #virtualclassOptionsCont .appOptions a span:before{
+	color:#fff;
 }
-
 #virtualclassCont #virtualclassOptionsCont{
 	border:#E2E2E4 3px solid;
 }
@@ -3214,7 +3248,7 @@
 
 #virtualclassCont #containerWb #commandToolsWrapper .tool a{
 	border-right: 1px solid #5d6b76;
-	color:#c5cfd8 !important;
+	color:#c5cfd8;
 }
 
 #virtualclassCont #speakerPressing .icon-speakerPressing::before{
@@ -3330,10 +3364,12 @@
 	color:#fff !important;
 }
 
+
 #virtualclassCont #beTeacher {
-	background: #84bd7f;
+	background: #7bb876 none repeat scroll 0 0;
 	border-radius: 4px;
 	box-shadow: none;
+	color: #ffffff;
 	cursor: pointer;
 	display: inline-block;
 	font-family: Arial;
@@ -3342,15 +3378,11 @@
 	position: absolute;
 	text-decoration: none;
 	text-transform: uppercase;
-	border:#6dac69 1px solid;
-}
-
-#virtualclassCont #beTeacher #beTeacherAnchor{
-	color: #ffffff !important;
+	border:#70ab6b 1px solid;
 }
 
 #beTeacher:hover{
-	background: #9dd19a;
+	background: #84bd7f;
 	border:#67a462 1px solid;
 }
 
@@ -3359,42 +3391,46 @@
 }
 
 #virtualclassCont[data-currapp="Whiteboard"]  #beTeacher{
-	right: 157px;
-	top: 25px;
+	top : 1%;
 }
 
 #virtualclassCont.student[data-currapp="Whiteboard"]  #beTeacher{
-	top: 25px;
-    right: 5px;
+	top: 2%;
+	right: 1%;
 }
 
 #virtualclassCont.student[data-currapp="ScreenShare"]  #beTeacher{
-	right: 5px;
-	top: 25px;
+	right: 1%;
+	top: 3%;
 }
 
 #virtualclassCont.student[data-currapp="Yts"]  #beTeacher{
-    right: 5px;
-    top: 25px;
+	right: 1%;
+	top: 4%;
 }
 
-#virtualclassCont.student[data-currapp="EditorCode"] #beTeacher{
-    right: 157px;
-    top: 25px;
+#virtualclassCont.student[data-currapp="EditorCode"]  #beTeacher{
+	right: 13%;
+	top: 5%;
 }
 
-#virtualclassCont.presenter[data-currapp="Whiteboard"] #beTeacher{
-	top: 25px;
+#virtualclassCont.presenter[data-currapp="Whiteboard"]  #beTeacher{
+	top : 1%;
 }
 
-#virtualclassCont[data-currapp="EditorRich"] #beTeacher{
-	right: 157px;
-	top: 25px;
+#virtualclassCont[data-currapp="EditorRich"]  #beTeacher{
+	right: 13%;
+	top: 3%;
 }
-#audioWidget #audioTest-box #audioTestaudioTest #audiotestAnch{color:#fff !important;}
-#virtualclassCont .ui-dialog-header.ui-state-highlight span:first-child{color:#333 !important;}
-#virtualclassCont.playMode.student #virtualclassEditorCode{margin-top: 0px; border-top:#ccc 1px solid;}
 
-#totalProgressLabel, #indvProgressLabel, #recordFinishedMessageBox {
-	color : #262626;
+
+/* Play mode */
+
+#virtualclassCont.playMode .vceditor-toolbar{
+	background-color: transparent;
 }
+
+#virtualclassCont #recordFinishedMessage{color:#000; text-align: center;}
+
+#virtualclassCont.educator #virtualclassSharePresentation{margin-left : 7px;}
+
