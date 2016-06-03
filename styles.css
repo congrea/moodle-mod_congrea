@@ -874,3 +874,4 @@ min-height: none;
 #page-mod-congrea-view .wrapper-button.online {
     padding-bottom :50px;
 }
+body button:hover, body button:active, body button:focus{background-image: none !important; background-color: transparent !important;}
