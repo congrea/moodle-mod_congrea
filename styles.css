@@ -821,9 +821,15 @@ font-size : 11.5px !important;
 button, input.form-submit, input[type="button"], input[type="submit"], input[type="reset"]{
 	text-shadow:none !important;
 }
-#virtualclassCont #youtubeUrlContainer #youtubeurl{
+
+#virtualclassCont #youtubeUrlContainer #youtubeurl, #virtualclassCont #urlcontainer #presentationurl{
 	height: 42px !important;
 	font-size: 14px;
+}
+#virtualclassCont #urlcontainer #presentationurl{vertical-align: top;}
+#virtualclassCont[data-currapp="EditorRich"] #beTeacher{
+	right: 12%;
+    top: 2% !important;
 }
 
 #virtualclassCont #youtubeUrlContainer #submitURL{
