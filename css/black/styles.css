@@ -3182,10 +3182,10 @@
 }
 #virtualclassCont #virtualclassSharePresentation.pptSharing #urlcontainer, #virtualclassCont.student.presenter #virtualclassSharePresentation.pptSharing #urlcontainer{
     top: auto;
-    bottom: 2%;
     left: 30px;
     right: auto;
     z-index: 7;
+    margin-bottom: 35px;
 }
 
 #virtualclassCont #popupContainer #replayContainer.popupWindow{
