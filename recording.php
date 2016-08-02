@@ -23,11 +23,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-header("Access-Control-Allow-Origin: https://l.vidya.io");
+//header("Access-Control-Allow-Origin: https://l.vidya.io");
+
+header("access-control-allow-origin: *");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit();
+}
+
 if (isset($_GET['key'])) {
     session_id($_GET['key']);
 }
+
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+
 $cmid = required_param('cmid', PARAM_INT);
 $userid = required_param('user', PARAM_INT);
 $filenum = required_param('cn', PARAM_INT);

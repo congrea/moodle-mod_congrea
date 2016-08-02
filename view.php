@@ -172,6 +172,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         echo html_writer::start_tag('div', array('class'=>'clear'));
         echo html_writer::end_tag('div');
     } else {
+        global $USER;
         // Serve online at vidya.io.
         $url = "https://l.vidya.io";  // Online url
         $role = 's'; // Default role.
@@ -186,10 +187,11 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $mysession = session_id();
         //$upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
         // Todo this should be changed with actual server path
-        $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
+        
        // $upload = "https://local.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
 
-        
+        $upload = $CFG->wwwroot."/mod/congrea/recording.php?cmid=".$cm->id."&key=$mysession";
+       // $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
         $down = $CFG->wwwroot ."/mod/congrea/play_recording.php?cmid=$cm->id";
 
         if (has_capability('mod/congrea:addinstance', $context)) {
