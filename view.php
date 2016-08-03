@@ -190,7 +190,9 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         
        // $upload = "https://local.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
 
-        $upload = $CFG->wwwroot."/mod/congrea/recording.php?cmid=".$cm->id."&key=$mysession";
+          $upload = $CFG->wwwroot."/mod/congrea/webapi.php?cmid=".$cm->id."&key=$mysession&methodname=record_file_save";
+        
+        
        // $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
         $down = $CFG->wwwroot ."/mod/congrea/play_recording.php?cmid=$cm->id";
 
