@@ -185,7 +185,7 @@ if ($USER->id) {
     wbUser.anyonepresenter =  '<?php echo $anyonepresenter ?>';
 
     window.whiteboardPath =  '<?php echo $whiteboardpath; ?>';
-    window.importfilepath = "<?php echo $CFG->wwwroot."/mod/congrea/recording.php?cmid=".$cm->id ?>";
+    window.importfilepath = "<?php echo $CFG->wwwroot."/mod/congrea/webapi.php?cmid=".$cm->id."&methodname=record_file_save"; ?>";
     window.exportfilepath = "<?php echo $CFG->wwwroot."/mod/congrea/play_recording.php?cmid=".$cm->id ?>";
     if (!!window.Worker) {
         var sworker = new Worker("<?php echo $whiteboardpath."worker/screenworker.js" ?>");

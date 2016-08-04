@@ -11,13 +11,18 @@ set_session();
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 include('weblib.php');
 
-define('Functions_list', serialize(array('record_file_save', 'record_file_fetch')));
-
+// The function list is avaible in weblib.php
+define('Functions_list', serialize(array('record_file_save')));
 
 function set_header(){
     header("access-control-allow-origin: *");
 }
-	
+
+/* Exit when there is request is happend by options method  
+ * This generally happens when the request is coming from other domain
+ * eg:- if the request is coming from l.vidya.io and main domain suman.moodlehub.com
+ * it also know as preflight request
+ * **/
 function exit_if_request_is_options() {
     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
         exit;
@@ -40,7 +45,7 @@ function validate_request(){
     $data = required_param('record_data', PARAM_RAW);
     return array($cmid, $userid, $filenum, $vmsession, $data);
 }
-
+/* The function is executed which is passed by get */
 function execute_action($valid_parameters, $DB){
     $getdata = received_get_data();
     if($getdata && isset($getdata['methodname'])){
@@ -51,16 +56,18 @@ function execute_action($valid_parameters, $DB){
                 //call_user_func($getdata['methodname'], $getdata, $postdata, $valid_parameters, $DB);
                 $getdata['methodname']($getdata, $postdata, $valid_parameters, $DB);
             } else {
-                throw new Exception('There is no any method of name ' .$getdata['methodname']);
+                throw new Exception('There is no ' .$getdata['methodname'].' method to execute.');
             }
         }
     } else {
-        throw new Exception('There is no any method for execution');
+        throw new Exception('There is no method to execute.');
     }
 }
     
 set_header();
+
 exit_if_request_is_options();
+
 $validparams = validate_request();
 execute_action($validparams, $DB);
 ?>
