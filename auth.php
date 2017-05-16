@@ -60,14 +60,15 @@ $postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'lic
 $postdata = json_encode($postdata);
 
 if (true) { // False for local server deployment
-    $rid = mod_congrea_mycurlrequest("https://c.vidya.io", $postdata); // REMOVE HTTP.
+    $rid = mod_congrea_mycurlrequest("https://c.congrea.com", $postdata); // REMOVE HTTP.
+    //print_r($rid);exit;
     if (empty($rid) or strlen($rid) > 32) {
         print_error("Chat server is unavailable!");
         exit;
-    } else if(substr($rid, -9) !== '.vidya.io') {
+    }/* else if(substr($rid, -9) !== '.vidya.io') {
         print_error($rid);
         exit;
-    }
+    }*/
     $rid = "wss://$rid";
 } else {
     $rid = "ws://127.0.0.1:8080";

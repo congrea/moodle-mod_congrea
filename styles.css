@@ -875,3 +875,42 @@ min-height: none;
     padding-bottom :50px;
 }
 body button:hover, body button:active, body button:focus{background-image: none !important; background-color: transparent !important;}
+
+#virtuaclassCont.congrea .modal-body {max-height: inherit;}
+
+#virtuaclassCont.congrea .modal{
+    width: 100%;
+    margin-left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-width: 0;
+    border-radius: 0;
+}
+
+.modal.fade.in {top: 0;}
+.modal .modal-content{
+    padding: 20px;
+}
+.modal .modal-header{
+    padding: 0;
+}
+.modal-content .modal-footer{
+    margin-top: 20px;
+}
+.modal-backdrop{
+    z-index: 0 !important;
+    position:relative !important;
+
+}
+#virtualclassCont.congrea #preCheckProgress .progressBar {
+   background-color: transparent !important;
+   height: 20px;
+   width: 100% !important;
+   -webkit-box-shadow: none !important;
+   box-shadow: none !important;
+   -webkit-transition: width .6s ease;
+   transition: width .6s ease;
+   border:none;
+}
+#page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c4, #page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c5, #page-mod-congrea-quizreport .generaltable td.cell.c4, #page-mod-congrea-quizreport .generaltable td.cell.c5 {
+        text-align: center;
+}

@@ -51,7 +51,20 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-
+    //
+    'mod/congrea:graphic' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+    
+    
     // Ability to record a congea session to the course.
     'mod/congrea:dorecording' => array(
         'captype' => 'write',
@@ -87,7 +100,18 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
+    //Ability to show poll report
+    'mod/congrea:pollreport' => array(
 
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+        'teacher' => CAP_ALLOW,
+        'editingteacher' => CAP_ALLOW,
+        'manager' => CAP_ALLOW
+            
+        )
+    ),
     // Ability to play recorded session of congrea.
     'mod/congrea:playrecording' => array(
         'captype' => 'read',
@@ -97,6 +121,17 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
             'student' => CAP_ALLOW
+        )
+    ),
+    'mod/congrea:quizreport' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+        'teacher' => CAP_ALLOW,
+        'editingteacher' => CAP_ALLOW,
+        'manager' => CAP_ALLOW
+            
         )
     ),
 );

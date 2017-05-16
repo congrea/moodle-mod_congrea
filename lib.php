@@ -79,6 +79,28 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
     return $vclass;
 
 }
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param navigation_node $settings
+ * @param navigation_node $surveynode
+ */
+
+function congrea_extend_settings_navigation($settings, $congreanode) {
+    global $PAGE;
+
+    if (has_capability('mod/congrea:pollreport', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/congrea/polloverview.php', array('cmid'=>$PAGE->cm->id));
+        $congreanode->add(get_string('pollreport', 'congrea'), $url);
+    }
+    if (has_capability('mod/congrea:quizreport', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/congrea/quizoverview.php', array('cmid'=>$PAGE->cm->id));
+        $congreanode->add(get_string('quizreport', 'congrea'), $url);
+    }
+}
 
 /**
  * Updates an instance of the congrea in the database
@@ -249,14 +271,56 @@ function congrea_get_file_info($browser, $areas, $course, $cm, $context, $filear
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function congrea_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
+function congrea_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array()) {
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
 
-    require_login($course, true, $cm);
+
+    if (!$congrea = $DB->get_record('congrea', array('id' => $cm->instance))) {
+        return false;
+    }
+
+    require_login($course, false, $cm);
+
+    require_once($CFG->libdir . '/filelib.php');
+
+    if ($filearea === 'userdocument') {
+        $certrecord = (int) array_shift($args);
+        $relativepath = implode('/', $args);
+        $fullpath = "/{$context->id}/mod_congrea/userdocument/$congrea->id/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        send_stored_file($file, 0, 0, true); // Download MUST be forced - security!.
+    }
+    if ($filearea === 'documentimages') {
+        $certrecord = (int) array_shift($args);
+        $relativepath = implode('/', $args);
+        $fullpath = "/{$context->id}/mod_congrea/documentimages/$congrea->id/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        send_stored_file($file, 0, 0, true); // Download MUST be forced - security!.
+    }
+    if ($filearea === 'video') {
+        $certrecord = (int) array_shift($args);
+        $relativepath = implode('/', $args);
+        $fullpath = "/{$context->id}/mod_congrea/video/$congrea->id/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        send_stored_file($file, 0, 0, true); // Download MUST be forced - security!.
+    }
+
 
     send_file_not_found();
 }
