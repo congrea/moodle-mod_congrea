@@ -58,6 +58,7 @@ $event->trigger();
 $suggestion = 'low';
 $latency = 'slow';
 $quality = 'low';
+
 // Print the page header.
 $PAGE->set_url('/mod/congrea/classroom.php', array('id' => $cm->id));
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in virtual classroom.
@@ -129,7 +130,6 @@ if (has_capability('mod/congrea:addinstance', $context)) {
         $role  = 'teacher orginalTeacher';
         $classes = "audioTool active";
         $dap = "true";
-        $speakermsg = get_string('disablespeaker', 'congrea');
         $pressingimg = $whiteboardpath . "images/speakerpressingactive.png";
     }
 }
@@ -147,20 +147,27 @@ $cont_class .= $congrea->pushtotalk ? ' pt_enable' : ' pt_disable';
 // Audio enable/disable
 if($congrea->audio){
     $classes = "audioTool active";
-    $speakermsg = "Disable Speaker";
+
     $dap = "true";
-    $speakerimg = $whiteboardpath . "images/speakerpressingactive.png";
     $audio_tooltip =  get_string('disableAudio','congrea');
 } else {
     $dap = "false";
     $classes = "audioTool deactive";
-    //$isplay = false;
-    $speakermsg = get_string('enablespeaker', 'congrea');
-    $pressingimg = $whiteboardpath . "images/speakerpressing.png";
     $audio_tooltip =  get_string('enableAudio','congrea');
 }
+?>
+
+
+		<script>
+			virtualclassSetting = {};
+			virtualclassSetting.dap = '<?php echo $dap; ?>';
+			virtualclassSetting.classes = '<?php echo $classes; ?>';
+			virtualclassSetting.audio_tooltip = '<?php echo $audio_tooltip; ?>';
+		</script>
+<?php
 // Output starts here.
 echo $OUTPUT->header();
+
 // Default image if webcam disable.
 if ($USER->id) {
     $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
@@ -169,7 +176,7 @@ if ($USER->id) {
     $src = 'bundle/virtualclass/images/quality-support.png';
 }
 $ts = ($USER->id == 3) ? true : false;
-// Javascript variables.
+
 ?> <script type="text/javascript">
     wbUser.virtualclassPlay = '<?php echo $isplay; ?>';
     wbUser.vcSid = '<?php echo $vcSid; ?>';
@@ -181,7 +188,7 @@ $ts = ($USER->id == 3) ? true : false;
     wbUser.sid =  '<?php echo $sid; ?>';
     wbUser.role =  '<?php echo $r; ?>';
     wbUser.ts = '<?php  echo $ts; ?>';
-//    wbUser.fname =  '<?php // echo $USER->firstname; ?>';
+
     wbUser.lname =  '<?php echo $USER->lastname; ?>';
     wbUser.name =  '<?php echo $USER->firstname; ?>';
     wbUser.anyonepresenter =  '<?php echo $anyonepresenter ?>';
@@ -221,450 +228,14 @@ if ($info) {
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/bundle/io/build/iolib.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/build/wb.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/index.js');
-  
-    
 }
+
 ?>
-
-  <div id="virtualclassCont" class="<?php echo $cont_class; ?>">
-
-    <div id="virtualclassPreCheck" class="bootstrap">
-
-        <div id="preCheckcontainer">
-
-             <div class="container ">
-
-                  <!-- Modal -->
-                  <div class="modal fade" id="myModal" role="dialog">
-                    <div class="modal-dialog modal-lg">
-
-                      <!-- Modal content-->
-                      <div class="modal-content">
-
-                           <div class="modal-body">
-                                <div id="preCheckProgress">
-                                     <ul class="progressbar" id = "congProgressbar"> <!-- nirmala -->
-                                         <li class="screen1 browser active">  </li>
-                                         <li class="screen2 bandwidth">  </li>
-                                         <li class="screen5 speaker"> </li>
-                                         <li class="screen4 mic" > </li>
-                                         <li class="screen3 webcam" > </li>
-                                     </ul>
-                                </div>
-
-
-                              <div id="vcBrowserCheck" class="precheck browser">
-
-                                  <div class="testName"> <?php echo get_string('testingbrowser','congrea'); ?> </div>
-
-                                  <!-- <div class="progress"> Progressing .... </div> -->
-
-                                  <div class="result"> </div>
-
-                                  <div id="browserButtons" class="button clearfix"><button type="button" class="next btn btn-default">Next</button> </div>
-                              </div>
-
-                              <div id="vcBandWidthCheck" class="precheck bandwidth">
-                                  <div class="testName"> <?php echo get_string('testinginternetspeed','congrea'); ?></div>
-
-                                  <!-- <div class="progress"> Progressing....</div> -->
-
-                                  <div class="result"> <img src="<?php echo $whiteboardpath.'images/progressbar.gif'; ?>" /> </div>
-                                  <div id="bandwidthButtons" class="button clearfix"><button type="button" class="prev btn btn-default">Prev</button>  <button type="button" class="next btn btn-default">Next</button> </div>
-                              </div>
-
-
-                              <div id="vcSpeakerCheck" class="precheck speaker">
-                                    <div class="testName"> <?php echo get_string('testingspeaker','congrea'); ?>  </div>
-                                    <!-- <div class="progress"> Progressing....</div> -->
-                                    <audio id="vcSpeakerCheckAudio">
-                                        <source src="<?php echo $whiteboardpath.'audio/audio_music.ogg'; ?>"  type="audio/ogg">
-                                        <source src="<?php echo $whiteboardpath.'audio/audio-music.mp3'; ?>"  type="audio/mpeg">
-                                    </audio>
-                                    <div class="result"> </div>
-                                    <div id="speakerButtons" class="button clearfix"><button type="button" class="prev btn btn-default">Prev</button> <button type="button" class="next btn btn-default">Next</button> </div>
-
-                              </div>
-
-                              <div id="vcMicCheck" class="precheck mic">
-                                    <div class="testName">  <?php echo get_string('testingmichrophone','congrea'); ?> </div>
-                                    <!-- <div class="progress"> Progressing....</div> -->
-                                    <div id="audioVisualaizerCont">
-                                        <canvas id="audioVisualaizer" class="visualizer" width="60" ></canvas>
-                                    </div>
-
-                                    <div class="result"> </div>
-
-
-                                    <div id="micButtons" class="button clearfix"><button type="button" class="prev btn btn-default">Prev</button>  <button type="button" class="next btn btn-default">Next </button> </div>
-
-                              </div>
-
-                              <div id="vcWebCamCheck" class="precheck webcam">
-                                    <div class="testName">  <?php echo get_string('testingwebcam','congrea'); ?> </div>
-                                    <!-- <div class="progress"> Progressing....</div> -->
-                                    <div id="webcamTempVideoCon">
-                                      <video id="webcamTempVideo"></video>
-                                    </div>
-                                    <div class="result"> </div>
-
-                                    <div id="joinSession" class="button clearfix"><button type="button" class="prev btn btn-default">Prev</button> <button type="button" class="next btn btn-default">Join Session</button> </div>
-
-                              </div>
-
-                           </div>
-                      </div>
-
-                    </div>
-                  </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
- <div id="virtualclassApp">
-     <?php
-$adarr = array('0' => 'deactive', '1' => 'active');
-$audactive = '0';
-if(isset($_GET['audio'])){
-    if($_GET['audio'] == '0' || $_GET['audio'] == '1'){
-        $audactive = $_GET['audio'];
-    }
-}
-$audactive = $adarr[$audactive];
-?>
-<!-- virtualclass right panel start -->
-
-<div id="virtualclassAppRightPanel" class="rightbar">
-    <div id="audioWidget">
-        <?php
-        if($audactive == 'deactive'){
-            $dap = "false";
-            $classes = "audioTool";
-            $speakermsg = "Enable Speaker";
-            $speakerimg = $whiteboardpath . "images/speakerpressing.png";
-            $audio_tooltip =  get_string('enableAudio','congrea');
-        } else {
-            $classes = "audioTool";
-            $speakermsg = "Disable Speaker";
-            //$dap = "true"; //display audio
-            $dap = "true";
-            $speakerimg = $whiteboardpath . "images/speakerpressingactive.png";
-            $audio_tooltip =  get_string('disableAudio','congrea');
-        }
-        $classes .= ' ' .$audactive;
-        ?>
-
-        <div id="mainAudioPanel">
-            <div id="speakerPressOnce" class="<?php echo $classes; ?>" data-audio-playing="<?php echo $dap;?>">
-                <a id="speakerPressonceAnch" class="tooltip" data-title="<?php echo $audio_tooltip; ?>" name="speakerPressonceAnch">
-                <span id="speakerPressonceLabel" class="silenceDetect" data-silence-detect="stop"> <i> </i> </span>
-
-                </a>
-            </div>
-            <div id="videoPacketInfo">
-                <span id="videoSpeed">
-                    <span id="videSpeedNumber" class="suggestion tooltip" data-suggestion="<?php echo $suggestion; ?>"  data-title="<?php echo get_string('proposedspeed','congrea'); ?>">  </span>
-                    <span id="videLatency" class="latency  tooltip" data-latency="<?php echo $latency; ?>" data-title="<?php echo get_string('audiolatency','congrea'); ?>">  </span>
-                    <span id="videoFrameRate" class="quality  tooltip" data-quality="<?php echo $quality; ?>" data-title="<?php echo get_string('videoquality','congrea'); ?>"> </span>
-                </span>
-            </div>
-<!--            <div id="precheckTest" class="prechk">
-                <span id="precheckSetting" class="precheck tooltip" data-title="precheck test ">precheck</span>
-            </div>-->
-            
-        </div>
-    </div>
-
-    <div id="videoHostContainer">
-            <?php if($r == 't') { ?>
-                <video id="videoHostSource" autoplay=""> </video>
-
-                    <!--
-                        <div id="videoPacketInfo">
-                            <span id="videoSpeed"><b >Proposed Speed : </b> <span id="videSpeedNumber"> Low </span> <br />
-                                <b> Audio Latency  : </b> <span id="videLatency"> Fast </span> <br />
-                                <b> Video Quality : </b> <span id="videoFrameRate"> High </span>
-                            </span>
-                        </div>
-                    -->
-
-                    <canvas id="videoHost"> </canvas>
-                    <canvas id="videoHostSlice"> </canvas>
-                  
-                    
-
-            <?php } else {
-            ?>
-                <div id="fromServer">
-                    <!-- <canvas id="videoParticipate" width="320" height="240"> </canvas> -->
-                    <canvas id="videoParticipate" > </canvas>
-                    <!--
-                    <div id="videoPacketInfo">
-                        <span id="videoSpeed"><b >Proposed Speed : </b> <span id="videSpeedNumber"> Low </span> <br />
-                            <b> Audio Latency  : </b> <span id="videLatency"> Slow </span> <br />
-                            <b> Video Quality : </b> <span id="videoFrameRate"> Low </span>
-                        </span>
-                    </div>
-                    -->
-
-                </div>
-            <?php
-                }
-        ?>
-                    
-                    
-                    
-    </div>
-<!--    <div id ="congCtrBar">
-        
-    </div>-->
-
-    <div id="chatWidget">
-        <div id = "stickycontainer"> </div>
-        <div id ="congreaChatCont"></div>
-    </div>
-</div>
-
- <div id="virtualclassAppLeftPanel" class="leftbar">
-
-    <?php
-        if($isplay){
-            ?>
-
-                <div id="playControllerCont">
-                    <div id="playController">
-                        <div id="recPlayCont" class="recButton"> <button id="recPlay" class="icon-play tooltip" data-title="Play"></button></div>
-                        <div id="recPauseCont" class="recButton "> <button id="recPause" class="icon-pause tooltip" data-title="Pause"></button></div>
-                        <div id="ff2Cont" class="recButton"> <button id="ff2" class="ff icon-forward tooltip" data-title="Fast Forward 2"></button></div>
-                        <div id="ff8Cont" class="recButton"> <button id="ff8" class="ff icon-fast-forward tooltip" data-title="Fast Forward 8"></button></div>
-                        <div id="playProgress"> <div id="playProgressBar" class="progressBar" style="width: 0%;"></div> </div>
-                        <div id="repTimeCont"> <span id="tillRepTime">00:00</span> / <span id="totalRepTime">00:00</span> </div>
-                   </div>
-                   <div id="replayFromStart"> <button  class="ff icon-Replayfromstart tooltip" data-title="Replay from Start."></button> </div>
-               </div>
-
-    <?php
-        }
-    ?>
-    
-    <div id="virtualclassWhiteboard" class="virtualclass">
-
-       <div id="vcanvas" class="socketon">
-
-        <div id="containerWb">
-
-        </div>
-
-        <!-- this need to be deleted -->
-        <div id="mainContainer">
-            <div id="packetContainer" >
-                
-            </div>
-
-            <div id="informationCont">
-                
-            </div>
-        </div>
-
-        <div class="clear"></div>
-      </div>
-
-    </div>
-         <!-- file uplaoder --> 
-    <!-- Fine Uploader Gallery template ====================== -->
     <script type="text/template" id="qq-template-gallery">
-         
-          <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
-            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
-                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
-            </div>
-            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
-                <span class="qq-upload-drop-area-text-selector"></span>
-            </div>
-            <div class="qq-upload-button-selector qq-upload-button">
-                <div>Upload a file</div>
-            </div>
-            <span class="qq-drop-processing-selector qq-drop-processing">
-                <span>Processing dropped files...</span>
-                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
-            </span>
-            <ul class="qq-upload-list-selector qq-upload-list" role="region" aria-live="polite" aria-relevant="additions removals">
-                <li>
-                    <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
-                    <div class="qq-progress-bar-container-selector qq-progress-bar-container">
-                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
-                    </div>
-                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
-                    <div class="qq-thumbnail-wrapper">
-                        <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
-                    </div>
-                    <button type="button" class="qq-upload-cancel-selector qq-upload-cancel">X</button>
-                    <button type="button" class="qq-upload-retry-selector qq-upload-retry">
-                        <span class="qq-btn qq-retry-icon" aria-label="Retry"></span>
-                        Retry
-                    </button>
-
-                    <div class="qq-file-info">
-                        <div class="qq-file-name">
-                            <span class="qq-upload-file-selector qq-upload-file"></span>
-                            <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
-                        </div>
-                        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
-                        <span class="qq-upload-size-selector qq-upload-size"></span>
-                        <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">
-                            <span class="qq-btn qq-delete-icon" aria-label="Delete"></span>
-                        </button>
-                        <button type="button" class="qq-btn qq-upload-pause-selector qq-upload-pause">
-                            <span class="qq-btn qq-pause-icon" aria-label="Pause"></span>
-                        </button>
-                        <button type="button" class="qq-btn qq-upload-continue-selector qq-upload-continue">
-                            <span class="qq-btn qq-continue-icon" aria-label="Continue"></span>
-                        </button>
-                    </div>
-                </li>
-            </ul>
-
-            <dialog class="qq-alert-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">Close</button>
-                </div>
-            </dialog>
-
-            <dialog class="qq-confirm-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">No</button>
-                    <button type="button" class="qq-ok-button-selector">Yes</button>
-                </div>
-            </dialog>
-
-            <dialog class="qq-prompt-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <input type="text">
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">Cancel</button>
-                    <button type="button" class="qq-ok-button-selector">Ok</button>
-                </div>
-            </dialog>
-        </div>
-  
+<?php require_once('bundle/virtualclass/fine-upload.php'); ?>
     </script>
+<div id="virtualclassCont" class="<?php echo $cont_class; ?>">
 
-
-
-    </div>
-
-
-
-<!-- virtualclass right panel end -->
-    <div id="popupContainer">
-        <div id="about-modal" class="rv-vanilla-modal">
-
-            <!-- for uploading progress bar -->
-
-            <div id="recordingContainer" class="popupWindow">
-
-                <div class="rv-vanilla-modal-header group" id="recordingHeaderContainer">
-                    <h2 class="rv-vanilla-modal-title" id="recordingHeader"> <?php echo get_string('uploadsession','congrea'); ?> </h2>
-                </div>
-
-                <div class="rv-vanilla-modal-body">
-
-                    <div id="progressContainer">
-
-                        <div id="totProgressCont">
-                            <div id="totalProgressLabel"> <?php echo get_string('totalprogress','congrea'); ?> </div>
-                            
-                            <div id="progress">
-                                <div id="progressBar" class="progressBar"></div>
-                                <div id="progressValue" class="progressValue"> 0%</div>
-                            </div>
-                        </div>
-
-                        <div id="indvProgressCont">
-                            <div id="indvProgressLabel"> <?php echo get_string('indvprogress','congrea'); ?> </div>
-
-                            <div id="indProgress">
-                                <div id="indProgressBar" class="progressBar">
-                                </div>
-
-                                <div id="indProgressValue" class="progressValue"> 0%
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                    </div>
-
-                    <div id="recordFinishedMessageBox">
-                        <span id="recordFinishedMessage">  <?php echo get_string('uploadedsession','congrea'); ?></span>
-                        <span id="recordingClose" class="icon-close"></span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- for play window -->
-            <div id="recordPlay" class="popupWindow">
-                <div class="rv-vanilla-modal-body">
-                    <div id="downloadPcCont">
-                        <div id="downloadSessionText"> <?php echo get_string('downloadsession','congrea'); ?> </div>
-
-                        <div id="downloadPrgressLabel"> <?php echo get_string('overallprogress','congrea'); ?>  </div>
-                        <div id="downloadProgress">
-                            <div id="downloadProgressBar" class="progressBar"></div>
-                            <div id="downloadProgressValue" class="progressValue"> 0% </div>
-                        </div>
-
-                    </div>
-
-                    <div id="askPlay">
-                        <div id="askplayMessage"> </div>
-
-                         <button id="playButton" class="icon-play"><?php echo get_string('play','congrea'); ?> </button>
-
-                    </div>
-                </div>
-             </div>
-
-
-         <!--for replay window -->
-         <div id="replayContainer" class="popupWindow">
-             <p id="replayMessage"><?php echo get_string('replay_message','congrea'); ?>  </p>
-             <div id="replayClose" class="close icon-close"></div>
-             <button id="replayButton" class="icon-repeat"><?php echo get_string('replay','congrea'); ?> </button>
-
-         </div>
-
-         <!--For confirm window-->
-          <div id="confirm" class="popupWindow simple-box">
-          </div>
-
-           <!-- For Session End window -->
-           <div id="sessionEndMsgCont" class="popupWindow">
-           <span id="sessionEndClose" class="icon-close"></span>
-
-           <span id="sessionEndMsg"> <?php echo get_string('sessionendmsg','congrea'); ?> </span>
-           </div>
-
-            <!--For confirm window-->
-            <div id="waitMsgCont" class="popupWindow">
-                <span id="waitMsg"> <?php echo get_string('waitmsgconnect','congrea'); ?> </span>
-            </div>
-
-        </div>
-
-         <!--For wait message window-->
-    </div>
-
-</div>
 </div>
 <?php
 echo $OUTPUT->footer();
