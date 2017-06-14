@@ -58,7 +58,6 @@ $event->trigger();
 $suggestion = 'low';
 $latency = 'slow';
 $quality = 'low';
-
 // Print the page header.
 $PAGE->set_url('/mod/congrea/classroom.php', array('id' => $cm->id));
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in virtual classroom.
@@ -105,20 +104,31 @@ echo "</style>";
 <script src=<?php echo $whiteboardpath."poll/graphs/c3.min.js" ?>></script>
 */
 // File included if debugging on
-if($info) { 
+if($info) {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/styles.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/popup.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/vceditor.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/document-share.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/editor.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/icon.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/media.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/poll.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/quiz.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/screenshare.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/sharepresentation.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/video.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/whiteboard.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/modules/youtube.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/css/theme/theme.css'));;
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/jquery.ui.chatbox.css'));
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/vceditor.css'));  
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'/document-share.css')); 
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/progress.css'));  
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/pbar.css'));  
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/bootstrap/css/bootstrap.css'));  
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/progress.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/pbar.css'));
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/bootstrap/css/bootstrap.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/poll/graphs/c3.css'));
 } else {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/'.$theme.'.min.css'));
-}  
-   
+}
+
 $whiteboardpath = $CFG->wwwroot . "/mod/congrea/bundle/virtualclass/";
 $sid = $USER->sesskey;
 $r = 's'; // Default role.
@@ -140,14 +150,13 @@ if(empty($congrea->moderatorid)) {
     $anyonepresenter = 0;
 }
 if($isplay){
-	$cont_class .= " playMode";	
+	$cont_class .= " playMode";
 }
 // Push to talk
 $cont_class .= $congrea->pushtotalk ? ' pt_enable' : ' pt_disable';
 // Audio enable/disable
 if($congrea->audio){
     $classes = "audioTool active";
-
     $dap = "true";
     $audio_tooltip =  get_string('disableAudio','congrea');
 } else {
@@ -167,7 +176,6 @@ if($congrea->audio){
 <?php
 // Output starts here.
 echo $OUTPUT->header();
-
 // Default image if webcam disable.
 if ($USER->id) {
     $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
@@ -176,7 +184,6 @@ if ($USER->id) {
     $src = 'bundle/virtualclass/images/quality-support.png';
 }
 $ts = ($USER->id == 3) ? true : false;
-
 ?> <script type="text/javascript">
     wbUser.virtualclassPlay = '<?php echo $isplay; ?>';
     wbUser.vcSid = '<?php echo $vcSid; ?>';
@@ -188,7 +195,6 @@ $ts = ($USER->id == 3) ? true : false;
     wbUser.sid =  '<?php echo $sid; ?>';
     wbUser.role =  '<?php echo $r; ?>';
     wbUser.ts = '<?php  echo $ts; ?>';
-
     wbUser.lname =  '<?php echo $USER->lastname; ?>';
     wbUser.name =  '<?php echo $USER->firstname; ?>';
     wbUser.anyonepresenter =  '<?php echo $anyonepresenter ?>';
@@ -202,13 +208,13 @@ $ts = ($USER->id == 3) ? true : false;
         var mvDataWorker = new Worker("<?php echo $whiteboardpath."worker/json-chunks.js" ?>");
         var dtConWorker = new Worker("<?php echo $whiteboardpath."worker/storage-array-base64-converter.js" ?>");
         var webpToPng = new Worker("<?php echo $whiteboardpath."worker/webptopng.js" ?>");
-        
+
     }
 </script>
 <link href="https://vjs.zencdn.net/5.8.8/video-js.css" rel="stylesheet">
 <script src="https://vjs.zencdn.net/5.8.8/video.js"></script>
   <!-- If you'd like to support IE8 -->
-<script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>  
+<script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
 <link href="<?php echo $whiteboardpath.'fileuploader/js/fine-uploader-gallery.css'; ?>" rel="stylesheet">
 
     <!-- Fine Uploader JS file
@@ -222,14 +228,13 @@ if ($info) {
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/css/bootstrap/js/bootstrap.js');
     //$PAGE->requires->js('/mod/congrea/bundle/virtualclass/poll/graphs/d3.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/poll/graphs/c3.js');
-        
-    
+
+
 } else {
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/bundle/io/build/iolib.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/build/wb.min.js');
     $PAGE->requires->js('/mod/congrea/bundle/virtualclass/index.js');
 }
-
 ?>
     <script type="text/template" id="qq-template-gallery">
 <?php require_once('bundle/virtualclass/fine-upload.php'); ?>
