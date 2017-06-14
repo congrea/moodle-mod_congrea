@@ -44,11 +44,8 @@
             },
 
             createControl: function (userId, controls) {
-                var controlCont = document.createElement('div');
-                controlCont.id = userId + "ControlContainer";
-                controlCont.className = "controls";
+                var controlCont = document.getElementById(userId+"ControlContainer")
                 this.createControlDivs(controlCont, userId, controls);
-                return controlCont;
             },
 
             createControllerElement: function (userId, imgName) {
@@ -599,6 +596,7 @@
                         canvasWrapper.className = canvasWrapper.className.replace(/\bteacher\b/, ' ');
                         canvasWrapper.className = 'student';
                     }
+
                     localStorage.setItem('canvasDrwMsg', true);
                     var ssVideo = document.getElementById('virtualclassScreenShareLocalVideo');
                     if (ssVideo != null && ssVideo.tagName == "VIDEO") {
