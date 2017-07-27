@@ -14,6 +14,7 @@ function my_curl_request($url, $post_data, $key){
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_PROXY, false);
+	curl_setopt($ch, CURLOPT_CAINFO, "$CFG->libdir/cacert.pem"); // for window operating system
 	$result = @curl_exec($ch);
 	curl_close($ch);
 	return $result;
