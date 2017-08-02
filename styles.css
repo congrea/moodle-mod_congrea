@@ -63,9 +63,9 @@
 	top : -2px !important;
 	vertical-align : sub !important;
 }
-#page-mod-congrea-classroom .ui-memblist-usr a img {
-	padding : 6px 13px !important;
-}
+/*#page-mod-congrea-classroom .ui-memblist-usr a img {*/
+	/*padding : 6px 13px !important;*/
+/*}*/
 #page-mod-congrea-classroom .close {
 	float : left !important;
 }
@@ -91,15 +91,15 @@
 #page-mod-congrea-classroom #chatroom_bt2 .inner_bt #chatroom_text {
 	margin-top : 0 !important;
 }
-#page-mod-congrea-classroom #chatroom_bt2 .inner_bt {
-	margin-top : 3px !important;
-}
+/*#page-mod-congrea-classroom #chatroom_bt2 .inner_bt {*/
+	/*margin-top : 3px !important;*/
+/*}*/
  #page-mod-congrea-classroom #usertab_icon {
 	margin : 4px 2px 0 0 !important;
 }
-#page-mod-congrea-classroom .inner_bt {
-	padding : 9px 0 !important;
-}
+/*#page-mod-congrea-classroom .inner_bt {*/
+	/*padding : 9px 0 !important;*/
+/*}*/
  #page-mod-congrea-classroom #chat_div .controleCont {
 	margin-top : 2px;
 }
@@ -243,10 +243,10 @@ font-size : 11.5px !important;
 	top:0px !important;
 }
 
-#page-mod-congrea-classroom #virtualclassCont #chatroom_bt2 .inner_bt{
-	margin-top: 6px !important;
-	
-}
+/*#page-mod-congrea-classroom #virtualclassCont #chatroom_bt2 .inner_bt{*/
+	/*margin-top: 6px !important;*/
+	/**/
+/*}*/
 
 #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-down, #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-up{
 	
@@ -393,9 +393,9 @@ font-size : 11.5px !important;
 	top : -2px !important;
 	vertical-align : sub !important;
 }
-#page-mod-congrea-classroom .ui-memblist-usr a img {
-	padding : 6px 13px !important;
-}
+/*#page-mod-congrea-classroom .ui-memblist-usr a img {*/
+	/*padding : 6px 13px !important;*/
+/*}*/
 #page-mod-congrea-classroom .close {
 	float : left !important;
 }
@@ -421,15 +421,15 @@ font-size : 11.5px !important;
 #page-mod-congrea-classroom #chatroom_bt2 .inner_bt #chatroom_text {
 	margin-top : 0 !important;
 }
-#page-mod-congrea-classroom #chatroom_bt2 .inner_bt {
-	margin-top : 3px !important;
-}
+/*#page-mod-congrea-classroom #chatroom_bt2 .inner_bt {*/
+	/*margin-top : 3px !important;*/
+/*}*/
  #page-mod-congrea-classroom #usertab_icon {
 	margin : 4px 2px 0 0 !important;
 }
-#page-mod-congrea-classroom .inner_bt {
-	padding : 9px 0 !important;
-}
+/*#page-mod-congrea-classroom .inner_bt {*/
+	/*padding : 9px 0 !important;*/
+/*}*/
  #page-mod-congrea-classroom #chat_div .controleCont {
 	margin-top : 2px;
 }
@@ -613,10 +613,10 @@ font-size : 11.5px !important;
 	top:0px !important;
 }
 
-#page-mod-congrea-classroom #virtualclassCont #chatroom_bt2 .inner_bt{
-	margin-top: 6px !important;
-	
-}
+/*#page-mod-congrea-classroom #virtualclassCont #chatroom_bt2 .inner_bt{*/
+	/*margin-top: 6px !important;*/
+	/**/
+/*}*/
 
 #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-down, #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-up{
 	
@@ -846,9 +846,9 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
 #virtualclassCont .vceditor-dialog-input{
 	padding: 15px 5px !important;
 }
-#virtualclassCont .ui-chatbox-input-box{
-	height: 30px !important;
-}
+/*#virtualclassCont .ui-chatbox-input-box{*/
+	/*height: 30px !important;*/
+/*}*/
 #virtualclassCont #alwaysPress .audioTool a{
 	top: 10px !important;
 }
@@ -874,7 +874,7 @@ min-height: none;
 #page-mod-congrea-view .wrapper-button.online {
     padding-bottom :50px;
 }
-body button:hover, body button:active, body button:focus{background-image: none !important; background-color: transparent !important;}
+/*body button:hover, body button:active, body button:focus{ background-color: transparent !important;}*/
 
 #virtuaclassCont.congrea .modal-body {max-height: inherit;}
 
