@@ -17,64 +17,98 @@
 
 /**
  * Congrea module internal API,
- * serving for virtual class 
+ * serving for virtual class
  *
  * @package   mod_congrea
  * @copyright 2017 Suman Bogati, Ravi Kumar
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 //////// Congrea Video Sharing ///////////
 
 /**
- * Save videos in to moodle DB 
- * serving for virtual class 
+ * Save videos in to moodle DB
+ * serving for virtual class
  *
  * @param array $valparams
  * @return json to ensures videos sucessfully uploaded in moodle DB
  */
-
 function file_save($valparams) { // To do-for function name
-    global $CFG;
-    list($file, $cmid, $userid) = $valparams;
-    if (!empty($file) && !empty($valparams) && !empty($userid)) {
-        if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-            print_error('Course Module ID was incorrect');
-        }
-        $context = context_module::instance($cm->id);
-        $the_content_type = $file['qqfile']['type'];
-        $video = strstr($the_content_type, '/', true);
-        if ($file['qqfile']['size'] > 0 && $file['qqfile']['error'] == 0 && $video == 'video') {
-            $fs = get_file_storage();
-            $file_record = array(
-                'contextid' => $context->id, // ID of context.
-                'component' => 'mod_congrea', // usually = table name.
-                'filearea' => 'video', // usually = table name.
-                'itemid' => $cm->instance, // usually = ID of row in table.
-                'filepath' => '/', // any path beginning and ending in.
-                'filename' => basename($file['qqfile']['name']), // any filename
-                'status' => 1,
-                'timecreated' => time(),
-                'timemodified' => time(),
-                'userid' => $userid);
-            if ($existing = $fs->get_file($context->id, 'mod_congrea', 'video', $cm->instance, '/', basename($file['qqfile']['name']))) {
-                 if ($existing) {
-                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'duplicate');
+    global $CFG, $DB;
+    if (!empty($valparams)) {
+        if (!empty($valparams[0]['qqfile'])) { // File is Video Type
+            list($file, $cmid, $userid) = $valparams;
+            if (!empty($file) && !empty($cmid) && !empty($userid)) {
+                if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+                    print_error('Course Module ID was incorrect');
+                }
+                $context = context_module::instance($cm->id);
+                $the_content_type = $file['qqfile']['type'];
+                $video = strstr($the_content_type, '/', true);
+                if ($file['qqfile']['size'] > 0 && $file['qqfile']['error'] == 0 && $video == 'video') {
+                    $fs = get_file_storage();
+                    $file_record = array(
+                        'contextid' => $context->id, // ID of context.
+                        'component' => 'mod_congrea', // usually = table name.
+                        'filearea' => 'video', // usually = table name.
+                        'itemid' => $cm->instance, // usually = ID of row in table.
+                        'filepath' => '/', // any path beginning and ending in.
+                        'filename' => basename($file['qqfile']['name']), // any filename
+                        'status' => 1,
+                        'timecreated' => time(),
+                        'timemodified' => time(),
+                        'userid' => $userid);
+                    if ($existing = $fs->get_file($context->id, 'mod_congrea', 'video', $cm->instance, '/', basename($file['qqfile']['name']))) {
+                        if ($existing) {
+                            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'duplicate');
+                            echo json_encode($unsuccess);
+                            return false;
+                        }
+                    }
+                    $uservideo = $fs->create_file_from_pathname($file_record, $file['qqfile']['tmp_name']); // Save user source file into file api of moodle.
+                    if (!empty($uservideo)) {
+                        $obj = new stdClass();
+                        $obj->congreaid = $cm->instance;
+                        $obj->userid = $userid;
+                        $obj->resource = $uservideo->get_id();
+                        $obj->type = 'video';
+                        $obj->status = 1;
+                        $obj->timecreated = time();
+                        $uservideoid = $DB->insert_record('congrea_mediafiles', $obj);
+                        if (!empty($uservideoid)) {
+                            $suceess = array('status' => '1', 'message' => 'success', 'resultdata' => array('id' => $uservideoid), 'code' => 100);
+                            echo json_encode($suceess);
+                        }
+                    } else {
+                        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                        echo json_encode($unsuccess);
+                    }
+                } else {
+                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
                     echo json_encode($unsuccess);
-                    return false;
-               }
+                }
             }
-            $uservideo = $fs->create_file_from_pathname($file_record, $file['qqfile']['tmp_name']); // Save user source file into file api of moodle.
-            if (!empty($uservideo)) {
-                $suceess = array('status' => '1', 'message' => 'success', 'resultdata' => array('id' => $uservideo->get_id()), 'code' => 100);
-                echo json_encode($suceess);
-            } else {
-                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-                echo json_encode($unsuccess);
+        } else { // Save videos URl.
+            list($path, $cmid, $userid) = $valparams;
+            if (!empty($path) && !empty($cmid) && !empty($userid)) {
+                if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+                    print_error('Course Module ID was incorrect');
+                }
+                $obj = new stdClass();
+                $obj->congreaid = $cm->instance;
+                $obj->userid = $userid;
+                $obj->resource = $path['video'];
+                $obj->type = $path['type'];
+                $obj->status = 1;
+                $obj->timecreated = time();
+                $sucess = $DB->insert_record('congrea_mediafiles', $obj);
+                if (!empty($sucess)) {
+                    $suceess = array('status' => '1', 'message' => 'success', 'resultdata' => array('id' => $sucess), 'code' => 100);
+                    echo json_encode($suceess);
+                } else {
+                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                    echo json_encode($unsuccess);
+                }
             }
-        } else {
-            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-            echo json_encode($unsuccess);
         }
     } else {
         $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
@@ -84,44 +118,59 @@ function file_save($valparams) { // To do-for function name
 
 /**
  * Retrieve congrea videos
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
  * @return json
  */
-
 function congrea_retrieve_video($valparams) {
-    global $CFG;
+    global $CFG, $DB;
     list($cmid, $userid) = $valparams;
     if (!empty($cmid) && !empty($userid)) {
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
             print_error('Course Module ID was incorrect');
         }
-        $context = context_module::instance($cm->id);
-        $fs = get_file_storage();
-        $component = 'mod_congrea';
-        $filearea = 'video';
-        $files = $fs->get_area_files($context->id, $component, $filearea, $cm->instance);
-        if (!empty($files)) {
-            foreach ($files as $file) {
-                if ($file->get_filename() != "." && $file->get_filename() != "..") {
-                    $content_path = file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $context->id . '/mod_congrea/video/' . $cm->instance . '/' . $file->get_filename());
-                    $videodata = new stdClass();
-                    $videodata->id = $file->get_id();
-                    $videodata->title = $file->get_filename();
-                    $videodata->status = $file->get_status();
-                    $videodata->content_path = $content_path;
-                    $videolist[] = $videodata;
+        $records = $DB->get_records('congrea_mediafiles', array('congreaid' => $cm->instance));
+        if (!empty($records)) {
+            foreach ($records as $record) {
+                if ($record->type == 'video') { // For videos which are save in moodle file api.
+                    $filedata = $DB->get_records('files', array('id' => "$record->resource"));
+                    if (!empty($filedata)) {
+                        if ($filedata[$record->resource]->filename != "." && $filedata[$record->resource]->filename != "..") {
+                            $contextid = $filedata[$record->resource]->contextid;
+                            $itemid = $filedata[$record->resource]->itemid;
+                            $filename = $filedata[$record->resource]->filename;
+                            $contentpath = "$CFG->wwwroot/pluginfile.php/$contextid/mod_congrea/video/$itemid/$filename";
+                            if (!empty($contentpath)) {
+                                $videodata = new stdClass();
+                                $videodata->id = $record->id;
+                                $videodata->title = $filedata[$record->resource]->filename;
+                                $videodata->status = $record->status;
+                                $videodata->type = $record->type;
+                                $videodata->content_path = $contentpath;
+                                $videolist[] = $videodata;
+                            }
+                        }
+                    }
+                }else if($record->type !=='ppt'){ // For Url such as Youtube etc.
+                    $videosurl = new stdClass();
+                    $videosurl->id = $record->id;
+                    $videosurl->title = $record->resource;
+                    $videosurl->status = $record->status;
+                    $videosurl->type = $record->type;
+                    $videosurl->content_path = $record->resource;
+                    $videolist[] = $videosurl;
                 }
             }
             if (!empty($videolist)) {
+                //print_r($videolist);
                 echo json_encode($videolist);
             } else {
                 $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noVideo');
                 echo json_encode($unsuccess);
             }
         } else {
-            $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'Invalid Access, Please login to access your account');
+            $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noVideo');
             echo json_encode($unsuccess);
         }
     }
@@ -129,7 +178,7 @@ function congrea_retrieve_video($valparams) {
 
 /**
  * Delete videos,docs and change status of videos,docs
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
  * @return  json to ensures videos delete or status sucessfully perform.
@@ -179,7 +228,7 @@ function update_content($valparams) { // TO do - Improve function name.
             if ($postdata['action'] == 'delete') {
                 $fs = get_file_storage();
                 $records = $DB->get_records('files', array('id' => $id));
-                $fileinfo = array( // Delete docs or videos
+                $fileinfo = array(// Delete docs or videos
                     'component' => 'mod_congrea',
                     'filearea' => $records[$id]->filearea, // usually = table name
                     'itemid' => $records[$id]->itemid, // usually = ID of row in table
@@ -204,7 +253,48 @@ function update_content($valparams) { // TO do - Improve function name.
         if ($postdata['action'] == 'status') { // update status
             if (!empty($id)) {
                 $status = $DB->execute("UPDATE {files} SET status = '" . $postdata['status'] . "' WHERE id = '" . $id . "'");
-                if ($status == 1) { //  Ensure Update is Sucessfull. 
+                if ($status == 1) { //  Ensure Update is Sucessfull.
+                    $success = array('status' => '1', 'message' => 'Status Changed Successfully', 'code' => 100,);
+                    echo json_encode($success);
+                } else {
+                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                    echo json_encode($unsuccess);
+                }
+            }
+        }
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+        echo json_encode($unsuccess);
+    }
+}
+
+function update_content_video($valparams) { // TO do - Improve function name.
+    global $DB;
+    if (!empty($valparams)) {
+        list($postdata) = $valparams;
+        if (!empty($postdata['lc_content_id'])) {
+            $id = json_decode($postdata['lc_content_id']);
+            if ($postdata['action'] == 'delete') { // Delete content
+                if (!empty($id)) {
+                    $fileid = $DB->get_field('congrea_mediafiles', 'resource', array('id' => $id));
+                    if (is_numeric($fileid)) {
+                        delete_file_videos($fileid); // Delete videos which are save in moodle file api.
+                    }
+                    $sucess = $DB->delete_records('congrea_mediafiles', array('id' => $id));
+                    if ($sucess == 1) {
+                        $success = array('status' => '1', 'message' => 'Delete content type is Successfully', 'code' => 100,);
+                        echo json_encode($success);
+                    } else {
+                        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                        echo json_encode($unsuccess);
+                    }
+                }
+            }
+        }
+        if ($postdata['action'] == 'status') { // update status
+            if (!empty($id)) {
+                $status = $DB->execute("UPDATE {congrea_mediafiles} SET status = '" . $postdata['status'] . "' WHERE id = '" . $id . "'");
+                if ($status == 1) { //  Ensure Update is Sucessfull.
                     $success = array('status' => '1', 'message' => 'Status Changed Successfully', 'code' => 100,);
                     echo json_encode($success);
                 } else {
@@ -220,13 +310,48 @@ function update_content($valparams) { // TO do - Improve function name.
 }
 
 /**
+ * Delete videos which save in moodle file api.
+ * serving for virtual class
+ *
+ * @param array of object  $records
+ * @return  json
+ */
+
+function delete_file_videos($fileid) {
+    global $DB;
+    if (!empty($fileid)) {
+        $records = $DB->get_record('files', array('id' => $fileid));
+        if (!empty($records)) {
+            $fs = get_file_storage();
+            if ($records->filename != "." && $records->filename != "..") {
+                $fileinfo = array(// Delete videos
+                    'component' => 'mod_congrea',
+                    'filearea' => $records->filearea, // usually = table name
+                    'itemid' => $records->itemid, // usually = ID of row in table
+                    'contextid' => $records->contextid, // ID of context
+                    'filepath' => $records->filepath, // any path beginning and ending in /
+                    'filename' => $records->filename); // any fil
+                // Get file
+                $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'], $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+                // Delete it if it exists
+                if ($file) {
+                    $file->delete();
+                } else {
+                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                    echo json_encode($unsuccess);
+                }
+            }
+        }
+    }
+}
+
+/**
  * Delete Doc's related images
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array of object  $docsimagedata
  * @return  json to ensures Doc's related images are deleted
  */
-
 function delete_docs_images($docsimagedata) { // to do.
     if (!empty($docsimagedata)) {
         $fs = get_file_storage();
@@ -242,7 +367,7 @@ function delete_docs_images($docsimagedata) { // to do.
                 // Get file
                 $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'], $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
                 if ($file) {
-                    $file->delete(); // Delete all related images of Notes. 
+                    $file->delete(); // Delete all related images of Notes.
                 } else {
                     $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
                     echo json_encode($unsuccess);
@@ -256,11 +381,10 @@ function delete_docs_images($docsimagedata) { // to do.
 
 /**
  * Save recorded files
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
  */
-
 function record_file_save($valparams) {
     global $CFG, $DB;
     list($cmid, $userid, $filenum, $vmsession, $data) = $valparams;
@@ -318,12 +442,11 @@ function record_file_save($valparams) {
 
 /**
  * Save Congrea poll
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
- * @return json for publishing poll  
+ * @return json for publishing poll
  */
-
 function poll_save($valparams) {
     global $DB;
     if (!empty($valparams)) {
@@ -369,13 +492,12 @@ function poll_save($valparams) {
 }
 
 /**
- * Delete poll's option 
- * serving for virtual class 
+ * Delete poll's option
+ * serving for virtual class
  *
  * @param array $valparams
- * @return bool true if successful otherwise false 
+ * @return bool true if successful otherwise false
  */
-
 function poll_option_drop($valparams) {
     global $DB;
     list($postdata) = $valparams;
@@ -396,12 +518,11 @@ function poll_option_drop($valparams) {
 
 /**
  * Retrieve congrea poll
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
- * @return json 
+ * @return json
  */
-
 function poll_data_retrieve($valparams) {
     global $DB;
     list($postdata) = $valparams;
@@ -431,13 +552,12 @@ function poll_data_retrieve($valparams) {
 }
 
 /**
- * Delete Congrea poll 
- * serving for virtual class 
+ * Delete Congrea poll
+ * serving for virtual class
  *
  * @param array $valparams
  * @return int 0 ensures site poll otherwise course poll
  */
-
 function poll_delete($valparams) {
     global $DB;
     if (!empty($valparams)) {
@@ -459,12 +579,11 @@ function poll_delete($valparams) {
 
 /**
  * Update Congrea poll and add new options in existing poll.
- * serving for virtual class 
+ * serving for virtual class
  *
  * @param array $valparams
- * @return json 
+ * @return json
  */
-
 function poll_update($valparams) {
     global $DB;
     list($postdata) = $valparams;
@@ -482,7 +601,7 @@ function poll_update($valparams) {
                     $newoptions->options = $value;
                     $newoptions->id = $key;
                     $newoptions->qid = $data->questionid;
-                } else { // Add new Options. 
+                } else { // Add new Options.
                     $newoptions->options = $value;
                     $newoptions->qid = $data->questionid;
                     $optid = $DB->insert_record('congrea_poll_question_option', $newoptions);
@@ -503,13 +622,12 @@ function poll_update($valparams) {
 }
 
 /**
- * Save questions and options which is attempt by users 
- * serving for virtual class 
+ * Save questions and options which is attempt by users
+ * serving for virtual class
  *
  * @param array $valparams
  * @return int ensures which type of poll(course poll, site poll) is attemted by users, 0 specify site poll otherwise course poll.
  */
-
 function poll_result($valparams) {
     global $DB;
     list($postdata) = $valparams;
@@ -548,7 +666,6 @@ function poll_result($valparams) {
  * @copyright 2017 Ravi Kumar
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 function congrea_image_converter($valparams) {
     global $CFG, $OUTPUT;
     list($file, $cmid, $userid) = $valparams;
@@ -584,7 +701,7 @@ function congrea_image_converter($valparams) {
                 if ($getuserfile = $fs->get_file($file_record['contextid'], $file_record['component'], $file_record['filearea'], $file_record['itemid'], $file_record['filepath'], $file_record['filename'])) {
                     $pdfconversion = $fs->get_converted_document($getuserfile, 'pdf'); // convert user source file into pdf.
                     if (!empty($pdfconversion)) { // Pdf conversion is sucessfull.
-                        $convertedpdfid = $pdfconversion->get_id();  // Get converted pdf file id 
+                        $convertedpdfid = $pdfconversion->get_id();  // Get converted pdf file id
                         $pdffile = $pdfconversion->get_contenthash(); // Get contenthash of converted pdf for make path.
                     } else { // pdf conversion is unsuccessfull.
                         $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Pdf conversion is failed,Try again');
@@ -627,7 +744,7 @@ function congrea_image_converter($valparams) {
                 closedir($dh);
             }
             if (!empty($images)) {
-                sort($images); // Now images are in sequence. 
+                sort($images); // Now images are in sequence.
                 $path = '/' . $soucefile->get_filename() . '/';
                 foreach ($images as $image) {
                     $fs = get_file_storage();
@@ -667,15 +784,14 @@ function congrea_image_converter($valparams) {
 }
 
 /**
- * Retrieve all uploaded documents 
+ * Retrieve all uploaded documents
  * serving for virtual class
  *
  * @param int $contextid
  * @param int $congreaid
- * @return json 
- * 
+ * @return json
+ *
  */
-
 function retrieve_docs($valparams) {
     global $CFG, $DB;
     list($cmid) = $valparams;
@@ -697,7 +813,6 @@ function retrieve_docs($valparams) {
             if (!empty($notes)) {
                 $filedata = array('status' => 1, 'resultdata' => (object) array('NOTES' => $notes), 'code' => 100, 'message' => 'Success');
                 echo json_encode($filedata);
-               
             } else {
                 $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'Failed');
                 echo json_encode($unsuccess);
@@ -713,15 +828,14 @@ function retrieve_docs($valparams) {
 }
 
 /**
- * Retrieve all document's images 
+ * Retrieve all document's images
  * serving for virtual class
  *
  * @param int $contextid
  * @param int $congreaid
- * @return json 
- * 
+ * @return json
+ *
  */
-
 function retrieve_all_notes($valparams) {
     global $CFG, $DB;
     list($cmid) = $valparams;
@@ -770,7 +884,6 @@ function retrieve_all_notes($valparams) {
  * @return bool - True if the format is supported for input.
  *
  */
-
 function congrea_is_format_supported_by_unoconv($format) {
     global $CFG;
     if (!isset($unoconvformats)) {
@@ -792,13 +905,12 @@ function congrea_is_format_supported_by_unoconv($format) {
 }
 
 /**
- * Save page orders 
+ * Save page orders
  * serving for virtual class
  *
  * @param array $valparams
  * @return json to ensures page orders are sucessfully saved
  */
-
 function congrea_page_order($valparams) {
     global $DB;
     if (!empty($valparams)) {
@@ -850,13 +962,12 @@ function congrea_page_order($valparams) {
 }
 
 /**
- * Retrieve page orders 
+ * Retrieve page orders
  * serving for virtual class
  *
  * @param array $valparams
- * @return string 
+ * @return string
  */
-
 function congrea_retrieve_page_order($valparams) {
     global $DB;
     if (!empty($valparams)) {
@@ -879,14 +990,12 @@ function congrea_retrieve_page_order($valparams) {
     }
 }
 
-
-/** 
+/**
  * Returns list of users enrolled into course.
  *
  * @param int $data
  * @return array of user records
  */
-
 function congrea_get_enrolled_users($data) {
     global $DB, $OUTPUT, $CFG;
     if (!empty($data)) {
@@ -942,66 +1051,67 @@ function congrea_get_enrolled_users($data) {
     }
 }
 
-// Quiz functions 
+// Quiz functions
 
 /**
  * Get all quizes with the details (timelimit, ques per page)
  * as an array of object for a specific course.
  *
- * @param array $postdata 
+ * @param array $postdata
  * @return json  quizes as an array of object
  */
 function congrea_quiz($valparams) {
     global $DB;
-	list($postdata) = $valparams;
+    list($postdata) = $valparams;
 
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    
-    $quizes = $DB->get_records('quiz', array('course'=> $cm->course),null,'id, name, timelimit, preferredbehaviour, questionsperpage');
+
+    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, timelimit, preferredbehaviour, questionsperpage');
 
     if ($quizes) {
         echo( json_encode($quizes));
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
     }
-   //echo( json_encode($response_array));
+    //echo( json_encode($response_array));
 }
 
 /**
  * Attach a quiz with congrea activity.
- * @param array $postdata 
+ * @param array $postdata
  * @return boolean
  */
-function congrea_add_quiz($valparams){
+function congrea_add_quiz($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
     if ($postdata['qzid']) {
-        if($DB->record_exists('congrea_quiz',array('congreaid'=> $cm->instance, 'quizid' =>$postdata['qzid']))){
+        if ($DB->record_exists('congrea_quiz', array('congreaid' => $cm->instance, 'quizid' => $postdata['qzid']))) {
             return true;
-        } else{
+        } else {
             $data = new stdClass();
             $data->congreaid = $cm->instance;
             $data->quizid = $postdata['qzid'];
-            if($DB->insert_record('congrea_quiz', $data)){
+            if ($DB->insert_record('congrea_quiz', $data)) {
                 return true;
             }
-        }                   
+        }
         // quiz not linked with congrea
     }
     return false;
 }
+
 /**
  * function to save quiz grade in table.
- * @param array $postdata 
+ * @param array $postdata
  * @return boolean
  */
-function congrea_quiz_result($valparams){
+function congrea_quiz_result($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    $con_quiz_id = $DB->get_field('congrea_quiz', 'id', array('congreaid'=> $cm->instance, 'quizid' =>$postdata['qzid']));
-    if($con_quiz_id) {
+    $con_quiz_id = $DB->get_field('congrea_quiz', 'id', array('congreaid' => $cm->instance, 'quizid' => $postdata['qzid']));
+    if ($con_quiz_id) {
         //save grade
         $data = new stdClass();
         $data->congreaquiz = $con_quiz_id;
@@ -1010,16 +1120,16 @@ function congrea_quiz_result($valparams){
         $data->timetaken = $postdata['timetaken'];
         $data->questionattempted = $postdata['qusattempted'];
         $data->currectanswer = $postdata['currectans'];
-        $data->	timecreated = time();
-        if($DB->insert_record('congrea_quiz_grade', $data)) {
+        $data->timecreated = time();
+        if ($DB->insert_record('congrea_quiz_grade', $data)) {
             return true;
         } else {
             echo 'Grade not saved';
         }
-    }   
+    }
 }
 
-function congrea_file_path($args, $forcedownload, $options ) {
+function congrea_file_path($args, $forcedownload, $options) {
     global $DB;
     $options = array('preview' => $options);
     $fs = get_file_storage();
@@ -1033,10 +1143,10 @@ function congrea_file_path($args, $forcedownload, $options ) {
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
-function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, $filename, array $options=null) {
+function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, $filename, array $options = null) {
     global $CFG;
 
-    $options = (array)$options;
+    $options = (array) $options;
     if (!isset($options['forcehttps'])) {
         $options['forcehttps'] = false;
     }
@@ -1060,7 +1170,7 @@ function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $compone
 
 function congrea_formate_text($cmid, $questiondata, $text, $formate, $component, $filearea, $itemid) {
     global $PAGE, $DB;
-    
+
     $context = context_module::instance($cmid);
     if (!empty($text)) {
         if (!isset($formate)) {
@@ -1072,11 +1182,10 @@ function congrea_formate_text($cmid, $questiondata, $text, $formate, $component,
             $filename = $matches[1];
             $f = 'mod/congrea/pluginfile.php';
             $contents = congrea_file_rewrite_pluginfile_urls($text, $f, $questiondata->contextid, $component, $filearea, $itemid, $filename);
-             //print_r($contents);exit;
-            return  congrea_make_html_inline($contents);
-
+            //print_r($contents);exit;
+            return congrea_make_html_inline($contents);
         } else {
-            return  congrea_make_html_inline($text);
+            return congrea_make_html_inline($text);
         }
     } else {
         return '';
@@ -1084,10 +1193,10 @@ function congrea_formate_text($cmid, $questiondata, $text, $formate, $component,
 }
 
 function congrea_make_html_inline($html) {
-        $html = preg_replace('~\s*<p>\s*~u', '', $html);
-        $html = preg_replace('~\s*</p>\s*~u', '<br />', $html);
-        $html = preg_replace('~(<br\s*/?>)+$~u', '', $html);
-        return trim($html);
+    $html = preg_replace('~\s*<p>\s*~u', '', $html);
+    $html = preg_replace('~\s*</p>\s*~u', '<br />', $html);
+    $html = preg_replace('~(<br\s*/?>)+$~u', '', $html);
+    return trim($html);
 }
 
 /**
@@ -1100,38 +1209,41 @@ function congrea_make_html_inline($html) {
 function congrea_get_quizdata($valparams) {
     global $CFG, $DB;
     list($postdata) = $valparams;
-    if(empty($postdata) || !is_array($postdata)){
-        print_r('invalid data');exit;
+    if (empty($postdata) || !is_array($postdata)) {
+        print_r('invalid data');
+        exit;
         //return array ("status" => 0, "message" =>'Invalid data');
     }
-    
+
     $quizid = $postdata['qid'];
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
 
     if (!$qzcm = get_coursemodule_from_instance('quiz', $quizid, $cm->course)) {
         //print_error('invalidcoursemodule');
-         print_r('invalidcoursemodule');exit;
+        print_r('invalidcoursemodule');
+        exit;
         //return array ("status" => 0,"message" =>'Invalid course module');
     }
-    
+
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
     $quizobj = quiz::create($qzcm->instance, $postdata['user']);
 
     if (!$quizobj->has_questions()) {
-        print_r('No question in this quiz.');exit;
+        print_r('No question in this quiz.');
+        exit;
     }
-    $quizgrade = $DB->get_field('quiz', 'grade', array ('id'=> $quizid, 'course' => $cm->course));
+    $quizgrade = $DB->get_field('quiz', 'grade', array('id' => $quizid, 'course' => $cm->course));
     //print_r($quizgrade);exit;
     $quizjson = array();
     $questions = array();
     $context = context_module::instance($cm->id);
-    
+
     if (empty($quizjson)) {
         $quizobj->preload_questions();
         $quizobj->load_questions();
 
-        $info = array ("quiz" => $quizid, "name" => "",
-        "main" => "", "results" => $quizgrade);
+        $info = array("quiz" => $quizid, "name" => "",
+            "main" => "", "results" => $quizgrade);
         foreach ($quizobj->get_questions() as $questiondata) {
             $options = array();
             $selectany = true;
@@ -1150,23 +1262,123 @@ function congrea_get_quizdata($valparams) {
                     $answer = congrea_formate_text($cm->id, $questiondata, $ans->answer, $ans->answerformat, 'question', 'answer', $ans->id);
                     $options[] = array("option" => $answer, "correct" => $correct);
                 }
-/*
-                $questiontext = congrea_question_rewrite_question_preview_urls($questiondata->questiontext, $questiondata->id, $questiondata->contextid, 'question', 'questiontext', $questiondata->id,
-                	$context->id, 'quiz_statistics');
-*/
+                /*
+                  $questiontext = congrea_question_rewrite_question_preview_urls($questiondata->questiontext, $questiondata->id, $questiondata->contextid, 'question', 'questiontext', $questiondata->id,
+                  $context->id, 'quiz_statistics');
+                 */
                 $questiontext = congrea_formate_text($cm->id, $questiondata, $questiondata->questiontext, $questiondata->questiontextformat, 'question', 'questiontext', $questiondata->id);
                 $questions[] = array("q" => $questiontext, "a" => $options,
-                "qid" => $questiondata->id,
-                "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback : "Your answer is correct.",
-                "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback : "Your answer is incorrect.",
-                "select_any" => $selectany,
-                "force_checkbox" => $forcecheckbox);
+                    "qid" => $questiondata->id,
+                    "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback : "Your answer is correct.",
+                    "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback : "Your answer is incorrect.",
+                    "select_any" => $selectany,
+                    "force_checkbox" => $forcecheckbox);
             }
         }
         $qjson = array("info" => $info, "questions" => $questions);
         //$quizjson = addslashes(json_encode($qjson));
-        $quizjson = json_encode($qjson);       
+        $quizjson = json_encode($qjson);
     }
     echo $quizjson;
     //return $quizjson;
 }
+
+function ppt_save($valparams) { // To do-for function name
+    global $CFG, $DB;
+    if (!empty($valparams)) {
+        list($postdata, $cmid, $userid) = $valparams;
+        if (!empty($postdata) && !empty($cmid) && !empty($userid)) {
+            if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+                print_error('Course Module ID was incorrect');
+            }
+            $obj = new stdClass();
+            $obj->congreaid = $cm->instance;
+            $obj->userid = $userid;
+            $obj->resource = $postdata['content_path'];
+            $obj->type = $postdata['type'];
+            $obj->status = 1;
+            $obj->timecreated = time();
+            $sucess = $DB->insert_record('congrea_mediafiles', $obj);
+            if (!empty($sucess)) {
+                $suceess = array('status' => '1', 'message' => 'success', 'resultdata' => array('id' => $sucess), 'code' => 100);
+                echo json_encode($suceess);
+            } else {
+                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                echo json_encode($unsuccess);
+            }
+        }
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+        echo json_encode($unsuccess);
+    }
+}
+
+function congrea_retrieve_ppt($valparams) {
+    global $CFG, $DB;
+    list($postdata, $cmid, $userid) = $valparams;
+    if (!empty($postdata) && !empty($cmid) && !empty($userid)) {
+        if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+            print_error('Course Module ID was incorrect');
+        }
+        $records = $DB->get_records('congrea_mediafiles', array('congreaid' => $cm->instance, 'type' => $postdata['type']));
+        if (!empty($records)) {
+            foreach ($records as $record) {
+                if ($record->type == 'ppt') { // For videos which are save in moodle file api.
+                    $ppt = new stdClass();
+                    $ppt->id = $record->id;
+                    $ppt->title = $record->resource;
+                    $ppt->status = $record->status;
+                    $ppt->type = $record->type;
+                    $ppt->content_path = $record->resource;
+                    $pptlist[] = $ppt;
+                }
+            }
+        }
+        if (!empty($pptlist)) {
+            //print_r($videolist);
+            echo json_encode($pptlist);
+        } else {
+            $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
+            echo json_encode($unsuccess);
+        }
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
+        echo json_encode($unsuccess);
+    }
+}
+
+function update_ppt($valparams){
+    global $CFG, $DB;
+    list($postdata, $cmid, $userid) = $valparams;
+        if (!empty($postdata) && !empty($cmid) && !empty($userid)) {
+            if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+                print_error('Course Module ID was incorrect');
+            }
+            $records = $DB->get_records('congrea_mediafiles', array('congreaid' => $cm->instance, 'type' => $postdata['type']));
+            if (!empty($records)) {
+                foreach ($records as $record) {
+                    if ($record->type == 'ppt') { // For videos which are save in moodle file api.
+                        $ppt = new stdClass();
+                        $ppt->id = $record->id;
+                        $ppt->title = $record->resource;
+                        $ppt->status = $record->status;
+                        $ppt->type = $record->type;
+                        $ppt->content_path = $record->resource;
+                        $pptlist[] = $ppt;
+                    }
+                }
+            }
+            if (!empty($pptlist)) {
+                //print_r($videolist);
+                echo json_encode($pptlist);
+            } else {
+                $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
+                echo json_encode($unsuccess);
+            }
+        } else {
+            $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
+            echo json_encode($unsuccess);
+        }
+
+}
+
