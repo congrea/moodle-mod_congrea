@@ -73,6 +73,9 @@ $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtual
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/progress.css'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/custom.css'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/SlickQuiz/css/slickQuiz.css'));
+ $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/dashboard.css'));
+$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/dbPpt.css'));
+$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/dbVideo.css'));
 // Chrome extension for desktop sharing.
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Mark viewed by user (if required).
