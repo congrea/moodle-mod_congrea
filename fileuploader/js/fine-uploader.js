@@ -5696,6 +5696,15 @@
                                 }
                             });
                         }
+
+                        /* Hack for handling drag and drop of outside element (file uploader)
+                            and inside element (eg:Video list), we need to disable exlsuively
+                            one drag-drop element while ohter is being dragged
+                        eg: */
+                        if(isFileDrag(e)){
+                          virtualclass.fineUploader.onDragEnter(e);
+                        }
+
                     });
                 }
             });
@@ -5745,6 +5754,7 @@
             },
             dropLog: function(message, level) {
                 qq.log(message, level);
+                console.log("drophere");
             }
         };
     };
@@ -5831,6 +5841,12 @@
                         return;
                     }
                     options.onEnter(e);
+
+                    /* Hack for handling drag and drop of outside element (file uploader)
+                     and inside element (eg:Video list), we need to disable exlsuively
+                     one drag-drop element while ohter is being dragged
+                     eg: */
+                    // virtualclass.fineUploader.onDragEnter(e);
                 }
             });
             disposeSupport.attach(element, "dragleave", function(e) {
@@ -5853,6 +5869,30 @@
                     e.stopPropagation();
                     options.onDrop(e);
                     triggerHidezonesEvent();
+                    console.log("nirmala");
+                    if(virtualclass.currApp =="Video"){
+                        virtualclass.vutil.makeElementDeactive('#VideoDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
+                        virtualclass.vutil.makeElementActive('#listvideo');
+
+                    }else if(virtualclass.currApp =="DocumentShare"){
+                        virtualclass.vutil.makeElementDeactive('#DocumentShareDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
+                        virtualclass.vutil.makeElementActive('#listnotes');
+
+                    }
+
+
+
+
+                    // $('#listvideo').css({
+                    //     "z-index":55
+                    //
+                    // })
+                    // $('.qq-uploader-selector.qq-uploader.qq-gallery').css({
+                    //     "z-index":1
+                    //
+                    // })
+
+
                 }
             });
         }

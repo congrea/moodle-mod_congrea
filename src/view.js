@@ -262,8 +262,10 @@
         var res = virtualclass.system.measureResoultion({'width': window.innerWidth, 'height': window.innerHeight});
         virtualclass.vutil.setContainerWidth(res, virtualclass.currApp);
         console.log('Window resize event ');
-        if(virtualclass.currApp == 'Whiteboard'){
-            vcan.renderAll();
+
+        var cwb = virtualclass.gObj.currWb;
+        if(typeof cwb != 'undefined' && virtualclass.wb[cwb].hasOwnProperty('vcan')){
+            virtualclass.wb[cwb].vcan.renderAll();
         }
 
         view.windowResizeFinished();

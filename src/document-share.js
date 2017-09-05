@@ -28,10 +28,10 @@
                 this.UI.container();
 
              //   var elem = document.getElementById('docScreenContainer');
-
-                if(roles.hasControls()){
-                  virtualclass.vutil.attachEventToUploadTab('docs', ["dtsPopupContainer"], virtualclass.vutil.modalPopup);
-                }
+                //nirmala
+                // if(roles.hasControls()){
+                //   virtualclass.vutil.attachEventToUploadTab('docs', ["dtsPopupContainer"], virtualclass.vutil.modalPopup);
+                // }
 
                 this.pages = {};
                 this.notes = {};
@@ -127,32 +127,6 @@
 
                     // remove if there is already pages before render the ordering elements
                     var alreadyElements = document.querySelectorAll('#notesContainer .note');
-
-                    // if(allNotes.length > 0){
-                    //     var pageContainer = document.querySelector('#screen-docs .pageContainer');
-                    //     //this.UI.createSlides(pageContainer, allNotes);
-                    //     if(pageContainer == null){
-                    //       var noteObj = {notes : allNotes, hasControls : roles.hasControls(), cd : currDoc};
-                    //       var docTemplate = JST['templates/docMain.hbs'];
-                    //       var docHtml =  docTemplate(noteObj);
-                    //
-                    //       var docScreenContainer  = document.querySelector('#docScreenContainer');
-                    //       if(docScreenContainer != null){
-                    //         // var earlierHTML = docScreenContainer.innerHTML;
-                    //         docScreenContainer.insertAdjacentHTML('beforeend', docHtml);
-                    //
-                    //         // docScreenContainer.innerHTML = earlierHTML  + docHtml;
-                    //       }else{
-                    //         alert('there is null');
-                    //       }
-                    //     }else{
-                    //       var noteObj = {notes :  allNotes};
-                    //       var notesTemplate = JST['templates/docNotesMain.hbs'];
-                    //       var notesHtml =  notesTemplate(noteObj);
-                    //       pageContainer.innerHTML = notesHtml;
-                    //     }
-                    // }
-
                     this.createNoteLayout(allNotes, currDoc);
                     this.reArrangeNotes(this.order);
 
@@ -207,7 +181,6 @@
                 } else {
                     var docId = 'docs' + doc;
                     if(typeof this.pages[docId] != 'object'){
-
                         this.pages[docId] = new virtualclass.page('docScreenContainer', 'docs', 'virtualclassDocumentShare', 'dts', status);
                         if(typeof docObj != 'undefined'){
                             var title = docObj.docs[docId].title;
@@ -674,17 +647,24 @@
                         var template = virtualclass.getTemplate('docsMain', 'documentSharing');
                         $('#virtualclassAppLeftPanel').append(template(data));
 
-                        //
-                        //
-                        //
-                        // var elemArr = ["dtsPopupContainer"];
-                        //
-                        // var btn = document.getElementById("newDocBtn")
-                        // // this.showUploadTab(videoCont);
-                        // btn.addEventListener("click", function () {
-                        //   virtualclass.vutil.modalPopup(type, elemArr);
-                        // })
+
+                        if(document.querySelector('#congdashboard') ==  null){
+                            var dashboardTemp = virtualclass.getTemplate('dashboard');
+                            var dbHtml = dashboardTemp({app:"DocumentShare"});
+                            document.querySelector('#dashboardContainer').innerHTML = dbHtml;
+                        }
                     }
+                    if(document.querySelector('#DocumentShareDashboard') == null){
+                        var elem = document.createElement("div");
+                        var cont = document.querySelector('#congdashboard .modal-body')
+                        cont.appendChild(elem);
+                        elem.id ='DocumentShareDashboard'
+                    }
+
+                    if(document.querySelector('.docsDbCont') == null) {
+                        document.querySelector('#DocumentShareDashboard').innerHTML = virtualclass.vutil.getDocsDashBoard("DocumentShare");
+                    }
+
                 },
 
                 createMainContent : function (container, content, docId){
@@ -769,7 +749,6 @@
                     link.className = 'linkdoc';
                     link.innerHTML  = sn;
                     link.dataset.screen = sn;
-
                     return link;
                 },
 
@@ -795,6 +774,24 @@
                             this.noteStatus(this.order[i], status);
                         }
                     }
+                }
+            },
+
+            createNoteNavAlt : function (fromReload){
+                // need to get all images from here
+                for(var i=0; i<this.order.length; i++){
+
+                    if(this.allNotes[this.order[i]].status == 'true' || (+this.allNotes[this.order[i]].status) == 1){
+                        var status = 1;
+                    }else {
+                        var status = 0;
+                    }
+                    this.notes[this.order[i]] = new virtualclass.page('screen-docs', 'notes', 'virtualclassDocumentShare', 'dts', status);
+                    this.notes[this.order[i]].init(this.order[i], 'note_'+ this.allNotes[this.order[i]].lc_content_id + '_' + this.order[i]);
+                    if(typeof fromReload == 'undefined'){
+                        this.noteStatus(this.order[i], status);
+                    }
+
                 }
             },
 
@@ -932,8 +929,17 @@
                  * @param slide expects the slide
                  */
                 createWhiteboard : function (slide){
-
                     var cthis = virtualclass.dts;
+                    var wbid = '_doc_'+slide+'_'+slide;
+
+                    /**
+                     * This canvas width and height is set for Screen 1280 * 1024
+                     * The same dimension is using for image
+                     */
+                    var canvasWidth = 730;
+                    var canvasHeight = 750;
+
+                    cthis.setNoteDimension(canvasWidth, canvasHeight, wbid);
                     //console.log('Create Whiteboard ');
 
                     console.log(virtualclass.gObj.currWb + ' ' + 'document share Create Whiteboard ');
@@ -941,7 +947,7 @@
                     whiteboard.id = 'cont';
                     whiteboard.className = 'whiteboard';
 
-                    whiteboard.dataset.wid = '_doc_'+slide+'_'+slide;
+                    whiteboard.dataset.wid = wbid;
                     whiteboard.id = 'cont' + whiteboard.dataset.wid;
 
                     //document.querySelector("[data-doc='1'] .slide[data-slide='1']");
@@ -954,14 +960,7 @@
                         var args = [app, 'byclick', whiteboard.dataset.wid, whiteboard.id];
                         virtualclass.appInitiator['Whiteboard'].apply(virtualclass, Array.prototype.slice.call(args));
 
-                        /**
-                         * This canvas width and height is set for Screen 1280 * 1024
-                         * The same dimension is using for image
-                         */
-                        var canvasWidth = 730;
-                        var canvasHeight = 750;
-
-                        cthis.setNoteDimension(canvasWidth, canvasHeight, whiteboard.dataset.wid);
+                      cthis.setNoteDimension(canvasWidth, canvasHeight, wbid);
 
                     } else {
                         console.log("Element is null");
@@ -1542,7 +1541,10 @@
              * @returns {*}
              */
             getDocId : function(id){
-               return this.allNotes[id].lc_content_id;
+                if(this.allNotes){
+                    return this.allNotes[id].lc_content_id;
+                }
+
             },
 
             getAllNotes : function(order){
@@ -1586,6 +1588,14 @@
                 } else {
                         alert(virtualclass.lang.getString('someproblem'));
                 }
+
+                var listnotes  = document.querySelector('#listnotes');
+                if(listnotes != null){
+                  virtualclass.vutil.makeElementDeactive('#DocumentShareDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
+                  virtualclass.vutil.makeElementActive('#listnotes');
+                }else {
+                  console.log('List note is null');
+                }
             },
 
             /**
@@ -1613,6 +1623,18 @@
                     notesContainer.style.height = height+'px';
                 }
 
+            },
+
+            setNoteImageDimension : function (width, height, nid){
+              var contElem =  document.querySelector('#cont' + nid);
+              if(contElem != null){
+                var noteContainer = contElem.parentNode;
+                var imageContainer = document.querySelector('#'+ noteContainer.id +  ' .imageContainer img');
+                imageContainer.style.width = width;
+                imageContainer.style.height = height;
+              }else {
+                alert(nid + ' is null');
+              }
             }
         };
     }
