@@ -209,6 +209,7 @@ $ts = ($USER->id == 3) ? true : false;
     window.congCourse =  "<?php echo $cm->id ?>";
     if (!!window.Worker) {
         var sworker = new Worker("<?php echo $whiteboardpath."worker/screenworker.js" ?>");
+        var sdworker = new Worker("<?php echo $whiteboardpath."worker/screendecode.js" ?>");
         var mvDataWorker = new Worker("<?php echo $whiteboardpath."worker/json-chunks.js" ?>");
         var dtConWorker = new Worker("<?php echo $whiteboardpath."worker/storage-array-base64-converter.js" ?>");
         var webpToPng = new Worker("<?php echo $whiteboardpath."worker/webptopng.js" ?>");
