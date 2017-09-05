@@ -43,9 +43,18 @@
                 return false;
             },
 
+            // createControl: function (userId, controls) {
+            //     // var controlCont = document.getElementById(userId+"ControlContainer");
+            //     var controlCont = document.createElement('div');
+            //     this.createControlDivs(controlCont, userId, controls);
+            // },
+
             createControl: function (userId, controls) {
-                var controlCont = document.getElementById(userId+"ControlContainer")
+                var controlCont = document.createElement('div');
+                controlCont.id = userId + "ControlContainer";
+                controlCont.className = "controls";
                 this.createControlDivs(controlCont, userId, controls);
+                return controlCont;
             },
 
             createControllerElement: function (userId, imgName) {
@@ -54,7 +63,7 @@
 
                 var elemAnch = document.createElement('a');
                 elemAnch.id = userId + imgName + "Anch";
-                elemAnch.className = "tooltip";
+                elemAnch.className = "congtooltip";
                 elemAnch.appendChild(elemBlock);
 
                 var imgCont = document.createElement('div');
@@ -821,10 +830,10 @@
                     if(!listTab.classList.contains("active")){
                         listTab.classList.add("active")
                     }
-                    var supportTab = document.querySelector("#congreaSupport");
-                    if(supportTab.classList.contains("active")){
-                        supportTab.classList.remove("active")
-                    }
+                    // var supportTab = document.querySelector("#congreaSupport");
+                    // if(supportTab.classList.contains("active")){
+                    //     supportTab.classList.remove("active")
+                    // }
                    var chatroomTab = document.querySelector("#chatroom_bt2");
                     if(chatroomTab.classList.contains("active")){
                         chatroomTab.classList.remove("active")
@@ -1033,12 +1042,12 @@
                 if(allAudAction != null &&  allAudAction == 'disable'){
                     //spanTag.innerHTML = "En Aud All";
                     spanTag.setAttribute('data-action', 'enable');
-                    spanTag.className = 'icon-all-audio-enable tooltip';
+                    spanTag.className = 'icon-all-audio-enable congtooltip';
                     spanTag.dataset.title = virtualclass.lang.getString('unmuteAll');
                 }else{
                     //spanTag.innerHTML = "Dis Aud All";
                     spanTag.setAttribute('data-action', 'disable');
-                    spanTag.className = 'icon-all-audio-disable tooltip';
+                    spanTag.className = 'icon-all-audio-disable congtooltip';
                     spanTag.dataset.title = virtualclass.lang.getString('muteAll');
                 }
 
@@ -1074,7 +1083,7 @@
                     toggleCommonChatBox();
                 } else {
                     if ($("div#chat_room").length == 0) {
-                        var d = document.createElement('div');
+                        var d = document.createElement('ul');
                         d.id = 'chat_room';
                         document.body.appendChild(d);
 
@@ -1115,14 +1124,14 @@
 
                         audioController.dataset.action = 'disable';
                         //audioController.innerHTML = "Dis Aud All";
-                        audioController.className = 'icon-all-audio-disable tooltip';
+                        audioController.className = 'icon-all-audio-disable congtooltip';
 
                         audioController.dataset.title = virtualclass.lang.getString('muteAll');
 
                     } else {
                         audioController.dataset.action = 'enable';
                         //audioController.innerHTML = "En Aud All";
-                        audioController.className = 'icon-all-audio-enable tooltip';
+                        audioController.className = 'icon-all-audio-enable congtooltip';
                         audioController.dataset.title = virtualclass.lang.getString('unmuteAll');
 
                     }
@@ -1133,6 +1142,75 @@
             changeRoleOnFooter : function (id, role){
                 var footerDiv = document.getElementById("ml" + id);
                 footerDiv.dataset.role = role;
+            },
+
+            initControlHanlder : function (userId){
+                var orginalTeacher = virtualclass.vutil.userIsOrginalTeacher(userId);
+                // Assign event handler
+                var that = this;
+                var allSpans = document.querySelectorAll('#ml' + userId +  ' .contImg');
+
+                var uObj = false;
+                var userObj = localStorage.getItem('virtualclass' + userId);
+                if (userObj != null) {
+                    uObj = true;
+                    userObj = JSON.parse(userObj);
+                    if (userObj.hasOwnProperty('currTeacher')) {
+                        virtualclass.gObj[userId + 'currTeacher'] = {};
+                        if (userObj.currTeacher == true) {
+                            virtualclass.user.control.currTeacherAlready = true;
+                            var currTeacher = true;
+                            virtualclass.gObj[userId + 'currTeacher'].ct = true;
+                        } else {
+                            virtualclass.gObj[userId + 'currTeacher'].ct = false;
+                        }
+                    }
+                }
+
+                for(var i=0; i<allSpans.length; i++){
+                    (
+                        function (i){
+                            allSpans[i].addEventListener('click',
+                                function (){
+                                    that.control.init.call(that, allSpans[i]);
+                                }
+                            );
+
+                        }
+                    )(i);
+
+                    if(allSpans[i].className.indexOf('chat') > -1){
+                        if (uObj && userObj.hasOwnProperty('chat')) {
+                            var chEnable = (userObj.chat) ? true : false;
+                        } else {
+                            var chEnable = true;
+                        }
+                        virtualclass.user.control.changeAttribute(userId, allSpans[i], chEnable, 'chat', 'chat');
+                    } else if(allSpans[i].className.indexOf('aud') > -1) {
+                        if (uObj && userObj.hasOwnProperty('aud')) {
+                            var audEnable = (userObj.aud) ? true : false;
+                        } else {
+                            var audEnable = true;
+                        }
+
+                        virtualclass.user.control.changeAttribute(userId, allSpans[i], audEnable, 'audio', 'aud');
+
+                        // if (orginalTeacher) {
+                        //     allSpans[i].addEventListener('click', function () {
+                        //         that.control.init.call(that, allSpans[i]);
+                        //     });
+                        // }
+
+                        if(roles.hasAdmin()){
+                            if(allSpans[i].dataset.audioDisable == 'false'){
+                                var allAudAction = localStorage.getItem('allAudAction');
+                                if(allAudAction != null && allAudAction == 'disable'){
+                                    allSpans[i].click();
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     };

@@ -43,7 +43,7 @@ var precheck = {
     _next : function (curr, cb){
         var test = this[curr].next;
         virtualclass.precheck.updateProgressBar(test);
-        if(!this[test].hasOwnProperty('alreadyDone')){
+        if((!this[test].hasOwnProperty('alreadyDone') || this[test].hasOwnProperty('alreadyDone') && test == 'bandwidth')){
             // Only perform the test if it's not already done
             this[test].perform();
         }else {
@@ -179,7 +179,8 @@ var precheck = {
             // http://stackoverflow.com/questions/5529718/how-to-detect-internet-speed-in-javascript
 
             var msgSelector = '#preCheckcontainer .precheck.'+this.curr+' .result';
-             this.imageAddr = window.whiteboardPath + "images/bandwidth-check.jpeg";
+             // this.imageAddr = window.whiteboardPath + "images/bandwidth-check.jpeg";
+                this.imageAddr = "https://dl.congrea.com/bandwidth.jpg";
             //this.imageAddr = 'https://raw.githubusercontent.com/sumanbogati/html_css/master/bandwidth-check.jpeg';
             this.downloadSize = 1000000; // bytes
 
@@ -212,12 +213,11 @@ var precheck = {
             }else if (speed > 400){
                 bandwidthText = "medium";
                 virtualclass.videoHost.gObj.MYSPEED = 2;
-                ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
             }else {
                 virtualclass.videoHost.gObj.MYSPEED = 3;
-                ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
                 bandwidthText = "low";
             }
+            ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
             return bandwidthText;
         },
 

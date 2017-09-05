@@ -113,8 +113,7 @@ var videoHost = {
             this.UI.displayVideo();
 
         } else if (msg.congCtr.videoSwitch == "off") {
-            virtualclass.videoHost.gObj.videoSwitch = 0;
-            this.UI.hideVideo();
+            virtualclass.videoHost.gObj.videoSwitch = 0;            this.UI.hideVideo();
 
         }
 
@@ -276,7 +275,7 @@ var videoHost = {
                 } else {
                     loadfile(imgData, that.videoPartCont); // for firefox
                 }
-            }, 372
+            }, myVideoDelay = (16382/virtualclass.gObj.video.audio.Html5Audio.audioContext.sampleRate)*1000*4
         );
     },
     onError: function (err) {
@@ -363,19 +362,25 @@ var videoHost = {
             latency = "fast";
         }
 
-
-
         var videoSpeed = document.getElementById('videSpeedNumber');
-        videoSpeed.dataset.suggestion = speed;
-        //videoSpeed.innerHTML = speed;
+        if(videoSpeed){
+            videoSpeed.dataset.suggestion = speed;
+        }
 
+        // todo to  validate
         var videoFrameRate = document.getElementById('videoFrameRate');
-        videoFrameRate.dataset.quality = frameRate;
-        //videoFrameRate.innerHTML = frameRate;
+        if(videoFrameRate){
+            videoFrameRate.dataset.quality = frameRate;
+        }
 
+        //videoFrameRate.innerHTML = frameRate;
+        // todo to  validate
         var videLatency = document.getElementById('videLatency');
-        videLatency.dataset.latency = latency;
+        if(videLatency){
+            videLatency.dataset.latency = latency;
+        }
         //videLatency.innerHTML =  latency;
+
     },
     getTeacherVideoQuality: function () {
         virtualclass.videoHost.gObj.teacherVideoQuality = 16;
@@ -388,10 +393,11 @@ var videoHost = {
         return virtualclass.videoHost.gObj.teacherVideoQuality;
     },
     initVideoInfo: function () {
+        var that = this;
         if (roles.hasAdmin() && virtualclass.system.mybrowser.name == 'Firefox') {
             virtualclass.vutil.removeVideoHostContainer();
         } else {
-            setInterval(
+            that.videoInfoInterval =  setInterval(
                 function () {
                     // MYSPEED, internet connection
                     //  virtualclass.videoHost.gObj.video_count, frame rate
@@ -405,14 +411,14 @@ var videoHost = {
                     virtualclass.videoHost.updateVideoInfo(virtualclass.videoHost.gObj.MYSPEED, virtualclass.videoHost.gObj.video_count, virtualclass.videoHost.gObj.time_diff);
                     //
                 }, 1000
-                );
+            );
 
         }
     },
     afterSessionJoin: function () {
         var speed = roles.hasAdmin() ? 1 : virtualclass.videoHost.gObj.MYSPEED;
         this.setDefaultValue(speed);
-        this.initVideoInfo();
+        // this.initVideoInfo();
 
         setInterval(
                 function () {
