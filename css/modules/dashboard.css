@@ -67,7 +67,7 @@
 }
 
 
-#virtualclassCont.congrea .dbContainer .linkdocs .mainpreview, #virtualclassCont.congrea .dbContainer .linkdocs  .controlCont {
+#virtualclassCont.congrea .dbContainer .linkdocs, #virtualclassCont.congrea .dbContainer .linkdocs  .controlCont {
   cursor : pointer;
 }
 
@@ -220,4 +220,11 @@
   background: -o-linear-gradient(top, rgb(46, 219, 236), #1f8ac7);
   background: -webkit-linear-gradient(top, rgb(46, 219, 236), #1f8ac7);
 
+}
+
+
+#virtualclassCont.congrea #dashboardnav {
+  position: absolute;
+  top: 645px;
+  left: -4px;
 }
