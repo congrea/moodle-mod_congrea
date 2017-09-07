@@ -195,21 +195,8 @@
                 } else {
                     virtualclass.makeReadySocket();
                 }
-
-                //For change color uncomment this and give the appropriate values
-                // var editorbtn={color : 'blue'}
-                // var allbg = {fcolor : '#777999', scolor : '#666999'};
-                // var active = {fcolor : '#459878', scolor : '#698568'};
-                // var hover = {fcolor : '#989655', scolor : '#837394'};
-                // virtualclass.makeThemeReady(editorbtn, allbg,active,hover);
-
                 // For initialize the Teacher Video
                 virtualclass.videoHost.init(320 , 240);
-
-                // dts means document sharing
-                //virtualclass.dts  = window.documentShare();
-
-                //virtualclass.documentShare.init();
                 virtualclass.networkStatus();
                 if(virtualclass.gObj.has_ts_capability && !virtualclass.vutil.isPlayMode()){
                     virtualclass.vutil.initTechSupportUi();
@@ -226,37 +213,7 @@
             },
 
             networkStatus: function(){
-                var netstatus = virtualclass.getTemplate('network');
-                var context = {suggestion:'low',
-                    latency:'slow',
-                    quality:'low'};
-                var netstatushtml = netstatus(context);
-                // $('#vedioPacket').append(netstatushtml);
-
-                popoverOptions = {
-                    content: function () {
-                        // Get the content from the hidden sibling.
-                        //virtualclass.media.initVideoInfo();
-                        return netstatushtml;
-                    },
-                    html : true,
-                    trigger: 'hover',
-                    // animation: false,
-                    placement: 'bottom',
-                };
-                $('#ntkstatus').popover(popoverOptions);
-
-                $('#ntkstatus').on('shown.bs.popover', function () {
-                    // do something…
-                    //initVideoInfo
-                    virtualclass.videoHost.initVideoInfo();
-                });
-
-                $('#ntkstatus').on('hide.bs.popover', function () {
-                    // do something…
-                    clearInterval( virtualclass.videoHost.videoInfoInterval);
-                });
-
+                virtualclass.videoHost.initVideoInfo();
             },
 
             makeReadySocket : function (){
@@ -521,8 +478,12 @@
                     if ("virtualclass" + app != virtualclass.previous) {
                         this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(arguments));
                     }
+
                 } else if (app == "DocumentShare") {
                     this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(arguments));
+                    if(roles.hasControls()){
+                        virtualclass.vutil.triggerDashboard(app);
+                    }
                 } else {
                     var prevapp = localStorage.getItem('prevApp');
                     if (prevapp != null) {
@@ -549,6 +510,9 @@
                         this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(args));
                     }else {
                         this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(arguments));
+                        if(roles.hasControls() && app == 'Video'){
+                            virtualclass.vutil.triggerDashboard(app);
+                        }
                     }
                 }
                 this.previrtualclass = this.previous;
@@ -577,14 +541,20 @@
 
                 }
                 if(roles.hasControls()) {
-
-                    if (virtualclass.currApp == 'SharePresentation' || virtualclass.currApp == 'Video' ||virtualclass.currApp == 'DocumentShare') {
+                    if (virtualclass.currApp == 'SharePresentation' || virtualclass.currApp == 'Video') {
                         virtualclass.vutil.initDashboardNav();
+                        var dashboardnav =  document.querySelector('#dashboardnav button');
+                        if(dashboardnav != null){
+                            dashboardnav.click();
+                        }
+                    } else if(virtualclass.currApp == 'DocumentShare'){
+                        // this.checkDsTable();
                     }else {
                         virtualclass.vutil.removeDashboardNav();
                     }
                 }
             },
+
 
             // Helper functions for making the app is ready
             appInitiator : {
@@ -750,7 +720,6 @@
                     console.log(virtualclass.sharePt.pptUrl);
                     this.previous = virtualclass.ptConfig.id;
                     virtualclass.sharePt.attachMessageEvent("message", virtualclass.sharePt.pptMessageEventHandler);
-
                 },
 
                 Poll : function (app){
@@ -923,19 +892,28 @@
                         dstData = setTimeout(
                             function (){
                                 cthis.appInitiator.DocumentShare.apply(cthis.appInitiator, args);
+
+
+
                             },100
                         )
                     } else {
                         // IndexDb is not initialise
                         // misspacket on new user does not work
                         cthis.appInitiator.makeReadyDsShare.apply(cthis.appInitiator, args);
+                        virtualclass.vutil.initDashboardNav();
+                        if(!virtualclass.dts.noteExist()){
+                            var dashboardnav =  document.querySelector('#dashboardnav button');
+                            if(dashboardnav != null) {
+                                dashboardnav.click();
+
+                            }
+                        }
 
                         if(dstData != null){
                             clearTimeout(dstData);
                         }
                     }
-
-
                 }
             },
 
@@ -1051,6 +1029,7 @@
                         context = contPara;
                     }else if(initTemplates[i] == 'audioWidget'){
                         context = virtualclassSetting;
+
                     }else if(initTemplates[i] == 'teacherVideo' || initTemplates[i] == 'appTools'){
                         context = isControl;
                     }

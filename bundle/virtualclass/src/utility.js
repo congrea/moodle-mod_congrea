@@ -1931,6 +1931,7 @@
                     virtualclass.sharePt.retrieveOrder();
                 }
 
+
             }
             var allDbContainer  = document.querySelectorAll('#congdashboard .dbContainer');
             for(var i=0; i<allDbContainer.length; i++){
@@ -1941,12 +1942,24 @@
                 }
             }
 
-            $('#congdashboard').modal({
-                backdrop: 'static',
-                keyboard: false,
-                show: true
-            });
+            // $('#congdashboard').modal({
+            //     backdrop: 'static',
+            //     keyboard: true,
+            //     show: true
+            // });
 
+            $('#congdashboard').modal();
+
+            if(currApp == "DocumentShare"){
+                if(virtualclass.dts.noteExist()){
+                    virtualclass.vutil.hideUploadMsg('docsuploadContainer'); // file uploader container
+                }
+            }
+
+            var moodleHeader = document.querySelector('#congdashboard .modal-header h4');
+            if(moodleHeader != null){
+                moodleHeader.innerHTML = virtualclass.lang.getString(currApp + 'dbHeading');
+            }
         },
 
         getDocsDashBoard : function (app){
@@ -1989,8 +2002,36 @@
                       sortCommonChat();
                  }, 800
             );
-        }
+        },
 
+        triggerDashboard : function (currApp){
+            if(currApp == 'DocumentShare'){
+                var currentNote = document.querySelector('#screen-docs .note.current');
+                if(currentNote == null){
+                    virtualclass.vutil.initDashboard(currApp);
+                }
+            } else {
+                virtualclass.vutil.initDashboard(currApp);
+            }
+        },
+
+        trimExtension : function (fname){
+            return fname.replace(/\.[^/.]+$/, "")
+        },
+
+        hideUploadMsg : function (appId){
+            var elem = document.querySelector('#'+appId+' .qq-uploader-selector.qq-uploader.qq-gallery');
+            if(elem != null){
+                elem.setAttribute('qq-drop-area-text', '')
+            }
+        },
+
+        showUploadMsg : function (appId){
+            var elem = document.querySelector('#'+appId+' .qq-uploader-selector.qq-uploader.qq-gallery');
+            if(elem != null){
+                elem.setAttribute('qq-drop-area-text', 'Drop File Here');
+            }
+        }
     };
     window.vutil = vutil;
 })(window);
