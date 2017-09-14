@@ -662,10 +662,10 @@ function poll_result($valparams) {
  * This function convert office file to pdf and pdf to images.
  * serving for virtual class
  *
- * @package   mod_congrea
- * @copyright 2017 Ravi Kumar
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @param array $valparams
+ * @return json
  */
+
 function congrea_image_converter($valparams) {
     global $CFG, $OUTPUT;
     list($file, $cmid, $userid) = $valparams;
@@ -698,91 +698,108 @@ function congrea_image_converter($valparams) {
             }
             $soucefile = $fs->create_file_from_pathname($file_record, $file['qqfile']['tmp_name']); // Save user source file into file api of moodle.
             if (!empty($soucefile)) {
-                if ($getuserfile = $fs->get_file($file_record['contextid'], $file_record['component'], $file_record['filearea'], $file_record['itemid'], $file_record['filepath'], $file_record['filename'])) {
-                    $pdfconversion = $fs->get_converted_document($getuserfile, 'pdf'); // convert user source file into pdf.
-                    if (!empty($pdfconversion)) { // Pdf conversion is sucessfull.
-                        $convertedpdfid = $pdfconversion->get_id();  // Get converted pdf file id
-                        $pdffile = $pdfconversion->get_contenthash(); // Get contenthash of converted pdf for make path.
-                    } else { // pdf conversion is unsuccessfull.
-                        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Pdf conversion is failed,Try again');
+                if ($getuserfile = $fs->get_file($file_record['contextid'], $file_record['component'], 
+                    $file_record['filearea'], $file_record['itemid'], $file_record['filepath'], $file_record['filename'])) {
+                    if (pathinfo(basename($getuserfile->get_filename()), PATHINFO_EXTENSION) == 'pdf') { // Not need for conversion.
+                        $convertedpdfid = $getuserfile->get_id();  // Get converted pdf file id 
+                        $contenthash = $getuserfile->get_contenthash(); // Get contenthash of converted pdf for make path.
+                    } else {
+                        $converter = new \core_files\converter();
+                        $pdfconversion = $converter->start_conversion($getuserfile, 'pdf');
+                        $converter->poll_conversion($pdfconversion);
+                        if ($pdfconversion->get('status') === \core_files\conversion::STATUS_COMPLETE) { // Ensures Pdf conversion is sucessful.
+                            $pdffile = $pdfconversion->get_destfile(); // Get converted pdf file.
+                            $convertedpdfid = $pdffile->get_id();  // Get converted pdf file id 
+                            $contenthash = $pdffile->get_contenthash(); // Get contenthash of converted pdf for make path.
+                        } else {
+                            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Pdf conversion is Failed,Try again');
+                            echo json_encode($unsuccess);
+                            return false;
+                        }
+                    }
+                    if (!empty($convertedpdfid) && !empty($contenthash)) {
+                        $uniqdir = "core_file/conversions/" . uniqid($convertedpdfid . "-", true);
+                        $newtmpfile = make_temp_directory($uniqdir); // Create tmp directory for store converted image.
+                        if (!empty($newtmpfile)) { // Tmp directory is created.
+                            $a = substr("$contenthash", 0, -38);
+                            $b = substr("$contenthash", 2, -36);
+                            $pdffilepath = "$CFG->dataroot/filedir/$a/$b/$contenthash"; // get converted pdf file path. to do.
+                            $quality = 90;
+                            $res = '300x300';
+                            exec("'gs' '-dNOPAUSE' '-sDEVICE=jpeg' '-dUseCIEColor' '-dTextAlphaBits=4' '-dGraphicsAlphaBits=4' '-o$newtmpfile/%03d.jpg' '-r$res' '-dJPEGQ=$quality' '$pdffilepath'", $output);
+                            if (touch($newtmpfile) == 1) { // pdf to image conversion is sucessfull.
+                                $convertedimagedir = $newtmpfile;
+                            } else {
+                                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'pdf to image conversion is failed, try again');
+                                echo json_encode($unsuccess);
+                                return false;
+                            }
+                        }
+                    }
+                    if (is_dir($convertedimagedir)) { // open tmp directory where images are saved
+                        if ($dh = opendir($convertedimagedir)) {
+                            while (($file = readdir($dh)) !== false) {
+                                if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'jpg') {
+                                    $images[] = $file; // collect all converted images from tmp directory.
+                                }
+                            }
+                        }
+                        closedir($dh);
+                    }
+                    if (!empty($images)) {
+                        sort($images); // Now images are in sequence. 
+                        $path = '/' . $soucefile->get_filename() . '/';
+                        foreach ($images as $image) {
+                            $fs = get_file_storage();
+                            $images_record = array(
+                                'contextid' => $context->id, // ID of context.
+                                'component' => 'mod_congrea', // usually = table name.
+                                'filearea' => 'documentimages', // usually = table name.
+                                'itemid' => $cm->instance, // congrea id
+                                'filepath' => $path, // any path beginning and ending in.
+                                'filename' => $image, // any filename
+                                'timecreated' => time(),
+                                'timemodified' => time(),
+                                'userid' => $userid,
+                                'status' => true,
+                                'source' => $soucefile->get_id(), // converted pdf id which ensures which pdf file converted into images.
+                            );
+                            if ($existing = $fs->get_file($images_record['contextid'], $images_record['component'], $images_record['filearea'], 
+                                $images_record['itemid'], $images_record['filepath'], $images_record['filename'], $images_record['source'])) {
+                                if ($existing) {
+                                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Unable to Save converted image, try again');
+                                    return false;
+                                }
+                            }
+                            $success = $fs->create_file_from_pathname($images_record, "$convertedimagedir/$image"); // Save each images into moodle file api.
+                            $imagesid[] = $success->get_id(); // ensures images are saved into  moodle Db.
+                        }
+                        if (!empty($success) && !empty($imagesid)) {
+                            $senddaata = array('status' => '1', 'message' => 'success', 'resultdata' => (object) array('id' => $soucefile->get_id()), 'code' => 100);
+                            echo json_encode($senddaata);
+                            remove_dir($convertedimagedir); // After save files are in moodle api, tmp file is deleted.
+                        } else {
+                            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                            echo json_encode($unsuccess);
+                        }
+                    } else {
+                        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Images are not available for save ,Try again');
                         echo json_encode($unsuccess);
                         return false;
                     }
                 }
-            }
-        } else {
-            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'file are not supported by unoconv');
-            echo json_encode($unsuccess);
-            return false;
-        }
-        if (!empty($pdffile) && !empty($convertedpdfid)) { // Ensure pdf conversion is successfull.
-            $uniqdir = "core_file/conversions/" . uniqid($convertedpdfid . "-", true);
-            $newtmpfile = make_temp_directory($uniqdir); // Create tmp directory for store converted image.
-            if (!empty($newtmpfile)) { // Tmp directory is created.
-                $a = substr("$pdffile", 0, -38);
-                $b = substr("$pdffile", 2, -36);
-                $pdffilepath = "$CFG->dataroot/filedir/$a/$b/$pdffile"; // get converted pdf file path.
-            }
-            $quality = 90;
-            $res = '300x300';
-            exec("'gs' '-dNOPAUSE' '-sDEVICE=jpeg' '-dUseCIEColor' '-dTextAlphaBits=4' '-dGraphicsAlphaBits=4' '-o$newtmpfile/%03d.jpg' '-r$res' '-dJPEGQ=$quality' '$pdffilepath'", $output);
-            if (touch($newtmpfile) == 1) { // pdf to image conversion is sucessfull.
-                $convertedimagedir = $newtmpfile;
             } else {
-                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'pdf to image conversion is failed, try again');
+                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'File is not Uploaded sucessfully,Try again');
                 echo json_encode($unsuccess);
                 return false;
             }
-            if (is_dir($convertedimagedir)) { // open tmp directory where images are saved
-                if ($dh = opendir($convertedimagedir)) {
-                    while (($file = readdir($dh)) !== false) {
-                        if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'jpg') {
-                            $images[] = $file; // collect all converted images from tmp directory.
-                        }
-                    }
-                }
-                closedir($dh);
-            }
-            if (!empty($images)) {
-                sort($images); // Now images are in sequence.
-                $path = '/' . $soucefile->get_filename() . '/';
-                foreach ($images as $image) {
-                    $fs = get_file_storage();
-                    $images_record = array(
-                        'contextid' => $context->id, // ID of context.
-                        'component' => 'mod_congrea', // usually = table name.
-                        'filearea' => 'documentimages', // usually = table name.
-                        'itemid' => $cm->instance, // congrea id
-                        'filepath' => $path, // any path beginning and ending in.
-                        'filename' => $image, // any filename
-                        'timecreated' => time(),
-                        'timemodified' => time(),
-                        'userid' => $userid,
-                        'status' => true,
-                        'source' => $soucefile->get_id(), // converted pdf id which ensures which pdf file converted into images.
-                    );
-                    if ($existing = $fs->get_file($images_record['contextid'], $images_record['component'], $images_record['filearea'], $images_record['itemid'], $images_record['filepath'], $images_record['filename'], $images_record['source'])) {
-                        if ($existing) {
-                            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Unable to Save converted image, try again');
-                            return false;
-                        }
-                    }
-                    $success = $fs->create_file_from_pathname($images_record, "$convertedimagedir/$image"); // Save each images into moodle file api.
-                    $imagesid[] = $success->get_id(); // ensures images are saved into  moodle Db.
-                }
-                if (!empty($success) && !empty($imagesid)) {
-                    $senddaata = array('status' => '1', 'message' => 'success', 'resultdata' => (object) array('id' => $soucefile->get_id()), 'code' => 100);
-                    echo json_encode($senddaata);
-                    remove_dir($convertedimagedir); // After save files are in moodle api, tmp file is deleted.
-                } else {
-                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-                    echo json_encode($unsuccess);
-                }
-            }
+        } else {
+            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'File is not supported by unoconv,Try again');
+            echo json_encode($unsuccess);
+            return false;
         }
     }
 }
-
 /**
  * Retrieve all uploaded documents
  * serving for virtual class
