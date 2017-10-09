@@ -1,7 +1,7 @@
 /*left pannel*/
 #virtualclassCont .icon-videoUpload:before {
-  content: "\e917";
-  font-size: 28px;
+  content: "\e92d";
+  font-size: 26px;
 }
 
 #virtualclassVideo button#newVideoBtn::before {
@@ -21,20 +21,21 @@
 #virtualclassCont .icon-poll:before {
   content: "\e916";
   font-size: 28px;
+  margin-right: 3px;
 }
 /*#virtualclassCont .icon-setting:before {*/
-  /*content: "\e991";*/
-  /*font-size: 13px;*/
-  /*color:#4c4c4c;*/
-  /*font-weight: bold;*/
+/*content: "\e991";*/
+/*font-size: 13px;*/
+/*color:#4c4c4c;*/
+/*font-weight: bold;*/
 /*}*/
 /*#virtualclassCont .icon-help:before {*/
-  /*content: "\e928";*/
-  /*color:#4c4c4c;*/
+/*content: "\e928";*/
+/*color:#4c4c4c;*/
 /*}*/
 /*#virtualclassCont .icon-creator:before {*/
-  /*content: "\e923";*/
-  /*color:#4c4c4c;*/
+/*content: "\e923";*/
+/*color:#4c4c4c;*/
 /*}*/
 #virtualclassCont .icon-pencil2:before {
   content: "\f044";
@@ -66,6 +67,7 @@
 #virtualclassCont .icon-quiz:before {
   content: "\e915";
   font-size: 26px;
+  margin-right: 2px;
 }
 
 #virtualclassCont .icon-publish2:before {
@@ -79,16 +81,19 @@
   font-size: 28px;
   position: relative;
   top: 3px;
+  margin-right: 6px;
 }
 
 #virtualclassCont.congrea #virtualclassWhiteboardTool .icon-whiteboard:before {
   content: "\e604";
   font-size: 34px;
+  margin-right: 5px;
 }
 
 #virtualclassCont.congrea #virtualclassScreenShareTool .icon-screenshare:before {
   content: "\e602";
   font-size: 32px;
+  margin-right: 5px;
 }
 
 #virtualclassCont.congrea #virtualclassYtsTool .icon-youtubeshare:before {
@@ -97,18 +102,20 @@
 }
 
 #virtualclassCont.congrea .icon-editorCode:before {
-  content: "\e608";
-  font-size: 28px;
+  content: "\e938";
+  font-size: 22px;
   position: relative;
   top: 3px;
+  margin-right: 5px;
 }
 
 #virtualclassCont.congrea .icon-sharePresentation:before {
   content: "\e904";
-  font-size: 30px;
+  font-size: 32px;
   color: #444;
   position: relative;
   top: 2px;
+  margin-right: 5px;
 }
 
 #virtualclassDocumentShareTool .icon-documentShare:before {
@@ -281,6 +288,7 @@
   font-size: 11px;
   font-family: 'icomoon';
   font-size: 23px;
+
 }
 
 #virtualclassCont.congrea #virtualclassAppRightPanel span#videoSwitch.video.on:before {
@@ -289,6 +297,7 @@
   font-size: 11px;
   font-family: 'icomoon';
   font-size: 23px;
+  color : #37da52;
 }
 
 #virtualclassCont.congrea .commandToolsWrapper .icon-rectangle:before {
@@ -429,7 +438,9 @@
   font-size: 15px;
 }
 
-#virtualclassCont.congrea .rv-vanilla-modal-body #recordFinishedMessageBox .icon-close:before, #replayContainer #replayClose.icon-close:before, #sessionEndMsgCont #sessionEndClose.icon-close:before{
+#virtualclassCont.congrea .rv-vanilla-modal-body #recordFinishedMessageBox .icon-close:before,
+#replayContainer #replayClose.icon-close:before, #sessionEndMsgCont #sessionEndClose.icon-close:before,
+#virtualclassCont.congrea #chromeExtClose.icon-close:before {
   content: "\f00d";
   font-size: 12px;
   color: #6a8e0b;
@@ -455,13 +466,13 @@
   color:#333;
 }
 
-.icon-sharePresentation:before{
-  content: "\e904";
-  font-size: 30px;
-  color:#444;
-  position: relative;
-  top: 2px;
-}
+/*.icon-sharePresentation:before{*/
+  /*content: "\e904";*/
+  /*font-size: 30px;*/
+  /*color:#444;*/
+  /*position: relative;*/
+  /*top: 2px;*/
+/*}*/
 
 #virtualclassCont.congrea #preCheckcontainer .screen1.browser::before {
   content : "\e903";
@@ -592,4 +603,63 @@
   font-size: 14px;
   position: relative;
   top: -1px;
+}
+
+
+#virtualclassCont.congrea i.dashboard-icon:before{
+  content : "\f00a";
+  /*color: #34b532;*/
+  /*font-size: 14px;*/
+  /*position: relative;*/
+  /*top: -1px;*/
+  font-weight : normal;
+  font-size : 11px;
+  font-family: 'icomoon';
+  font-size: 23px;
+  color:white;
+}
+
+#virtualclassCont.congrea i.icon-savevideo:before{
+  content : "\e90d";
+  font-weight : normal;
+  font-size : 11px;
+  font-family: 'icomoon';
+  font-size: 23px;
+  color:white;
+  line-height: 65% !important;
+}
+
+#virtualclassCont.congrea #dashboardnav .clicked i.dashboard-icon:before{
+  content : "X";
+}
+
+#virtualclassCont.congrea #virtualclassMultiVideoTool .icon-videoConfrence:before {
+  content: "\e935";
+  font-size: 26px;
+  color: #444;
+  position: relative;
+  top: 2px;
+}
+
+#virtualclassCont.congrea #dashboardnav .clicked i.dashboard-icon:before{
+  content : "\f00d";
+  font-weight : normal;
+  font-size : 11px;
+  font-family: 'icomoon';
+  font-size: 26px;
+  color:white;
+}
+
+#virtualclassCont.congrea .glyphicon-upload:before {
+  margin-right: 5px;
+}
+
+#virtualclassCont.congrea #popupContainer #uploadvideourl #endSessionclose.icon-close:before {
+  content: "\f00d";
+  font-size: 12px;
+  color: #6a8e0b;
+  border: #bcd2aa 1px solid;
+  border-radius: 50%;
+  padding: 3px 5px;
+  background-color: #f9f9f9;
 }

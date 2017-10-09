@@ -2,24 +2,24 @@
   <li class="vmchat_room_bt congtooltip" data-title="Common Chat" id="chatroom_bt2">
     <a class="inner_bt">
       <span id="chatroom_icon"><span class="icon-chatroom"></span></span>
-      <span id="chatroom_text">Chatroom</span>
+      <span id="chatroom_text">{{getString 'Chatroom'}}</span>
     </a>
   </li>
   <li class="vmchat_bar_button congtooltip active" id="user_list" data-title="Pivate Chat">
     <a class="inner_bt" id="yui_3_17_2_1_1496985300499_68">
-      <span id="usertab_text"><span id="onlineusertext">Private Chat</span></span>
+      <span id="usertab_text"><span id="onlineusertext">{{getString 'Pchat'}}</span></span>
     </a>
   </li>
-{{#if control}}
-  <li class="uiMuteAll">
-    <a id="contrAudioAll">
+  {{#if control}}
+    <li class="uiMuteAll congtooltip">
+      <a id="contrAudioAll">
           <span id="contrAudioAllImg" data-action="disable"
-                class="icon-all-audio-disable congtooltip"
+                class="icon-all-audio-disable"
                 data-title="Mute All">
           </span>
-    </a>
-  </li>
-{{/if}}
+      </a>
+    </li>
+  {{/if}}
 </ul>
 <div id="stickybar" class="maximize" style="z-index: 2000;">
   <div id="tabs" class="tabs-bottom ui-tabs ui-widget ui-widget-content ui-corner-all">

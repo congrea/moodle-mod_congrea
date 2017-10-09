@@ -42,6 +42,7 @@
     var userSource = {}; //for contain the user specific audio source
     var sNode = {};
     var ac = {};
+    var sNodePak = {};
 //        var AudioContext = AudioContext || webkitAudioContext;
     /*
      * this returns an object that contains various Properties
@@ -54,7 +55,6 @@
             isChannelReady: '',// not being used
             isInitiator: false,
             isStarted: '',
-            localStream: '',
             pc: [],
             cn: 0,
             ba: false,
@@ -257,7 +257,7 @@
                         vol > (minthreshold * 2) || // Current max volume
                         thdiff <= 4 ) { // We are not ready for this algo
                         this.audioSend(send, audStatus);
-                        audioWasSent = 9;
+                        audioWasSent = 3;
                         // console.log('SEND Current '+vol+' Min '+minthreshold+' Max '+maxthreshold+' rate '+rate+' thdiff '+thdiff+' th '+th);
                     } else if (audioWasSent > 0) {
                         this.audioSend(send, audStatus);  // Continue sending Audio for next X samples
@@ -317,27 +317,40 @@
                  * And it is invoked on clicking test audio
                  */
                 audioToolInit: function () {
-                    var that = virtualclass.gObj.video.audio;
-                    if (this.id == 'speakerPressOnce') {
-                        that.clickOnceSpeaker(this.id);
-                    } else if (this.id == 'audioTest') {
-                        var self = this;
-                        virtualclass.popup.confirmInput(virtualclass.lang.getString('audioTest'), function (confirm) {
-                            if (confirm) {
-                                that.testInit(self.id);
-                            }
-
-                        });
-                    } else if (this.id == 'silenceDetect') {
-                        var a = this.getElementsByTagName('a')[0];
-                        if (that.sd) {
-                            that.sd = false;
-                            this.className = this.className + " sdDisable";
+                    if(virtualclass.gObj.meetingMode){
+                        var tag = document.getElementById(this.id);
+                        // var anchor = tag.getElementsByClassName('tooltip')[0];
+                        // if (tag.getAttribute('data-audio-playing') == 'false' && typeof alwaysDisable == 'undefined') {
+                        if (tag.getAttribute('data-audio-playing') == 'false' && typeof alwaysDisable == 'undefined') {
+                            virtualclass.vutil.audioStatus(tag, "true");
                         } else {
-                            that.sd = true;
-                            this.className = this.className + " sdEnable";
+                            virtualclass.vutil.audioStatus(tag, "false");
+                        }
+                        virtualclass.multiVideo.disableAudio();
+                    } else {
+                        var that = virtualclass.gObj.video.audio;
+                        if (this.id == 'speakerPressOnce') {
+                            that.clickOnceSpeaker(this.id);
+                        } else if (this.id == 'audioTest') {
+                            var self = this;
+                            virtualclass.popup.confirmInput(virtualclass.lang.getString('audioTest'), function (confirm) {
+                                if (confirm) {
+                                    that.testInit(self.id);
+                                }
+
+                            });
+                        } else if (this.id == 'silenceDetect') {
+                            var a = this.getElementsByTagName('a')[0];
+                            if (that.sd) {
+                                that.sd = false;
+                                this.className = this.className + " sdDisable";
+                            } else {
+                                that.sd = true;
+                                this.className = this.className + " sdEnable";
+                            }
                         }
                     }
+
                 },
                 /*
                  * If Push to talk audio tool is pressed down then audio is active
@@ -424,9 +437,11 @@
                     var alwaysPressElem = document.getElementById('speakerPressing');
                     var anchor = tag.getElementsByClassName('congtooltip')[0];
                     // var anchor = tag.getElementsByClassName('tooltip')[0];
+                    // if (tag.getAttribute('data-audio-playing') == 'false' && typeof alwaysDisable == 'undefined') {
                     if (tag.getAttribute('data-audio-playing') == 'false' && typeof alwaysDisable == 'undefined') {
                         //this.studentSpeak(alwaysPressElem);
                         this.studentSpeak();
+
                         tag.setAttribute('data-audio-playing', "true");
                         anchor.setAttribute('data-title', virtualclass.lang.getString('disableSpeaker'));
                         tag.className = "audioTool active";
@@ -438,7 +453,6 @@
                         if(anchor){
                             anchor.setAttribute('data-title', virtualclass.lang.getString('enableSpeaker'));
                         }
-
                         tag.className = "audioTool deactive";
                     }
                 },
@@ -627,6 +641,7 @@
                     if(typeof sNode[uid] != 'object'){
                         console.log('script processor node is created');
                         sNode[uid] = this.Html5Audio.audioContext.createScriptProcessor(16384, 1, 1);
+                        sNodePak[uid] = 0;
                         sNode[uid].onaudioprocess = function (event){
                             var output = event.outputBuffer.getChannelData(0);
                             var newAud = virtualclass.gObj.video.audio.getAudioChunks(uid);
@@ -635,12 +650,10 @@
                                 for (i = 0; i < newAud.length; i++) {
                                     output[i] = newAud[i];
                                 }
-                                if (newAud.length == 16383) {
-                                    output[16383] = newAud[16382];
-                                }
+                                sNodePak[uid] = newAud[16383];
                             }else {
                                 for (i = 0; i < output.length; i++) {
-                                    output[i] = 0;
+                                    output[i] = sNodePak[uid];
                                 }
                             }
                         };
@@ -694,12 +707,20 @@
                      The Audio context should be generated on Student side by following code */
 
                     if(typeof this.resamplerdecode != 'object'){
+                        this.resamplerdecode  = {};
+                    }
+
+                    if(typeof this.resamplerdecode[uid] != 'object'){
                         if(typeof this.Html5Audio != 'object'){
                             this.Html5Audio = {audioContext: new (window.AudioContext || window.webkitAudioContext)()};
                         }
-                        this.resamplerdecode = new Resampler(8000, this.Html5Audio.audioContext.sampleRate, 1, 32768);
+
+                        if(typeof this.resamplerdecode[uid] != "object"){
+                            this.resamplerdecode[uid] =  new Resampler(8000, this.Html5Audio.audioContext.sampleRate, 1, 32768);
+                        }
                     }
-                    var samples = this.resamplerdecode.resampler(samples);
+
+                    var samples = this.resamplerdecode[uid].resampler(samples);
                     // this.audioToBePlay[uid].push(new Float32Array(samples));
 
                     if(typeof allAudioArr[uid] == 'undefined'){
@@ -714,7 +735,7 @@
                     }
 
                     if(typeof ac[uid] == 'undefined'){
-                       ac[uid] = 0;
+                        ac[uid] = 0;
                     }
 
                     /* Picking up an audio chunk and giving
@@ -740,13 +761,13 @@
                         ac[uid] = 0;
                     }
                     console.log("Audio " + this.audioToBePlay[uid].length + " uid " + uid);
-                    if (this.audioToBePlay[uid].length >= 8) {
+                    if (this.audioToBePlay[uid].length >= 19) { // 7 seconds
                         // console.log("Audio Buffer Full");
-                        while (this.audioToBePlay[uid].length >= 3) {
+                        while (this.audioToBePlay[uid].length >= 11) { // 4 seconds
                             virtualclass.gObj.video.audio.audioToBePlay[uid].shift();
                         }
                         return virtualclass.gObj.video.audio.audioToBePlay[uid].shift();
-                    } else if(ac[uid] >= 3) {
+                    } else if(ac[uid] >= 3) { // 1 second
                         // console.log("start audio");
                         return virtualclass.gObj.video.audio.audioToBePlay[uid].shift();
                     } else {
@@ -821,31 +842,30 @@
                  * it eventually plays audio
                  */
                 manuPulateStream: function () {
-                    console.log("Manupulate Stream");
                     var stream = cthis.stream;
                     /* if (!virtualclass.vutil.chkValueInLocalStorage('recordStart')) {
-                     virtualclass.wb[virtualclass.gObj.currWb].recordStarted = new Date().getTime();
-                     localStorage.setItem('recordStart', virtualclass.wb[virtualclass.gObj.currWb].recordStarted);
+                     virtualclass.wb.recordStarted = new Date().getTime();
+                     localStorage.setItem('recordStart', virtualclass.wb.recordStarted);
                      } else {
-                     virtualclass.wb[virtualclass.gObj.currWb].recordStarted = localStorage.getItem('recordStart');
+                     virtualclass.wb.recordStarted = localStorage.getItem('recordStart');
                      } */
                     var audioInput = cthis.audio.Html5Audio.audioContext.createMediaStreamSource(stream);
-                    // This controls the latency
-                    // higher value increase the latency, but avoid auido breakup and glitch
-
-                    // bufferSize = 16384, sampleRate = 44100
-                    // latency = (bufferSize / sampleRate)
-                    // audio latency = 371.5 ms
-
-                    cthis.audio.bufferSize = 16384; // 371 ms
+                    cthis.audio.bufferSize = 16384;
                     // grec is being made global because recorderProcess with onaudioprocess is not triggered due to Garbage Collector
                     // https://code.google.com/p/chromium/issues/detail?id=360378
                     // cthis.audio.rec = cthis.audio.Html5Audio.audioContext.createScriptProcessor(cthis.audio.bufferSize, 1, 1);
                     grec = cthis.audio.Html5Audio.audioContext.createScriptProcessor(cthis.audio.bufferSize, 1, 1);
                     grec.onaudioprocess = cthis.audio.recorderProcess.bind(cthis.audio);
-                    var gainNode = cthis.audio.Html5Audio.audioContext.createGain();
+
+                    gainNode = cthis.audio.Html5Audio.audioContext.createGain();
                     gainNode.gain.value = 0.9;
-                    audioInput.connect(gainNode);
+
+                    filter = cthis.audio.Html5Audio.audioContext.createBiquadFilter();
+                    filter.type = "lowpass";
+                    filter.frequency.value = 1000;
+
+                    audioInput.connect(filter);
+                    filter.connect(gainNode);
                     gainNode.connect(grec);
                     grec.connect(cthis.audio.Html5Audio.audioContext.destination);
                 },
@@ -1031,7 +1051,7 @@
                         }
 
                         if (roles.hasControls()) {
-                            cthis.audio.graph.display();
+                            // cthis.audio.graph.display();
                         }
                         //frame = cvideo.tempVid.toDataURL("image/jpg", 0.2);
                         var user = {
@@ -1202,12 +1222,10 @@
 
 
             init: function (vbool) {
-                //    alert("hello borther");
+                console.log('Video second, normal video');
                 cthis = this; //TODO there should be done work for cthis
                 //vcan.oneExecuted = true;
                 virtualclass.gObj.oneExecuted = true;
-                var audio = true;
-
                 var audioOpts = {
                     mandatory: {
                     },
@@ -1228,28 +1246,39 @@
                         {googAudioMirroring: true},
                         {googNoiseReduction: true},
                         {VoiceActivityDetection: true}
-                    ]
+                    ],
+
                 };
+
+                var webcam = virtualclass.system.mediaDevices.hasWebcam ? true : false;
+
+
                 var session = {
-                    audio: audioOpts,
-                    video: true
+                    //audio: virtualclass.gObj.multiVideo ? true :  audioOpts,
+                    video: webcam,
+                    audio : true
                 };
-
                 cthis.video.init();
-                if (!virtualclass.vutil.isPlayMode()) {
+                var that  = this;
 
+                if (!virtualclass.vutil.isPlayMode()) {
                     virtualclass.adpt = new virtualclass.adapter();
                     var cNavigator = virtualclass.adpt.init(navigator);
 
                     //  cNavigator.getUserMedia(session, this.handleUserMedia, this.handleUserMediaError);
 
-                    var that  = this;
+
+                    //return;
                     cNavigator.mediaDevices.getUserMedia(session).then(function (stream) {
                         that.handleUserMedia(stream)
+                        if(virtualclass.gObj.meetingMode){
+                            virtualclass.multiVideo.init();
+                        }
                     }).catch(function (e) {
                         that.handleUserMediaError(e);
                     });
                 }
+
 
                 if (virtualclass.system.wbRtc.peerCon) { //TODO this should be deleted
                     if (typeof localStorage.wbrtcMsg == 'undefined') {
@@ -1257,6 +1286,11 @@
                         localStorage.wbrtcMsg = true;
                     }
                 }
+
+                if(webcam == false){
+                    virtualclass.user.control.videoDisable();
+                }
+
             },
 
 
@@ -1270,7 +1304,6 @@
 
             handleUserMedia: function (stream) {
                 virtualclass.gObj.video.audioVisual.readyForVisual(stream);
-
                 localStorage.removeItem('dvid');
                 var audioWiget = document.getElementById('audioWidget');
                 var audio = localStorage.getItem('audEnable');
@@ -1412,7 +1445,7 @@
             },
             /*
              * Plays all videos of currentlly logged in users after an interval of 1040 ms
-             * @param id footer chat  container id 
+             * @param id footer chat  container id
              */
             dispAllVideo: function (id) {
                 setTimeout(
@@ -1449,7 +1482,6 @@
              * @param error error object
              */
             handleUserMediaError: function (error) {
-
                 var errorMsg = (typeof error == 'object') ? virtualclass.lang.getString(error.name) : virtualclass.lang.getString(error);
                 virtualclass.view.createErrorMsg(errorMsg, 'errorContainer', 'chatWidget');
                 virtualclass.user.control.audioWidgetDisable('vd');
