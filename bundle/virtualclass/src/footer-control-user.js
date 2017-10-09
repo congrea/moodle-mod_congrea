@@ -761,13 +761,34 @@
                     localStorage.setItem('audEnable', JSON.stringify(ad));
 
                     var studentSpeaker = document.getElementById('audioWidget');
-                    studentSpeaker.style.opacity = "0.5";
-                    studentSpeaker.style.pointerEvents = "none";
+                    studentSpeaker.style.opacity = "1";
+                    studentSpeaker.style.pointerEvents = "visible";
                     studentSpeaker.className = 'deactive';
+                    this.audioDisable();
+                    this.videoDisable();
+
                     var alwaysPressElem = document.getElementById('speakerPressing');
                     if (virtualclass.gObj.hasOwnProperty('video')) {
                         virtualclass.gObj.video.audio.studentNotSpeak(alwaysPressElem);
                         virtualclass.gObj.video.audio.clickOnceSpeaker('speakerPressOnce', "alwaysDisable");
+                    }
+
+                },
+
+                audioDisable : function (){
+                    var mic = document.getElementById('speakerPressOnce');
+                    if(mic != null){
+                        mic.style.opacity = "0.5";
+                        mic.style.pointerEvents = "none";
+                    }
+
+                },
+
+                videoDisable : function (){
+                    var videoIcon = document.getElementById('congCtrBar');
+                    if(videoIcon != null){
+                        videoIcon.style.opacity = "0.5";
+                        videoIcon.style.pointerEvents = "none";
                     }
                 },
 

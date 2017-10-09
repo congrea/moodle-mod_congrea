@@ -1,6 +1,7 @@
 
 <?php
-$version = '20161221618';
+// $version = '20161221618';
+$version = '201710091125';
 $domain=$_SERVER['HTTP_HOST'];
 $whiteboardpath = "https://$domain/virtualclass/";
 define( 'SCRIPT_ROOT', $whiteboardpath);
@@ -42,7 +43,7 @@ $name = $_COOKIE['name'];
 $sid = $_COOKIE['sid'];
 $role = $_COOKIE['role'];
 $room = $_COOKIE['room'];
-$ts = (isset($_COOKIE['room')) ? $_GET['ts'] : false;
+$ts = (isset($_COOKIE['room'])) ? $_GET['ts'] : false;
 ?>
 
 <link href="https://vjs.zencdn.net/5.8.8/video-js.css" rel="stylesheet">
@@ -76,6 +77,13 @@ if (isset($role)) {
     $cont_class .= 'student';
 }
 
+if($meetingmode){
+   $cont_class .= ' meetingmode';
+}else {
+    $cont_class .= ' normalmode';
+}
+
+
 include('./virtualclass/example/en.php');
 function get_string($phrase)
 {
@@ -87,10 +95,17 @@ function get_string($phrase)
 if(isset($_GET['theme'])){
     $theme = $_GET['theme'];
 } else {
-    $theme = 'black';
+    $theme = 'gray';
 }
 
 $pt = array('0' => 'disable', '1' => 'enable');
+
+if (isset($_GET['meetingmode'])) {
+    $meetingmode = $_GET['meetingmode'];
+} else {
+    $meetingmode = 1;
+}
+
 $pushtotalk = '0';
 if(isset($_GET['pt'])){
     if($_GET['pt'] == 'enable' || $_GET['pt'] == 'disable'){
@@ -108,6 +123,7 @@ if(isset($_GET['anyonepresenter'])){
 }
 
 if ($room) {
+
     if (!$matches[0]) {
         //header("Location: https://v.vidya.io/$room/");
         header("Location: https://$domain/$room/");
@@ -125,47 +141,76 @@ if ($room) {
     }
 
 
-    $authusername = substr(str_shuffle(MD5(microtime())), 0, 12);
-    $authpassword = substr(str_shuffle(MD5(microtime())), 0, 12);
-    $licen = '100-1139e6899fdeda0db594a5';
+   //send auth detail to server
+   $authusername = substr(str_shuffle(MD5(microtime())), 0, 20);
+   $authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);
+   $licensekey = '2210-sg-245-uqGwY3qnHMamdpwBMmKXXns8qqZVFDhAmksJ8gMXap59JMHz';
+   $post_data = array('authuser'=> $authusername,'authpass' => $authpassword);
+   $post_data = json_encode($post_data);
+   //echo $post_data;
+   $rid = my_curl_request("https://api.congrea.com/auth", $post_data, $licensekey);
+   //print_r( $rid);exit;
 
 
-    $post_data = array('authuser' => $authusername, 'authpass' => $authpassword, 'licensekey' => $licen);
-    $post_data = json_encode($post_data);
-    $rid = my_curl_request("https://c.congrea.com", $post_data); // REMOVE HTTP
-    $rid = "wss://$rid";
+   if (!$rid = json_decode($rid)) {
+       echo "{\"error\": \"403\"}";exit;
+   } elseif (isset($rid->message)) {
+       echo "{\"error\": \"$rid->message\"}";exit;
+   } elseif (!isset($rid->result)) {
+       echo "{\"error\": \"invalid\"}";exit;
+   }
 
-    if (empty($rid) or strlen($rid) > 31) {
-        echo "Chat server is unavailable!";
-        exit;
-    }
-
-
+   $rid = "wss://$rid->result";
 
     ?>
+
 
     <!DOCTYPE html>
     <html lang="en">
     <head>
     <title>Congrea Virtual Class</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."css/bootstrap/css/bootstrap.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."codemirror/lib/codemirror.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."bundle/jquery/css/base/".$theme."_jquery-ui.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."css/pbar.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."css/progress.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."css/custom.css" ?> />
-    <link rel="stylesheet" type="text/css" href= <?php echo $whiteboardpath."poll/graphs/c3.css" ?> />
-    
-
 
     <?php
     if($debug){
-        echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/styles.css">';
-        echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/popup.css">';
-        echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/jquery.ui.chatbox.css">';
-        echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/vceditor.css">';
-        echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/document-share.css">';
+        //  echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/styles.css">';
+        // echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/popup.css">';
+        // echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/jquery.ui.chatbox.css">';
+        // echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/vceditor.css">';
+        // echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'/document-share.css">';
+    ?>
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT."css/bootstrap/css/bootstrap.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT."codemirror/lib/codemirror.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT."bundle/jquery/css/base/".$theme."_jquery-ui.css" ?> />
+
+
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT."css/modules/custom.css" ?> />
+
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT."poll/graphs/c3.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "SlickQuiz/css/slickQuiz.css" ?> />
+
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/styles.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/popup.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/vceditor.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/document-share.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/editor.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/icon.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/media.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/poll.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/quiz.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/screenshare.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/sharepresentation.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/video.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/peervideo.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/whiteboard.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/youtube.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/jquery.ui.chatbox.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/progress.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/pbar.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/modules/multivideo.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/bootstrap/css/bootstrap.css" ?> />
+        <link rel="stylesheet" type="text/css" href= <?php echo SCRIPT_ROOT . "css/theme/$theme".".css" ?> />
+    <?php
     } else {
         echo '<link rel="stylesheet" type="text/css" href="'.SCRIPT_ROOT.'css/'.$theme.'.min.css">';
     }
@@ -216,6 +261,9 @@ if ($room) {
 
     <script type="text/javascript"
             src="/virtualclass/bundle/jquery/jquery-ui.min.js?ver=<?php echo $version ?>"></script>
+            <script type="text/javascript">
+                var sdworker = new Worker("<?php echo $whiteboardpath."worker/screendecode.js" ?>");
+            </script>
     <?php
     if (!$debug) {
         ?>
@@ -225,6 +273,7 @@ if ($room) {
     <?php
     } else {
     ?>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.8/handlebars.js"></script>
         <script type="text/javascript"
                 src="/virtualclass/bundle/io/src/iolib.js?ver=<?php echo $version ?>"></script>
         <script type="text/javascript" src="/virtualclass/src/roles.js?ver=<?php echo $version ?>"></script>
@@ -373,15 +422,22 @@ if ($room) {
         <script type="text/javascript" src="/virtualclass/chat/lang.en.js?ver=<?php echo $version ?>"></script>
         <script type="text/javascript"
                 src="/virtualclass/src/precheck.js?ver=<?php echo $version ?>"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-base64.min.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-ajax.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-script.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-host.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/upload-video.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/congrea-uploader.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/page.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/document-share.js"></script>
-        <script type="text/javascript" src="<?php echo $whiteboardpath;?>index.js"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-base64.min.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-ajax.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-script.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/video-host.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/dashboard.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/poll.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/upload-video.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/congrea-uploader.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/page.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/document-share.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>SlickQuiz/js/mo_slickQuiz.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/quiz.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/templates_view.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/doNotesMain.js?ver=<?php echo $version ?>"></script>
+        <script type="text/javascript" src="<?php echo $whiteboardpath;?>src/multi-video.js?ver=<?php echo $version ?>"></script>
+
     <?php
     }
     ?>
@@ -415,6 +471,7 @@ if ($room) {
         wbUser.imageurl = window.whiteboardPath + "images/quality-support.png";
         window.importfilepath = '/importnotallowed.php';
         window.exportfilepath = '/exportnotallowed.php';
+        wbUser.meetingMode =  '<?php echo $meetingmode; ?>';
     </script>
 
     </head>
@@ -560,6 +617,15 @@ if ($room) {
             $classes .= ' ' .$audactive;
 
             ?>
+
+            <script>
+                virtualclassSetting = {};
+                virtualclassSetting.dap = '<?php echo $dap; ?>';
+                virtualclassSetting.classes = '<?php echo $classes; ?>';
+                virtualclassSetting.audio_tooltip = '<?php echo $audio_tooltip; ?>';
+                virtualclassSetting.meetingMode = '<?php echo ($meetingmode == '1') ? true : false ?>';
+
+            </script>
 
             <div id="mainAudioPanel">
                 <div id="speakerPressOnce" class="<?php echo $classes; ?>" data-audio-playing="<?php echo $dap;?>">
@@ -865,28 +931,24 @@ if ($room) {
 
 }
 // Lib Functions
-function my_curl_request($url, $post_data)
-{
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_HEADER, 'content-type: text/plain;');
-    curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_PROXY, false);
-    curl_setopt($ch, CURLOPT_SSLVERSION, 1);
-
-    $result = @curl_exec($ch);
-    if ($result === false) {
-        echo 'Curl error: ' . curl_error($ch);
-        exit;
-    }
-    curl_close($ch);
-
-    return $result;
+function my_curl_request($url, $post_data, $key){
+       $ch = curl_init();
+       curl_setopt($ch, CURLOPT_URL, $url);
+       curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+       curl_setopt($ch, CURLOPT_HEADER, FALSE);
+           curl_setopt($ch, CURLOPT_HTTPHEADER,
+                       array('Content-Type: application/json',
+                       'x-api-key: ' . $key,
+                     ));
+       curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+       curl_setopt($ch, CURLOPT_PROXY, false);
+       $result = @curl_exec($ch);
+       curl_close($ch);
+       return $result;
 }
 
 function notInRoom()

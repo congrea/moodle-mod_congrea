@@ -4,7 +4,7 @@
         var playMode = (wbUser.virtualclassPlay != '' ? parseInt(wbUser.virtualclassPlay, 10) : 0);
         return {
             isPlayMode :playMode,
-            apps: ["Whiteboard", "ScreenShare", 'Yts', 'EditorRich', 'EditorCode', 'SharePresentation','Poll','Video', 'DocumentShare','Quiz'],
+            apps: ["Whiteboard", "ScreenShare", 'Yts', 'EditorRich', 'EditorCode', 'SharePresentation','Poll','Video', 'DocumentShare','Quiz', 'MultiVideo'],
             appSessionEnd: "virtualclassSessionEnd",
             appAudioTest: "virtualclassAudioTest",
 
@@ -27,7 +27,8 @@
                 commandToolsWrapperId: {},
                 editorInitDone: 0,
                 resize : false,
-                has_ts_capability : (wbUser.ts == 1 || wbUser.ts == true) ? true : false
+                has_ts_capability : (wbUser.ts == 1 || wbUser.ts == true) ? true : false,
+                meetingMode : +(wbUser.meetingMode),
             },
 
             enablePreCheck : true,
@@ -88,6 +89,7 @@
                 this.viConfig ={id:"virtualclass"+this.apps[7],classes:"appOptions"};
                 this.dtsConfig = {id: "virtualclass" + this.apps[8], classes: "appOptions"};
                 this.qzConfig = {id:"virtualclass"+this.apps[9],classes:"appOptions"};
+                this.mvConfig = {id:"virtualclass"+this.apps[10],classes:"appOptions"};
 
                 //this.wssConfig = { id : "virtualclass" + this.apps[2], classes : "appOptions"};
                 this.user = new window.user();
@@ -103,6 +105,9 @@
                 this.clear = "";
                 this.currApp = this.vutil.capitalizeFirstLetter(app);
                 this.storage = window.storage;
+                this.dashBoard  = dashBoard;
+                this.multiVideo = window.MultiVideo;
+
 //                this.storage.init(function () {
 //                    if (!virtualclass.vutil.isPlayMode()) {
 //                        ioStorage.completeStorage(JSON.stringify(virtualclass.uInfo));
@@ -196,8 +201,20 @@
                     virtualclass.makeReadySocket();
                 }
                 // For initialize the Teacher Video
-                virtualclass.videoHost.init(320 , 240);
-                virtualclass.networkStatus();
+                if(!virtualclass.gObj.meetingMode){
+                    virtualclass.videoHost.init(320 , 240);
+                    virtualclass.networkStatus();
+                } else {
+                    // virtualclass.multiVideo.init();
+
+                    // virtualclass.user.control.audioDisable()
+                    // if(roles.hasAdmin()){
+                    //     virtualclass.user.control.videoDisable()
+                    // }
+                }
+
+                virtualclass.vutil.videoController();
+
                 if(virtualclass.gObj.has_ts_capability && !virtualclass.vutil.isPlayMode()){
                     virtualclass.vutil.initTechSupportUi();
                 }
@@ -446,6 +463,11 @@
             },
 
             makeAppReady: function (app, cusEvent, data) {
+                // var congdashboardClose = document.querySelector('#congdashboard button.close');
+                // if(congdashboardClose != null){
+                //     congdashboardClose.click();
+                // }
+                virtualclass.dashBoard.close();
                 console.log('Application is ready' + app);
                 this.view = window.view;
                 this.currApp = virtualclass.vutil.capitalizeFirstLetter(app);
@@ -482,7 +504,16 @@
                 } else if (app == "DocumentShare") {
                     this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(arguments));
                     if(roles.hasControls()){
-                        virtualclass.vutil.triggerDashboard(app);
+                        if(!virtualclass.dts.firstRequest){
+                            virtualclass.vutil.triggerDashboard(app);
+                        } else{
+
+                            /* For the request of Docs, we need to hide the popup Dashboard,
+                             * If the notes order is not available from database then the application
+                             * shows the popup Dashboard later
+                             */
+                            virtualclass.vutil.triggerDashboard(app, 'hidepopup');
+                        }
                     }
                 } else {
                     var prevapp = localStorage.getItem('prevApp');
@@ -509,8 +540,9 @@
 
                         this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(args));
                     }else {
+                        var currVideo= Array.prototype.slice.call(arguments)[2];
                         this.appInitiator[app].apply(virtualclass, Array.prototype.slice.call(arguments));
-                        if(roles.hasControls() && app == 'Video'){
+                        if(roles.hasControls() && app == 'Video' && !(currVideo && currVideo.init&&(currVideo.init.videoUrl|| currVideo.fromReload))){
                             virtualclass.vutil.triggerDashboard(app);
                         }
                     }
@@ -541,18 +573,36 @@
 
                 }
                 if(roles.hasControls()) {
-                    if (virtualclass.currApp == 'SharePresentation' || virtualclass.currApp == 'Video') {
-                        virtualclass.vutil.initDashboardNav();
-                        var dashboardnav =  document.querySelector('#dashboardnav button');
-                        if(dashboardnav != null){
-                            dashboardnav.click();
+                    var currVideo= Array.prototype.slice.call(arguments)[2];
+                    if (virtualclass.currApp == 'SharePresentation' || (virtualclass.currApp == 'Video')) {
+                        virtualclass.vutil.initDashboardNav(currVideo);
+                        if(virtualclass.currApp == 'Video'){
+
+                         // if(!(currVideo && currVideo.init && (currVideo.init.videoUrl|| currVideo.fromReload))){
+                            if(!(currVideo)){
+                                var dashboardnav =  document.querySelector('#dashboardnav button');
+                                if(dashboardnav != null){
+                                     dashboardnav.click();
+                                }
+                            }
+
+                        }else{
+                            if(!(virtualclass.sharePt.localStoragFlag)){
+                                var dashboardnav =  document.querySelector('#dashboardnav button');
+                                if(dashboardnav != null){
+                                     dashboardnav.click();
+                                }
+
+                            }
                         }
+
                     } else if(virtualclass.currApp == 'DocumentShare'){
                         // this.checkDsTable();
                     }else {
                         virtualclass.vutil.removeDashboardNav();
                     }
                 }
+
             },
 
 
@@ -812,6 +862,8 @@
                     }
                 },
 
+
+
                 //SharePresentation: function(app, cusEvent) {
                 //if (typeof this.ss == 'object') {
                 //    this.ss.prevStream = false;
@@ -825,6 +877,7 @@
                         } else {
                             virtualclass.dts.init();
                         }
+
                     }else {
                         // send the initialize for the user layout
                         if(roles.hasControls()){
@@ -848,6 +901,8 @@
                 DocumentShare: function(app, customEvent, docsObj) {
                     if(!virtualclass.hasOwnProperty('dts') || virtualclass.dts == null){
                         virtualclass.dts  = window.documentShare();
+                    }else{
+                        virtualclass.dts.firstRequest = false;
                     }
 
                     //if(!virtualclass.dts.docs.hasOwnProperty('currDoc')){
@@ -893,8 +948,6 @@
                             function (){
                                 cthis.appInitiator.DocumentShare.apply(cthis.appInitiator, args);
 
-
-
                             },100
                         )
                     } else {
@@ -902,11 +955,12 @@
                         // misspacket on new user does not work
                         cthis.appInitiator.makeReadyDsShare.apply(cthis.appInitiator, args);
                         virtualclass.vutil.initDashboardNav();
-                        if(!virtualclass.dts.noteExist()){
+                        http://localhost/bench.html
+                        /** This condition is satisfied when user page refresh without selecting any docs **/
+                        if(!virtualclass.dts.firstRequest && !virtualclass.dts.noteExist()){
                             var dashboardnav =  document.querySelector('#dashboardnav button');
                             if(dashboardnav != null) {
                                 dashboardnav.click();
-
                             }
                         }
 
@@ -914,7 +968,22 @@
                             clearTimeout(dstData);
                         }
                     }
-                }
+                },
+
+                MultiVideo : function (){
+                    var that = this;
+
+                    if(!that.multiVideo.hasOwnProperty('initDone')){
+                        setTimeout(
+                            function (){
+                                that.appInitiator.MultiVideo.apply(virtualclass);
+                            }, 2000
+                        );
+                    }else {
+                        that.multiVideo._init();
+                    }
+                    this.previous = virtualclass.mvConfig.id;
+                },
             },
 
             attachFunction: function () {
@@ -1019,7 +1088,7 @@
                 var contPara = {'whiteboardPath' : whiteboardPath};
 
                 /** Registering the partials which have setting paramter **/
-                var initTemplates = ["precheck", 'teacherVideo', 'audioWidget', 'appTools', 'popupCont'];
+                var initTemplates = ["precheck", 'teacherVideo', 'audioWidget', 'appTools', 'popupCont', 'appToolsMeeting'];
 
                 var isControl = {hasControl : roles.hasControls()};
                 var context;
@@ -1029,6 +1098,8 @@
                         context = contPara;
                     }else if(initTemplates[i] == 'audioWidget'){
                         context = virtualclassSetting;
+                        context.isControl= roles.hasControls();
+                        context.isMettingMode= (virtualclass.gObj.meetingMode) && (roles.isStudent());
 
                     }else if(initTemplates[i] == 'teacherVideo' || initTemplates[i] == 'appTools'){
                         context = isControl;
@@ -1046,6 +1117,7 @@
                     main: this.getTemplate('main') ,
                     whiteboard: this.getTemplate('main', 'whiteboard'),
                     dashboardCont: this.getTemplate('dashboardCont'),
+                    multiVideo: this.getTemplate('multiVideo'),
 
                 });
             },
@@ -1069,6 +1141,15 @@
                         console.log(optionalValue);
                     }
                 });
+
+                Handlebars.registerHelper("getVideoType", function(optionalValue) {
+                    if(virtualclass.gObj.meetingMode){
+                        return 'multiVideo';
+                    }else {
+                        return 'teacherVideo';
+                    }
+                });
+
             },
 
             //the same function is defining at script.js
@@ -1076,12 +1157,14 @@
                 var mainContainer = document.querySelector('#'+virtualclass.html.id);
                 this.registerHelper();
                 this.registerPartial();
-                /** inserting the main container of virtualclass **/
+                /** Inserting the main container of virtualclass **/
                 var mainTemplate = this.getTemplate('main');
 
                 var mainCont = {
                     isPlay : virtualclass.isPlayMode,
-                    hasControls : roles.hasControls()}
+                    hasControls : roles.hasControls(),
+                    meetingMode : virtualclass.gObj.meetingMode
+                }
                 var mainHtml = mainTemplate(mainCont);
                 mainContainer.insertAdjacentHTML('afterbegin', mainHtml);
             },
@@ -1110,4 +1193,5 @@
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
+
 })(window);

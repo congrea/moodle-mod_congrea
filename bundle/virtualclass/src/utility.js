@@ -787,8 +787,12 @@
             }
 
             if (!virtualclass.gObj.hasOwnProperty('audIntDisable') && !virtualclass.gObj.hasOwnProperty('vidIntDisable')) {
-                virtualclass.gObj.video.init();
-                virtualclass.gObj.video.isInitiator = true;
+                setTimeout(
+                    function (){
+                        virtualclass.gObj.video.init();
+                        virtualclass.gObj.video.isInitiator = true;
+                    },200
+                );
             }
 
             // vcan.oneExecuted = false;
@@ -1664,16 +1668,25 @@
 
 
         attachEventToUploadTab : function (type, elemArr, cb) {
-            var btn = document.getElementById("newDocBtn")
+            var btn = document.getElementById("newDocBtn");
             if(btn != null){
-                btn.addEventListener("click", function (){
-                    var element = document.querySelector('#DocumentShareDashboard .qq-upload-button-selector.qq-upload-button input');
-                    if(element != null){
-                        element.click(); // This function triggers funtion attached on fine-uploader 'Upoad button'
-                    }else {
-                        alert('Element is null');
-                    }
-                })
+                btn.removeEventListener('click', virtualclass.vutil._attachEventToUploadTab);
+                btn.addEventListener("click", virtualclass.vutil._attachEventToUploadTab);
+
+            }
+        },
+
+        _attachEventToUploadTab : function (){
+            var element = document.querySelector('#DocumentShareDashboard .qq-upload-button-selector.qq-upload-button input');
+            if(element != null){
+                element.click(); // This function triggers funtion attached on fine-uploader 'Upoad button'
+                var msz = document.querySelector("#DocumentShareDashboard .qq-upload-list-selector.qq-upload-list");
+                if(msz){
+                    msz.style.display="block";
+                }
+
+            }else {
+                alert('Element is null');
             }
         },
         attachEventToUpload : function (type, elemArr, cb) {
@@ -1709,6 +1722,7 @@
                 upload.multiple = false;
                 // upload.requesteEndPoint = window.webapi + "&methodname=congrea_image_converter&user="+virtualclass.gObj.uid;
                 upload.requesteEndPoint = window.webapi + "&methodname=congrea_image_converter&live_class_id="+virtualclass.gObj.congCourse+"&status=1&content_type_id=1&user="+virtualclass.gObj.uid;
+
             }
 
             //  virtualclass.fineUploader.generateModal(type, elemArr)
@@ -1719,6 +1733,18 @@
             //upload.requesteEndPoint = "https://local.vidya.io/congrea_te_online/example/upload.php";
 
             virtualclass.fineUploader.uploaderFn(upload);
+
+            if(type != 'video') {
+                var cont = document.querySelector("#docsUploadMsz");
+                var upMsz = document.createElement("div")
+                cont.appendChild(upMsz);
+                var msz = document.querySelector("#DocumentShareDashboard .qq-upload-list-selector.qq-upload-list");
+                if (msz) {
+                    upMsz.appendChild(msz);
+                    msz.style.display = "block";
+                }
+            }
+
 
             // TODO this need to be outside the function
             // if(type == 'video'){
@@ -1831,28 +1857,61 @@
             }
             return true;
         },
+        /**
+         * Todo, this needs to move in dashboard.js
+         * @param currVideo
+         */
+        initDashboardNav : function (currVideo){
+            if(roles.hasControls()){
+                var dashboardnav = document.querySelector('#dashboardnav button');
 
-        initDashboardNav : function (){
-            var dashboardnav = document.querySelector('#dashboardnav button');
+                if(dashboardnav == null){
+                    var dbNavTemp = virtualclass.getTemplate('dashboardNav');
+                    var context = {app : virtualclass.currApp};
+                    var dbNavHtml = dbNavTemp(context);
 
-            if(dashboardnav == null){
-                var dbNavTemp = virtualclass.getTemplate('dashboardNav');
-                var context = {app : virtualclass.currApp};
-                var dbNavHtml = dbNavTemp(context);
+                    var virtualclassOptionsCont = document.querySelector('#virtualclassOptionsCont');
+                    virtualclassOptionsCont.insertAdjacentHTML('afterend', dbNavHtml);
 
-                var virtualclassOptionsCont = document.querySelector('#virtualclassOptionsCont');
-                virtualclassOptionsCont.insertAdjacentHTML('afterend', dbNavHtml);
+                    var dashboardnav =  document.querySelector('#dashboardnav button');
+                    if(dashboardnav != null){
+                        dashboardnav.addEventListener('click', function (){
+                             if(this.classList.contains('clicked')){
+                                 virtualclass.dashBoard.close();
+                             }else {
+                                 virtualclass.vutil.initDashboard(virtualclass.currApp);
+                                 this.classList.add('clicked');
+                             }
+                           }
+                        );
 
-                var dashboardnav =  document.querySelector('#dashboardnav button');
-                if(dashboardnav != null){
-                    dashboardnav.addEventListener('click', function (){virtualclass.vutil.initDashboard(virtualclass.currApp)});
+                        if(currVideo){
+                            virtualclass.vutil.readyDashboard();
+                        }
+                    }
                 }
-            }
 
-            this.readyDashboard();
+                if(virtualclass.currApp == 'DocumentShare'){
+                    if(!virtualclass.dts.noteExist()){
+                        this.readyDashboard();
+                    }
+                }else if(virtualclass.currApp == 'Video'){
+                    if(typeof currVideo == 'undefined'){
+                        this.readyDashboard();
+                    }
+
+                    // if(!(currVideo && currVideo.init && currVideo.init.videoUrl)){
+                    //     this.readyDashboard();
+                    // }
+                } else {
+                    this.readyDashboard();
+                }
+
+            }
         },
 
         readyDashboard : function (){
+            console.log('Ready Dashboard');
             var currApp = virtualclass.currApp;
             // virtualclass.vutil.initDashboard(virtualclass.currApp);
             if(document.querySelector('#congdashboard') ==  null){
@@ -1864,7 +1923,8 @@
             // in any other application we can handle
             // dashoard content in own style
             if(currApp == 'DocumentShare'){
-
+                var dtitle = document.getElementById('dashboardnav');
+                dtitle.setAttribute('data-title', virtualclass.lang.getString('DocumentSharedbHeading'));
                 if(document.querySelector('#'+currApp+'Dashboard') == null){
                     var elem = document.createElement("div");
                     var cont = document.querySelector('#congdashboard .modal-body')
@@ -1883,7 +1943,8 @@
                 virtualclass.vutil.makeElementActive('#DocumentShareDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
                 virtualclass.vutil.makeElementActive('#listnotes');
             }else if(currApp == 'Video'){
-
+                var dtitle = document.getElementById('dashboardnav');
+                dtitle.setAttribute('data-title', virtualclass.lang.getString('VideodbHeading'));
                 if(document.querySelector('#'+currApp+'Dashboard') == null){
                     var elem = document.createElement("div");
                     var cont = document.querySelector('#congdashboard .modal-body')
@@ -1896,14 +1957,20 @@
                     videocont.parentNode.removeChild(videocont);
                 }
 
-                var videoDashboard = virtualclass.getTemplate('popup','videoupload');
-                var dbHtml = videoDashboard();
-                $('#VideoDashboard').append(dbHtml);
-                virtualclass.videoUl.UI.popup();
+
+               // if(!(currVideo && currVideo.init&&currVideo.init.videoUrl)){
+                    var videoDashboard = virtualclass.getTemplate('popup','videoupload');
+                    var dbHtml = videoDashboard();
+                    $('#VideoDashboard').append(dbHtml);
+                    virtualclass.videoUl.UI.popup();
+               // }
+
                 virtualclass.vutil.attachEventToUpload();
                 virtualclass.vutil.makeElementActive('#VideoDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
                 virtualclass.vutil.makeElementActive('#listvideo');
             } else if (currApp == "SharePresentation"){
+                var dtitle = document.getElementById('dashboardnav');
+                dtitle.setAttribute('data-title', virtualclass.lang.getString('SharePresentationdbHeading'));
                 if(document.querySelector('#'+currApp+'Dashboard') == null){
                     var elem = document.createElement("div");
                     var cont = document.querySelector('#congdashboard .modal-body')
@@ -1914,7 +1981,7 @@
             }
         },
 
-        initDashboard : function (currApp){
+        initDashboard : function (currApp, hidepopup){
             var mainContainer = document.querySelector('#mainContainer');
             if(currApp=="SharePresentation") {
                 var dbcont = document.querySelector('#pptDbCont');
@@ -1927,11 +1994,9 @@
 
                 }
                 if (virtualclass.sharePt.ppts && virtualclass.sharePt.ppts.length) {
-                    virtualclass.sharePt.showPpts(virtualclass.sharePt.ppts);
-                    virtualclass.sharePt.retrieveOrder();
+                    // virtualclass.sharePt.showPpts(virtualclass.sharePt.ppts);
+                    // virtualclass.sharePt.retrieveOrder();
                 }
-
-
             }
             var allDbContainer  = document.querySelectorAll('#congdashboard .dbContainer');
             for(var i=0; i<allDbContainer.length; i++){
@@ -1948,18 +2013,32 @@
             //     show: true
             // });
 
-            $('#congdashboard').modal();
+         //   $('#congdashboard').modal();
 
+            console.log('Dashboard is created for ' + virtualclass.currApp);
             if(currApp == "DocumentShare"){
+                if(typeof hidepopup == 'undefined'){
+                    $('#congdashboard').modal();
+                    virtualclass.dashBoard.clickCloseButton();
+                }
+
                 if(virtualclass.dts.noteExist()){
                     virtualclass.vutil.hideUploadMsg('docsuploadContainer'); // file uploader container
                 }
+               //  virtualclass.vutil.attachEventToUploadTab();
+
+            }else {
+                $('#congdashboard').modal();
             }
+
+            virtualclass.dashBoard.actualCloseHandler();
 
             var moodleHeader = document.querySelector('#congdashboard .modal-header h4');
             if(moodleHeader != null){
                 moodleHeader.innerHTML = virtualclass.lang.getString(currApp + 'dbHeading');
             }
+
+
         },
 
         getDocsDashBoard : function (app){
@@ -2004,11 +2083,15 @@
             );
         },
 
-        triggerDashboard : function (currApp){
+        triggerDashboard : function (currApp, hidepopup){
             if(currApp == 'DocumentShare'){
                 var currentNote = document.querySelector('#screen-docs .note.current');
                 if(currentNote == null){
-                    virtualclass.vutil.initDashboard(currApp);
+                    if(typeof hidepopup ==  'undefined'){
+                        virtualclass.vutil.initDashboard(currApp);
+                    }else {
+                        virtualclass.vutil.initDashboard(currApp, hidepopup);
+                    }
                 }
             } else {
                 virtualclass.vutil.initDashboard(currApp);
@@ -2031,7 +2114,59 @@
             if(elem != null){
                 elem.setAttribute('qq-drop-area-text', 'Drop File Here');
             }
-        }
+        },
+
+        /** Enable or Disable the Audio **/
+        audioStatus : function (tag, status){
+            var anchor = tag.getElementsByClassName('congtooltip')[0];
+            if(status == 'true'){
+                tag.setAttribute('data-audio-playing', "true");
+                anchor.setAttribute('data-title', virtualclass.lang.getString('disableSpeaker'));
+                tag.className = "audioTool active";
+            }else {
+                tag.setAttribute('data-audio-playing', "false");
+                if(anchor){
+                    anchor.setAttribute('data-title', virtualclass.lang.getString('enableSpeaker'));
+                }
+                tag.className = "audioTool deactive";
+            }
+        },
+
+        videoController: function () {
+            var elem = document.getElementById("videoSwitch");
+            if(elem){
+                elem.addEventListener("click", function () {
+                    virtualclass.vutil.videoHandler(this);
+                })
+            }
+
+        },
+
+        videoHandler: function (that) {
+            var video;
+            if (that.classList.contains("on")) {
+                that.classList.remove("on");
+                that.classList.add("off");
+                virtualclass.videoHost.gObj.videoSwitch = 0;
+                video = "off";
+                var tooltip = document.querySelector(".videoSwitchCont");
+                tooltip.dataset.title="video on"
+            } else {
+                that.classList.remove("off");
+                that.classList.add("on");
+                virtualclass.videoHost.gObj.videoSwitch = 1;
+                video = "on"
+                var tooltip = document.querySelector(".videoSwitchCont");
+                tooltip.dataset.title="video off"
+            }
+
+            if(virtualclass.gObj.meetingMode){
+               virtualclass.multiVideo.disableVideo();
+            }else {
+                ioAdapter.mustSend({'congCtr': {videoSwitch: video}, 'cf': 'congController'});
+            }
+
+        },
     };
     window.vutil = vutil;
 })(window);

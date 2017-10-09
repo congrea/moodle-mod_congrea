@@ -260,7 +260,9 @@ $(document).ready(function () {
             }
             var e = {removeUser : removeUser};
 
-            memberUpdateWithDelay(e, 'removed');
+            memberUpdateWithDelay(e, 'removed')
+
+            virtualclass.multiVideo.onUserRemove(removeUser);
 
         });
 
@@ -840,6 +842,11 @@ $(document).ready(function () {
             if (virtualclass.joinUser.role == 's' && virtualclass.gObj.has_ts_capability){
                 ioAdapter.mustSend({'uid': virtualclass.gObj.uid, ac:true, 'cf': 'tsr'});
             }
+
+            if(virtualclass.gObj.uid != virtualclass.jId && virtualclass.gObj.meetingMode   ){
+                virtualclass.multiVideo.onUserJoin(virtualclass.jId);
+            }
+
         });
 
         var overrideRoleTeacher = function () {
@@ -855,25 +862,35 @@ $(document).ready(function () {
 
         $(document).on("PONG", function (e) {
             virtualclass.videoHost.gObj.time_diff = e.timeStamp - e.message;
-            // console.log("PONG " + (time_diff) + " Counter is at " + virtualclass.videoHost.gObj.MYSPEED_COUNTER  + " Speed " + MYSPEED);
-            if (virtualclass.videoHost.gObj.MYSPEED == 1 && virtualclass.videoHost.gObj.time_diff > 2000) {
+            if (virtualclass.videoHost.gObj.MYSPEED <= 4 && virtualclass.videoHost.gObj.time_diff > 1200) {
+                virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN = 0;
                 virtualclass.videoHost.gObj.MYSPEED_COUNTER++;
-                if (virtualclass.videoHost.gObj.MYSPEED_COUNTER > 5) {
+                if (virtualclass.videoHost.gObj.MYSPEED_COUNTER > 2) {
                     virtualclass.videoHost.gObj.MYSPEED++;
                     ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
-                    //     console.log("REDUCE SPEED TO " + virtualclass.videoHost.gObj.MYSPEED);
+                    console.log("REDUCE SPEED TO " + virtualclass.videoHost.gObj.MYSPEED);
                     virtualclass.videoHost.gObj.MYSPEED_COUNTER = 0;
                 }
-            } else if (virtualclass.videoHost.gObj.MYSPEED == 2 && virtualclass.videoHost.gObj.time_diff > 2000) {
-                virtualclass.videoHost.gObj.MYSPEED_COUNTER++;
-                if (virtualclass.videoHost.gObj.MYSPEED_COUNTER > 15) {
-                    virtualclass.videoHost.gObj.MYSPEED++;
-                    ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
-                    //   console.log("REDUCE SPEED TO " + virtualclass.videoHost.gObj.MYSPEED);
-                }
-            } else if (virtualclass.videoHost.gObj.time_diff < 900) {
+            } else if (virtualclass.videoHost.gObj.time_diff < 500) {
                 virtualclass.videoHost.gObj.MYSPEED_COUNTER = 0;
+                if (virtualclass.videoHost.gObj.time_diff < 400 && virtualclass.videoHost.gObj.MYSPEED > 1) {
+                    virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN++;
+                    if ((virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN > 10 && virtualclass.videoHost.gObj.MYSPEED > 2)
+                        || (virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN > 30 && virtualclass.videoHost.gObj.MYSPEED > 1 &&
+                        virtualclass.videoHost.gObj.MYSPEED_CHANGE <= 2)) {
+                        virtualclass.videoHost.gObj.MYSPEED--;
+                        ioAdapter.sendSpeed(virtualclass.videoHost.gObj.MYSPEED);
+                        console.log("INCREASE SPEED TO " + virtualclass.videoHost.gObj.MYSPEED);
+                        virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN = 0;
+                        if (virtualclass.videoHost.gObj.MYSPEED == 1) {
+                            virtualclass.videoHost.gObj.MYSPEED_CHANGE++;
+                        }
+
+                    }
+                }
             }
+            //console.log("PONG " + (virtualclass.videoHost.gObj.time_diff) + " UP Counter is at " + virtualclass.videoHost.gObj.MYSPEED_COUNTER  + " Speed " + virtualclass.videoHost.gObj.MYSPEED);
+            //console.log("PONG " + (virtualclass.videoHost.gObj.time_diff) + " DOWN Counter is at " + virtualclass.videoHost.gObj.MYSPEED_COUNTER_DOWN  + " Speed " + virtualclass.videoHost.gObj.MYSPEED);
         });
 
         $(document).on("authentication_failed", function (e) {
@@ -1404,6 +1421,11 @@ $(document).ready(function () {
                     newJoinId : e.fromUser.userid,
                     cmadd : true
                 });
+            }
+
+            this.mvid = function (e){
+                console.log('multivideo, message received');
+                virtualclass.multiVideo.onmessage(e.message, e.fromUser.userid);
             }
         };
         // TODO this shoudl be remove, after precheck feature is enabled
