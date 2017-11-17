@@ -152,7 +152,7 @@ function congrea_retrieve_video($valparams) {
                             }
                         }
                     }
-                }else if($record->type !=='ppt'){ // For Url such as Youtube etc.
+                } else if ($record->type !== 'ppt') { // For Url such as Youtube etc.
                     $videosurl = new stdClass();
                     $videosurl->id = $record->id;
                     $videosurl->title = $record->resource;
@@ -183,7 +183,6 @@ function congrea_retrieve_video($valparams) {
  * @param array $valparams
  * @return  json to ensures videos delete or status sucessfully perform.
  */
-
 function update_content($valparams) { // TO do - Improve function name.
     global $DB;
     if (!empty($valparams)) {
@@ -316,7 +315,6 @@ function update_content_video($valparams) { // TO do - Improve function name.
  * @param array of object  $records
  * @return  json
  */
-
 function delete_file_videos($fileid) {
     global $DB;
     if (!empty($fileid)) {
@@ -659,13 +657,12 @@ function poll_result($valparams) {
 //////// Congrea Document Sharing  ///////////
 
 /**
- * This function convert office file to pdf and pdf to images.
+ * This function convert office file to pdf and separate pdf pages .
  * serving for virtual class
  *
  * @param array $valparams
  * @return json
  */
-
 function congrea_image_converter($valparams) {
     global $CFG, $OUTPUT;
     list($file, $cmid, $userid) = $valparams;
@@ -698,8 +695,7 @@ function congrea_image_converter($valparams) {
             }
             $soucefile = $fs->create_file_from_pathname($file_record, $file['qqfile']['tmp_name']); // Save user source file into file api of moodle.
             if (!empty($soucefile)) {
-                if ($getuserfile = $fs->get_file($file_record['contextid'], $file_record['component'], 
-                    $file_record['filearea'], $file_record['itemid'], $file_record['filepath'], $file_record['filename'])) {
+                if ($getuserfile = $fs->get_file($file_record['contextid'], $file_record['component'], $file_record['filearea'], $file_record['itemid'], $file_record['filepath'], $file_record['filename'])) {
                     if (pathinfo(basename($getuserfile->get_filename()), PATHINFO_EXTENSION) == 'pdf') { // Not need for conversion.
                         $convertedpdfid = $getuserfile->get_id();  // Get converted pdf file id 
                         $contenthash = $getuserfile->get_contenthash(); // Get contenthash of converted pdf for make path.
@@ -726,8 +722,8 @@ function congrea_image_converter($valparams) {
                             $pdffilepath = "$CFG->dataroot/filedir/$a/$b/$contenthash"; // get converted pdf file path. to do.
                             $quality = 90;
                             $res = '300x300';
-                            exec("'gs' '-dNOPAUSE' '-sDEVICE=jpeg' '-dUseCIEColor' '-dTextAlphaBits=4' '-dGraphicsAlphaBits=4' '-o$newtmpfile/%03d.jpg' '-r$res' '-dJPEGQ=$quality' '$pdffilepath'", $output);
-                            if (touch($newtmpfile) == 1) { // pdf to image conversion is sucessfull.
+                            exec("'gs' '-dNOPAUSE' '-sDEVICE=pdfwrite' '-dUseCIEColor' '-dTextAlphaBits=4' '-dGraphicsAlphaBits=4' '-o$newtmpfile/%03d.pdf' '-r$res' '-dJPEGQ=$quality' '$pdffilepath'", $output);
+                            if (touch($newtmpfile) == 1) { // pdf separate pdf pages is sucessfull.
                                 $convertedimagedir = $newtmpfile;
                             } else {
                                 $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'pdf to image conversion is failed, try again');
@@ -739,7 +735,7 @@ function congrea_image_converter($valparams) {
                     if (is_dir($convertedimagedir)) { // open tmp directory where images are saved
                         if ($dh = opendir($convertedimagedir)) {
                             while (($file = readdir($dh)) !== false) {
-                                if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'jpg') {
+                                if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'pdf') {
                                     $images[] = $file; // collect all converted images from tmp directory.
                                 }
                             }
@@ -748,13 +744,14 @@ function congrea_image_converter($valparams) {
                     }
                     if (!empty($images)) {
                         sort($images); // Now images are in sequence. 
+                        array_pop($images); // To do, Remove last element from array because last element contain blank pdf page.
                         $path = '/' . $soucefile->get_filename() . '/';
                         foreach ($images as $image) {
                             $fs = get_file_storage();
                             $images_record = array(
                                 'contextid' => $context->id, // ID of context.
                                 'component' => 'mod_congrea', // usually = table name.
-                                'filearea' => 'documentimages', // usually = table name.
+                                'filearea' => 'pdfimages', // usually = table name.
                                 'itemid' => $cm->instance, // congrea id
                                 'filepath' => $path, // any path beginning and ending in.
                                 'filename' => $image, // any filename
@@ -764,15 +761,14 @@ function congrea_image_converter($valparams) {
                                 'status' => true,
                                 'source' => $soucefile->get_id(), // converted pdf id which ensures which pdf file converted into images.
                             );
-                            if ($existing = $fs->get_file($images_record['contextid'], $images_record['component'], $images_record['filearea'], 
-                                $images_record['itemid'], $images_record['filepath'], $images_record['filename'], $images_record['source'])) {
+                            if ($existing = $fs->get_file($images_record['contextid'], $images_record['component'], $images_record['filearea'], $images_record['itemid'], $images_record['filepath'], $images_record['filename'], $images_record['source'])) {
                                 if ($existing) {
                                     $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Unable to Save converted image, try again');
                                     return false;
                                 }
                             }
                             $success = $fs->create_file_from_pathname($images_record, "$convertedimagedir/$image"); // Save each images into moodle file api.
-                            $imagesid[] = $success->get_id(); // ensures images are saved into  moodle Db.
+                            $imagesid[] = $success->get_id(); // Ensures images are saved into  moodle Db.
                         }
                         if (!empty($success) && !empty($imagesid)) {
                             $senddaata = array('status' => '1', 'message' => 'success', 'resultdata' => (object) array('id' => $soucefile->get_id()), 'code' => 100);
@@ -800,6 +796,7 @@ function congrea_image_converter($valparams) {
         }
     }
 }
+
 /**
  * Retrieve all uploaded documents
  * serving for virtual class
@@ -823,7 +820,7 @@ function retrieve_docs($valparams) {
             foreach ($files as $file) {
                 if ($file->get_filename() != "." && $file->get_filename() != "..") {
                     $sql = "SELECT count(source) from {files} where contextid  = ? && itemid = ? && filearea = ? && filepath = ?";
-                    $images = $DB->count_records_sql($sql, array('contextid' => $context->id, 'itemid' => $cm->instance, 'filearea' => 'documentimages', 'filepath' => '/' . $file->get_filename() . '/'));
+                    $images = $DB->count_records_sql($sql, array('contextid' => $context->id, 'itemid' => $cm->instance, 'filearea' => 'pdfimages', 'filepath' => '/' . $file->get_filename() . '/'));
                     $notes[] = array('id' => $file->get_id(), 'title' => $file->get_filename(), 'status' => $file->get_status(), 'pagecount' => $images);
                 }
             }
@@ -872,7 +869,7 @@ function retrieve_all_notes($valparams) {
                     if (!empty($fildata)) {
                         foreach ($fildata as $file) {
                             if ($file->filename != "." && $file->filename != "..") {
-                                $imageurl = file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $file->contextid . '/mod_congrea/documentimages/' . $file->itemid . '/' . $file->filepath . '/' . $file->filename);
+                                $imageurl = file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $file->contextid . '/mod_congrea/pdfimages/' . $file->itemid . '/' . $file->filepath . '/' . $file->filename);
                                 $content_path[] = array('id' => $file->id, 'content_id' => $file->itemid, 'lc_content_id' => $file->source, 'display_order' => 0, 'status' => $file->status, 'content_path' => $imageurl);
                             }
                         }
@@ -881,6 +878,7 @@ function retrieve_all_notes($valparams) {
             }
             if (!empty($content_path)) {
                 $allimagedata = array('status' => 1, 'resultdata' => $content_path, 'code' => 100, 'message' => 'Success');
+                //print_r($allimagedata);
                 echo json_encode($allimagedata);
             }
         } else {
@@ -1364,38 +1362,36 @@ function congrea_retrieve_ppt($valparams) {
     }
 }
 
-function update_ppt($valparams){
+function update_ppt($valparams) {
     global $CFG, $DB;
     list($postdata, $cmid, $userid) = $valparams;
-        if (!empty($postdata) && !empty($cmid) && !empty($userid)) {
-            if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-                print_error('Course Module ID was incorrect');
-            }
-            $records = $DB->get_records('congrea_mediafiles', array('congreaid' => $cm->instance, 'type' => $postdata['type']));
-            if (!empty($records)) {
-                foreach ($records as $record) {
-                    if ($record->type == 'ppt') { // For videos which are save in moodle file api.
-                        $ppt = new stdClass();
-                        $ppt->id = $record->id;
-                        $ppt->title = $record->resource;
-                        $ppt->status = $record->status;
-                        $ppt->type = $record->type;
-                        $ppt->content_path = $record->resource;
-                        $pptlist[] = $ppt;
-                    }
+    if (!empty($postdata) && !empty($cmid) && !empty($userid)) {
+        if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+            print_error('Course Module ID was incorrect');
+        }
+        $records = $DB->get_records('congrea_mediafiles', array('congreaid' => $cm->instance, 'type' => $postdata['type']));
+        if (!empty($records)) {
+            foreach ($records as $record) {
+                if ($record->type == 'ppt') { // For videos which are save in moodle file api.
+                    $ppt = new stdClass();
+                    $ppt->id = $record->id;
+                    $ppt->title = $record->resource;
+                    $ppt->status = $record->status;
+                    $ppt->type = $record->type;
+                    $ppt->content_path = $record->resource;
+                    $pptlist[] = $ppt;
                 }
             }
-            if (!empty($pptlist)) {
-                //print_r($videolist);
-                echo json_encode($pptlist);
-            } else {
-                $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
-                echo json_encode($unsuccess);
-            }
+        }
+        if (!empty($pptlist)) {
+            //print_r($videolist);
+            echo json_encode($pptlist);
         } else {
             $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
             echo json_encode($unsuccess);
         }
-
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 108, 'message' => 'noPPt');
+        echo json_encode($unsuccess);
+    }
 }
-
