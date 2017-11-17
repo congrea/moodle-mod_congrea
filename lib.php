@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,7 +28,6 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -42,16 +42,16 @@ defined('MOODLE_INTERNAL') || die();
  * @return mixed true if the feature is supported, null if unknown
  */
 function congrea_supports($feature) {
-    switch($feature) {
+    switch ($feature) {
         case FEATURE_MOD_INTRO: return true;
         case FEATURE_SHOW_DESCRIPTION: return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_GROUPS:                  return true;
-        case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
+        case FEATURE_GRADE_HAS_GRADE: return false;
+        case FEATURE_GRADE_OUTCOMES: return false;
+        case FEATURE_BACKUP_MOODLE2: return true;
+        case FEATURE_GROUPS: return true;
+        case FEATURE_GROUPINGS: return true;
+        case FEATURE_GROUPMEMBERSONLY: return true;
         default:
             return null;
     }
@@ -77,8 +77,8 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
     $congrea->id = $vclass;
     mod_congrea_update_calendar($congrea);
     return $vclass;
-
 }
+
 /**
  * This function extends the settings navigation block for the site.
  *
@@ -88,16 +88,15 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
  * @param navigation_node $settings
  * @param navigation_node $surveynode
  */
-
 function congrea_extend_settings_navigation($settings, $congreanode) {
     global $PAGE;
 
     if (has_capability('mod/congrea:pollreport', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/congrea/polloverview.php', array('cmid'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/congrea/polloverview.php', array('cmid' => $PAGE->cm->id));
         $congreanode->add(get_string('pollreport', 'congrea'), $url);
     }
     if (has_capability('mod/congrea:quizreport', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/congrea/quizoverview.php', array('cmid'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/congrea/quizoverview.php', array('cmid' => $PAGE->cm->id));
         $congreanode->add(get_string('quizreport', 'congrea'), $url);
     }
 }
@@ -115,7 +114,7 @@ function congrea_extend_settings_navigation($settings, $congreanode) {
  */
 function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
     global $DB;
-    if(!empty($congrea->anyonepresenter)) {
+    if (!empty($congrea->anyonepresenter)) {
         $congrea->moderatorid = 0;
     }
     $congrea->timemodified = time();
@@ -139,16 +138,16 @@ function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform 
 function congrea_delete_instance($id) {
     global $DB, $CFG;
 
-    if (! $congrea = $DB->get_record('congrea', array('id' => $id))) {
+    if (!$congrea = $DB->get_record('congrea', array('id' => $id))) {
         return false;
     }
     // Delete any dependent records here.
     if ($congreafiles = $DB->get_records('congrea_files', array('vcid' => $congrea->id))) {
         $filepath = "{$CFG->dataroot}/congrea/{$congrea->course}/{$congrea->id}/";
 
-        foreach($congreafiles as $cfile) {
+        foreach ($congreafiles as $cfile) {
             $vcsession = $cfile->vcsessionkey;
-            $dir = $filepath.$vcsession;
+            $dir = $filepath . $vcsession;
             // Delete recorded files
             congrea_deleteDirectory($filepath);
         }
@@ -184,17 +183,17 @@ function congrea_user_outline($course, $user, $mod, $congrea) {
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return void
  */
-function congrea_grade_item_update(stdClass $congrea, $grades=null) {
+function congrea_grade_item_update(stdClass $congrea, $grades = null) {
     return false;
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     /* @example */
     $item = array();
     $item['itemname'] = clean_param($congrea->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
-    $item['grademax']  = $congrea->grade;
-    $item['grademin']  = 0;
+    $item['grademax'] = $congrea->grade;
+    $item['grademin'] = 0;
 
     grade_update('mod/congrea', $congrea->course, 'mod', 'congrea', $congrea->id, 0, null, $item);
 }
@@ -210,7 +209,7 @@ function congrea_grade_item_update(stdClass $congrea, $grades=null) {
  */
 function congrea_update_grades(stdClass $congrea, $userid = 0) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     $grades = array(); // Populate array of grade objects indexed by userid. @example .
 
@@ -298,10 +297,10 @@ function congrea_pluginfile($course, $cm, $context, $filearea, array $args, $for
         }
         send_stored_file($file, 0, 0, true); // Download MUST be forced - security!.
     }
-    if ($filearea === 'documentimages') {
+    if ($filearea === 'pdfimages') {
         $certrecord = (int) array_shift($args);
         $relativepath = implode('/', $args);
-        $fullpath = "/{$context->id}/mod_congrea/documentimages/$congrea->id/$relativepath";
+        $fullpath = "/{$context->id}/mod_congrea/pdfimages/$congrea->id/$relativepath";
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
