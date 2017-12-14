@@ -100,7 +100,8 @@
 }
 
 #virtualclassCont.congrea .page_wrapper {
-    height: 600px;
+    /*height: 600px;*/
+    height : 95vh;
 }
 
 /*#listnotes {*/
@@ -115,16 +116,17 @@
 #virtualclassCont.congrea[data-currapp = 'Poll'] #chat_div .controls [data-title = 'Transfer Controls'],
 #virtualclassCont.congrea[data-currapp = 'Video'] #chat_div .controls [data-title = 'Transfer Controls'],
 #virtualclassCont.congrea[data-currapp = 'Quiz'] #chat_div .controls [data-title = 'Transfer Controls'],
-#virtualclassCont.congrea[data-currapp = 'DocumentShare'] #chat_div .controls [data-title = 'Transfer Controls'] {
+#virtualclassCont.congrea[data-currapp = 'DocumentShare'] #chat_div .controls [data-title = 'Transfer Controls'],
+#virtualclassCont.congrea .zoomControler .maxLevel{
     pointer-events: none;
     opacity: 0.5;
 }
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .next, #virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .prev {
-    z-index: 20;
-}
+/*#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .next, #virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .prev {*/
+    /*z-index: 20;*/
+/*}*/
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .next, #virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .prev {
+#virtualclassCont.congrea .next, #virtualclassCont.congrea .prev {
     z-index: 20;
 }
 
@@ -176,6 +178,11 @@
     min-height: 660px;
     margin:0;
     margin-left : 60px;
+}
+
+#virtualclassCont.congrea.student #virtualclassDocumentShare.virtualclass.container {
+    width: calc(100% - 20px) !important;
+    margin-left : 10px !important;
 }
 
 #virtualclassCont.congrea #virtualclassDocumentShare.virtualclass #documentScreen {
@@ -497,11 +504,11 @@
     background: #eee none;
 }
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .prev {
+#virtualclassCont.congrea .prev {
     left: 10px;
 }
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .prev::before {
+#virtualclassCont.congrea .prev::before {
     content: "\ea40";
     font-family: 'icomoon';
     font-size: 18px;
@@ -510,18 +517,31 @@
     color: #606060;
 }
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .next {
+#virtualclassCont.congrea .next {
     right: 10px;
-
 }
 
-#virtualclassCont.congrea #virtualclassDocumentShare.virtualclass .next::before {
+
+#virtualclassCont.congrea .whiteboard .prev {
+    left: 60px;
+}
+
+
+#virtualclassCont.congrea .whiteboard .next {
+    right : 380px;
+}
+
+#virtualclassCont.congrea .next::before {
     content: "\ea3c";
     font-family: 'icomoon';
     font-size: 18px;
     line-height: 50px;
     padding-top: 0px;
     color: #606060;
+}
+
+#virtualclassCont.congrea .whiteboard .next::before, #virtualclassCont.congrea .whiteboard .prev::before {
+    margin-left: 13px;
 }
 
 #virtualclassCont.congrea #docScreenContainer .mainpreview {
@@ -668,7 +688,9 @@
     pointer-events : none;
 }
 
-#virtualclassCont.congrea #screen-docs .pageContainer.lastNote .nvgt.next,  #virtualclassCont.congrea #screen-docs .pageContainer.firstNote .nvgt.prev{
+#virtualclassCont.congrea #screen-docs .pageContainer.lastNote .nvgt.next,
+#virtualclassCont.congrea #screen-docs .pageContainer.firstNote .nvgt.prev,
+#virtualclassCont.congrea #virtualclassWhiteboard.firstNote .nvgt.prev{
     pointer-events : none;
     opacity : 0.5;
 }
@@ -691,4 +713,14 @@
     outline: none;
     outline: none;
     outline-offset: 0px;
+}
+
+
+#virtualclassCont.congrea #videoUrlContainer{
+    display :block;
+}
+
+#virtualclassCont.congrea .linkdocs.noDocs{
+    pointer-events : none;
+    opacity : 0.5;
 }
