@@ -2662,22 +2662,6 @@
 	letter-spacing: 0.02em;
 }
 
-/** for hiding the screen element from teacher/educator */
-#virtualclassCont.congrea #virtualclassScreenShareLocal  video#virtualclassScreenShareLocalVideo{
-	position :absolute;
-	left : -2000;
-	visibility: hidden;
-}
-
-
-#virtualclassCont.congrea #virtualclassScreenShareLocal  #screenShrMsg {
-	width: 600px;
-	margin-left: 10%;
-	margin-top: 28%;
-	font-weight: normal;
-	text-align: center;
-}
-
 #virtualclassCont.congrea #chat_div .usern.media-heading {
 	margin-bottom :0;
 }
@@ -2797,7 +2781,8 @@
 }
 
 #virtualclassCont.congrea .appOptions.active {
-	pointer-events : none;
+	/*pointer-events : none;*/
+
 }
 
 #virtualclassCont.congrea.student  #speakerPressonceLabel {
@@ -2919,3 +2904,105 @@
 	cursor: pointer;
 }
 
+
+#virtualclassCont.congrea #zoomControler  {
+	position: absolute;
+	top: 0;
+	right: 338px;
+	padding: 6px;
+}
+
+#virtualclassCont.congrea #zoomControler button {
+	margin : 5px;
+}
+
+
+#virtualclassCont.congrea .scrollX {
+	overflow : scroll;
+}
+
+
+#virtualclassCont.congrea .canvasWrapper.cscrollX {
+	overflow-x : scroll;
+}
+
+#virtualclassCont.congrea .canvasWrapper.cscrollY {
+	overflow-y: scroll
+}
+
+
+#virtualclassCont.congrea .canvasWrapper .scrollDivY{
+	width : 5px;
+	border : 2px solid red;
+	position : absolute;
+	top  : 0;
+	right: 0;
+}
+
+#virtualclassCont.congrea .canvasWrapper .scrollDivX {
+	height : 5px;
+	border : 2px solid red;
+	position : fixed;
+	bottom  : 0;
+	left: 0;
+	bottom : 60px;
+}
+
+#virtualclassCont.congrea .canvasWrapper {
+	position : relative;
+}
+
+
+#virtualclassCont.congrea .canvasWrapper .mousepointer {
+	width : 5px;
+	height : 10px;
+	background-color : green;
+	position :absolute;
+}
+
+#virtualclassCont.congrea #virtualclassDocumentShare #docScreenContainer {
+	height : 94vh;
+}
+
+
+#virtualclassCont.congrea .zoomControler{
+	position: absolute;
+	top: 11px;
+	text-align: right;
+	float: right;
+	right: 360px;
+	z-index: 1;
+}
+
+#virtualclassCont.congrea #virtualclassWhiteboard .whiteboardContainer .canvasContainer{
+	display : none;
+}
+
+#virtualclassCont.congrea #virtualclassWhiteboard .whiteboardContainer .canvasContainer.current{
+	display : block;
+}
+
+/*#virtualclassCont.congrea #virtualclassScreenShare {*/
+	/*overflow : scroll;*/
+/*}*/
+
+#virtualclassCont.congrea.student #virtualclassScreenShareLocalVideoNew {
+	position : absolute;
+	top : -1333px;
+	left : -13333px
+}
+
+
+#virtualclassCont.congrea.student #virtualclassScreenShare{
+	margin-top : 0;
+}
+
+
+#virtualclassCont.congrea #virtualclassWhiteboard.whiteboard .nvgt {
+	display : none;
+}
+
+
+#virtualclassCont.congrea[data-currapp='Whiteboard'] #virtualclassWhiteboard.whiteboard .nvgt{
+	display : block;
+}

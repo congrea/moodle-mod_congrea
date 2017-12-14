@@ -124,6 +124,7 @@
         'iosAudEnable' : 'Tap here to enable the audio',
         'studentAudEnable' : 'Student Audio Enabled',
         'screensharealready' : "The Screen is being shared.",
+        'screensharemsg' : "The above screen is being shared.",
         'editorsynchmsg' : 'Editor is not in sync, please wait a few seconds and try again ',
         'canvasmissing' : 'Canvas is missing in your browsers. Please update the latest version of your browser',
         'downloadFile'  : 'Download File',
@@ -319,7 +320,7 @@
         'cancel' : 'Cancel',
         'EHTMLPresentUrl' : 'Enter HTML5 presentation url.',
         'preWllBshortly' : 'Presentation will be shared shortly',
-        'clicktoplay' : 'Click to play',
+        'clicktoplay' : 'Play',
         'uploadvideo' : 'Upload video from device',
         'onlinevideo' : '+',
         'Vwllbshrshortly' : 'Video will be shared shortly',
@@ -333,7 +334,6 @@
         'etDisabledCr':'Can be edited by creator of the poll',
         'dltDisabled':'Can be deleted  by creator of the poll',
         'edit':'Edit',
-        'delete':'Delete',
         'publish':'Publish',
         'pollHead':'Vote this Poll',
         'share' : 'Share',
@@ -345,7 +345,13 @@
         'editTitle':"Edit Title",
         'votesuccessPbt':"Vote has been submitted successfully ,You are not permitted to see the result",
         'pollDel':'Are you sure to delete this poll ?',
-
+        'enable':"Enable",
+        'disable':"Disable",
+        'edittitle':"Edit Title",
+        'pollblank':'Question can not be left blank',
+        'minoption':'enter atleast two options',
+        'delblank' :'remove the blank option',
+        'NotAllowedError':'Webcam is disabled',
     };
 
     window.message = message;

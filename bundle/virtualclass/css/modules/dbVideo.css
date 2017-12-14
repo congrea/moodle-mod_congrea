@@ -120,12 +120,14 @@
 
 }
 
+
+
 #virtualclassCont.congrea #listvideo .linkvideo .controlCont div[data-status="1"]::before {
   content: "\e94e";
   font-family: 'icomoon';
   font-size:21px;
-
 }
+
 
 #virtualclassCont.congrea #listvideo .linkvideo .controls.delete::before {
   content: "\e920";
@@ -157,6 +159,17 @@
   font-family: 'icomoon';
   opacity:.7;
 
+}
+
+
+#virtualclassCont.congrea #listvideo .linkvideo.noVideo .mainpreview::before {
+  content: "(...)";
+}
+
+
+#virtualclassCont.congrea #listvideo .linkvideo.noVideo{
+  pointer-events  : none;
+  opacity : 0.5;
 }
 
 #virtualclassCont.congrea #listvideo .linkvideo.links.video .videoTitleCont:before{
@@ -272,6 +285,7 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
 #virtualclassCont.congrea #videoUrlContainer {
   /*position: relative;*/
   text-align: right;
+  display:none;
 }
 
 
@@ -296,6 +310,7 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
   overflow: hidden;
   padding:0px;
   margin: 0px;
+
 }
 
 
@@ -492,4 +507,10 @@ border:solid #98c2ff 1px !important;
 #virtualclassCont.congrea #listvideo .linkvideo .controls:hover:before {
   font-size: 17px;
   color: rgba(0, 0, 0, 0.81);
+}
+#virtualclassCont.congrea #listvideo .linkvideo .controls.edit a:before{
+  padding-top: 3px !important;
+  height: 20px !important;
+  margin-top: 0 !important;
+
 }

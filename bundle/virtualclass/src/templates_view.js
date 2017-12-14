@@ -279,9 +279,9 @@ this["JST"]["templates/documentSharing/notesMain.hbs"] = Handlebars.template({"1
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
     + "\" data-status=\""
     + alias4(((helper = (helper = helpers.status || (depth0 != null ? depth0.status : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"status","hash":{},"data":data}) : helper)))
-    + "\" >\n    <div class=\"imageContainer\">\n      <img src= "
+    + "\" >\n    <!-- <div class=\"imageContainer\">\n      <img src= "
     + alias4(((helper = (helper = helpers.content_path || (depth0 != null ? depth0.content_path : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"content_path","hash":{},"data":data}) : helper)))
-    + " />\n    </div>\n  </div>\n";
+    + " />\n    </div> -->\n  </div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -390,15 +390,19 @@ this["JST"]["templates/leftBar.hbs"] = Handlebars.template({"1":function(contain
     var stack1;
 
   return ((stack1 = container.invokePartial(partials.appTools,depth0,{"name":"appTools","data":data,"indent":"      ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "");
+},"8":function(container,depth0,helpers,partials,data) {
+    return "    <span class=\"nvgt prev\"></span>\n    <span class=\"nvgt next\"></span>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<div id=\"virtualclassAppLeftPanel\" class=\"leftbar\" data-surname=\""
+  return "\n<div id=\"virtualclassAppLeftPanel\" class=\"leftbar\" data-surname=\""
     + container.escapeExpression(((helper = (helper = helpers.meetingMode || (depth0 != null ? depth0.meetingMode : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"meetingMode","hash":{},"data":data}) : helper)))
     + "\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isPlay : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasControls : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "  <div id=\"virtualclassWhiteboard\" class=\"virtualclass \"></div>\n</div>";
+    + "  <div id=\"virtualclassWhiteboard\" class=\"virtualclass whiteboard\">\n    <div class=\"whiteboardContainer\"> </div>\n\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasControls : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    \n  </div>\n</div>\n";
 },"usePartial":true,"useData":true});
 
 this["JST"]["templates/main.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -925,7 +929,9 @@ this["JST"]["templates/ssmainDiv.hbs"] = Handlebars.template({"1":function(conta
 },"2":function(container,depth0,helpers,partials,data) {
     return "      <div id=\"virtualclassScreenShareLocalTemp\">\n        <canvas id=\"virtualclassScreenShareLocalTempVideo\" width=\"1440\" height=\"738\"></canvas>\n      </div>\n";
 },"4":function(container,depth0,helpers,partials,data) {
-    return "      <div id=\"virtualclassScreenShareLocal\" class=\"Local \" style=\"position: relative; width: 1536px; height: 677px;\">\n        <video id=\"virtualclassScreenShareLocalVideo\" autoplay=\"true\" src=\" \"></video>\n      </div>\n";
+    return "      <div id=\"virtualclassScreenShareLocal\" class=\"Local \" style=\"position: relative; width: 1536px; height: 677px;\">\n        <video id=\"virtualclassScreenShareLocalVideo\" autoplay=\"true\" src=\" \"></video>\n      </div>\n\n    <div id=\"virtualclassScreenShareLocalSmall\" class=\"Local \">\n      <video id=\"virtualclassScreenShareLocalVideosmall\" autoplay=\"true\" src=\" \"></video>\n\n      <h3 id=\"screenShrMsg\" class=\"alert alert-info\">"
+    + container.escapeExpression((helpers.getString || (depth0 && depth0.getString) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),"screensharemsg",{"name":"getString","hash":{},"data":data}))
+    + "</h3>\n    </div>\n";
 },"6":function(container,depth0,helpers,partials,data) {
     return "    <div id=\"virtualclassScreenShareLocal\" class=\"Local\">\n      <canvas id=\"virtualclassScreenShareLocalVideo\" width=\"886\" height=\"724\"></canvas>\n    </div>\n";
 },"8":function(container,depth0,helpers,partials,data) {
@@ -955,7 +961,27 @@ this["JST"]["templates/teacherVideo.hbs"] = Handlebars.template({"1":function(co
     + "</div>\n\n";
 },"useData":true});
 
-this["JST"]["templates/videoupload/linkvideo.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+this["JST"]["templates/videoupload/linkvideo.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "    <div class=\"controls status\" data-status=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
+    + "\"  data-toggle=\"congtooltip\" title=\""
+    + alias2((helpers.getString || (depth0 && depth0.getString) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),"disable",{"name":"getString","hash":{},"data":data}))
+    + "\"><a class=\"statusanch\">status\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
+    + "\"</a></div>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "      <div class=\"controls status\" data-status=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
+    + "\"  data-toggle=\"congtooltip\" title=\""
+    + alias2((helpers.getString || (depth0 && depth0.getString) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),"enable",{"name":"getString","hash":{},"data":data}))
+    + "\"><a class=\"statusanch\">status\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
+    + "\"</a></div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 
   return "<div class=\""
@@ -980,7 +1006,11 @@ this["JST"]["templates/videoupload/linkvideo.hbs"] = Handlebars.template({"compi
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
     + "\" class=\""
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
-    + "Title tooltip2\"></div>\n    <div class=\"controls edit\">\n      <a class=\"editanch\" id =\"editVideoTitle\"></a>\n    </div>\n  </div>\n\n  <div id=\"controlCont"
+    + "Title tooltip2\"></div>\n    <div class=\"controls edit\"   data-toggle=\"congtooltip\" title=\""
+    + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"edittitle",{"name":"getString","hash":{},"data":data}))
+    + "\">\n      <a class=\"editanch\" id =\"editVideoTitle"
+    + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
+    + "\"></a>\n    </div>\n  </div>\n\n  <div id=\"controlCont"
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
     + "\" class=\"controlCont col-md-2\">\n    <div class=\"controls mainpreview \" id=\"mainp"
@@ -989,17 +1019,19 @@ this["JST"]["templates/videoupload/linkvideo.hbs"] = Handlebars.template({"compi
     + "\" data-screen=\""
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
-    + "\"\n         data-rid=\""
-    + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
-    + "\" style=\"opacity: 1; pointer-events: auto;\">"
+    + "\"\n         data-toggle=\"congtooltip\" title=\""
     + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"clicktoplay",{"name":"getString","hash":{},"data":data}))
-    + "</div>\n    <div class=\"controls status\" data-status=\""
-    + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
-    + "\"><a class=\"statusanch\">status\""
-    + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1), depth0))
-    + "\"</a></div>\n    <div class=\"controls delete\">\n      <a class=\"deleteanch\">"
+    + "\" data-rid=\""
+    + alias4(alias5(((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.rid : stack1), depth0))
+    + "\"   style=\"opacity: 1; pointer-events: auto;\">"
+    + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"clicktoplay",{"name":"getString","hash":{},"data":data}))
+    + "</div>\n\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.dataset : depth0)) != null ? stack1.status : stack1),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + "    <div class=\"controls delete\"  data-toggle=\"congtooltip\" title=\""
     + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"delete",{"name":"getString","hash":{},"data":data}))
-    + "</a>\n    </div>\n  </div>\n</div>";
+    + "\">\n      <a class=\"deleteanch\">"
+    + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"delete",{"name":"getString","hash":{},"data":data}))
+    + "</a>\n    </div>\n  </div>\n</div>\n\n";
 },"useData":true});
 
 this["JST"]["templates/videoupload/popup.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -1039,7 +1071,7 @@ this["JST"]["templates/whiteboard/main.hbs"] = Handlebars.template({"1":function
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasControl : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "      <div id=\"canvasWrapper"
     + alias4(((helper = (helper = helpers.cn || (depth0 != null ? depth0.cn : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cn","hash":{},"data":data}) : helper)))
-    + "\">\n      <canvas id=\"canvas"
+    + "\" class=\"canvasWrapper\">\n      <canvas id=\"canvas"
     + alias4(((helper = (helper = helpers.cn || (depth0 != null ? depth0.cn : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cn","hash":{},"data":data}) : helper)))
     + "\" tabindex=\"0\" width=\"730\" height=\"750\">\n        "
     + alias4((helpers.getString || (depth0 && depth0.getString) || alias2).call(alias1,"canvasmissing",{"name":"getString","hash":{},"data":data}))
@@ -1091,4 +1123,8 @@ this["JST"]["templates/youtube/ytscontrol.hbs"] = Handlebars.template({"compiler
     return "<div id=\"youtubeUrlContainer\">\n  <input id=\"youtubeurl\" placeholder=\"Enter YouTube Video URL.\">\n  <button id=\"submitURL\">"
     + container.escapeExpression((helpers.getString || (depth0 && depth0.getString) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),"ShareYouTubeVideo",{"name":"getString","hash":{},"data":data}))
     + "</button>\n</div>";
+},"useData":true});
+
+this["JST"]["templates/zoomControl.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"zoomControler\">\n  <button class=\"zoomIn\"> ZOOM in </button>\n  <button class=\"zoomOut\">ZOOM out</button>\n  <button class=\"fitScreen\">Fit to Screen</button>\n</div>";
 },"useData":true});
