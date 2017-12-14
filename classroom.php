@@ -125,7 +125,7 @@ if($info) {
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/jquery.ui.chatbox.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/progress.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/pbar.css'));
-    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/dashboard.css'));	
+    $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/modules/dashboard.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/bootstrap/css/bootstrap.css'));
     $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/poll/graphs/c3.css'));
      $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/mod/congrea/bundle/virtualclass/css/theme/'.$theme.'.css'));
@@ -224,7 +224,10 @@ $ts = ($USER->id == 3) ? true : false;
 
     <!-- Fine Uploader JS file
     ====================================================================== -->
-<script src ="<?php echo $whiteboardpath.'fileuploader/js/fine-uploader.js'; ?>"></script>
+<!-- <script src ="<?php //echo $whiteboardpath.'fileuploader/js/fine-uploader.js'; ?>"></script> -->
+<script src ="<?php echo $whiteboardpath.'s3/s3.fine-uploader.min.js'; ?>"></script>
+
+
 
 
  <?php
