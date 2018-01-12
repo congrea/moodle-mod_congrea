@@ -620,15 +620,15 @@
   color:white;
 }
 
-#virtualclassCont.congrea i.icon-savevideo:before{
-  content : "\e90d";
-  font-weight : normal;
-  font-size : 11px;
-  font-family: 'icomoon';
-  font-size: 23px;
-  color:white;
-  line-height: 65% !important;
-}
+/*#virtualclassCont.congrea i.icon-savevideo:before{*/
+  /*content : "\e90d";*/
+  /*font-weight : normal;*/
+  /*font-size : 11px;*/
+  /*font-family: 'icomoon';*/
+  /*font-size: 23px;*/
+  /*color:white;*/
+  /*line-height: 65% !important;*/
+/*}*/
 
 #virtualclassCont.congrea #dashboardnav .clicked i.dashboard-icon:before{
   content : "X";
@@ -663,4 +663,19 @@
   border-radius: 50%;
   padding: 3px 5px;
   background-color: #f9f9f9;
+}
+
+#virtualclassCont.congrea .icon-zoonIn:before{
+  content: "\e95f";
+  font-size: 18px;
+}
+
+#virtualclassCont.congrea .icon-zoomOut:before{
+  content: "\e960";
+  font-size: 18px;
+}
+
+#virtualclassCont.congrea .icon-fitScreen:before{
+  content: "\e95e";
+  font-size: 18px;
 }

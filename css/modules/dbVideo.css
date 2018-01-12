@@ -6,6 +6,7 @@
   /*height: 87%;*/
   max-height:none;
   padding : 0;
+  overflow: hidden;
 
 }
 
@@ -19,7 +20,7 @@
 }
 
 #virtualclassCont #listvideo {
-  height: calc(100% - 78px);
+  height: 83%;
   overflow-y: auto;
   margin-bottom :0;
   margin-top : 8px;
@@ -186,12 +187,12 @@
 }
 
 #virtualclassCont.congrea #listvideo .linkvideo.links.video .videoTitleCont:before{
-  content: "\e956";
+  content: "\e95d";
   font-family: 'icomoon';
 
 }
 
-#virtualclassCont.congrea #listvideo .linkvideo.links.yts .videoTitleCont:before{
+#virtualclassCont.congrea #listvideo .linkvideo.links.video_yts .videoTitleCont:before{
   content: "\f167";
   font-family: 'icomoon';
 
@@ -316,16 +317,14 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
 }
 
 #virtualclassCont.congrea #VideoDashboard #congreaShareVideoUrlCont{
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   width: 100%;
-  height : 63px;
+  height: 48px;
   overflow: hidden;
-  padding:0px;
+  padding: 0px;
   margin: 0px;
-
 }
-
 
 #virtualclassCont.congrea #listvideo .linkvideo .mainpreview {
   font-size: 0;
@@ -336,10 +335,16 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
   padding-top:2px;
 }
 
+#virtualclassCont.congrea i.icon-savevideo.cgIcon {
+  position: absolute;
+  top: 16px;
+  left: 14px;
+  font-family: inherit;
+}
 
 
 #virtualclassCont.congrea #listvideo .linkvideo.links .videoTitleCont:before{
-  font-size: 35px;
+  font-size: 24px;
   align-items: center;
   position: relative;
   top: 8px;
@@ -411,7 +416,8 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
   box-shadow: none;
 }
 
-#virtualclassCont.congrea #congreavideoContBody .qq-progress-bar{
+#virtualclassCont.congrea #congreavideoContBody .qq-progress-bar,
+#virtualclassCont.congrea #docsuploadContainer .qq-progress-bar{
   display:none;
 }
 #virtualclassCont.congrea #VideoDashboard #uploadMsz{
@@ -466,7 +472,7 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
 }
 
 #virtualclassCont.congrea #listvideo .linkvideo .videoTitleCont .controls.edit{
-  display:inline;
+  display:none;
 }
 
 #virtualclassCont.congrea #listvideo .linkvideo .videoTitleCont .titleCont{
@@ -528,4 +534,8 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
   height: 20px !important;
   margin-top: 0 !important;
 
+}
+#listvideo{
+
+  z-index: 0 !important;
 }

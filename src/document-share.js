@@ -17,60 +17,46 @@
             notes : null,
             order : [],
             tempFolder : "documentSharing",
-            
+
             init: function(docsObj) {
                 this.firstRequest = false;
                 firstTime = true;
-              
+
                 if(virtualclass.gObj.hasOwnProperty('dstAll') &&  typeof virtualclass.gObj.dstAll == 'string'){
                     this.storageRawData = null;
                 }else {
                     this.storageRawData = (typeof virtualclass.gObj.dstAll == 'object') ? virtualclass.gObj.dstAll : null;
-                } 
-                
-                /*
-                if(virtualclass.gObj.hasOwnProperty('dstAll')){
-                    if(typeof virtualclass.gObj.dstAll == 'string'){
-                       this.storageRawData = null; 
-                    }else if((typeof virtualclass.gObj.dstAll == 'object')){
-                        this.storageRawData =  virtualclass.gObj.dstAll;
+                    this.allNotes = virtualclass.gObj.dstAllNotes;
+                    if(roles.isStudent()){
+                        virtualclass.serverData.rawData.docs = this.storageRawData;
                     }
-                } else {
-                    var that = this;
+
+                    // virtualclass.storage.dstAllStore(virtualclass.gObj.dstAll);
+                    /**
+                     * Storing again into indexedDb when page is being refreshed
+                     */
                     setTimeout(
                         function (){
-                           that.init(docsObj) 
-                        },100
-                    )
-                    return;
-                } */
-                
+                            if(roles.hasControls()){
+                                virtualclass.storage.dstAllStore(virtualclass.gObj.dstAll);
+                            }
+                        },0
+                    );
+                }
+
                 if(virtualclass.gObj.hasOwnProperty('docs') &&  typeof virtualclass.gObj.docs == 'string'){
                     this.documents = null;
                 }else {
                     this.documents = (typeof virtualclass.gObj.docs == 'object') ? virtualclass.gObj.docs : null;
                 }
-                
-
 
                 this.UI.container();
-
-             //   var elem = document.getElementById('docScreenContainer');
-                //nirmala
-                // if(roles.hasControls()){
-                //   virtualclass.vutil.attachEventToUploadTab('docs', ["dtsPopupContainer"], virtualclass.vutil.modalPopup);
-                // }
-
                 this.pages = {};
                 this.notes = {};
-                if(this.documents != null){
-                    //this.allPages = this.documents;
-                    this.allNotes = this.documents;
-                }   
 
-                // if(virtualclass.serverData.rawData.docs.length > 0){
-                //     this.rawToProperData(virtualclass.serverData.rawData.docs);
-                // }
+                if(this.documents != null){
+                    this.allNotes = this.documents;
+                }
 
                 this.initAfterUpload(docsObj);
                 if (roles.hasControls()) {
@@ -94,71 +80,83 @@
                         alert("Container is null");
                     }
                 }
-                
-              
+
+
                 if(typeof docsObj != 'undefined' ){
                     if(docsObj.init != 'layout' && docsObj.init != 'studentlayout'){
                         if(this.storageRawData != null){
-                            this.rawToProperData(this.storageRawData);
+                            this.rawToProperData(this.storageRawData, 'fromStorage');
                         }
                         // docsObj.init = layout means first layout
                         this.setNoteScreen(docsObj);
                     }
                 } else {
-                      // Check if there is already docs in local storage
-                      var docsObj = JSON.parse(localStorage.getItem('dtsdocs'));
-                      if(docsObj != null){
+                    // Check if there is already docs in local storage
+                    var docsObj = JSON.parse(localStorage.getItem('dtsdocs'));
+                    if(docsObj != null){
                         if(this.storageRawData != null){
-                            this.rawToProperData(this.storageRawData);
+                            this.rawToProperData(this.storageRawData, 'fromStorage');
                         }
                         this.initAfterUpload(docsObj);
-                 //       this.allDocs = docsObj.docs;
-                 
+                        //       this.allDocs = docsObj.docs;
+
                         if(docsObj.slideNumber != null){
                             this.setNoteScreen(docsObj);
                             docsObj.slideNumber = null;
                             localStorage.setItem('dtsdocs', JSON.stringify(docsObj));
                         }
-                      } else if(this.allDocs != null && Object.keys(this.allDocs).length > 0){
-                            console.log('Do nothing');
-                            this.afterFirstRequestDocs(this.allDocs, true);
-                      } else {
-                            // Only send the request to server
-                            // when the docs is not in storage
-                            if(roles.hasControls()){
-                              this.firstRequestDocs();
-                              this.firstRequest = true;
-                            }
-                      }
+                    } else if(this.allDocs != null && Object.keys(this.allDocs).length > 0){
+                        console.log('Do nothing');
+                        this.afterFirstRequestDocs(this.allDocs, true);
+                    } else {
+                        // Only send the request to server
+                        // when the docs is not in storage
+                        if(roles.hasControls()){
+                            this.firstRequestDocs();
+                            this.firstRequest = true;
+                        }
+                    }
+                }
+
+            },
+
+            moveProgressbar : function (){
+                var cont =  document.querySelector("#docsUploadMsz")
+                var msz = document.querySelector("#docsuploadContainer .qq-upload-list-selector.qq-upload-list");
+                if(msz){
+                    msz.style.display="block";
+                    var divCont = document.createElement("div")
+                    cont.appendChild(divCont);
+                    divCont.appendChild(msz);
                 }
             },
 
-           /**
-           * This function initiate the docs order
-           * and the function which should be performed
-           * after uploading the docs
-           */
+            /**
+             * This function initiate the docs order
+             * and the function which should be performed
+             * after uploading the docs
+             */
             initAfterUpload : function (docsObj){
                 if(typeof docsObj != 'undefined'){
-                  for(var key in docsObj.docs) {
-                    this.afterUploadFile(docsObj.docs[key].rid, 'fromReload',  docsObj);
-                  }
+                    for(var key in docsObj.docs) {
+                        this.afterUploadFile(docsObj.docs[key].rid, 'fromReload',  docsObj);
+                    }
 
-                  if(docsObj.hasOwnProperty('order')){
-                    this.order = JSON.parse(docsObj.order);
-                  }
+                    if(docsObj.hasOwnProperty('order')){
+                        this.order = JSON.parse(docsObj.order);
+                    }
                 }
             },
 
-          /**
-           * This function displays the current note on screen
-           * and highlight the naviation of that screen
-           */
-          setNoteScreen : function (docsObj){
-            var doc = this.getDocId(docsObj.slideNumber);
-            this.docs.executeScreen(doc, 'fromreload', undefined, docsObj.slideNumber);
-            this.setScreenByOrder(doc);
-          },
+            /**
+             * This function displays the current note on screen
+             * and highlight the naviation of that screen
+             */
+            setNoteScreen : function (docsObj){
+                var doc = this.getDocId(docsObj.slideNumber);
+                this.docs.executeScreen(doc, 'fromreload', undefined, docsObj.slideNumber);
+                this.setScreenByOrder(doc);
+            },
 
             /**
              * This display the notes acorrding to order
@@ -169,10 +167,11 @@
                 if(this.order != null && this.order.length > 0){
                     var allNotes = this.getAllNotes(this.order);
                     // TODO this should be improve
+                    var docId;
                     for(var i =0; i<allNotes.length; i++){
-                        this.setLinkSelected(allNotes[i].lc_content_id, 1);
+                        docId = allNotes[i].id.split('_')[0];
+                        this.setLinkSelected(docId, 1);
                     }
-
                     // remove if there is already pages before render the ordering elements
                     var alreadyElements = document.querySelectorAll('#notesContainer .note');
                     this.createNoteLayout(allNotes, currDoc);
@@ -181,36 +180,35 @@
                     // TODO This should be improve at later, should handle at function createNoteNav
                     for(var i=0; i<this.order.length; i++){
                         this.noteStatus(this.order[i], this.allNotes[this.order[i]].status);
+                        console.log('Note status ' + this.order[i] + ' -->' + this.allNotes[this.order[i]].status);
                     }
                 }
             },
 
             createNoteLayout : function (allNotes, currDoc){
-              var mainContainer, tempCont, objTemp, template, tempHtml;
-              if(allNotes.length > 0){
-                var pageContainer = document.querySelector('#screen-docs .pageContainer');
-                //this.UI.createSlides(pageContainer, allNotes);
-                if(pageContainer == null){
-                  var tempCont = {notes : allNotes, hasControls : roles.hasControls(), cd : currDoc};
-                  template =  'screen';
-                  mainContainer = document.querySelector('#docScreenContainer');
+                var mainContainer, tempCont, objTemp, template, tempHtml;
+                if(allNotes.length > 0){
+                    var pageContainer = document.querySelector('#screen-docs .pageContainer');
+                    //this.UI.createSlides(pageContainer, allNotes);
+                    if(pageContainer == null){
+                        var tempCont = {notes : allNotes, hasControls : roles.hasControls(), cd : currDoc};
+                        template =  'screen';
+                        mainContainer = document.querySelector('#docScreenContainer');
+                    }else{
+                        tempCont = {notes :  allNotes};
+                        template = 'notesMain';
+                        mainContainer =  document.querySelector('#screen-docs #notesContainer');
+                    }
 
+                    template =  virtualclass.getTemplate(template, 'documentSharing');
+                    tempHtml = template(tempCont);
 
-                }else{
-                  tempCont = {notes :  allNotes};
-                  template = 'notesMain';
-                  mainContainer =  document.querySelector('#screen-docs #notesContainer');
+                    if(mainContainer != null){
+                        mainContainer.insertAdjacentHTML('beforeend', tempHtml);
+                    }else{
+                        alert('there is no such element');
+                    }
                 }
-
-                template =  virtualclass.getTemplate(template, 'documentSharing');
-                tempHtml = template(tempCont);
-
-                if(mainContainer != null){
-                  mainContainer.insertAdjacentHTML('beforeend', tempHtml);
-                }else{
-                  alert('there is no such element');
-                }
-              }
             },
 
             /**
@@ -227,7 +225,6 @@
                 }
 
                 if(typeof fromReload == 'undefined' && roles.hasControls()){
-                    
                     this.requestDocs(doc);
                 } else {
                     var docId = 'docs' + doc;
@@ -265,49 +262,30 @@
              * we have to fetch that only once
              *
              */
-            // firstRequestDocs : function (){
-            //     var cthis = this;
-            //     var data = {live_class_id : virtualclass.gObj.congCourse, type : 1, user : virtualclass.gObj.uid};
-            //     virtualclass.vutil.xhrSendWithForm(data, 'retrieve_docs', function (response){
-            //             response = JSON.parse(response);
-            //             if(((+response.status))){
-            //                 cthis.afterFirstRequestDocs(response.resultdata.NOTES);
-            //                 ioAdapter.mustSend({'dts': {fallDocs: response.resultdata.NOTES},  'cf': 'dts'});
-            //                 cthis.firstRequestNotes();
-            //             } else if(response.message == "Failed" && (+response.status) == 0){ //there is no document, so let user upload the documents
-            //                 virtualclass.vutil.modalPopup('docs', ["dtsPopupContainer"]);
-            //             }
-            //         }
-            //     );
-            // },
-
             firstRequestDocs : function (){
-                // if(virtualclass.serverData.rawData.docs.length > 0){
-                //     this.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
-                //     this.allNotes = this.fetchAllNotes();
-                // }else {
-                //     var that = this;
-                //     virtualclass.serverData.fetchAllData(function (){
-                //         that.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
-                //         that.allNotes = that.fetchAllNotes();
-                //     });
-                // }
-
                 var that = this;
-                virtualclass.serverData.fetchAllData(function (){
-                    ioAdapter.mustSend({'dts': {fallDocs: virtualclass.serverData.rawData.docs}, 'cf': 'dts'});
-                    that.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
-                    // that.allNotes = that.fetchAllNotes();
-                });
+                if(!virtualclass.vutil.isBulkDataFetched()){
+                    virtualclass.serverData.fetchAllData(function (){
+                        ioAdapter.mustSend({'dts': {fallDocs: virtualclass.serverData.rawData.docs}, 'cf': 'dts'});
+                        that.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
+                    });
+                }else {
+                    // TODO, this should be called without setTimeout
+                    setTimeout(
+                        function (){
+                            ioAdapter.mustSend({'dts': {fallDocs: virtualclass.serverData.rawData.docs}, 'cf': 'dts'});
+                            that.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
+                        }, 0
+                    );
+                }
             },
-            
+
             fetchAllNotes : function (){
                 var allNotes = {};
                 for(var key in virtualclass.dts.allDocs){
                     for(var j=0; j< virtualclass.dts.allDocs[key].notesarr.length; j++){
                         allNotes[virtualclass.dts.allDocs[key].notesarr[j].id] = virtualclass.dts.allDocs[key].notesarr[j];
                     }
-                   
                 }
                 return allNotes;
             },
@@ -318,57 +296,39 @@
                     for(var j=0; j< virtualclass.dts.allDocs[key].notesarr.length; j++){
                         allNotes.push(virtualclass.dts.allDocs[key].notesarr[j]) ;
                     }
-
                 }
                 return allNotes;
             },
 
             // requestDocs
-
-            afterFirstRequestDocs2 : function (docs, notconvert){
-                if(typeof notconvert == 'undefined'){
-                    this.allDocsTemp = docs;
-                    this.allDocs = this.convertInObjects(this.allDocsTemp);
-                }
-
-                for(var key in this.allDocs){
-                    if(!this.allDocs[key].hasOwnProperty('deleted')){
-                        this.initDocs(this.allDocs[key].fileuuid);
-                    }
-                }
-
-                this.allNotes = this.fetchAllNotes();
-            },
-
-
             afterFirstRequestDocs : function (docs, notconvert){
-                // if(typeof notconvert == 'undefined'){
-                //     this.allDocsTemp = docs;
-                //     this.allDocs = this.convertInObjects(this.allDocsTemp);
-                // }
-                //
-                // this.allNotes = this.fetchAllNotes();
-
                 this.rawToProperData(docs);
-                // virtualclass.
-                // virtualclass.dts
                 virtualclass.storage.dstAllStore(docs);
                 for(var key in this.allDocs){
                     if(!this.allDocs[key].hasOwnProperty('deleted')){
                         this.initDocs(this.allDocs[key].fileuuid);
                     }
                 }
+                this.requestOrder(this.executeOrder);
             },
 
-            rawToProperData : function (docs){
+            rawToProperData : function (docs, fromStorage){
                 if(typeof notconvert == 'undefined'){
                     this.allDocsTemp = docs;
                     this.allDocs = this.convertInObjects(this.allDocsTemp);
                 }
 
-                this.allNotes = this.fetchAllNotes();
-            },
+                //this.allNotes = this.fetchAllNotes();
+                if(typeof fromStorage !=  'undefined'){
+                    this.allNotes = virtualclass.gObj.dstAllNotes;
+                }else{
+                    this.allNotes = this.fetchAllNotes();
+                }
 
+                // if(this.documents != null){
+                //     this.allNotes = this.documents;
+                // }
+            },
 
             /**
              * This would be performed after got
@@ -376,20 +336,11 @@
              * @param docs expects documenation list that have been
              * received from LMS and localstorage
              */
-            // afterFirstRequestDocsOld : function (docs, notconvert){
-            //     if(typeof notconvert == 'undefined'){
-            //         this.allDocsTemp = docs;
-            //         this.allDocs = this.convertInObjects(this.allDocsTemp);
-            //     }
-            //
-            //     for(var key in this.allDocs){
-            //         this.initDocs(this.allDocs[key].id);
-            //     }
-            // },
 
             afterRequestOrder : function (content){
                 this.order.length = 0;
-                this.order = content.split(',');
+                // this.order = content.split(',');
+                this.order = content;
                 var docId = 'docs' + this.getDocId(this.order[0]);
                 // var mainCont = this.pages[docId].UI.mainView.call(this.pages[docId]);
                 console.log('From database doc share order ' + this.order.join(','));
@@ -401,63 +352,32 @@
             /**
              * this requests the order from LMS
              */
-            requestOrder : function (cb){
-                var data = {
-                    "live_class_id" : virtualclass.gObj.congCourse,
-                    "content_order_type" : 1
-                };
-                var cthis = this;
-                virtualclass.vutil.xhrSendWithForm(data, 'congrea_retrieve_page_order', function (response){
-                        cb.apply(cthis, [response]);
-                    }
-                );
+            requestOrder: function (cb) {
+                virtualclass.vutil.requestOrder('docs', cb);
             },
 
             executeOrder : function (response){
-                var cthis = this;
-                var content = JSON.parse(response);
-                if (content.message == "Failed") {
-                    console.log("page order retrieve failed");
-                    $('#congdashboard').modal();
-                    virtualclass.dashBoard.clickCloseButton();
-
-                } else if(content) {
-                    ioAdapter.mustSend({'dts': {order_recived: content},  'cf': 'dts'});
-                    cthis.afterRequestOrder(content);
-                    cthis.createNoteNav();
+                if(response != undefined && typeof response != 'undefined'){
+                    var cthis = virtualclass.dts;
+                    if(response.length > 0){
+                        if (response == "Failed" || response == "Error") {
+                            console.log("page order retrieve failed");
+                            $('#congdashboard').modal();
+                            virtualclass.dashBoard.clickCloseButton();
+                        } else if(response) {
+                            if(roles.hasAdmin()){
+                                ioAdapter.mustSend({'dts': {order_recived: response},  'cf': 'dts'});
+                                cthis.afterRequestOrder(response);
+                                cthis.createNoteNav();
+                            }
+                        }
+                    }
                 }
             },
 
             /**
              * this requests documentation lists from LMS
              */
-            // requestDocs : function (doc){
-            //         var cthis = this;
-            //         var data = {live_class_id : virtualclass.gObj.congCourse, type : 1, user : virtualclass.gObj.uid};
-            //         virtualclass.vutil.xhrSendWithForm(data, 'retrieve_docs', function (response){
-            //             response = JSON.parse(response);
-            //             if(((+response.status))){
-            //                 cthis.allDocsTemp = response.resultdata.NOTES;
-            //                 cthis.allDocs = cthis.convertInObjects(cthis.allDocsTemp);
-            //
-            //                 var status = 0;
-            //                 if(cthis.allDocs[doc].status == 'true' ||  cthis.allDocs[doc].status == 1){
-            //                      status = 1;
-            //                 }
-            //
-            //                 var docId = 'docs' + doc;
-            //                 if(typeof cthis.pages[docId] != 'object'){
-            //                     cthis.pages[docId] = new virtualclass.page('docScreenContainer', 'docs', 'virtualclassDocumentShare', 'dts', status);
-            //                     cthis.pages[docId].init(doc, cthis.allDocs[doc].title);
-            //                 }
-            //                 ioAdapter.mustSend({'dts': {allDocs: cthis.allDocs, doc:doc},  'cf': 'dts'});
-            //
-            //                     cthis.requestNotes(doc);
-            //             }
-            //         }
-            //     );
-            // },
-
             getFilenameFromUploadingfiles : function (doc){
                 for(var i=0; i<virtualclass.gObj.uploadingFiles.length; i++){
                     return virtualclass.gObj.uploadingFiles[i].name;
@@ -475,11 +395,7 @@
                     status : 1
                 };
 
-                // cthis.allDocsTemp = response.resultdata.NOTES;
-                // cthis.allDocs = cthis.convertInObjects(cthis.allDocsTemp);
-                
                 cthis.allDocs[doc] = newDocObj;
-
                 var status = 0;
                 if(cthis.allDocs[doc].status == 'true' ||  cthis.allDocs[doc].status == 1){
                     status = 1;
@@ -498,12 +414,9 @@
                 // here should be the polling
                 // cthis.requestNotes(doc);
                 virtualclass.serverData.pollingStatus(virtualclass.dts.afterRequestNotes);
-
-
             },
 
             // Earlier it was requestNotes,
-
             afterRequestNotes :function (){
                 var cthis = virtualclass.dts;
                 virtualclass.dts.afterFirstRequestDocs(virtualclass.serverData.rawData.docs);
@@ -513,7 +426,7 @@
                 cthis.allPages = virtualclass.dts.fetchAllNotesAsArr();
                 cthis.allNotes = virtualclass.dts.fetchAllNotes();
                 cthis.storeInDocs(cthis.allNotes);
-                cthis.dstAllStore(virtualclass.serverData.rawData.docs);
+                virtualclass.storage.dstAllStore(virtualclass.serverData.rawData.docs);
                 // TODO, by disabling this can be critical, new api
                 // ioAdapter.mustSend({'dts': {allNotes: cthis.allNotes, doc:doc},  'cf': 'dts'});
                 ioAdapter.mustSend({'dts': {allNotes: cthis.allNotes}, 'cf': 'dts'});
@@ -535,11 +448,11 @@
                 virtualclass.vutil.xhrSendWithForm(data, 'retrieve_all_notes',  function (response){
                         response = JSON.parse(response);
                         if((+response.status)){
-                           cthis.allPages = response.resultdata;
-                           cthis.allNotes = cthis.convertInObjects(cthis.allPages);
-                           cthis.storeInDocs(cthis.allNotes)
-                           ioAdapter.mustSend({'dts': {allNotes: cthis.allNotes, doc:doc},  'cf': 'dts'});
-                       }
+                            cthis.allPages = response.resultdata;
+                            cthis.allNotes = cthis.convertInObjects(cthis.allPages);
+                            cthis.storeInDocs(cthis.allNotes)
+                            ioAdapter.mustSend({'dts': {allNotes: cthis.allNotes, doc:doc},  'cf': 'dts'});
+                        }
                     }
                 );
             },
@@ -549,14 +462,14 @@
                 var data = { live_class_id : virtualclass.gObj.congCourse, 'notes_id' : 'all', user : virtualclass.gObj.uid};
                 virtualclass.vutil.xhrSendWithForm(data, 'retrieve_all_notes',  function (response){
                         response = JSON.parse(response);
-                      //  if((+response.status)){
-                           cthis.allPages = response.resultdata;
-                           cthis.allNotes = cthis.convertInObjects(cthis.allPages);
-                           cthis.storeInDocs(cthis.allNotes)
-                           ioAdapter.mustSend({'dts': {fallNotes: cthis.allNotes},  'cf': 'dts'});
-                           // cthis.firstRequestDocs();
-                           cthis.requestOrder(cthis.executeOrder);
-                       //}
+                        //  if((+response.status)){
+                        cthis.allPages = response.resultdata;
+                        cthis.allNotes = cthis.convertInObjects(cthis.allPages);
+                        cthis.storeInDocs(cthis.allNotes)
+                        ioAdapter.mustSend({'dts': {fallNotes: cthis.allNotes},  'cf': 'dts'});
+                        // cthis.firstRequestDocs();
+                        cthis.requestOrder(cthis.executeOrder);
+                        //}
                     }
                 );
             },
@@ -589,7 +502,8 @@
              * @param allPages exepects all notes
              */
             storeInDocs : function (allPages){
-                virtualclass.storage.dstStore(JSON.stringify(allPages));
+                //virtualclass.storage.dstStore(JSON.stringify(allPages));
+                virtualclass.storage.dstAllStore(virtualclass.serverData.rawData.docs);
             },
 
             removeWhiteboardFromStorage : function (key){
@@ -618,7 +532,7 @@
                 if(this.order.length <= 0){
                     firstTime = true;
                 }
-             },
+            },
 
             _removePageUI : function (noteId, typeDoc){
                 var orderId =  this.order.indexOf(noteId);
@@ -636,9 +550,10 @@
                 }
                 this.removeNoteNav(noteId);
 
-                if(roles.hasControls() && typeof (typeDoc != 'undefined' && typeDoc == 'hosts')){
-                    // this.selectFirstNote();
-                }
+                // if(roles.hasControls() && typeof (typeDoc != 'undefined' && typeDoc == 'hosts')){
+                //     this.selectFirstNote();
+                // }
+
                 this.reaArrangeThumbCount();
             },
 
@@ -678,69 +593,69 @@
                 }
             },
 
-          onResponseFiles : function (doc, slides, docFetch, slide, fromReload){
-            if(firstTime){
-             // this.docs.currNote = (typeof slide != 'undefined') ? slide : slides[0].id; // first id if order is not defined
-              this.docs.currNote = (typeof slide != 'undefined') ? slide : slides[0].id;; // first id if order is not defined
-              // this.order = [];
-              firstTime = false;
-            }
-
-            if(roles.hasControls()){
-              var addSlide = this.toggleSlideWithOrder(doc, slides)
-            } else {
-              var addSlide = (typeof docFetch != 'undefined') ? (+docFetch) : true;
-            }
-
-            //var addSlide = this.toggleSlideWithOrder(doc, slides);
-            if(addSlide){
-              this.addPages(slides);
-
-              var cthis = this;
-              if(typeof doc != 'string'){
-                var docId = 'docs'+doc;
-              } else {
-                if(doc.indexOf('docs') >= 0){
-                  var docId = doc;
-                }else{
-                  var docId = 'docs'+doc;
-                }
-              }
-
-               this.createNoteLayout(slides, docId);
-
-                if(typeof slide != 'undefined'){
-                  this.docs.displayScreen(docId, slide);
-                }else{
-                  this.docs.displayScreen(docId);
+            onResponseFiles : function (doc, slides, docFetch, slide, fromReload){
+                if(firstTime){
+                    // this.docs.currNote = (typeof slide != 'undefined') ? slide : slides[0].id; // first id if order is not defined
+                    this.docs.currNote = (typeof slide != 'undefined') ? slide : slides[0].id;; // first id if order is not defined
+                    // this.order = [];
+                    firstTime = false;
                 }
 
+                if(roles.hasControls()){
+                    var addSlide = this.toggleSlideWithOrder(doc, slides)
+                } else {
+                    var addSlide = (typeof docFetch != 'undefined') ? (+docFetch) : true;
+                }
 
-              (typeof fromReload != 'undefined') ? this.createNoteNav(fromReload) : this.createNoteNav();
-              this.updateLinkNotes(this.docs.currNote);
-              virtualclass.vutil.hideUploadMsg('docsuploadContainer'); // file uploader container
-            } else {
-              this.removePagesUI(doc);
-              if(!virtualclass.dts.noteExist()){
-                  virtualclass.vutil.showUploadMsg('docsuploadContainer'); // file uploader container
-              }
+                //var addSlide = this.toggleSlideWithOrder(doc, slides);
+                if(addSlide){
+                    this.addPages(slides);
 
-              if(!virtualclass.dts.docSelected()){
-                  var docsObj = JSON.parse(localStorage.getItem('dtsdocs'));
-                  if(docsObj != null){
-                      docsObj.slideNumber = null;
-                      localStorage.setItem('dtsdocs', JSON.stringify(docsObj));
-                  }
-              }
-            }
+                    var cthis = this;
+                    if(typeof doc != 'string'){
+                        var docId = 'docs'+doc;
+                    } else {
+                        if(doc.indexOf('docs') >= 0){
+                            var docId = doc;
+                        }else{
+                            var docId = 'docs'+doc;
+                        }
+                    }
 
-            if(roles.hasAdmin()){
-              this.sendOrder(this.order);
-              console.log('Document share:- ' + this.order.toString());
-            }
-          },
+                    this.createNoteLayout(slides, docId);
 
-          selectFirstNote : function (){
+                    if(typeof slide != 'undefined'){
+                        this.docs.displayScreen(docId, slide);
+                    }else{
+                        this.docs.displayScreen(docId);
+                    }
+
+
+                    (typeof fromReload != 'undefined') ? this.createNoteNav(fromReload) : this.createNoteNav();
+                    this.updateLinkNotes(this.docs.currNote);
+                    virtualclass.vutil.hideUploadMsg('docsuploadContainer'); // file uploader container
+                } else {
+                    this.removePagesUI(doc);
+                    if(!virtualclass.dts.noteExist()){
+                        virtualclass.vutil.showUploadMsg('docsuploadContainer'); // file uploader container
+                    }
+
+                    if(!virtualclass.dts.docSelected()){
+                        var docsObj = JSON.parse(localStorage.getItem('dtsdocs'));
+                        if(docsObj != null){
+                            docsObj.slideNumber = null;
+                            localStorage.setItem('dtsdocs', JSON.stringify(docsObj));
+                        }
+                    }
+                }
+
+                if(roles.hasAdmin()){
+                    this.sendOrder(this.order);
+                    console.log('Document share:- ' + this.order.toString());
+                }
+            },
+
+            selectFirstNote : function (){
                 var currenElement = document.querySelector('#notesContainer .current');
                 if(currenElement == null){
                     var firstElement = document.querySelector('#notesContainer .note');
@@ -764,9 +679,9 @@
 
             isDocAlreadyExist : function (id){
                 for(var i=0; i<this.documents.length; i++){
-                     if(this.documents[i].id == id){
-                         return true;
-                     }
+                    if(this.documents[i].id == id){
+                        return true;
+                    }
                 }
                 return false;
             },
@@ -806,8 +721,10 @@
                         document.querySelector('#DocumentShareDashboard').innerHTML = virtualclass.vutil.getDocsDashBoard("DocumentShare");
                         if(roles.hasControls()){
                             virtualclass.vutil.attachEventToUploadTab();
-                            virtualclass.vutil.modalPopup('docs', ["docsuploadContainer"]);
-                        }
+                            if(document.querySelector('#DocumentShareDashboard .qq-gallery')== null){
+                                virtualclass.vutil.modalPopup('docs', ["docsuploadContainer"]);
+                            }
+                            }
                     }
                 },
 
@@ -839,14 +756,6 @@
                             }else{
                                 note.dataset.status = allNotes[i].status;
                             }
-
-                            // var imgContainer = document.createElement('div');
-                            //     imgContainer.className = 'imageContainer';
-                            // var img = document.createElement('img');
-                            // img.src = allNotes[i].content_path;
-                            // imgContainer.appendChild(img);
-                            // note.appendChild(imgContainer);
-                            // notes.appendChild(note);
                         }
                     }
 
@@ -908,7 +817,7 @@
                     if(typeof this.notes[this.order[i]] != 'object'){
 
                         if(this.allNotes[this.order[i]].status == 'true' || (+this.allNotes[this.order[i]].status) == 1){
-                           var status = 1;
+                            var status = 1;
                         }else {
                             var status = 0;
                         }
@@ -1084,12 +993,12 @@
 
                     /*** width and height handling ***/
 
-                    // var res = virtualclass.system.measureResoultion({'width': window.innerWidth, 'height': window.innerHeight});
+                        // var res = virtualclass.system.measureResoultion({'width': window.innerWidth, 'height': window.innerHeight});
 
                     var canvasWidth = 730;
                     var canvasHeight = 750;
 
-                   // cthis.setNoteDimension(canvasWidth, canvasHeight, wbid);
+                    // cthis.setNoteDimension(canvasWidth, canvasHeight, wbid);
                     //console.log('Create Whiteboard ');
 
                     console.log(virtualclass.gObj.currWb + ' ' + 'document share Create Whiteboard ');
@@ -1106,18 +1015,7 @@
                     var elem = document.querySelector(query);
                     if(elem != null){
                         elem.insertBefore(whiteboard, elem.firstChild);
-
                         virtualclass.vutil.createWhiteBoard(whiteboard.dataset.wid);
-                        // var app = 'Whiteboard';
-                        // var args = [app, 'byclick', whiteboard.dataset.wid, whiteboard.id];
-                        // virtualclass.appInitiator['Whiteboard'].apply(virtualclass, Array.prototype.slice.call(args));
-                        // var measureRes = virtualclass.system.measureResoultion({'width': window.innerWidth, 'height': window.innerHeight});
-                        //
-                        // var id = virtualclass.gObj.currWb;
-                        // virtualclass.system.setCanvasWrapperDimension(measureRes, id);
-
-
-                        // cthis.setNoteDimension(canvasWidth, canvasHeight, wbid);
                     } else {
                         console.log("Element is null");
 
@@ -1177,7 +1075,7 @@
                             /**
                              * TODO, that setTimeout should be removed, it used to hanldle black screen at student
                              * while teacher select/click the document tab subsequently
-                              **/
+                             **/
                             if(roles.hasControls() && typeof fromReload == 'undefined'){
                                 setTimeout(
                                     function (){
@@ -1385,21 +1283,8 @@
 
             screenIsCreated : function (doc){
                 var screen = document.getElementById('screen' + doc);
-                if(screen != null){
-                    return true;
-                } else {
-                    return false;
-                }
+                return (screen != null);
             },
-
-            convertInObjects2 : function (allPages){
-                var note = {};
-                for(var i=0; i<allPages.length; i++){
-                    note[allPages[i].id] = allPages[i];
-                }
-                return note;
-            },
-
 
             convertInObjects : function (allPages){
                 var note = {};
@@ -1429,12 +1314,15 @@
                 } else if(dts.hasOwnProperty('fallNotes')){
                     this.allNotes = dts.fallNotes;
                     this.storeInDocs(this.allNotes);
-                    this.dstAllStore(virtualclass.serverData.rawData.docs);
+                    virtualclass.storage.dstAllStore(virtualclass.serverData.rawData.docs);
                 } else if((dts.hasOwnProperty('allDocs'))) {
                     this.allDocs = dts.allDocs;
                     this.afterUploadFile(dts.doc);
                 }else if (dts.hasOwnProperty('fallDocs')){
-                    this.afterFirstRequestDocs(dts.fallDocs);
+                    var cthis = this;
+                    cthis.afterFirstRequestDocs(dts.fallDocs);
+                    virtualclass.serverData.rawData.docs = dts.fallDocs;
+
 
 //                    this.allDocs = dts.fallDocs;
 //                    for(var i=0; i< this.allDocs.length; i++){
@@ -1554,12 +1442,10 @@
                 if(roles.hasAdmin()){
                     this.sendOrder(this.order);
                 }
-
             },
 
-            sendOrder : function(order){
-                var data = {'content_order': order.toString(), content_order_type: 1, live_class_id : virtualclass.gObj.congCourse};
-                virtualclass.vutil.xhrSendWithForm(data, 'congrea_page_order', function (response){});
+            sendOrder: function (order) {
+                virtualclass.vutil.sendOrder('docs', order);
             },
 
             reaArrangeThumbCount : function (){
@@ -1568,11 +1454,12 @@
                     allThumbist[j].innerHTML = j+1;
                 }
             },
+
             reArrangeElements : function (order){
                 var container = document.getElementById('notesContainer'),
                     tmpdiv = document.createElement('div');
-                    tmpdiv.id = "notesContainer";
-                    tmpdiv.className  = "notes";
+                tmpdiv.id = "notesContainer";
+                tmpdiv.className  = "notes";
 
                 for (var i = 0; i < order.length; i++) {
                     tmpdiv.appendChild(document.getElementById('note' + order[i]));
@@ -1580,28 +1467,6 @@
                 container.parentNode.replaceChild(tmpdiv, container);
                 // organize list
                 this.reaArrangeThumbCount();
-            },
-
-            _deleteOld : function (id){
-                if(roles.hasControls()){
-                    var linkDocs = document.querySelector('#linkdocs' + id);
-                    if(linkDocs != null){
-                        linkDocs.parentNode.removeChild(linkDocs);
-                    }
-
-                    ioAdapter.mustSend({'dts': {rmnote: id}, 'cf': 'dts'});
-
-                    var data = {lc_content_id : id, action : 'delete', user : virtualclass.gObj.uid};
-                    var cthis = this;
-                    virtualclass.vutil.xhrSendWithForm(data, 'update_content', function (response){
-                        //    alert(response);
-                        cthis.sendOrder(cthis.order);
-                    });
-                }
-
-                delete this.pages['docs'+id];
-                this.removePagesUI(id);
-                this.removePagesFromStructure(id);
             },
 
             _delete : function (id){
@@ -1630,21 +1495,6 @@
                 this.removePagesUI(id);
                 this.removePagesFromStructure(id);
             },
-
-            _deleteNote2 : function (id, typeDoc){
-                this._removePageUI(id, typeDoc);
-                this._removePageFromStructure(id, typeDoc);
-                if(roles.hasControls()){
-                    ioAdapter.mustSend({'dts': {rmsnote: id}, 'cf': 'dts'});
-                }
-                var cthis = this;
-                var data = {page_id : id, action : 'delete', user : virtualclass.gObj.uid};
-                virtualclass.vutil.xhrSendWithForm(data, 'update_content', function (response){
-                    //alert(response);
-                    cthis.sendOrder(cthis.order);
-                });
-            },
-
 
             _deleteNote : function (id, typeDoc){
                 this._removePageUI(id, typeDoc);
@@ -1691,9 +1541,9 @@
 
             _removePageFromStructure : function (id){
                 this.removeWhiteboardFromStorage('_doc_'+ id+'_'+ id);
-                delete this.allNotes[id];
+                // delete this.allNotes[id];
+                this.allNotes[id].deletedn = id;
                 this.storeInDocs(this.allNotes); //new pages save into docs
-
             },
 
             _disable : function (id){
@@ -1779,9 +1629,9 @@
                         var status = (1 - (+note.dataset.status));
                     } else {
                         if(status == true || status == 'true'){
-                             status = 1;
+                            status = 1;
                         }else {
-                                status = 0;
+                            status = 0;
                         }
                     }
                     note.dataset.status = status;
@@ -1810,14 +1660,6 @@
 
             // Return the pages from specific page
             getDocs : function (id){
-                // var doc = this.allDocs[id];
-                // var result = [];
-                // for(var i in this.allNotes){
-                //     if(id == this.allNotes[i].lc_content_id){
-                //         result.push(this.allNotes[i]);
-                //     }
-                // }
-                // return result;
                 console.log("--------------");
                 console.log(virtualclass.gObj.dstAll);
                 return this.allDocs[id].notesarr;
@@ -1828,12 +1670,6 @@
              * @param id expectes node
              * @returns {*}
              */
-            // getDocId : function(id){
-            //     if(this.allNotes){
-            //         return this.allNotes[id].lc_content_id;
-            //     }
-            // },
-
             getDocId : function(id){
                 return id.split('_')[0];
             },
@@ -1845,6 +1681,7 @@
                 }
                 return result;
             },
+
             /**
              * get note object by passing note
              * @param id expects note
@@ -1871,43 +1708,13 @@
              * @param xhr expects xhr object
              * @param response expects xhr response
              */
-            onAjaxResponse2 : function (id, xhr, response){
-                if(response.hasOwnProperty('resultdata')){
-                    this.afterUploadFile(response.resultdata.id);
-                    this.showUploadMsz("document upload success","alert-success");
-
-
-
-                } else if (response.message == 'duplicate'){
-                    //alert(virtualclass.lang.getString('duplicateUploadMsg'));
-                    this.showUploadMsz(virtualclass.lang.getString('duplicateUploadMsg'),"alert-error");
-
-                } else {
-                    this.showUploadMsz(virtualclass.lang.getString('someproblem'),"alert-error");
-
-                }
-
-                var msz = document.querySelector("#DocumentShareDashboard .qq-upload-list-selector.qq-upload-list");
-                if (msz) {
-                    msz.style.display = "none";
-                }
-
-                var listnotes  = document.querySelector('#listnotes');
-                if(listnotes != null){
-                  virtualclass.vutil.makeElementDeactive('#DocumentShareDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
-                  virtualclass.vutil.makeElementActive('#listnotes');
-                }else {
-                  console.log('List note is null');
-                }
-            },
-
             onAjaxResponse : function (id, xhr, response){
                 if(response.hasOwnProperty('success')){
                     for(var i=0; i< virtualclass.gObj.uploadingFiles.length; i++){
                         var docUploadId = virtualclass.gObj.uploadingFiles[i].uuid;
                         this.afterUploadFile(docUploadId);
                     }
-                    
+
                     virtualclass.gObj.uploadingFiles = [];
                     this.showUploadMsz("document upload success","alert-success");
                 } else if (response.message == 'duplicate'){
@@ -1980,18 +1787,6 @@
                 }
 
             },
-
-            // setNoteImageDimension : function (width, height, nid){
-            //   var contElem =  document.querySelector('#cont' + nid);
-            //   if(contElem != null){
-            //     var noteContainer = contElem.parentNode;
-            //     var imageContainer = document.querySelector('#'+ noteContainer.id +  ' .imageContainer img');
-            //     imageContainer.style.width = width;
-            //     imageContainer.style.height = height;
-            //   }else {
-            //     alert(nid + ' is null');
-            //   }
-            // },
 
             isFirstNote : function (id){
                 var firstNote = document.querySelector('#notesContainer .note');

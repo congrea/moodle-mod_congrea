@@ -154,7 +154,6 @@
 
             if(appCont != null){
                 var rightOffSet, leftSideBarWidth, reduceHeight;
-                var extraWidth = 0;
 
                 var leftSideBar = document.getElementById("virtualclassOptionsCont");
                 if (leftSideBar != null) {
@@ -167,21 +166,18 @@
                     leftSideBarWidth = roles.hasControls() ? 60 : 5;
                 }
 
-                //rightOffSet  = 12;
-                rightOffSet  = 0;
-                //leftSideBarWidth = roles.hasControls() ? 60 : 5;
 
                 if (virtualclass.isPlayMode) {
                     reduceHeight += 75;
                 }else {
                     if (app == 'SharePresentation') {
                         if(document.querySelector('#virtualclass' + app + '.pptSharing') != null){
-                            reduceHeight = 120;
+                            reduceHeight = 80;
                         } else {
                             //reduceHeight = reduceHeight - 42;
                             reduceHeight = 28;
                         }
-                    }else if(app == 'Yts'){
+                    }else if(app == 'Video' || app == 'Yts'){
                         reduceHeight = 28;
                     }else if (app == 'EditorCode'){
                         reduceHeight = 16;
@@ -198,9 +194,13 @@
                 //    reduceHeight = reduceHeight + 49;
                 //}
 
-                console.log('rightOffSet=' + rightOffSet +  ' leftSideBarWidth=' + leftSideBarWidth + ' extraWidth= ' + extraWidth);
+                console.log( ' leftSideBarWidth=' + leftSideBarWidth);
+                var extraWidth = 0;
+                if(virtualclass.currApp == 'Whiteboard' ||   virtualclass.currApp == 'DocumentShare' || virtualclass.currApp == 'SharePresentation'){
+                    extraWidth = 20;
+                }
+                res.width = (extraWidth + res.width) - leftSideBarWidth;
 
-                res.width = res.width - (rightOffSet + leftSideBarWidth + extraWidth);
                 appCont.style.width = res.width + 'px';
                 appCont.style.height = (res.height - reduceHeight) + 'px';
 
@@ -616,8 +616,8 @@
                     };
 
                     console.log(prvAppObj);
-                    console.log("nirmala");
-                    virtualclass.videoUl.saveVideosInLocalStr();
+                        //nirmala
+                  //  virtualclass.videoUl.saveVideosInLocalStr();
 
               //  }
 
@@ -1746,21 +1746,24 @@
                     var id = $('#listvideo .linkvideo.playing').attr('data-rid')
                     this.currPlaying = id;
                 }
-                upload.validation = ['mp4', 'webm'];
+                upload.validation = ["avi", "flv", "wmv", "mov", "mp4", "webm", "mkv", "vob", "ogv", "ogg", "drc", "mng", "qt", "yuv", "rm", "rmvb", "asf", "amv", "m4p",
+                    "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv", "f4v", "f4p", "f4a", "f4b"];
                 upload.cb = virtualclass.videoUl.afterUploadVideo;
                 upload.cthis = 'video';
-                upload.multiple = false;
                 //upload.requesteEndPoint = window.webapi + "&methodname=file_save&user="+virtualclass.gObj.uid;
                 upload.requesteEndPoint = window.webapi + "&methodname=file_save&live_class_id="+virtualclass.gObj.congCourse+"&status=1&content_type_id=2&user="+virtualclass.gObj.uid;
             } else {
-                upload.validation = ['bib','doc','xml','docx','fodt','html','ltx','txt','odt','ott','pdb','pdf','psw','rtf','sdw','stw','sxw','uot','vor','wps','bmp','emf','eps','fodg','gif','jpg','met','odd','otg','pbm','pct','pgm','png','ppm','ras','std','svg','svm','swf','sxd','tiff','wmf','xhtml','xpm','fodp','odg','odp','otp','potm','pot','pptx','pps','ppt','pwp','sda','sdd','sti','sxi','uop','csv','dbf','dif','fods','ods','ots','pxl','sdc','slk','stc','sxc','uos','xls','xlt','xlsx'];
+                upload.validation = ["bib", "doc", "xml", "docx", "fodt", "html", "ltx", "txt", "odt", "ott", "pdb", "pdf", "psw", "rtf", "sdw", "stw", "sxw", "uot", "vor",
+                    "wps", "bmp", "emf", "eps", "fodg", "gif", "jpg", "met", "odd", "otg", "pbm", "pct", "pgm", "png", "ppm", "ras", "std", "svg", "svm", "swf",
+                    "sxd", "tiff", "wmf", "xhtml", "xpm", "fodp", "odg", "odp", "otp", "potm", "pot", "pptx", "pps", "ppt", "pwp", "sda", "sdd", "sti", "sxi", "uop",
+                    "csv", "dbf", "dif", "fods", "ods", "ots", "pxl", "sdc", "slk", "stc", "sxc", "uos", "xls", "xlt", "xlsx"];
                 upload.cb = virtualclass.dts.onAjaxResponse;
                 upload.cthis = 'docs';
-                upload.multiple = false;
                 // upload.requesteEndPoint = window.webapi + "&methodname=congrea_image_converter&user="+virtualclass.gObj.uid;
                 upload.requesteEndPoint = window.webapi + "&methodname=congrea_image_converter&live_class_id="+virtualclass.gObj.congCourse+"&status=1&content_type_id=1&user="+virtualclass.gObj.uid;
-
             }
+
+            upload.multiple = false;
 
             //  virtualclass.fineUploader.generateModal(type, elemArr)
             // virtualclass.fineUploader.initModal(type);
@@ -1920,6 +1923,10 @@
                              }else {
                                  virtualclass.vutil.initDashboard(virtualclass.currApp);
                                  this.classList.add('clicked');
+
+                                 if(virtualclass.currApp == 'DocumentShare' && virtualclass.hasOwnProperty('dts')){
+                                     virtualclass.dts.moveProgressbar();
+                                 }
                              }
                            }
                         );
@@ -1933,6 +1940,9 @@
                 if(virtualclass.currApp == 'DocumentShare'){
                     if(!virtualclass.dts.noteExist()){
                         this.readyDashboard();
+                    } else {
+                        var dtitle = document.getElementById('dashboardnav');
+                        dtitle.setAttribute('data-title', virtualclass.lang.getString('DocumentSharedbHeading'));
                     }
                 }else if(virtualclass.currApp == 'Video'){
                     if(typeof currVideo == 'undefined'){
@@ -2007,6 +2017,17 @@
                 virtualclass.vutil.attachEventToUpload();
                 virtualclass.vutil.makeElementActive('#VideoDashboard .qq-uploader-selector.qq-uploader.qq-gallery');
                 virtualclass.vutil.makeElementActive('#listvideo');
+
+                 if(currVideo && currVideo.init.videoUrl){
+                    var hidepopup= true;
+                 }
+                var dashboardnav =  document.querySelector('#dashboardnav button');
+                if(dashboardnav != null && !hidepopup){
+                    dashboardnav.click();
+                }
+
+
+
             } else if (currApp == "SharePresentation"){
                 var dtitle = document.getElementById('dashboardnav');
                 dtitle.setAttribute('data-title', virtualclass.lang.getString('SharePresentationdbHeading'));
@@ -2066,7 +2087,14 @@
                 }
                //  virtualclass.vutil.attachEventToUploadTab();
 
-            }else {
+            }else if(currApp == "Video"){
+                if(typeof hidepopup == 'undefined'){
+                    $('#congdashboard').modal();
+                  //  virtualclass.dashBoard.clickCloseButton();
+                }
+
+
+            } else {
                 $('#congdashboard').modal();
             }
 
@@ -2101,6 +2129,7 @@
         },
 
         makeElementDeactive : function (selector){
+            console.log('drag drop Deactive element ' + selector);
             var element = document.querySelector(selector);
             if(element != null){
                 element.style.pointerEvents = 'none';
@@ -2108,6 +2137,7 @@
         },
 
         makeElementActive : function (selector){
+            console.log('drag drop Active element ' + selector);
             var element = document.querySelector(selector);
             if(element != null){
                 element.style.pointerEvents = 'visible';
@@ -2132,6 +2162,15 @@
                         virtualclass.vutil.initDashboard(currApp, hidepopup);
                     }
                 }
+            }else if(currApp == 'Video'){
+                if(typeof hidepopup ==  'undefined'){
+
+                    virtualclass.vutil.initDashboard(currApp);
+                }else{
+                    virtualclass.vutil.initDashboard(currApp, hidepopup);
+
+                }
+
             } else {
                 virtualclass.vutil.initDashboard(currApp);
             }
@@ -2355,8 +2394,72 @@
             var result = '';
             for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
             return result;
+        },
+
+        isBulkDataFetched : function (){
+            return (virtualclass.serverData.rawData.video.length > 0
+            || virtualclass.serverData.rawData.docs.length > 0
+            || virtualclass.serverData.rawData.ppt.length > 0 );
+        },
+
+        sendOrder : function (type, order,cb){
+            virtualclass.gObj.docOrder[type] = order;
+            var data = {order: JSON.stringify(virtualclass.gObj.docOrder)};
+            var url = 'https://api.congrea.net/t/UpdateRoomMetaData'
+            virtualclass.xhrn.sendData(data, url,cb);
+        },
+
+        requestOrder : function (type, cb){
+            var url = 'https://api.congrea.net/t/GetRoomMetaData';
+            var cthis = this;
+            virtualclass.xhrn.sendData({noting:true}, url, function (response) {
+                if (response == "Error") {
+                    console.log("page order retrieve failed");
+                } else {
+                    var response = JSON.parse(response).Item;
+                    if (response.order.S) {
+                        if(virtualclass.vutil.IsJsonString(response.order.S)){
+                            var responseData = JSON.parse(response.order.S);
+                            virtualclass.gObj.docOrder = responseData;
+                            cb(responseData[type]);
+                        }
+                    }
+                }
+            });
+        },
+
+        IsJsonString : function(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        },
+
+        removeChildrens : function (selector){
+            // selector = selector + ' .qq-upload-list-selector.qq-upload-list li';
+            console.log('children selector ' + selector);
+            var uploadLists = document.querySelectorAll(selector);
+            for(var i=0; i < uploadLists.length; i++){
+                uploadLists[i].parentNode.removeChild(uploadLists[i]);
+            }
+        },
+
+
+        initAcitveElement : function (){
+            if(virtualclass.currApp == 'Video'){
+                var activeElem = '#VideoDashboard .qq-uploader-selector.qq-uploader.qq-gallery';
+                var deactiveElem = '#listvideo';
+            }else if(virtualclass.currApp == 'DocumentShare'){
+                var activeElem = '#DocumentShareDashboard .qq-uploader-selector.qq-uploader.qq-gallery';
+                var deactiveElem = '#listdocs';
+            }
+
+            virtualclass.vutil.makeElementActive(activeElem);
+            virtualclass.vutil.makeElementDeactive(deactiveElem);
+
         }
     };
-
     window.vutil = vutil;
 })(window);
