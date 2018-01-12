@@ -225,7 +225,7 @@ $ts = ($USER->id == 3) ? true : false;
     <!-- Fine Uploader JS file
     ====================================================================== -->
 <!-- <script src ="<?php //echo $whiteboardpath.'fileuploader/js/fine-uploader.js'; ?>"></script> -->
-<script src ="<?php echo $whiteboardpath.'s3/s3.fine-uploader.min.js'; ?>"></script>
+<script src ="<?php echo $whiteboardpath.'s3/s3.fine-uploader.js'; ?>"></script>
 
 
 
