@@ -174,7 +174,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     } else {
         global $USER;
         // Serve online at vidya.io.
-        $url = "https://l.vidya.io";  // Online url
+        $url = "https://local.vidya.io";  // Online url
         $role = 's'; // Default role.
         $info = false; // Debugging off.
 
@@ -191,7 +191,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
        // $upload = "https://local.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
 
           $upload = $CFG->wwwroot."/mod/congrea/webapi.php?cmid=".$cm->id."&key=$mysession&methodname=record_file_save";
-        
+          $webapi =  $CFG->wwwroot."/mod/congrea/webapi.php?cmid=".$cm->id;
         
        // $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
         $down = $CFG->wwwroot ."/mod/congrea/play_recording.php?cmid=$cm->id";
@@ -205,7 +205,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
             $info = true;
         }
         $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
-                    $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor);
+                    $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi);
         echo $form; 
     }
 } else {
@@ -248,12 +248,12 @@ foreach ($recordings as $record){
                                                    $popupwidth, $popupheight));
     // play button
     if (has_capability('mod/congrea:playrecording', $context)) {    
-       $buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('e/insert_edit_video'), 'alt' => $strplay, 'class'=>'iconsmall hand', 'onclick' => $playpopup));
+       $buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class'=>'iconsmall hand', 'onclick' => $playpopup));
     }
 
     // delete button
     if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
-       $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete'=>$record->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'iconsmall')), array('title'=>$strdelete));
+       $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete'=>$record->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->image_url('t/delete'), 'alt'=>$strdelete, 'class'=>'iconsmall')), array('title'=>$strdelete));
     }
 
     $row[] = implode(' ', $buttons);

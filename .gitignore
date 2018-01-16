@@ -36,4 +36,4 @@ bundle/virtualclass/src/virtualclass.js
 bundle/virtualclass/templates/chat/stickycont.hbs
 bundle/virtualclass/templates/precheck.hbs
 bundle/virtualclass/v.vidya.io/index.php
-
+.idea/*
