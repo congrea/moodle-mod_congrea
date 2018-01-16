@@ -13,6 +13,7 @@
             autoPlayFlag: 1,
             status: 0,
             yts:false,
+            online:false,
 
             /*
              * it creates the the necessary layout and containers to place
@@ -34,6 +35,7 @@
                         this.videoId = videoObj.init.videoId || videoObj.init;
                         this.videoUrl = videoObj.init.videoUrl;
                         this.yts=videoObj.init.yts;
+                        this.online=videoObj.init.online;
                         this.isPaused= videoObj.init.isPaused;
                     }
                 }
@@ -111,61 +113,61 @@
 
              */
 
-            videoListFromLocalStr: function (videoObj) {
-                // if data available in localstorage
-                if (typeof videoObj != 'undefined' && videoObj.hasOwnProperty('fromReload')) {
-                    this.videos = JSON.parse(localStorage.getItem("videoList"));
-
-                    // if videos available
-                    if (this.videos && this.videos.length > 0) {
-
-                        this.showVideos(this.videos, videoObj.init.videoId);
-                        this.order = JSON.parse(localStorage.getItem("videoOrder"));
-                        this.reArrangeElements(this.order); // 3, local storage
-                        localStorage.removeItem("videoList");
-                        localStorage.removeItem("videoOrder");
-                    } else {
-                        // if videolist is empty
-                        var type = "video";
-                        var firstId = "congrea" + type + "ContBody";
-                        var secondId = "congreaShareVideoUrlCont";
-                        var elemArr = [firstId, secondId];
-                        this.modalPopup(type, elemArr);
-                    }
-
-                } else {
-                    // When user come at first time i.e  no localstorage video data  available
-                    var list = "onlyRetrieve";
-                    //this.getVideoList(list);
-                }
-            },
-
-            /*
-             * rearranges  videos in playlist based on  updated order
-             * @param  order of videolist element ,to be called each time,when
-             * order changes or videolist to be displayed
-
-             */
-
-            //virtualclass.videoUl.videos
-
-            reArrangeElementsOld: function (order) {
-                var container = document.getElementById('listvideo'),
-                tmpdiv = document.createElement('div');
-                tmpdiv.id = "listvideo";
-                tmpdiv.className = "videos";
-
-                this.order = order;
-
-                for (var i = 0; i < order.length; i++) {
-                    var elem = document.getElementById('linkvideo' + order[i])
-                    if (elem) {
-                        tmpdiv.appendChild(elem);
-                    }
-                }
-
-                container.parentNode.replaceChild(tmpdiv, container);
-            },
+            // videoListFromLocalStr: function (videoObj) {
+            //     // if data available in localstorage
+            //     if (typeof videoObj != 'undefined' && videoObj.hasOwnProperty('fromReload')) {
+            //         this.videos = JSON.parse(localStorage.getItem("videoList"));
+            //
+            //         // if videos available
+            //         if (this.videos && this.videos.length > 0) {
+            //
+            //             this.showVideos(this.videos, videoObj.init.videoId);
+            //             this.order = JSON.parse(localStorage.getItem("videoOrder"));
+            //             this.reArrangeElements(this.order); // 3, local storage
+            //             localStorage.removeItem("videoList");
+            //             localStorage.removeItem("videoOrder");
+            //         } else {
+            //             // if videolist is empty
+            //             var type = "video";
+            //             var firstId = "congrea" + type + "ContBody";
+            //             var secondId = "congreaShareVideoUrlCont";
+            //             var elemArr = [firstId, secondId];
+            //             this.modalPopup(type, elemArr);
+            //         }
+            //
+            //     } else {
+            //         // When user come at first time i.e  no localstorage video data  available
+            //         var list = "onlyRetrieve";
+            //         //this.getVideoList(list);
+            //     }
+            // },
+            //
+            // /*
+            //  * rearranges  videos in playlist based on  updated order
+            //  * @param  order of videolist element ,to be called each time,when
+            //  * order changes or videolist to be displayed
+            //
+            //  */
+            //
+            // //virtualclass.videoUl.videos
+            //
+            // reArrangeElementsOld: function (order) {
+            //     var container = document.getElementById('listvideo'),
+            //     tmpdiv = document.createElement('div');
+            //     tmpdiv.id = "listvideo";
+            //     tmpdiv.className = "videos";
+            //
+            //     this.order = order;
+            //
+            //     for (var i = 0; i < order.length; i++) {
+            //         var elem = document.getElementById('linkvideo' + order[i])
+            //         if (elem) {
+            //             tmpdiv.appendChild(elem);
+            //         }
+            //     }
+            //
+            //     container.parentNode.replaceChild(tmpdiv, container);
+            // },
 
             reArrangeElements: function (order) {
                 var container = document.getElementById('listvideo'),
@@ -615,8 +617,17 @@
                         video.addEventListener("click", function () {
                             if(vidObj.filetype == "video_yts"){
                                 virtualclass.videoUl.yts=true;
-                            }else{
+                                virtualclass.videoUl.online=false
+                            }else if (vidObj.filetype == "video_online"){
+
                                 virtualclass.videoUl.yts=false;
+
+                                virtualclass.videoUl.online=true
+
+                            } else{
+                                virtualclass.videoUl.yts=false;
+                                virtualclass.videoUl.online=false
+
                             }
 
                             var url =vidObj.urls.main_video;
@@ -814,8 +825,14 @@
                 if(msg.videoUl.type){
                     if(msg.videoUl.type=="video_yts"){
                         virtualclass.videoUl.yts=true;
+                        virtualclass.videoUl.online=false
+                    }else if (msg.videoUl.type=="video_online"){
+                        virtualclass.videoUl.online=true;
+                        virtualclass.videoUl.yts=false;
+
                     }else{
                         virtualclass.videoUl.yts=false;
+                        virtualclass.videoUl.online=false;
                     }
                 }
 
@@ -901,10 +918,18 @@
                         currVideoObj = this.autoPlayList(nxIndex)
                     }
                 } else {
+
+                    var toStd={};
+                    toStd.id=currVideoObj.fileuuid;
+                    toStd.title=currVideoObj.filename;
+                    toStd.type=currVideoObj.filetype;
+
                     if (!virtualclass.videoUl.listEnd) {
-                         if(currVideoObj.type=='online'){
+                         if(currVideoObj.filetype=='video_online'){
                             virtualclass.videoUl.yts=false;
-                            virtualclass.videoUl.UI.displayVideo(currVideoObj.id, currVideoObj.URL);
+                            virtualclass.videoUl.online=true;
+                          //  virtualclass.videoUl.UI.displayVideo(currVideoObj.id, currVideoObj.URL);
+                             virtualclass.videoUl.UI.displayVideo(currVideoObj.fileuuid,currVideoObj.URL);
                             virtualclass.videoUl.videoToStudent(currVideoObj);
 
                             if (virtualclass.videoUl.player) {
@@ -913,38 +938,37 @@
                             }
                             this.activeVideoClass(currVideoObj.id);
 
+                             toStd.content_path=currVideoObj.URL;
+
                         }else{
+                             virtualclass.videoUl.online=false;
                              if(currVideoObj.filetype=='video_yts'){
                                  virtualclass.videoUl.yts=true;
+                                 virtualclass.videoUl.UI.displayVideo(currVideoObj.fileuuid,currVideoObj.URL);
+                                 toStd.content_path=currVideoObj.URL;
 
                              }else{
                                  virtualclass.videoUl.yts=false;
+                                 virtualclass.videoUl.UI.displayVideo(currVideoObj.fileuuid,currVideoObj.urls.main_video);
+                                 toStd.content_path=currVideoObj.urls.main_video;
 
                              }
-                            // var videoUrl ="https://media.congrea.net/yJaR3lEhER3470dI88CMD5s0eCUJRINc2lcjKCu2/12323/225a730b-4609-400c-8489-19d8e1bdaf5c/video/video.m3u8";
-                             virtualclass.videoUl.UI.displayVideo(currVideoObj.fileuuid,currVideoObj.urls.main_video);
-                            // virtualclass.videoUl.UI.displayVideo(currVideoObj.id, currVideoObj.content_path);
-                             var toStd={};
-                             toStd.content_path=currVideoObj.urls.main_video;
-                             toStd.id=currVideoObj.fileuuid;
-                             toStd.title=currVideoObj.filename;
-                             toStd.type=currVideoObj.filetype;
 
-
+                             //virtualclass.videoUl.UI.displayVideo(currVideoObj.fileuuid,currVideoObj.urls.main_video);
 
                             virtualclass.videoUl.videoToStudent(toStd);
 
-                            if (virtualclass.videoUl.player) {
-
-                                virtualclass.videoUl.player.ready(function(){
-                                    var myPlayer = this;
-                                    myPlayer.play()
-
-                                });
-                            }
-                            this.activeVideoClass(currVideoObj.fileuuid);
-
                         }
+
+                        if (virtualclass.videoUl.player) {
+
+                            virtualclass.videoUl.player.ready(function(){
+                                var myPlayer = this;
+                                myPlayer.play()
+
+                            });
+                        }
+                        this.activeVideoClass(currVideoObj.fileuuid);
 
                     }
                 }
@@ -985,7 +1009,6 @@
                 var list = document.querySelectorAll("#listvideo .linkvideo");
                 var index =0;
                 for(var i =0; i <list.length ;i++){
-                    debugger;
                     if(list[i].getAttribute("data-rid")==vidId){
                         index = i
                         return index;
@@ -1065,11 +1088,11 @@
                     var type ="saved";
                     var elem = document.getElementById("linkvideo" + id);
                     if (elem) {
-                        if(elem.classList.contains("yts")){
-                            type="yts"
-                        }else if(elem.classList.contains("online")){
-                            type="online";
-                        }
+                        // if(elem.classList.contains("yts")){
+                        //     type="yts"
+                        // }else if(elem.classList.contains("online")){
+                        //     type="online";
+                        // }
                         elem.parentNode.removeChild(elem);
                         //virtualclass.videoUl.order=[];
 
@@ -1302,28 +1325,24 @@
                 },
 
                 setPlayerUrl: function (player, videoUrl, startFrom) {
+                    if(player.poster_){
+                        player.poster_="";
+                    }
+
                     var dispVideo = document.querySelector("#dispVideo");
                     if(virtualclass.videoUl.yts){
                         dispVideo.setAttribute('data-setup','{ techOrder: [youtube]}');
                         player.src({type: 'video/youtube', src:videoUrl});
 
-                    }else{
-                        var poster = document.querySelector("#dispVideo .vjs-poster");
-                        if(poster){
-                            poster.style.backgroundImage="none";
-                        }
-                        dispVideo.setAttribute('data-setup','{"preload": "auto" }');
-                        // var isFirefox = typeof InstallTrigger !== 'undefined';
-                      //  if(isFirefox){
+                    }else if (virtualclass.videoUl.online) {
+                        dispVideo.setAttribute('data-setup', '{"preload": "auto" }');
+                        player.src({type: 'video/webm', src: videoUrl});
+                        player.src({type: 'video/mp4', src: videoUrl});
 
-                          // videoUrl="https://media.congrea.net/yJaR3lEhER3470dI88CMD5s0eCUJRINc2lcjKCu2/12323/89bbbd11-10b9-4687-8d18-c5df8040dcad/video/0400k/video.m3u8";
+                    } else{
+                        dispVideo.setAttribute('data-setup','{"preload": "auto"}');
+                        player.src({type: "application/x-mpegURL", "withCredentials":true,src: videoUrl});
 
-                         player.src({type: "application/x-mpegURL", "withCredentials":true,src: videoUrl});
-
-                       // }else{
-                         //   player.src({type: '"type": "application/x-mpegUR', src: videoUrl});
-                         //   player.src({type: '"type": "application/x-mpegUR', src: videoUrl});
-                       // }
                     }
 
                     if (startFrom) {
@@ -1383,21 +1402,17 @@
                     player.reset();
                     var dispVideo = document.querySelector("#dispVideo");
                     if(virtualclass.videoUl.yts){
-                        dispVideo.setAttribute('data-setup','{ techOrder: [youtube]}');
+                        dispVideo.setAttribute('data-setup','{ techOrder: [youtube],controls: true,}');
                         player.src({type: 'video/youtube', src:videoUrl});
 
-                    }else{
-                        dispVideo.setAttribute('data-setup','{"preload": "auto" }');
+                    }else if(virtualclass.videoUl.online){
+                        dispVideo.setAttribute('data-setup','{"preload": "auto", "controls": true, }');
+                        player.src({type: 'video/webm', src: videoUrl});
+                        player.src({type: 'video/mp4', src: videoUrl});
 
-                        // var isFirefox = typeof InstallTrigger !== 'undefined';
-                        // if(isFirefox){
-                        //     player.src({type: 'video/webm', src: videoUrl});
-                        // }else{
-                        //     player.src({type: 'video/webm', src: videoUrl});
-                        //     player.src({type: 'video/mp4', src: videoUrl});
-                        // }
-                         player.src({type: 'application/x-mpegURL',"withCredentials":true, src: videoUrl});
-
+                    } else {
+                         dispVideo.setAttribute('data-setup','{"preload": "auto", "controls": true, }');
+                        player.src({type: 'application/x-mpegURL',"withCredentials":true, src: videoUrl});
 
                     }
                     console.log("ended" + vidId)
@@ -1413,10 +1428,12 @@
                     //     virtualclass.videoUl.autoPlayList(index + 1);
                     //
                     // }
+
+
+
                     var list = document.querySelectorAll("#listvideo .linkvideo");
                     var index =0;
                     for(var i =0; i <list.length ;i++){
-                        debugger;
                         if(list[i].getAttribute("data-rid")==vidId){
                            index = i
                            break;
@@ -1424,6 +1441,9 @@
                     }
 
                     if (virtualclass.videoUl.autoPlayFlag) {
+                        if(player.poster_){
+                            player.poster_="";
+                        }
                         virtualclass.videoUl.autoPlayList(index + 1,list);
 
                     }
@@ -1448,13 +1468,10 @@
                             // slice(1, -1) is used to remove first and last character
                             var id  = virtualclass.vutil.createHashString(input.value)+virtualclass.vutil.randomString(32).slice(1, -1);
 
+                             virtualclass.videoUl.UI.saveYtsUrl(id)
 
-                            var videoId = virtualclass.videoUl.getVideoId(input.value);
 
-                            if( videoId  ){
-                             virtualclass.videoUl.UI.saveYtsUrl(videoId)
 
-                            }
 
 
                             // var vidObj= {};
@@ -1507,11 +1524,14 @@
                     vidObj.title = input.value;
 
                     var url = ' https://api.congrea.net/t/addURL';
-                    if (typeof videoId == 'boolean') {
-                        vidObj.type = 'video_online';
-                    }else  {
-                        vidObj.type="video_yts"
-                    }
+
+                    var videoId = virtualclass.videoUl.getVideoId(input.value);
+
+                        if (typeof videoId == 'boolean') {
+                            vidObj.type = 'video_online';
+                        } else {
+                            vidObj.type = "video_yts"
+                        }
 
                     virtualclass.xhrn.sendData(vidObj, url, function (response) {
                         // virtualclass.videoUl.afterUploadFile(vidObj);
@@ -1676,7 +1696,7 @@
                     var data = virtualclass.awsData;
                     var videos=[];
                     for(var i =0;i<data.length;i++){
-                        if((data[i]["filetype"]=="video" || data[i]["filetype"]=="video_yts") && !data[i].hasOwnProperty("deleted") ){
+                        if((data[i]["filetype"]=="video" || data[i]["filetype"]=="video_yts"||data[i]["filetype"]=="video_online")&& !data[i].hasOwnProperty("deleted") ){
                             videos.push(data[i]);
                         }
                     }

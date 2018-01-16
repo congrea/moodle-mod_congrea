@@ -608,6 +608,7 @@
                             videoId:virtualclass.videoUl.videoId,
                             videoUrl:virtualclass.videoUl.videoUrl,
                             yts:virtualclass.videoUl.yts,
+                            online:virtualclass.videoUl.online,
                             isPaused:virtualclass.videoUl.isPaused,
 
                         },
@@ -2417,11 +2418,13 @@
                     console.log("page order retrieve failed");
                 } else {
                     var response = JSON.parse(response).Item;
-                    if (response.order.S) {
-                        if(virtualclass.vutil.IsJsonString(response.order.S)){
-                            var responseData = JSON.parse(response.order.S);
-                            virtualclass.gObj.docOrder = responseData;
-                            cb(responseData[type]);
+                    if(response != null && typeof response != 'undefined' && response != undefined){
+                        if (response.order.S) {
+                            if(virtualclass.vutil.IsJsonString(response.order.S)){
+                                var responseData = JSON.parse(response.order.S);
+                                virtualclass.gObj.docOrder = responseData;
+                                cb(responseData[type]);
+                            }
                         }
                     }
                 }
