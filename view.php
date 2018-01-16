@@ -204,8 +204,12 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
             $info = true;
         }
+        
+        //Todo that key should be dyanamic
+        $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
+        
         $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
-                    $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi);
+                    $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey);
         echo $form; 
     }
 } else {
