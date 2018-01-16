@@ -23,7 +23,10 @@ function my_curl_request($url, $post_data, $key, $secret){
 //send auth detail to server
 $authusername = substr(str_shuffle(MD5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);
+
+//Todo that key should be dyanamic, place licensekey
 $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
+
 $secret = 'IogyMNj7UQoWyazdbeyNmCtscNgDqrw9PMHCA1JvR7rqi0DtfchCPL41zlFZMb9B';
 $room = '2_15';
 $post_data = array('authuser'=> $authusername,'authpass' => $authpassword, 'role' => 't', 'room' => $room);

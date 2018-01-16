@@ -205,8 +205,8 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
             $info = true;
         }
         
-        //Todo that key should be dyanamic
-        $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
+        //Todo that key should be dyanamic, place licensekey
+         $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
         
         $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
                     $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey);
