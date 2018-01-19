@@ -12,10 +12,7 @@ include('weblib.php');
 
 // The function list is avaible in weblib.php
 define('Functions_list', serialize(array('record_file_save', 'poll_save', 'poll_data_retrieve',
-'poll_delete', 'poll_update', 'poll_result', 'poll_option_drop', 'file_save','url_save',
-'congrea_retrieve_video', 'update_content', 'congrea_image_converter', 'retrieve_all_notes',
-'retrieve_docs', 'congrea_page_order', 'congrea_retrieve_page_order','congrea_get_enrolled_users',
-'congrea_get_enrolled_users', 'congrea_quiz','congrea_get_quizdata', 'congrea_add_quiz', 'congrea_quiz_result','update_content_video','ppt_save','congrea_retrieve_ppt')));
+'poll_delete', 'poll_update', 'poll_result', 'poll_option_drop','congrea_get_enrolled_users','congrea_quiz','congrea_get_quizdata', 'congrea_add_quiz', 'congrea_quiz_result')));
 
 function set_header() {
     header("access-control-allow-origin: *");
@@ -62,43 +59,7 @@ function validate_request() {
         case 'poll_save':
             $qstring[] = $cmid;
             $qstring[] = $userid;
-            break;
-        case 'ppt_save':
-                    $qstring[] = $cmid;
-                    $qstring[] = $userid;
-                    break;
-        case 'congrea_retrieve_ppt':
-             $qstring[] = $cmid;
-             $qstring[] = $userid;
-             break;
-        case 'file_save':
-             if(!empty($_FILES)) {
-                unset($qstring); // Post data is not needed.
-                $qstring[] = $_FILES;
-             }
-             $qstring[] = $cmid;
-             $qstring[] = $userid;
-
-             break;
-        case 'congrea_retrieve_video':
-            unset($qstring); // Post data is not needed.
-            $qstring[] = $cmid;
-            $qstring[] = $userid;
-            break;
-        case 'congrea_image_converter':
-            unset($qstring); // Post data is not needed.
-            $qstring[] = $_FILES;
-            $qstring[] = $cmid;
-            $qstring[] = $userid;
-            break;
-        case 'retrieve_all_notes':
-            unset($qstring); // Post data is not needed.
-            $qstring[] = $cmid;
-            break;
-        case 'retrieve_docs':
-            unset($qstring); // Post data is not needed.
-            $qstring[] = $cmid;
-            break;
+            break;                
         case 'congrea_get_enrolled_users':
             unset($qstring); // Post data is not needed.
             $qstring[] = $cmid;

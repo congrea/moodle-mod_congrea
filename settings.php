@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     $defaultrun = array();
     $defaultrun[0] = get_string("liverun", "congrea");
-    $defaultrun[1] = get_string("localrun", "congrea");//mod_congrea/settingname 
     $settings->add(new admin_setting_configselect('mod_congrea/serve', get_string('wheretoruncongrea', 'congrea'),
             get_string('configactiontolocalrun', 'congrea'), 0, $defaultrun));
 }
