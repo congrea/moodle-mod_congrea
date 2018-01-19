@@ -28,7 +28,8 @@ $authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);
 $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
 
 $secret = 'IogyMNj7UQoWyazdbeyNmCtscNgDqrw9PMHCA1JvR7rqi0DtfchCPL41zlFZMb9B';
-$room = '2_15';
+$room = !empty($course->id)&&!empty($cm->id) ? $course->id.'_'.$cm->id : 0;
+
 $post_data = array('authuser'=> $authusername,'authpass' => $authpassword, 'role' => 't', 'room' => $room);
 $post_data = json_encode($post_data);
 //echo $post_data;

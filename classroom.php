@@ -26,7 +26,7 @@
 header("access-control-allow-origin: *");
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
-require_once('auth.php');
+
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n = optional_param('n', 0, PARAM_INT);  // ... congrea instance ID - it should be named as the first character of the module.
 $isplay = optional_param('play', 0, PARAM_INT);  // Play recording
@@ -42,6 +42,7 @@ if ($id) {
 } else {
     print_error('You must specify a course_module ID or an instance ID');
 }
+require_once('auth.php');
 // Theme color
 $theme = $congrea->themecolor;
 require_login($course, true, $cm);
