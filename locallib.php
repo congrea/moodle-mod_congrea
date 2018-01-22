@@ -94,6 +94,41 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     return $form;
 }
 
+// TODO, this function should be merge with congrea_online_server
+function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
+            $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false, 
+            $anyonepresenter = 0, $audio = 0, $pushtotalk = 0, $themecolor = 'black', $webapi, $licensekey, $id, $vcsid) {
+    global $USER;
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
+        'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
+        'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $USER->firstname.' '.$USER->lastname));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'user', 'value' => $authusername));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pass', 'value' => $authpassword));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'rid', 'value' => $rid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'upload', 'value' => $upload));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audio));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'themecolor', 'value' => $themecolor));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
+    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+         'value' => 'p'));
+    $form .= html_writer::end_tag('form');
+    return $form;
+}
+
 /**
  * Update the calendar entries for this congrea.
  *

@@ -152,13 +152,14 @@ $themecolor = $congrea->themecolor;
 $audio = $congrea->audio;
 $pushtotalk = $congrea->pushtotalk;
 $anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
+$licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
 
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $room = $course->id . "_" . $cm->id;
     global $USER;
     // Serve online at vidya.io.
-    $url = "https://local.vidya.io";  // Online url
+    $url = "https://l.vidya.io";  // Online url
     $role = 's'; // Default role.
     $info = false; // Debugging off.
 
@@ -171,12 +172,9 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $mysession = session_id();
     //$upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
     // Todo this should be changed with actual server path
-    // $upload = "https://local.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
-
     $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
     $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 
-    // $upload = "https://l.vidya.io/transfer.php?cmid=".$cm->id."&key=$mysession&mdroot=".htmlspecialchars($CFG->wwwroot);
     $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
 
     if (has_capability('mod/congrea:addinstance', $context)) {
@@ -187,7 +185,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
         $info = true;
     }
-    $licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
+
     $room = !empty($course->id)&&!empty($cm->id) ? $course->id.'_'.$cm->id : 0;
     $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey);
     echo $form;
@@ -217,7 +215,7 @@ $table->head[] = "";
 $table->colclasses[] = 'centeralign';
 
 $table->id = "recorded_data";
-
+global $USER;
 foreach ($recordings as $record) {
     $buttons = array();
     $lastcolumn = '';
@@ -225,14 +223,18 @@ foreach ($recordings as $record) {
     $row[] = $record->vcsessionname . ' ' . mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->timecreated);
 
-    $playurl = new moodle_url($CFG->wwwroot . '/mod/congrea/classroom.php', array('id' => $id, 'vcSid' => $record->id, 'play' => 1));
-    $playpopup = js_writer::function_call('congrea_openpopup', Array($playurl->out(false),
-                $popupname, $popupoptions,
-                $popupwidth, $popupheight));
+    //$playurl = new moodle_url($CFG->wwwroot . '/mod/congrea/classroom.php', array('id' => $id, 'vcSid' => $record->id, 'play' => 1));
+
     // play button
+    $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
-        $buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
+        //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
+        $buttons[] = congrea_online_server_play($url, $authusername, 
+        $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, 
+        $popupheight, $upload, $down, $info, $anyonepresenter, $audio, 
+        $pushtotalk, $themecolor, $webapi, $licensekey, $id, $vcsid);;
     }
+
 
     // delete button
     if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {

@@ -21,8 +21,9 @@
  * @copyright 2015 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+cors();
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+
 $filenum = required_param('prvfile' , PARAM_INT);
 $fid = required_param('fileBundelId' , PARAM_INT);
 $id = required_param('id' , PARAM_INT); //Course module id 
@@ -35,10 +36,10 @@ if ($id) {
     print_error('You must specify a course_module ID or an instance ID');
 }
 
-require_login($course, true, $cm);
+//require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-if (has_capability('mod/congrea:playrecording', $context)) {
+// if (has_capability('mod/congrea:playrecording', $context)) {
     $file = $DB->get_record('congrea_files', array('id'=>$fid));
     $filepath = $CFG->dataroot."/congrea/".$file->courseid."/".$file->vcid."/".$file->vcsessionkey."/vc.".$filenum;
     //$filepath = $CFG->dataroot."/congrea/2/1/74FzDRhfpAy/user.".$filenum;
@@ -50,6 +51,31 @@ if (has_capability('mod/congrea:playrecording', $context)) {
     }
     //echo json_encode($arr);
     echo $data;
-} else {
-    print_error('You do not have permission to play this file');
+//} else {
+//    print_error('You do not have permission to play this file');
+//}
+
+function cors() {
+
+    // Allow from any origin
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
+        // you want to allow, and if so:
+        header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Max-Age: 86400');    // cache for 1 day
+    }
+
+    // Access-Control headers are received during OPTIONS requests
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+            // may also be using PUT, PATCH, HEAD etc
+            header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
+
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+            header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+
+        exit(0);
+    }
 }
