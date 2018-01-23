@@ -159,7 +159,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $room = $course->id . "_" . $cm->id;
     global $USER;
     // Serve online at vidya.io.
-    $url = "https://l.vidya.io";  // Online url
+    $url = "https://live.congrea.net";  // Online url
     $role = 's'; // Default role.
     $info = false; // Debugging off.
 
