@@ -176,6 +176,7 @@ function poll_data_retrieve($valparams) {
     if (!empty($postdata)) {
         $response_array = array();
         $category = json_decode($postdata['category']);
+        $userid = json_decode($postdata['user']);
         $questiondata = $DB->get_records('congrea_poll_question', array('category' => $category));
         if ($questiondata) {
             foreach ($questiondata as $data) {
@@ -187,8 +188,13 @@ function poll_data_retrieve($valparams) {
                 $response_array[] = $polllist;
             }
         }
-        if (is_siteadmin()) {
-            $response_array[] = "true";
+        $admins = get_admins(); // check user is site admin.
+        if (!empty($admins) && !empty($admins[$userid]->id)) {           
+            if ($admins[$userid]->id == $userid) {
+                $response_array[] = "true";
+            } else {
+                $response_array[] = "false";
+            }
         } else {
             $response_array[] = "false";
         }
