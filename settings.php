@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,13 +21,14 @@
  * @package mod_congrea
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
- **/
-
+ * */
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $defaultrun = array();
-    $defaultrun[0] = get_string("liverun", "congrea");
-    $settings->add(new admin_setting_configselect('mod_congrea/serve', get_string('wheretoruncongrea', 'congrea'),
-            get_string('configactiontolocalrun', 'congrea'), 0, $defaultrun));
+    $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreageneral', 'congrea'), ''));
+    //$defaultrun = array();
+    //$defaultrun[0] = get_string("liverun", "congrea");    
+    $settings->add(new admin_setting_configtext('mod_congrea/cgapi', new lang_string('cgapi', 'congrea'), new lang_string('cgapid', 'congrea'), ''));
+    //$settings->add(new admin_setting_configtext('mod_congrea/cgsecret', new lang_string('cgsecret', 'congrea'), new lang_string('cgsecretd', 'congrea'), ''));
+    $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', new lang_string('cgsecret', 'congrea'), new lang_string('cgsecretd', 'congrea'), ''));
 }

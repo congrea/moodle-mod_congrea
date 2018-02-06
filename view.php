@@ -104,19 +104,31 @@ if ($delete and confirm_sesskey()) {
         }
     }
 }
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 
-// If vidya.io API key missing.
-if (!$licen = get_config('local_getkey', 'keyvalue')) {
-    $url = new moodle_url('/local/getkey/index.php');
-    echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $url->out(false)));
+
+// Get congrea api key and Secret key from congrea setting.
+if (!empty(get_config('mod_congrea', 'cgapi')) && !empty(get_config('mod_congrea', 'cgsecretpassword'))) {
+    $cgapi = get_config('mod_congrea', 'cgapi');
+    $cgsecret = get_config('mod_congrea', 'cgsecretpassword');
+    require_once('auth.php'); // Congrea api key and secret key are use in auth.php
+} else {
+    $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
+    echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $a));
     echo $OUTPUT->footer();
     exit();
-} else {
-    require_once('auth.php');
 }
+
+// If vidya.io API key missing.
+//if (!$licen = get_config('local_getkey', 'keyvalue')) {
+//    $url = new moodle_url('/local/getkey/index.php');
+//    echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $url->out(false)));
+//    echo $OUTPUT->footer();
+//    exit();
+//} else {
+//    require_once('auth.php');
+//}
 
 $a = new stdClass();
 $a->open = userdate($congrea->opentime);
@@ -124,7 +136,7 @@ $a->close = userdate($congrea->closetime);
 $user = $DB->get_record('user', array('id' => $congrea->moderatorid));
 
 $class_name = 'wrapper-button';
-if (($congrea->closetime > time() && $congrea->opentime <= time()) && (!get_config('mod_congrea', 'serve'))) {
+if (($congrea->closetime > time() && $congrea->opentime <= time())) {
     $class_name .= ' online';
 }
 echo html_writer::start_tag('div', array('class' => $class_name));
@@ -152,8 +164,7 @@ $themecolor = $congrea->themecolor;
 $audio = $congrea->audio;
 $pushtotalk = $congrea->pushtotalk;
 $anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
-$licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
-
+//$licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $room = $course->id . "_" . $cm->id;
@@ -186,7 +197,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $info = true;
     }
 
-    $room = !empty($course->id)&&!empty($cm->id) ? $course->id.'_'.$cm->id : 0;
+    $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
     $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey);
     echo $form;
 } else {
@@ -224,15 +235,12 @@ foreach ($recordings as $record) {
     $row[] = userdate($record->timecreated);
 
     //$playurl = new moodle_url($CFG->wwwroot . '/mod/congrea/classroom.php', array('id' => $id, 'vcSid' => $record->id, 'play' => 1));
-
     // play button
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
-        $buttons[] = congrea_online_server_play($url, $authusername, 
-        $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, 
-        $popupheight, $upload, $down, $info, $anyonepresenter, $audio, 
-        $pushtotalk, $themecolor, $webapi, $licensekey, $id, $vcsid);;
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey, $id, $vcsid);
+        ;
     }
 
 
