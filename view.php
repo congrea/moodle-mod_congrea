@@ -107,14 +107,17 @@ if ($delete and confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 
-
 // Get congrea api key and Secret key from congrea setting.
-if (!empty(get_config('mod_congrea', 'cgapi')) && !empty(get_config('mod_congrea', 'cgsecretpassword'))) {
-    $cgapi = get_config('mod_congrea', 'cgapi');
-    $cgsecret = get_config('mod_congrea', 'cgsecretpassword');
-    require_once('auth.php'); // Congrea api key and secret key are use in auth.php
+$a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
+if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
+    if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
+        require_once('auth.php');
+    } else {
+        echo $OUTPUT->notification(get_string('wrongkey', 'congrea', $a));
+        echo $OUTPUT->footer();
+        exit();
+    }
 } else {
-    $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
     echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $a));
     echo $OUTPUT->footer();
     exit();
