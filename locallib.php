@@ -123,8 +123,8 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
-    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-         'value' => 'p'));
+    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
+         'value' => ''));
     $form .= html_writer::end_tag('form');
     return $form;
 }
