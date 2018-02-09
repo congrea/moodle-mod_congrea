@@ -915,18 +915,20 @@ min-height: none;
         text-align: center;
 }
 
-input.playbtn{
+#page-mod-congrea-view input.playbtn{
    background-image:url([[pix:congrea|play]]) !important;
    background-color: white !important;
    padding-top: 1px !important;
    float:left;
    margin-right:5px !important;
 }
-input.playbtn:hover{
+
+#page-mod-congrea-view input.playbtn:hover{
    background-position: 0 !important;
 }
 
-input.playbtn:focus{
+
+#page-mod-congrea-view input.playbtn:focus{
    background-position: 0px !important;
 }
 
