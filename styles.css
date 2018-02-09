@@ -914,3 +914,19 @@ min-height: none;
 #page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c4, #page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c5, #page-mod-congrea-quizreport .generaltable td.cell.c4, #page-mod-congrea-quizreport .generaltable td.cell.c5 {
         text-align: center;
 }
+
+input.playbtn{
+   background-image:url([[pix:congrea|play]]) !important;
+   background-color: white !important;
+   padding-top: 1px !important;
+   float:left;
+   margin-right:5px !important;
+}
+input.playbtn:hover{
+   background-position: 0 !important;
+}
+
+input.playbtn:focus{
+   background-position: 0px !important;
+}
+
