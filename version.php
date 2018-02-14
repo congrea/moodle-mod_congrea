@@ -34,4 +34,4 @@ $plugin->requires  = 2014051202;      // Requires this Moodle version.(2.7.2+)
 $plugin->cron      = 0;               // Period for cron to check this module (secs).
 $plugin->component = 'mod_congrea'; // To check on upgrade, that module sits in correct place.
 $plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = array('local_getkey' => 2014081300);
+
