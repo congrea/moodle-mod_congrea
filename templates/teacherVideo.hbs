@@ -1,0 +1,12 @@
+<div id="videoHostContainer">
+  {{#if hasControl}}
+    <video id="videoHostSource" autoplay="" muted="muted"></video>
+    <canvas id="videoHost"></canvas>
+    <canvas id="videoHostSlice"></canvas>
+  {{else}}
+    <div id="fromServer">
+      <canvas id="videoParticipate" > </canvas>
+    </div>
+  {{/if}}
+</div>
+

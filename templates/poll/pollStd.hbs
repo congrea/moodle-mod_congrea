@@ -1,0 +1,23 @@
+<div id="stdPollContainer" class="container">
+  <div id="stdContHead" class="panel">
+    <div class="stdHeader">
+      <label id="pollHead">{{getString 'pollHead'}}</label>
+    </div>
+    <label id="timerLabel"></label>
+    <div id="timerCont"></div>
+  </div>
+  <div id="stdContBody" class="panel">
+    <label>{{getString 'Question'}} :<span id="stdQnCont">{{poll.question}}</span></label>
+    <div id="stdOptionCont">
+      {{#each poll.options}}
+        <div>
+          <input class="opt" name="option" value="{{@key}}" type="radio" id="{{@key}}">
+          <span>{{this}}</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+  <div id="stdContFooter">
+    <input id="btnVote" type="button" class="btn btn-primary" value ="vote">
+  </div>
+</div>

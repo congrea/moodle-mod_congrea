@@ -1,0 +1,8 @@
+.idea/
+/nbproject/private/
+nbproject/*
+node_modules/*
+uploads/*
+.sass-cache/
+css/theme/black.css.map
+css/theme/gray.css.map

@@ -1,0 +1,9 @@
+<div id="virtualclassYts" class="virtualclass">
+  <div id="player"></div>
+  {{#if hascontrol}}
+    {{> ytscontrol}}
+  {{/if}}
+  {{#if createMsg}}
+    <p id="messageLayout">{{getString 'youtubewllbshrshortly'}}</p>
+  {{/if}}
+</div>

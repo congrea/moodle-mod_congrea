@@ -1,0 +1,63 @@
+<div id="virtualclassPoll" class="virtualclass">
+  <div id="layoutPoll" class="bootstrap container-fluid pollLayout">
+    <nav id="navigator" class="nav navbar">
+      <ul class="nav nav-tabs pollNavBar">
+        {{#if control}}
+          <li role="presentation" id="coursePollTab" class="navListTab active" data-toggle="popover" data-trigger="hover" data-content="Polls you will create are course specific" >
+            <a href="#">{{getString 'Cpoll'}}</a>
+          </li>
+          <li role="presentation" id="sitePollTab" class="navListTab" data-toggle="popover" data-trigger="hover" data-content="Polls created here are of site level" >
+            <a href="# ">{{getString 'Spoll'}}</a>
+          </li>
+        {{else}}
+          <li role="presentation" id="pollResult" class="navListTab" data-toggle="popover" data-trigger="hover" data-content="show result">
+            <a href="# ">{{getString 'Presult'}}</a>
+          </li>
+        {{/if}}
+      </ul>
+
+    </nav>
+    <div id="layoutPollBody" class="pollMainCont">
+      {{#if  control}}
+        <div id="mszBoxPoll" class="row" style="display:none">
+        </div>
+        <div id="createPollCont" class="createBtnCont">
+          <button id="newPollBtnsite" class="btn btn-default site" data-toogle="modal" data-target="#editPollModal" style="display: none;"><i class="icon-create-new"></i>{{getString 'addnew'}}</button>
+          <button id="newPollBtncourse" class="btn btn-default course" data-toogle="modal" data-target="#editPollModal" style="display: block;"><i class="icon-create-new"></i>{{getString 'addnew'}}</button>
+        </div>
+
+        <div id="bootstrapCont" class="modalCont">
+
+        </div>
+        <div class="table-responsive" id="listQnContcourse">
+        <table  class="pollList table table-bordered table-striped table-fixed" >
+          <thead>
+          <tr class=" headerContainer" id="headerContainercourse">
+            <th class="controlsHeader">{{getString 'Controls'}}<i class="icon-setting"></i></th>
+            <th class="qnTextHeader">{{getString 'PQuestions'}}<i class="icon-help"></i></th>
+            <th class="creatorHeader">{{getString 'Creator'}}<i class="icon-creator"></i></th>
+          </tr>
+          </thead>
+        </table>
+        </div>
+      <div class="table-responsive"  id="listQnContsite" style="display: none;">
+        <table class="pollList table table-bordered table-striped" >
+          <thead>
+          <tr class=" headerContainer" id="headerContainersite">
+            <th class="controlsHeader">{{getString 'Controls'}}<i class="icon-setting"></i></th>
+            <th class="qnTextHeader">{{getString 'PQuestions'}}<i class="icon-help"></i></th>
+            <th class="creatorHeader">{{getString 'Creator'}}<i class="icon-creator"></i></th>
+          </tr>
+          </thead>
+        </table>
+      </div>
+      {{else}}
+        <div id="mszBoxPoll" class="row">
+          <div id="stdPollMszLayout">{{getString 'pollmybpublish'}}</div>
+        </div>
+        <div id="bootstrapCont" class="modalCont">
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
