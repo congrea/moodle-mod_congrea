@@ -1,0 +1,33 @@
+<tr id="contQn{{pollQn.pollType}}{{pollQn.index}}" class="vcPollCont">
+  <td id="ctrQn{{pollQn.pollType}}{{pollQn.index}}" class="pollCtrCont">
+    <table class="miniTB">
+      <tr>
+        <td>
+        <div id="contQn{{pollQn.pollType}}{{pollQn.index}}E" class="editCont pull-left">
+          <a href="#" data-target="#editPollModal" id="editQn{{pollQn.pollType}}{{pollQn.index}}">
+            <span class="icon-pencil2 controlIcon" data-toggle="congtooltip" title={{getString 'edit'}}></span>
+          </a>
+        </div>
+        </td>
+        <td>
+        <div id="contQn{{pollQn.pollType}}{{pollQn.index}}" class="deleteCont pull-left">
+          <a href="#" id="deleteQn{{pollQn.pollType}}{{pollQn.index}}">
+            <span class="icon-bin22 controlIcon" data-toggle="congtooltip" title={{getString 'delete'}}></span>
+          </a>
+        </div>
+        </td>
+        <td>
+        <div class="publishCont pull-left" id="contQn{{pollQn.pollType}}{{pollQn.index}}P">
+          <a href="#" id="publishQn{{pollQn.pollType}}{{pollQn.index}}">
+            <span class="icon-publish2 controlIcon" data-toggle="congtooltip" title={{getString 'Publish'}}></span>
+          </a>
+        </div>
+        </td>
+      </tr>
+    </table>
+
+  </td>
+  <td id="qnText{{pollQn.pollType}}{{pollQn.index}}" class="qnText" data-toggle="popover" data-trigger="hover"
+       >{{pollQn.questiontext}}</td>
+  <td class="creator">{{pollQn.creator}}</td>
+</tr>

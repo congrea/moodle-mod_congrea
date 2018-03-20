@@ -1,0 +1,27 @@
+<div id="editPollModal" class="modal in" tab-index="-1" area-hidden="true" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content" id="pollModalBody">
+      <div id="contHead" class="modal-header">
+        <button type="button" class="close" id="modalClose" data-dismiss="modal">×</button>
+        <div id="publishTx" class="row modalHeaderTx panel-body">{{getString 'ppoll'}}</div>
+      </div>
+      <div id="contBody" class="panel-body">
+        <label>{{getString 'Question'}}:<span id="qnTxCont" class="previewTxCont">{{poll.questiontext}}</span></label>
+        <div id="optsTxCont" class="previewTxCont">
+          {{#each poll.options}}
+            <div >
+              <span class="radio"><input class="opt" name="option" value="1" type="radio" id="1">{{this}}</span>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+      <div id="contFooter" class="modal-footer">
+        <div id="footerCtrCont">
+          <button id="goBack" data-dismiss="modal" class="btn btn-default controls">&lt; {{getString 'Back'}}<i class="icon-back"></i>
+          </button>
+          <button id="next" class="btn btn-default controls">{{getString 'Publish'}}<i class="icon-publish"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
