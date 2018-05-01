@@ -140,3 +140,7 @@ $string['congreadocument'] = 'You are already Uploaded this';
 $string['quizreport'] = 'Quiz Report';
 $string['noquizreport'] = 'No data Available for display quiz report';
 $string['noquizattempt'] = 'Not Attempt by any user';
+$string['colorpicker'] = 'Custom Colorpicker';
+$string['colorpickerd'] = 'Choose Custom Colorpicker';
+$string['preset'] = 'Preset Color';
+$string['presetd'] = 'Select Preset color';

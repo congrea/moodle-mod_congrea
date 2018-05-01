@@ -19,7 +19,6 @@ function my_curl_request($url, $post_data, $key, $secret) {
     curl_close($ch);
     return $result;
 }
-
 // send auth detail to server
 $authusername = substr(str_shuffle(MD5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);

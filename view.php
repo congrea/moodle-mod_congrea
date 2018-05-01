@@ -53,7 +53,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
-$PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
+//$PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
 
 // Event log
 $event = \mod_congrea\event\course_module_viewed::create(array(
@@ -106,16 +106,18 @@ if ($delete and confirm_sesskey()) {
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
-
 // Get congrea api key and Secret key from congrea setting.
 $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
-        require_once('auth.php');
+        require('auth.php');
     } else {
         echo $OUTPUT->notification(get_string('wrongkey', 'congrea', $a));
         echo $OUTPUT->footer();
         exit();
+    }
+    if (!empty($cgcolor = get_config('mod_congrea', 'colorpicker'))) { // Default color is gray.
+        require_once('auth.php');
     }
 } else {
     echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $a));
@@ -163,7 +165,7 @@ $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
 $popupoptions = "toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
 
-$themecolor = $congrea->themecolor;
+//$themecolor = $congrea->themecolor;
 $audio = $congrea->audio;
 $pushtotalk = $congrea->pushtotalk;
 $anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
@@ -201,7 +203,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     }
 
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey);
+    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $cgcolor, $webapi, $licensekey);
     echo $form;
 } else {
     // congrea closed.
@@ -242,7 +244,7 @@ foreach ($recordings as $record) {
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
-        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $themecolor, $webapi, $licensekey, $id, $vcsid);
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $cgcolor, $webapi, $licensekey, $id, $vcsid);
         ;
     }
 

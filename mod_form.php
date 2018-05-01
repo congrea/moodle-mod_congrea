@@ -90,9 +90,9 @@ class mod_congrea_mod_form extends moodleform_mod {
 
         // Layout settings
         $mform->addElement('header', 'general', get_string('customsetting', 'congrea'));
-        $themeoptions = array('gray' => 'Gray','black' =>'Black', 'white' => 'White');
-        $mform->addElement('select', 'themecolor', get_string('selectcolor', 'congrea'), $themeoptions);
-        $mform->addHelpButton('themecolor', 'selectcolor', 'congrea');
+        //$themeoptions = array('gray' => 'Gray','black' =>'Black', 'white' => 'White');
+        //$mform->addElement('select', 'themecolor', get_string('selectcolor', 'congrea'), $themeoptions);
+        //$mform->addHelpButton('themecolor', 'selectcolor', 'congrea');
         $audiooptions = array('Disable', 'Enable');
         $mform->addElement('select', 'audio', get_string('audio', 'congrea'), $audiooptions);
         $mform->addHelpButton('audio', 'audio', 'congrea');
