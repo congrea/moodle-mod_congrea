@@ -29,7 +29,6 @@ if ($ADMIN->fulltree) {
     //$defaultrun = array();
     //$defaultrun[0] = get_string("liverun", "congrea");    
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), get_string('cgapid', 'congrea'), ''));
- 
     $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'), get_string('cgsecretd', 'congrea'), ''));
     $choices['#34404c'] = 'Gray';
     $choices['#000000'] = 'Black';
