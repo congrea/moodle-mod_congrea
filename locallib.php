@@ -65,7 +65,7 @@ function congrea_course_teacher_list() {
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false, 
-            $anyonepresenter = 0, $audio = 0, $pushtotalk = 0, $themecolor = 'black', $webapi, $licensekey) {
+            $anyonepresenter = 0, $audio = 0, $pushtotalk = 0, $cgcolor, $webapi, $licensekey) {
     global $USER;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
         'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
@@ -83,7 +83,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audio));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'themecolor', 'value' => $themecolor));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
@@ -97,7 +97,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
 // TODO, this function should be merge with congrea_online_server
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false, 
-            $anyonepresenter = 0, $audio = 0, $pushtotalk = 0, $themecolor = 'black', $webapi, $licensekey, $id, $vcsid) {
+            $anyonepresenter = 0, $audio = 0, $pushtotalk = 0, $cgcolor, $webapi, $licensekey, $id, $vcsid) {
     global $USER;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
         'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
@@ -115,7 +115,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audio));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'themecolor', 'value' => $themecolor));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
