@@ -40,7 +40,7 @@ $context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/congrea/quizreport.php', array('cmid' => $cm->id, 'quizid' => $quizid, 'mquizid' => $mquizid));
 $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->navbar->add('Quiz Overview', new moodle_url('/mod/congrea/quizoverview.php?cmid=' . $cm->id));
+$PAGE->navbar->add('Quiz overview', new moodle_url('/mod/congrea/quizoverview.php?cmid=' . $cm->id));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
 if (!empty($quizid)&& !empty($mquizid)) {
@@ -55,7 +55,7 @@ if (!empty($quizid)&& !empty($mquizid)) {
     
     if (!empty($userdata)) {
         $table = new html_table();
-        $table->head = array('User Name', 'Email', 'Time taken<br/>[HH:MM:SS]', 'Grade', 'Q.Attemped', 'Correct', 'Time');
+        $table->head = array('User name', 'Email', 'Time taken<br/>[HH:MM:SS]', 'Grade', 'Q.Attempted', 'Correct', 'Time');
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;

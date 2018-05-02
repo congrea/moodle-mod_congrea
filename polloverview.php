@@ -32,13 +32,13 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Poll Overview');
+echo $OUTPUT->heading('Congrea poll overview');
 $sql = "SELECT id, description, timecreated from {congrea_poll_question} where cmid = $id";
 $questiondata = $DB->get_records_sql($sql);
 
 if (!empty($questiondata)) {
     $table = new html_table();
-    $table->head = array('Poll Questions', 'Users', 'Time');
+    $table->head = array('Poll questions', 'Users', 'Time');
     foreach ($questiondata as $data) {
         //$questionname = $data->description;
         $questionname = html_writer::link(new moodle_url('/mod/congrea/pollreport.php?cmid=' . $cm->id, array('questionid' => $data->id)), $data->description);
