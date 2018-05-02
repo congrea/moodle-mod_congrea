@@ -39,7 +39,7 @@ $context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/congrea/pollreport.php', array('cmid' => $cm->id, 'questionid' => $questionid));
 $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->navbar->add('Poll Overview', new moodle_url('/mod/congrea/polloverview.php?cmid=' . $cm->id));
+$PAGE->navbar->add('Poll overview', new moodle_url('/mod/congrea/polloverview.php?cmid=' . $cm->id));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
 if ($questionid) {
@@ -104,7 +104,7 @@ if (!empty($graphdata)) {
     $userdata = $DB->get_records_sql($sql);
     if (!empty($userdata)) {
         $table = new html_table();
-        $table->head = array('User Name', 'Email', 'Options');
+        $table->head = array('User name', 'Email', 'Options');
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;

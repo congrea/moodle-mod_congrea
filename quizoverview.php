@@ -32,7 +32,7 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Congrea Quiz  Overview');
+echo $OUTPUT->heading('Congrea quiz  overview');
 $sql = "SELECT q.id As mquizid, q.name, cq.id
                 FROM {congrea_quiz} cq
                 INNER JOIN
@@ -42,7 +42,7 @@ $quizdata = $DB->get_records_sql($sql);
 
 if (!empty($quizdata)) {
     $table = new html_table();
-    $table->head = array('Quizname', 'Users');
+    $table->head = array('Quiz name', 'Users');
     foreach ($quizdata as $data) {
         $quizname = html_writer::link(new moodle_url('/mod/congrea/quizreport.php?cmid=' . $cm->id, array('quizid' => $data->id, 'mquizid' => $data->mquizid)), $data->name);
         if ($data->id) {
