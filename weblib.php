@@ -381,18 +381,28 @@ function congrea_get_enrolled_users($data) {
  */
 function congrea_quiz($valparams) {
     global $DB;
+    //print_r($valparams); exit;
     list($postdata) = $valparams;
-
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-
-    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, timelimit, preferredbehaviour, questionsperpage');
-
+    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
     if ($quizes) {
-        echo( json_encode($quizes));
+        foreach ($quizes as $data) {
+            $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
+            if ($quizcm->id) {
+                $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
+                $quizdata[$data->id] = (object) array('id' => $data->id, 'name' => $data->name, 'timelimit' => $data->timelimit, 'preferredbehaviour' => $data->preferredbehaviour, 'questionsperpage' => $data->questionsperpage, 'quizstatus' => $quizstatus);
+            } else {
+                echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+            }
+        }
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
     }
-    //echo( json_encode($response_array));
+    if ($quizdata) {
+        echo(json_encode($quizdata));
+    } else {
+        echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+    }
 }
 
 /**
