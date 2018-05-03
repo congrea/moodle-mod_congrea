@@ -25,7 +25,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function ($) {
+define(['jquery', 'core/ajax', 'core/notification'], function ($) {
     return {
         presetcolor: function () {
             $(".form-select.defaultsnext #id_s_mod_congrea_preset").change(function () {
