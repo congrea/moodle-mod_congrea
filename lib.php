@@ -114,9 +114,9 @@ function congrea_extend_settings_navigation($settings, $congreanode) {
  */
 function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
     global $DB;
-    if (!empty($congrea->anyonepresenter)) {
-        $congrea->moderatorid = 0;
-    }
+//    if (!empty($congrea->anyonepresenter)) {
+//        $congrea->moderatorid = 0;
+//    }
     $congrea->timemodified = time();
     $congrea->id = $congrea->instance;
 

@@ -38,3 +38,4 @@ bundle/virtualclass/templates/precheck.hbs
 bundle/virtualclass/v.vidya.io/index.php
 .idea/*
 nbproject/private/
+node_modules/*

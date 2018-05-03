@@ -166,9 +166,9 @@ $popupheight = 'window.screen.height';
 $popupoptions = "toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
 
 //$themecolor = $congrea->themecolor;
-$audio = $congrea->audio;
-$pushtotalk = $congrea->pushtotalk;
-$anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
+//$audio = $congrea->audio;
+//$pushtotalk = $congrea->pushtotalk;
+//$anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
 //$licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
@@ -203,7 +203,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     }
 
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $cgcolor, $webapi, $licensekey);
+    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $licensekey);
     echo $form;
 } else {
     // congrea closed.
@@ -244,7 +244,7 @@ foreach ($recordings as $record) {
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
-        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $anyonepresenter, $audio, $pushtotalk, $cgcolor, $webapi, $licensekey, $id, $vcsid);
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $licensekey, $id, $vcsid);
         ;
     }
 
