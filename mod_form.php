@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,15 +25,16 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/congrea/locallib.php');
+
 /**
  * Module instance settings form
  */
 class mod_congrea_mod_form extends moodleform_mod {
+
     /**
      * Defines forms elements
      */
@@ -71,14 +73,13 @@ class mod_congrea_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
-        $mform->disabledIf('moderatorid', 'anyonepresenter', 'checked');
-
-        $mform->addElement('checkbox', 'anyonepresenter', get_string('anyonepresenter', 'congrea'));
-        $mform->addHelpButton('anyonepresenter', 'anyonepresenter', 'congrea');
-        if(empty($teacheroptions)) {
-            $mform->setDefault('anyonepresenter', 'checked');
-        }
-
+//        $mform->disabledIf('moderatorid', 'anyonepresenter', 'checked');
+//
+//        $mform->addElement('checkbox', 'anyonepresenter', get_string('anyonepresenter', 'congrea'));
+//        $mform->addHelpButton('anyonepresenter', 'anyonepresenter', 'congrea');
+//        if(empty($teacheroptions)) {
+//            $mform->setDefault('anyonepresenter', 'checked');
+//        }
         // Schedule fo session
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
         $mform->addElement('date_time_selector', 'opentime', get_string('opentime', 'congrea'));
@@ -89,24 +90,23 @@ class mod_congrea_mod_form extends moodleform_mod {
         $mform->addRule('closetime', null, 'required', null, 'client');
 
         // Layout settings
-        $mform->addElement('header', 'general', get_string('customsetting', 'congrea'));
+        //$mform->addElement('header', 'general', get_string('customsetting', 'congrea'));
         //$themeoptions = array('gray' => 'Gray','black' =>'Black', 'white' => 'White');
         //$mform->addElement('select', 'themecolor', get_string('selectcolor', 'congrea'), $themeoptions);
         //$mform->addHelpButton('themecolor', 'selectcolor', 'congrea');
-        $audiooptions = array('Disable', 'Enable');
-        $mform->addElement('select', 'audio', get_string('audio', 'congrea'), $audiooptions);
-        $mform->addHelpButton('audio', 'audio', 'congrea');
-
-        $pushtotalkoptions = array('Disable', 'Enable');
-        $mform->addElement('select', 'pushtotalk', get_string('pushtotalk', 'congrea'), $pushtotalkoptions);
-        $mform->addHelpButton('pushtotalk', 'pushtotalk', 'congrea');
-
+        //$audiooptions = array('Disable', 'Enable');
+        //$mform->addElement('select', 'audio', get_string('audio', 'congrea'), $audiooptions);
+        // $mform->addHelpButton('audio', 'audio', 'congrea');
+        //$pushtotalkoptions = array('Disable', 'Enable');
+        //$mform->addElement('select', 'pushtotalk', get_string('pushtotalk', 'congrea'), $pushtotalkoptions);
+        // $mform->addHelpButton('pushtotalk', 'pushtotalk', 'congrea');
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -124,4 +124,5 @@ class mod_congrea_mod_form extends moodleform_mod {
         }
         return $errors;
     }
+
 }
