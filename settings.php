@@ -30,7 +30,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), get_string('cgapid', 'congrea'), ''));
     $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'), get_string('cgsecretd', 'congrea'), ''));
     // Colourpicker Settings.
-    $choices = array('#34404c'=>'Gray', '#000000'=>'Black', '#FF0000'=>'Red', '#FFFF00'=>'Yellow');
+    $choices = array('#34404c'=>'Default', '#000000'=>'Black', '#FF0000'=>'Red', '#FFFF00'=>'Yellow');
     $settings->add(new admin_setting_configselect('mod_congrea/preset', get_string('preset', 'congrea'), get_string('presetd', 'congrea'),'#34404c', $choices));
     $PAGE->requires->js_call_amd('mod_congrea/presetcolor', 'presetcolor');
     $previewconfig = null;
