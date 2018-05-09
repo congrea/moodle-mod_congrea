@@ -190,9 +190,12 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     // Todo this should be changed with actual server path
     $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
     $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
-
+    
     $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
-
+    
+    $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
+    $userpicturesrc = $userpicture->out(false);
+    $fromcms = true; // Identify congrea is from cms.
     if (has_capability('mod/congrea:addinstance', $context)) {
         if ($USER->id == $congrea->moderatorid) {
             $role = 't';
@@ -203,7 +206,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     }
 
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $licensekey);
+    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey);
     echo $form;
 } else {
     // congrea closed.
@@ -244,7 +247,7 @@ foreach ($recordings as $record) {
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
-        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $licensekey, $id, $vcsid);
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid);
         ;
     }
 
