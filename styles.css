@@ -917,18 +917,24 @@ min-height: none;
 
 #page-mod-congrea-view input.playbtn{
    background-image:url([[pix:congrea|play]]) !important;
-   background-color: white !important;
-   padding-top: 1px !important;
+   border : none;
+   padding-top: 1px;
    float:left;
-   margin-right:5px !important;
+   margin-right:5px;
+   background : transparent;
+   box-shadow : unset;
+   height : 24px;
+   margin-top : 3px;
+   background-size : 17px 17px;
+   background-repeat : no-repeat;
 }
 
 #page-mod-congrea-view input.playbtn:hover{
-   background-position: 0 !important;
+/*   background-position: 0 !important; */
 }
 
 
 #page-mod-congrea-view input.playbtn:focus{
-   background-position: 0px !important;
+   /*background-position: 0px !important; */
 }
 
