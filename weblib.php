@@ -387,13 +387,16 @@ function congrea_quiz($valparams) {
     $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
     if ($quizes) {
         foreach ($quizes as $data) {
-            $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
-            if ($quizcm->id) {
-                $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
-                $quizdata[$data->id] = (object) array('id' => $data->id, 'name' => $data->name, 'timelimit' => $data->timelimit, 'preferredbehaviour' => $data->preferredbehaviour, 'questionsperpage' => $data->questionsperpage, 'quizstatus' => $quizstatus);
-            } else {
-                echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
-            }
+            $questiontype = congrea_question_type($data->id); // Check quiz question type is multichoce or not.
+            if ($questiontype) {
+                $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
+                if ($quizcm->id) {
+                    $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
+                    $quizdata[$data->id] = (object) array('id' => $data->id, 'name' => $data->name, 'timelimit' => $data->timelimit, 'preferredbehaviour' => $data->preferredbehaviour, 'questionsperpage' => $data->questionsperpage, 'quizstatus' => $quizstatus);
+                } else {
+                    echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+                }
+            } 
         }
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
@@ -402,6 +405,29 @@ function congrea_quiz($valparams) {
         echo(json_encode($quizdata));
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+    }
+}
+
+/**
+ * function to get quiz question type
+ * @param array $quizid
+ * @return boolean
+ */
+function congrea_question_type($quizid, $type = 'multichoice') {
+    global $DB;
+    $sql = "SELECT qs.questionid, q.qtype
+                FROM {quiz_slots} qs
+                INNER JOIN
+                    {question} q
+                ON qs.questionid = q.id where quizid = '" . $quizid . "'";
+    $questions = $DB->get_records_sql($sql);
+    if (!empty($questions)) {
+        foreach ($questions as $questiondata) {
+            if ($questiondata->qtype == $type) { // Only support multichoice type question. 
+                return true;
+            }
+        }
+        return false;
     }
 }
 
