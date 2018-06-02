@@ -75,8 +75,8 @@ function xmldb_congrea_upgrade($oldversion) {
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
 
-    $curversion = 2018020000;
-    if ($oldversion < $curversion) {
+        
+    if ($oldversion < 2018060200) {
 
         $table = new xmldb_table('congrea_poll_question');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
@@ -100,7 +100,7 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null,null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
@@ -123,7 +123,7 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('optionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null,null);
+        $table->add_field('optionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
@@ -161,10 +161,8 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        upgrade_mod_savepoint(true, $curversion, 'congrea');
+        upgrade_mod_savepoint(true, 2018060200, 'congrea');
     }
 
     return true;
 }
-
-
