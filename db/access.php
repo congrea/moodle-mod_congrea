@@ -51,20 +51,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    //
-    'mod/congrea:graphic' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'guest' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-    
-    
+       
     // Ability to record a congea session to the course.
     'mod/congrea:dorecording' => array(
         'captype' => 'write',
@@ -73,7 +60,6 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'student' => CAP_ALLOW
         )
     ),
 
