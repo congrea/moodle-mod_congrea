@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,10 +26,9 @@
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2018 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -38,7 +38,9 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_congrea_upgrade($oldversion) {
-    global $DB;
+    global $DB, $CFG;
+
+    require_once($CFG->libdir . '/db/upgradelib.php');
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
@@ -72,65 +74,97 @@ function xmldb_congrea_upgrade($oldversion) {
     /*
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
-     
-    if ($oldversion < 2015072402) {
 
-        // Define table congrea_files to virtualclass.
-        $table = new xmldb_table('virtualclass_files');
+    $curversion = 2018020000;
+    if ($oldversion < $curversion) {
+
+        $table = new xmldb_table('congrea_poll_question');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
-		$table->add_field('vcid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, null);
-		$table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, null);
-		$table->add_field('vcsessionkey', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null);
-		$table->add_field('vcsessionname', XMLDB_TYPE_CHAR, '225', null, null, null, null, null);
-		$table->add_field('numoffiles', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, null);
-		$table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, null);		
-	 
-		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'), null, null);
+        $table->add_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('category', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('createdby', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
 
-        // Conditionally launch add table virtualclass_files.
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
         if (!$dbman->table_exists($table)) {
-           $dbman->create_table($table);
-       	}
+            $dbman->create_table($table);
+        }
 
-        // Virtualclass savepoint reached.
-        upgrade_mod_savepoint(true, 2015072402, 'virtualclass');
+        $table = new xmldb_table('congrea_poll');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null,null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $table = new xmldb_table('congrea_poll_question_option');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('options', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $table = new xmldb_table('congrea_poll_attempts');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('optionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null,null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $table = new xmldb_table('congrea_quiz');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('congreaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('quizid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $table = new xmldb_table('congrea_quiz_grade');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('congreaquiz', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('grade', XMLDB_TYPE_NUMBER, '10, 2', null, null, null, null);
+        $table->add_field('timetaken', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('questionattempted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('currectanswer', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_mod_savepoint(true, $curversion, 'congrea');
     }
-
-    if ($oldversion < 2015103000) {
-        $table = new xmldb_table('virtualclass');
-        $field = new xmldb_field('themecolor', XMLDB_TYPE_CHAR, '225', null, null, null, '0', 'closetime');
-        
-        // Conditionally launch add field themecolor.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $table = new xmldb_table('virtualclass');
-        $field = new xmldb_field('audio', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'themecolor');
-
-        // Conditionally launch add field audio.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        
-        $table = new xmldb_table('virtualclass');
-        $field = new xmldb_field('pushtotalk', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'audio');
-        
-        // Conditionally launch add field pushtotalk.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2015103000, 'virtualclass');
-        
-    }
-
 
     return true;
 }
 
-/*
-ALTER TABLE  `mdl_virtualclass` ADD  `themecolor` VARCHAR( 225 ) NULL DEFAULT NULL AFTER  `closetime` ,
-ADD  `audio` BIGINT( 10 ) NOT NULL DEFAULT  '0' AFTER  `themecolor` ,
-ADD  `pushtotalk` BIGINT( 10 ) NOT NULL DEFAULT  '0' AFTER  `audio` ;
-*/
+
