@@ -9,7 +9,7 @@ Requirements
 ------------
 
 1. Moodle 2.7 and above
-2. API key and Secret (received from congrea.com  at the time of registration)
+2. API key and Secret (received from [congrea.com](https://www.congrea.com/)  at the time of registration)
 
 Installation
 ------------
@@ -18,7 +18,6 @@ Download the zip
 2. Login to your Moodle site as an admin and go to Administration > Site administration > Plugins > Install plugins.
 3. Upload the downloaded Congrea ZIP file.
 4. Click the button 'Install plugin from the ZIP file' and then click Continue.
-5. In Congrea plugin setting page enter the API key and Secret and then save.
 
 Settings
 ---------
