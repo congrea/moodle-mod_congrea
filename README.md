@@ -1,50 +1,38 @@
-Congrea module for Moodle
-------------------------------
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+Congrea
+--------
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+Congrea is an online virtual classroom software created by Vidya Mantra EduSystems Pvt. Ltd.
 
-You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
-
-Description
-
-Congrea activities are used to easy online learning process with whiteboard, screen sharing, audio, video and text chat which require advance booking. 
-
-Each activity is offered in one or more identical sessions.
+It can be used in Moodle as an activity and has features like whiteboard, screen sharing, document sharing, audio-video and text chat and much more to make an online session interactive.
 
 Requirements
 ------------
 
-Moodle 2.7.2+
+1. Moodle 2.7 and above
+2. API key and Secret (received from congrea.com  at the time of registration)
 
 Installation
 ------------
-1- Unpack the "moodle-mod_congrea.zip" and rename that unzipped folder to "congrea" and place this folder into 'mod' directory of moodle. The file structure for congrea would be something like. [site-root]/mod/congrea
+Download the zip
+1. Visit the [Moodle plugins](https://moodle.org/plugins/mod_congrea) website and download the zip corresponding to the version of Moodle you are using.
+2. Login to your Moodle site as an admin and go to Administration > Site administration > Plugins > Install plugins.
+3. Upload the downloaded Congrea ZIP file.
+4. Click the button 'Install plugin from the ZIP file' and then click Continue.
+5. In Congrea plugin setting page enter the API key and Secret and then save.
 
-Visit Settings > Site Administration > Notifications, You should find the module's tables successfully created
+Settings
+---------
+Under congrea settings, add API key and Secret.
 
-Dependencies
-------------
+Site Administration >  Plugin > Activity Module > Congrea
 
-2- To run "congrea" module you need to add another plugin named "getkey" found at "https://github.com/vidyamantra/moodle-local_getkey". Locate this folder 'getkey' into 'local' directory of moodle
-
-File structure for getkey would be. [site-root]/local/getkey
-
-3- Visit the admin notification page to trigger the database installation by [site-root] > Site administration > Notifications
+License
+---------
+Licensed under the [GNU GPL License](http://www.gnu.org/copyleft/gpl.html).
 
 Bugs/patches
 ------------
 
 Feel free to send bug reports (and/or patches!)
 
-For technical detail
-
-Suman Bogati suman@vidyamantra.com
-
-Pinky Sharma 
-
-Jai Gupta jai@vidyamantra.com
-
-For look and feel
-
-Fakrul Hasan 
+support@vidyamantra.com
