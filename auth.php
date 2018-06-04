@@ -19,7 +19,7 @@ function my_curl_request($url, $post_data, $key, $secret) {
     curl_close($ch);
     return $result;
 }
-// send auth detail to server
+// Send auth detail to server
 $authusername = substr(str_shuffle(MD5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);
 $licensekey = $cgapi;
@@ -51,12 +51,4 @@ $rid = "wss://$rid->result";
 <?php echo " wbUser.path='" . $rid . "';"; ?>
 <?php echo " wbUser.rm='" . $room . "';"; ?>
 <?php echo " wbUser.lkey='" . $licensekey . "';"; ?>
-<?php //echo "imageurl='./images/quality-support.png';";  ?>
-</script>
-<script type="text/javascript">
-    //earlier cookie is using
-<?php //echo "auth_user='".$authusername."';";  ?>
-<?php //echo "auth_pass='".$authpassword."';";  ?>
-<?php //echo "path='".$rid."';"; ?>
-<?php //echo "imageurl='./images/quality-support.png';"; ?>
 </script>
