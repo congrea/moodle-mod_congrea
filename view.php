@@ -54,7 +54,6 @@ $PAGE->set_context($context);
 
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 //$PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
-
 // Event log
 $event = \mod_congrea\event\course_module_viewed::create(array(
             'objectid' => $congrea->id,
@@ -109,15 +108,13 @@ echo $OUTPUT->heading($congrea->name);
 // Get congrea api key and Secret key from congrea setting.
 $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
+    $cgcolor = get_config('mod_congrea', 'colorpicker');
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
-        require('auth.php');
+        require_once('auth.php');
     } else {
         echo $OUTPUT->notification(get_string('wrongkey', 'congrea', $a));
         echo $OUTPUT->footer();
         exit();
-    }
-    if (!empty($cgcolor = get_config('mod_congrea', 'colorpicker'))) { // Default color is gray.
-        require_once('auth.php');
     }
 } else {
     echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $a));
@@ -125,15 +122,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     exit();
 }
 
-// If vidya.io API key missing.
-//if (!$licen = get_config('local_getkey', 'keyvalue')) {
-//    $url = new moodle_url('/local/getkey/index.php');
-//    echo $OUTPUT->notification(get_string('notsavekey', 'congrea', $url->out(false)));
-//    echo $OUTPUT->footer();
-//    exit();
-//} else {
-//    require_once('auth.php');
-//}
 
 $a = new stdClass();
 $a->open = userdate($congrea->opentime);
@@ -190,9 +178,9 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     // Todo this should be changed with actual server path
     $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
     $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
-    
+
     $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
-    
+
     $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
     $userpicturesrc = $userpicture->out(false);
     $fromcms = true; // Identify congrea is from cms.

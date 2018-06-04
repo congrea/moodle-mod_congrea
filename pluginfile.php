@@ -17,7 +17,7 @@
 /**
  * This script delegates file serving to individual plugins
  *
- * @package    mod_exam
+ * @package    mod_congrea
  * @subpackage file
  * @copyright  2014 Pinky Sharma 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
