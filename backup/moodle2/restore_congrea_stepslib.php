@@ -82,7 +82,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
                 if ( is_dir($src . '/' . $file) ) {
                     recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
-                    copy($src . '/' . $file,$dst . '/' . $file);
+                    copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }
         }
@@ -107,9 +107,9 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         $data->courseid = $this->get_courseid();
         $data->vcid = $this->get_new_parentid('congrea');
         $vcsessionkey = 'b'.time();
-        // New path where file will be copied
+        // New path where file will be copied.
         $newfilepath = "{$CFG->dataroot}/congrea/{$data->courseid}/{$data->vcid}/".$vcsessionkey;
-        // Copy file to new destination
+        // Copy file to new destination.
         $this->recurse_copy_files($filepath, $newfilepath);
 
         $data->timecreated = $this->apply_date_offset($data->timecreated);

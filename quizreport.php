@@ -25,7 +25,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 $id = optional_param('cmid', 0, PARAM_INT);
-$quizid = optional_param('quizid', 0, PARAM_INT); 
+$quizid = optional_param('quizid', 0, PARAM_INT);
 $mquizid = optional_param('mquizid', 0, PARAM_INT);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
@@ -45,26 +45,25 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 if (!empty($quizid)&& !empty($mquizid)) {
     $quizname = $DB->get_field('quiz', 'name', array('id' => $mquizid));
-    echo $OUTPUT->heading("$quizname-Report");  
+    echo $OUTPUT->heading("$quizname-Report");
     $sql = "SELECT cqg.*, u.firstname, u.lastname, u.email
                 FROM {congrea_quiz_grade} cqg
                 INNER JOIN
                     {user} u
                 ON cqg.userid = u.id where congreaquiz = '" . $quizid . "'";
     $userdata = $DB->get_records_sql($sql);
-    
     if (!empty($userdata)) {
         $table = new html_table();
         $table->head = array('User name', 'Email', 'Time taken<br/>[HH:MM:SS]', 'Grade', 'Q.Attempted', 'Correct', 'Time');
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;
-            $timetaken =  gmdate("H:i:s", $userinfo->timetaken);
-            $grade =  $userinfo->grade.'%';
+            $timetaken = gmdate("H:i:s", $userinfo->timetaken);
+            $grade = $userinfo->grade.'%';
             $qattempted = $userinfo->questionattempted;
             $correct = $userinfo->currectanswer;
-            $time =  userdate($userinfo->timecreated);        
-            $table->data[] = array($username, $email, $timetaken, $grade, $qattempted, $correct,$time);
+            $time = userdate($userinfo->timecreated);
+            $table->data[] = array($username, $email, $timetaken, $grade, $qattempted, $correct, $time);
         }
         if (!empty($table)) {
             echo html_writer::table($table);

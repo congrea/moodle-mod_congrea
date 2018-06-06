@@ -64,7 +64,7 @@ function congrea_course_teacher_list() {
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
-            $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false, 
+            $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey) {
     global $USER;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
@@ -82,10 +82,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'upload', 'value' => $upload));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audio));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'fromcms', 'value' => $fromcms));
@@ -98,8 +95,8 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
 
 // TODO, this function should be merge with congrea_online_server
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
-            $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false, 
-            $cgcolor, $webapi, $userpicturesrc,$licensekey, $id, $vcsid) {
+            $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false,
+            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
     global $USER;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
         'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
@@ -116,12 +113,9 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'upload', 'value' => $upload));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audio));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pushtotalk', 'value' => $pushtotalk));
-    //$form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'anyonepresenter', 'value' => $anyonepresenter));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
-     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
@@ -143,29 +137,25 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
 function mod_congrea_update_calendar($congrea) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
-
     if ($congrea->closetime && $congrea->closetime > time()) {
         $event = new stdClass();
         $params = array('modulename' => 'congrea', 'instance' => $congrea->id);
         $event->id = $DB->get_field('event', 'id', $params);
         $event->name = $congrea->name;
         $event->timestart = $congrea->opentime;
-
-        // Convert the links to pluginfile. It is a bit hacky but at this stage the files
-        // might not have been saved in the module area yet.
+        // Convert the links to pluginfile. It is a bit hacky but at this stage the files.
+        // Might not have been saved in the module area yet.
         $intro = $congrea->intro;
         if ($draftid = file_get_submitted_draft_itemid('introeditor')) {
             $intro = file_rewrite_urls_to_pluginfile($intro, $draftid);
         }
-
-        // We need to remove the links to files as the calendar is not ready
+        // We need to remove the links to files as the calendar is not ready.
         // to support module events with file areas.
         $intro = strip_pluginfile_content($intro);
         $event->description = array(
             'text' => $intro,
             'format' => $congrea->introformat
         );
-
         if ($event->id) {
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
@@ -188,23 +178,21 @@ function mod_congrea_update_calendar($congrea) {
 /**
  * Delete recoded files with folder.
  *
- * @param string $directory - Path of folder where  
+ * @param string $directory - Path of folder where
  * recording files of one session has been stored.
  * @return bool
  */
 
 function mod_congrea_deleteAll($directory, $empty = false) {
-    if(substr($directory,-1) == "/") {
-        $directory = substr($directory,0,-1);
+    if(substr($directory, -1) == "/") {
+        $directory = substr($directory, 0, -1);
     }
-
     if(!file_exists($directory) || !is_dir($directory)) {
         return false;
     } elseif(!is_readable($directory)) {
         return false;
     } else {
         $directoryHandle = opendir($directory);
-
         while ($contents = readdir($directoryHandle)) {
             if($contents != '.' && $contents != '..') {
                 $path = $directory . "/" . $contents;
@@ -240,27 +228,19 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
     static $baseurl;
 
     $modcontext = context_module::instance($cm->id);
-    //$hasmanageactivities = has_capability('mod/congrea:recordingupload', $modcontext);
     $hasmanageactivities = has_capability('mod/congrea:addinstance', $modcontext);
     if (!isset($str)) {
         $str = get_strings(array('edittitle'));
     }
-
     if (!isset($baseurl)) {
         $baseurl = new moodle_url('edit.php', array('id' => $cm->id, 'sesskey' => sesskey()));
     }
-
     if ($sr !== null) {
         $baseurl->param('sr', $sr);
     }
 
-    // AJAX edit title.
-    /*
-if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
-                (($mod->course == $COURSE->id) || ($mod->course == SITEID))) {
-*/
     if($hasmanageactivities || ($USER->id == $instance->userid)){
-        // we will not display link if we are on some other-course page (where we should not see this module anyway)
+        // we will not display link if we are on some other-course page (where we should not see this module anyway).
         return html_writer::span(
             html_writer::link(
                 new moodle_url($baseurl, array('update' => $instance->id)),
@@ -275,11 +255,10 @@ if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
     }
     return '';
 }
-
 /**
  * Generate random string of specified length
  *
- * @param int $length - length of random string  
+ * @param int $length - length of random string
  * @return bool
  */
 

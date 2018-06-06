@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,10 +40,8 @@ class mod_congrea_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG;
         $mform = $this->_form;
-
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
-
         // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('congreaname', 'congrea'), array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
@@ -55,16 +52,12 @@ class mod_congrea_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'congreaname', 'congrea');
-
         // Adding the standard "intro" and "introformat" fields.
-        //$this->add_intro_editor();
-        //  $this->standard_intro_elements();
         if ($CFG->version > 2014111008) {
             $this->standard_intro_elements();
         } else {
-            $this->add_intro_editor(); //moodle.2.8.9 or earlier
+            $this->add_intro_editor(); // Moodle.2.8.9 or earlier.
         }
-
         // Adding the rest of congrea settings
         // Adding list of teachers.
         $teacheroptions = congrea_course_teacher_list();
@@ -73,34 +66,12 @@ class mod_congrea_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
-//        $mform->disabledIf('moderatorid', 'anyonepresenter', 'checked');
-//
-//        $mform->addElement('checkbox', 'anyonepresenter', get_string('anyonepresenter', 'congrea'));
-//        $mform->addHelpButton('anyonepresenter', 'anyonepresenter', 'congrea');
-//        if(empty($teacheroptions)) {
-//            $mform->setDefault('anyonepresenter', 'checked');
-//        }
-        // Schedule fo session
+        // Schedule fo session.
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
         $mform->addElement('date_time_selector', 'opentime', get_string('opentime', 'congrea'));
-        // $mform->setDefault('timeavailable', 0);
         $mform->addRule('opentime', null, 'required', null, 'client');
         $mform->addElement('date_time_selector', 'closetime', get_string('closetime', 'congrea'));
-        // $mform->setDefault('timedue', 0);
         $mform->addRule('closetime', null, 'required', null, 'client');
-
-        // Layout settings
-        //$mform->addElement('header', 'general', get_string('customsetting', 'congrea'));
-        //$themeoptions = array('gray' => 'Gray','black' =>'Black', 'white' => 'White');
-        //$mform->addElement('select', 'themecolor', get_string('selectcolor', 'congrea'), $themeoptions);
-        //$mform->addHelpButton('themecolor', 'selectcolor', 'congrea');
-        //$audiooptions = array('Disable', 'Enable');
-        //$mform->addElement('select', 'audio', get_string('audio', 'congrea'), $audiooptions);
-        // $mform->addHelpButton('audio', 'audio', 'congrea');
-        //$pushtotalkoptions = array('Disable', 'Enable');
-        //$mform->addElement('select', 'pushtotalk', get_string('pushtotalk', 'congrea'), $pushtotalkoptions);
-        // $mform->addHelpButton('pushtotalk', 'pushtotalk', 'congrea');
-        // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons, common to all modules.
@@ -109,7 +80,6 @@ class mod_congrea_mod_form extends moodleform_mod {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
         // Check open and close times are consistent.
         if ($data['opentime'] != 0 && $data['closetime'] != 0 &&
                 $data['closetime'] < $data['opentime']) {

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//////// Congrea Files  ///////////
+/***************************** Congrea Files *****************************************/
 
 /**
  * Save recorded files
@@ -41,7 +40,7 @@ function record_file_save($valparams) {
         $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
     } else {
         echo 'VCE6';
-        exit; //'Course module ID missing.';
+        exit; // Course module ID missing.
     }
     require_login($course, true, $cm);
     $context = context_module::instance($cm->id);
@@ -49,15 +48,15 @@ function record_file_save($valparams) {
     if (has_capability('mod/congrea:dorecording', $context)) {
         if ($data) {
             $filepath = $basefilepath . "/" . $course->id . "/" . $congrea->id . "/" . $vmsession;
-            // Create folder if not exist
+            // Create folder if not exist.
             if (!file_exists($filepath)) {
                 mkdir($filepath, 0777, true);
             }
             $filename = "vc." . $filenum;
             if (file_put_contents($filepath . '/' . $filename, $data) != false) {
-                //save file record in database
+                // Save file record in database.
                 if ($filenum > 1) {
-                    //update record
+                    // Update record.
                     $vcfile = $DB->get_record('congrea_files', array('vcid' => $congrea->id, 'vcsessionkey' => $vmsession));
                     $vcfile->numoffiles = $filenum;
                     $DB->update_record('congrea_files', $vcfile);
@@ -70,18 +69,17 @@ function record_file_save($valparams) {
                     $vcfile->vcsessionname = 'vc-' . $course->shortname . '-' . $congrea->name . $cm->id . '-' . date("Ymd") . '-' . date('Hi');
                     $vcfile->numoffiles = $filenum;
                     $vcfile->timecreated = time();
-                    //print_r($vcfile);exit;
                     $DB->insert_record('congrea_files', $vcfile);
                 }
                 echo "done";
             } else {
-                echo 'VCE5'; //'Unable to record data.';exit;
+                echo 'VCE5'; // Unable to record data.
             }
         } else {
-            echo 'VCE4'; //'No data for recording.';
+            echo 'VCE4'; // No data for recording.
         }
     } else {
-        echo 'VCE2'; //'Permission denied';
+        echo 'VCE2'; // Permission denied.
     }
 }
 
@@ -97,7 +95,7 @@ function record_file_save($valparams) {
 function poll_save($valparams) {
     global $DB;
     if (!empty($valparams)) {
-        $response_array = array();
+        $responsearray = array();
         $obj = new stdClass();
         list($postdata, $cmid, $userid) = $valparams;
         $datatosave = json_decode($postdata['dataToSave']);
@@ -118,7 +116,7 @@ function poll_save($valparams) {
                     $options->qid = $questionid;
                     $id = $DB->insert_record('congrea_poll_question_option', $options);
                     $options->optid = $id;
-                    $response_array[] = $options;
+                    $responsearray[] = $options;
                 }
             }
             $obj->qid = $questionid;
@@ -126,7 +124,7 @@ function poll_save($valparams) {
             $obj->question = $question->description;
             $obj->createdby = $question->createdby;
             $obj->category = $question->category;
-            $obj->options = $response_array;
+            $obj->options = $responsearray;
             $obj->creatorname = $username;
             $obj->copied = $datatosave->copied;
             echo json_encode($obj);
@@ -159,7 +157,7 @@ function poll_option_drop($valparams) {
             }
         }
     } else {
-        echo get_string('polloptiondeletefailed', 'congrea'); // Delete is Failed,Try again;
+        echo get_string('polloptiondeletefailed', 'congrea'); // Delete is Failed,Try again.
     }
 }
 
@@ -174,7 +172,7 @@ function poll_data_retrieve($valparams) {
     global $DB;
     list($postdata) = $valparams;
     if (!empty($postdata)) {
-        $response_array = array();
+        $responsearray = array();
         $category = json_decode($postdata['category']);
         $userid = json_decode($postdata['user']);
         $questiondata = $DB->get_records('congrea_poll_question', array('category' => $category));
@@ -184,21 +182,22 @@ function poll_data_retrieve($valparams) {
                 $result = $DB->record_exists('congrea_poll_attempts', array('qid' => $data->id));
                 $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $data->id";
                 $optiondata = $DB->get_records_sql($sql);
-                $polllist = array('questionid' => $data->id, 'category' => $data->category, 'createdby' => $data->createdby, 'questiontext' => $data->description, 'options' => $optiondata, 'creatorname' => $username, 'isPublished' => $result);
-                $response_array[] = $polllist;
+                $polllist = array('questionid' => $data->id, 'category' => $data->category, 'createdby' => $data->createdby, 'questiontext' => $data->description,
+                                    'options' => $optiondata, 'creatorname' => $username, 'isPublished' => $result);
+                $responsearray[] = $polllist;
             }
         }
-        $admins = get_admins(); // check user is site admin.
-        if (!empty($admins) && !empty($admins[$userid]->id)) {           
+        $admins = get_admins(); // Check user is site admin.
+        if (!empty($admins) && !empty($admins[$userid]->id)) {
             if ($admins[$userid]->id == $userid) {
-                $response_array[] = "true";
+                $responsearray[] = "true";
             } else {
-                $response_array[] = "false";
+                $responsearray[] = "false";
             }
         } else {
-            $response_array[] = "false";
+            $responsearray[] = "false";
         }
-        echo json_encode($response_array);
+        echo json_encode($responsearray);
     } else {
         echo get_string('pollretrievefail', 'congrea'); // Unable to Retrieve Poll,Try again.
     }
@@ -241,7 +240,7 @@ function poll_update($valparams) {
     global $DB;
     list($postdata) = $valparams;
     if (!empty($postdata)) {
-        $response_array = array();
+        $responsearray = array();
         $obj = new stdClass();
         $data = json_decode($postdata['editdata']);
         $category = $DB->get_field('congrea_poll_question', 'category', array('id' => "$data->questionid"));
@@ -260,14 +259,14 @@ function poll_update($valparams) {
                     $optid = $DB->insert_record('congrea_poll_question_option', $newoptions);
                     $newoptions->id = $optid;
                 }
-                $response_array[] = $newoptions;
+                $responsearray[] = $newoptions;
             }
         }
         $obj->qid = $data->questionid;
         $obj->question = $data->question;
         $obj->createdby = $data->createdby;
         $obj->category = $category;
-        $obj->options = $response_array;
+        $obj->options = $responsearray;
         echo json_encode($obj);
     } else {
         echo get_string('pollupdatefail', 'congrea'); // Poll Update is Unsucessfull, try again.
@@ -381,7 +380,6 @@ function congrea_get_enrolled_users($data) {
  */
 function congrea_quiz($valparams) {
     global $DB;
-    //print_r($valparams); exit;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
     $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
@@ -392,11 +390,12 @@ function congrea_quiz($valparams) {
                 $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
                 if ($quizcm->id) {
                     $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
-                    $quizdata[$data->id] = (object) array('id' => $data->id, 'name' => $data->name, 'timelimit' => $data->timelimit, 'preferredbehaviour' => $data->preferredbehaviour, 'questionsperpage' => $data->questionsperpage, 'quizstatus' => $quizstatus);
+                    $quizdata[$data->id] = (object) array('id' => $data->id, 'name' => $data->name, 'timelimit' => $data->timelimit,
+                                                    'preferredbehaviour' => $data->preferredbehaviour, 'questionsperpage' => $data->questionsperpage, 'quizstatus' => $quizstatus);
                 } else {
                     echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
                 }
-            } 
+            }
         }
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
@@ -423,7 +422,7 @@ function congrea_question_type($quizid, $type = 'multichoice') {
     $questions = $DB->get_records_sql($sql);
     if (!empty($questions)) {
         foreach ($questions as $questiondata) {
-            if ($questiondata->qtype == $type) { // Only support multichoice type question. 
+            if ($questiondata->qtype == $type) { // Only support multichoice type question.
                 return true;
             }
         }
@@ -451,7 +450,7 @@ function congrea_add_quiz($valparams) {
                 return true;
             }
         }
-        // quiz not linked with congrea
+        // Quiz not linked with congrea.
     }
     return false;
 }
@@ -465,11 +464,11 @@ function congrea_quiz_result($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    $con_quiz_id = $DB->get_field('congrea_quiz', 'id', array('congreaid' => $cm->instance, 'quizid' => $postdata['qzid']));
-    if ($con_quiz_id) {
-        //save grade
+    $conquizid = $DB->get_field('congrea_quiz', 'id', array('congreaid' => $cm->instance, 'quizid' => $postdata['qzid']));
+    if ($conquizid) {
+        // Save grade.
         $data = new stdClass();
-        $data->congreaquiz = $con_quiz_id;
+        $data->congreaquiz = $conquizid;
         $data->userid = $postdata['user'];
         $data->grade = $postdata['grade'];
         $data->timetaken = $postdata['timetaken'];
@@ -537,7 +536,6 @@ function congrea_formate_text($cmid, $questiondata, $text, $formate, $component,
             $filename = $matches[1];
             $f = 'mod/congrea/pluginfile.php';
             $contents = congrea_file_rewrite_pluginfile_urls($text, $f, $questiondata->contextid, $component, $filearea, $itemid, $filename);
-            //print_r($contents);exit;
             return congrea_make_html_inline($contents);
         } else {
             return congrea_make_html_inline($text);
@@ -565,34 +563,32 @@ function congrea_get_quizdata($valparams) {
     global $CFG, $DB;
     list($postdata) = $valparams;
     if (empty($postdata) || !is_array($postdata)) {
-        print_r('invalid data');
+        // print_r('invalid data');
+        echo 'invalid data';
         exit;
-        //return array ("status" => 0, "message" =>'Invalid data');
     }
-
     $quizid = $postdata['qid'];
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
 
     if (!$qzcm = get_coursemodule_from_instance('quiz', $quizid, $cm->course)) {
-        //print_error('invalidcoursemodule');
-        print_r('invalidcoursemodule');
+        // print_r('invalidcoursemodule');
+        echo 'invalidcoursemodule';
         exit;
-        //return array ("status" => 0,"message" =>'Invalid course module');
     }
 
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
     $quizobj = quiz::create($qzcm->instance, $postdata['user']);
 
     if (!$quizobj->has_questions()) {
-        print_r('No question in this quiz.');
+        // print_r('No question in this quiz.');
+        echo 'No question in this quiz';
         exit;
     }
     $quizgrade = $DB->get_field('quiz', 'grade', array('id' => $quizid, 'course' => $cm->course));
-    //print_r($quizgrade);exit;
+
     $quizjson = array();
     $questions = array();
     $context = context_module::instance($cm->id);
-
     if (empty($quizjson)) {
         $quizobj->preload_questions();
         $quizobj->load_questions();
@@ -617,11 +613,8 @@ function congrea_get_quizdata($valparams) {
                     $answer = congrea_formate_text($cm->id, $questiondata, $ans->answer, $ans->answerformat, 'question', 'answer', $ans->id);
                     $options[] = array("option" => $answer, "correct" => $correct);
                 }
-                /*
-                  $questiontext = congrea_question_rewrite_question_preview_urls($questiondata->questiontext, $questiondata->id, $questiondata->contextid, 'question', 'questiontext', $questiondata->id,
-                  $context->id, 'quiz_statistics');
-                 */
-                $questiontext = congrea_formate_text($cm->id, $questiondata, $questiondata->questiontext, $questiondata->questiontextformat, 'question', 'questiontext', $questiondata->id);
+                $questiontext = congrea_formate_text($cm->id, $questiondata, $questiondata->questiontext,
+                                $questiondata->questiontextformat, 'question', 'questiontext', $questiondata->id);
                 $questions[] = array("q" => $questiontext, "a" => $options,
                     "qid" => $questiondata->id,
                     "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback : "Your answer is correct.",
@@ -631,9 +624,7 @@ function congrea_get_quizdata($valparams) {
             }
         }
         $qjson = array("info" => $info, "questions" => $questions);
-        //$quizjson = addslashes(json_encode($qjson));
         $quizjson = json_encode($qjson);
     }
     echo $quizjson;
-    //return $quizjson;
 }

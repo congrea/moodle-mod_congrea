@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 function set_session() {
     if (isset($_GET['key'])) {
@@ -8,17 +22,18 @@ function set_session() {
 
 set_session();
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-include('weblib.php');
+require('weblib.php');
 
-// The function list is avaible in weblib.php
-define('Functions_list', serialize(array('record_file_save', 'poll_save', 'poll_data_retrieve',
-'poll_delete', 'poll_update', 'poll_result', 'poll_option_drop','congrea_get_enrolled_users','congrea_quiz','congrea_get_quizdata', 'congrea_add_quiz', 'congrea_quiz_result')));
+// The function list is avaible in weblib.php.
+define('FUNCTIONS_LIST', serialize(array('record_file_save', 'poll_save', 'poll_data_retrieve',
+      'poll_delete', 'poll_update', 'poll_result', 'poll_option_drop', 'congrea_get_enrolled_users',
+      'congrea_quiz', 'congrea_get_quizdata', 'congrea_add_quiz', 'congrea_quiz_result')));
 
 function set_header() {
     header("access-control-allow-origin: *");
 }
 
-/* Exit when there is request is happend by options method  
+/* Exit when there is request is happend by options method
  * This generally happens when the request is coming from other domain
  * eg:- if the request is coming from l.vidya.io and main domain suman.moodlehub.com
  * it also know as preflight request
@@ -42,10 +57,10 @@ function validate_request() {
     $cmid = required_param('cmid', PARAM_INT);
     $userid = required_param('user', PARAM_INT);
     $getdata = received_get_data();
-    $fun_name = $getdata['methodname'];
+    $funname = $getdata['methodname'];
     $postdata = received_post_data();
     $qstring = array($postdata);
-    switch ($fun_name) {
+    switch ($funname) {
         case 'record_file_save' :
             unset($qstring); // Post data is not needed.
             $qstring = array($cmid, $userid);
@@ -59,7 +74,7 @@ function validate_request() {
         case 'poll_save':
             $qstring[] = $cmid;
             $qstring[] = $userid;
-            break;                
+            break;
         case 'congrea_get_enrolled_users':
             unset($qstring); // Post data is not needed.
             $qstring[] = $cmid;
@@ -71,14 +86,14 @@ function validate_request() {
 
 /* The function is executed which is passed by get */
 
-function execute_action($valid_parameters) {
+function execute_action($validparameters) {
     $getdata = received_get_data();
     if ($getdata && isset($getdata['methodname'])) {
         $postdata = received_post_data();
         if ($postdata) {
-            $function_list = unserialize(Functions_list);
-            if (in_array($getdata['methodname'], $function_list)) {
-                $getdata['methodname']($valid_parameters);
+            $functionlist = unserialize(FUNCTIONS_LIST);
+            if (in_array($getdata['methodname'], $functionlist)) {
+                $getdata['methodname']($validparameters);
             } else {
                 throw new Exception('There is no ' . $getdata['methodname'] . ' method to execute.');
             }
@@ -95,4 +110,3 @@ exit_if_request_is_options();
 $validparams = validate_request();
 
 execute_action($validparams);
-?>
