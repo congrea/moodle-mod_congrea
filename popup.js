@@ -66,7 +66,9 @@ function congrea_online_popup(form) {
         windowobj.focus();
         return false;
     } else {
-        windowobj = window.open('', 'popupVc', options);
+		// If we want to open the window in new tab then we should not pass options
+		// windowobj = window.open('', 'popupVc', options);
+		windowobj = window.open('', 'popupVc');
     }
 
     form.target = 'popupVc';
