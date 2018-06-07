@@ -1,0 +1,10 @@
+{
+    "name": "vidyamantra/moodle-mod_congrea",
+    "type": "moodle-mod",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "congrea"
+    }
+}
