@@ -30,11 +30,11 @@ function congrea_openpopup(url, name, options, width, height) {
         height = Math.round(screen.availHeight * height / 100);
     }
     options += ",width=" + width + ",height=" + height;
-    if(window.windowobj && window.windowobj.closed == false){
+    if (window.windowobj && window.windowobj.closed == false) {
         // Window already open.
         windowobj.focus();
         return false;
-    }else{
+    } else {
         windowobj = window.open(url, name, options, "");
     }
 
@@ -43,7 +43,7 @@ function congrea_openpopup(url, name, options, width, height) {
     }
     if ((width == 100) && (height == 100)) {
         // Fullscreen.
-        windowobj.moveTo(0,0);
+        windowobj.moveTo(0, 0);
     }
     windowobj.focus();
     return windowobj;
@@ -62,13 +62,13 @@ function congrea_online_popup(form) {
         height = Math.round(screen.availHeight * height / 100);
     }
     options += ",width=" + width + ",height=" + height;
-    if(window.windowobj && window.windowobj.closed == false){
+    if (window.windowobj && window.windowobj.closed == false) {
         windowobj.focus();
         return false;
     } else {
-		// If we want to open the window in new tab then we should not pass options
-		//windowobj = window.open('', 'popupVc', options);
-		 windowobj = window.open('', 'popupVc');
+        // If we want to open the window in new tab then we should not pass options.
+        // windowobj = window.open('', 'popupVc', options).
+        windowobj = window.open('', 'popupVc');
     }
 
     form.target = 'popupVc';
@@ -77,7 +77,7 @@ function congrea_online_popup(form) {
     }
     if ((width == 100) && (height == 100)) {
         // Fullscreen.
-        windowobj.moveTo(0,0);
+        windowobj.moveTo(0, 0);
     }
     windowobj.focus();
     return windowobj;
