@@ -81,12 +81,13 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$record->vcsessionname'"), new moodle_url($returnurl, $optionsyes), $returnurl);
+        echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$record->vcsessionname'"),
+                            new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
         $filepath = $CFG->dataroot . "/congrea/" . $record->courseid . "/" . $record->vcid . "/" . $record->vcsessionkey;
-        if (mod_congrea_deleteAll($filepath)) {
+        if (mod_congrea_deleteall($filepath)) {
             $DB->delete_records('congrea_files', array('id' => $record->id));
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
@@ -194,7 +195,8 @@ echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
 if (has_capability('mod/congrea:recordingupload', $context)) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)), get_string('uploadrecordedfile', 'congrea'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)),
+                                get_string('uploadrecordedfile', 'congrea'), 'get');
     echo html_writer::end_tag('div');
 }
 // Display list of recorded files.
@@ -228,7 +230,8 @@ foreach ($recordings as $record) {
     // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->id, 'sesskey' => sesskey())),
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('t/delete'), 'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
+        html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('t/delete'), 'alt' => $strdelete, 'class' => 'iconsmall')),
+        array('title' => $strdelete));
     }
 
     $row[] = implode(' ', $buttons);

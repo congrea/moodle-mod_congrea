@@ -23,13 +23,6 @@
     max-width: none !important;
 }
 
-/*
-#page-mod-congrea-classroom #virtualclassCont #confirm.popupWindow #confirmOk #confirmOkButton, #page-mod-congrea-classroom #virtualclassCont #confirm.popupWindow #confirmCancel #confirmCancelButton{
-        color:#333 !important;
-}
-*/
-
-
 #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page, #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page #page-content  {
     margin-top : 0;
 }
@@ -164,7 +157,7 @@ font-size : 11.5px !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr.teacher {
-    /* pointer-events: visible !important; */
+
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     #page-mod-congrea-classroom #chat_div .ui-memblist-usr a.tooltip:hover:after {
@@ -232,11 +225,6 @@ font-size : 11.5px !important;
 #page-mod-congrea-classroom #virtualclassCont #usertab_text .icon-arrow-up:before, #page-mod-congrea-classroom #virtualclassCont #chatroom_text .icon-arrow-up:before{
     top:0px !important;
 }
-
-/*#page-mod-congrea-classroom #virtualclassCont #chatroom_bt2 .inner_bt{*/
-/*margin-top: 6px !important;*/
-/**/
-/*}*/
 
 #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-down, #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-up{
 
@@ -314,16 +302,6 @@ font-size : 11.5px !important;
 
 #page-mod-congrea-classroom{ padding-top: 0px;}
 
-/*
-#page-mod-congrea-classroom #congreaEditorRich{
-        margin-left: 10px;
-}
-
-#page-mod-congrea-classroom #virtualclassCont.student #congreaScreenShare, #page-mod-congrea-classroom #virtualclassCont #congreaEditorRich, #page-mod-congrea-classroom#virtualclassCont #congreaEditorCode{
-        margin-left: 60px;
-}
-*/
-
 #page-mod-congrea-classroom #virtualclassCont{
     margin: 0;
     padding: 0;
@@ -383,9 +361,7 @@ font-size : 11.5px !important;
     top : -2px !important;
     vertical-align : sub !important;
 }
-/*#page-mod-congrea-classroom .ui-memblist-usr a img {*/
-/*padding : 6px 13px !important;*/
-/*}*/
+
 #page-mod-congrea-classroom .close {
     float : left !important;
 }
@@ -411,15 +387,11 @@ font-size : 11.5px !important;
 #page-mod-congrea-classroom #chatroom_bt2 .inner_bt #chatroom_text {
     margin-top : 0 !important;
 }
-/*#page-mod-congrea-classroom #chatroom_bt2 .inner_bt {*/
-/*margin-top : 3px !important;*/
-/*}*/
+
 #page-mod-congrea-classroom #usertab_icon {
     margin : 4px 2px 0 0 !important;
 }
-/*#page-mod-congrea-classroom .inner_bt {*/
-/*padding : 9px 0 !important;*/
-/*}*/
+
 #page-mod-congrea-classroom #chat_div .controleCont {
     margin-top : 2px;
 }
@@ -496,7 +468,6 @@ font-size : 11.5px !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr.teacher {
-    /* pointer-events: visible !important; */
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     #page-mod-congrea-classroom #chat_div .ui-memblist-usr a.tooltip:hover:after {
@@ -656,13 +627,6 @@ font-size : 11.5px !important;
 #page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear{
     clear: both;
 }
-
-/* #page-mod-congrea-view .wrapper-button{
-        //padding: 20px 15px;
-        padding: 20px 5px 5% 5px;
-        border:#ddd 1px solid;
-        border-radius: 5px;
-} */
 
 #page-mod-congrea-view .wrapper-button{
     padding: 20px 15px;
@@ -892,8 +856,6 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
 }
 
 #page-mod-congrea-view input.playbtn:hover{
-    /*   background-position: 0 !important; */
 }
 #page-mod-congrea-view input.playbtn:focus{
-    /*background-position: 0px !important; */
 }

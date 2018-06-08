@@ -22,6 +22,8 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
@@ -56,10 +58,8 @@ require_once('upload_form.php');
 $submiturl = new moodle_url('/mod/congrea/upload.php', array('id' => $cm->id));
 $mform = new mod_congrea_upload_file($submiturl, $cm, $congrea, $context);
 
-if ($mform->is_cancelled()) {
-    // Do nothing.
-} else if ($fromform = $mform->get_data()) {
-    $vcsession = mod_congrea_generateRandomString();
+if ($fromform = $mform->get_data()) {
+    $vcsession = mod_congrea_generaterandomstring();
     $name = $mform->get_new_filename('userfile');
     $filepath = "{$CFG->dataroot}/congrea/{$course->id}/{$congrea->id}/" . $vcsession;
     if (!file_exists($filepath)) {
@@ -90,7 +90,6 @@ if ($mform->is_cancelled()) {
             if (array_key_exists('rdata', $decodedata[$i])) {
                 $filename = "vc." . $filenum;
                 $newcunk = json_encode($decodedata[$i]);
-
                 if (file_put_contents($filepath . '/' . $filename, $newcunk) != false) {
                     if ($filenum > 1) {
                         // Update file count.

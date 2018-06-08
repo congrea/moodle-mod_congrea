@@ -31,7 +31,7 @@ function congrea_openpopup(url, name, options, width, height) {
     }
     options += ",width=" + width + ",height=" + height;
     if(window.windowobj && window.windowobj.closed == false){
-        // Window already open
+        // Window already open.
         windowobj.focus();
         return false;
     }else{
@@ -42,7 +42,7 @@ function congrea_openpopup(url, name, options, width, height) {
         return;
     }
     if ((width == 100) && (height == 100)) {
-        // Fullscreen
+        // Fullscreen.
         windowobj.moveTo(0,0);
     }
     windowobj.focus();
@@ -74,7 +74,7 @@ function congrea_online_popup(form) {
         return;
     }
     if ((width == 100) && (height == 100)) {
-        // Fullscreen
+        // Fullscreen.
         windowobj.moveTo(0,0);
     }
     windowobj.focus();

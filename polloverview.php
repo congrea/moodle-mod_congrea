@@ -49,7 +49,8 @@ if (!empty($questiondata)) {
     $table = new html_table();
     $table->head = array('Poll questions', 'Users', 'Time');
     foreach ($questiondata as $data) {
-        $questionname = html_writer::link(new moodle_url('/mod/congrea/pollreport.php?cmid=' . $cm->id, array('questionid' => $data->id)), $data->description);
+        $questionname = html_writer::link(new moodle_url('/mod/congrea/pollreport.php?cmid=' . $cm->id,
+                                            array('questionid' => $data->id)), $data->description);
         if ($data->id) {
             $sql = "SELECT count(userid) from {congrea_poll_attempts} where qid = ?";
             $totalusers = $DB->count_records_sql($sql, array('qid' => $data->id));

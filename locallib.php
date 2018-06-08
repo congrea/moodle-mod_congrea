@@ -67,12 +67,13 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
             $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey) {
     global $USER;
+    $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
         'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
         'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $USER->firstname.' '.$USER->lastname));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
@@ -93,17 +94,18 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     return $form;
 }
 
-// TODO, this function should be merge with congrea_online_server
+// TODO, this function should be merge with congrea_online_server.
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $popupoptions, $popupwidth, $popupheight, $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
     global $USER;
+    $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
         'onsubmit' => 'return congrea_online_popup(this)', 'data-popupoption' => $popupoptions,
         'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $USER->firstname.' '.$USER->lastname));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
@@ -183,30 +185,29 @@ function mod_congrea_update_calendar($congrea) {
  * @return bool
  */
 
-function mod_congrea_deleteAll($directory, $empty = false) {
-    if(substr($directory, -1) == "/") {
+function mod_congrea_deleteall($directory, $empty = false) {
+    if (substr($directory, -1) == "/") {
         $directory = substr($directory, 0, -1);
     }
-    if(!file_exists($directory) || !is_dir($directory)) {
+    if (!file_exists($directory) || !is_dir($directory)) {
         return false;
-    } elseif(!is_readable($directory)) {
+    } else if (!is_readable($directory)) {
         return false;
     } else {
-        $directoryHandle = opendir($directory);
-        while ($contents = readdir($directoryHandle)) {
-            if($contents != '.' && $contents != '..') {
+        $directoryhandle = opendir($directory);
+        while ($contents = readdir($directoryhandle)) {
+            if ($contents != '.' && $contents != '..') {
                 $path = $directory . "/" . $contents;
-
-                if(is_dir($path)) {
-                    mod_congrea_deleteAll($path);
+                if (is_dir($path)) {
+                    mod_congrea_deleteall($path);
                 } else {
                     unlink($path);
                 }
             }
         }
-        closedir($directoryHandle);
-        if($empty == false) {
-            if(!rmdir($directory)) {
+        closedir($directoryhandle);
+        if ($empty == false) {
+            if (!rmdir($directory)) {
                 return false;
             }
         }
@@ -238,9 +239,8 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
     if ($sr !== null) {
         $baseurl->param('sr', $sr);
     }
-
-    if($hasmanageactivities || ($USER->id == $instance->userid)){
-        // we will not display link if we are on some other-course page (where we should not see this module anyway).
+    if ($hasmanageactivities || ($USER->id == $instance->userid)) {
+        // We will not display link if we are on some other-course page (where we should not see this module anyway).
         return html_writer::span(
             html_writer::link(
                 new moodle_url($baseurl, array('update' => $instance->id)),
@@ -262,12 +262,12 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
  * @return bool
  */
 
-function mod_congrea_generateRandomString($length = 11) {
+function mod_congrea_generaterandomstring($length = 11) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
+    $characterslength = strlen($characters);
+    $randomstring = '';
     for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
+        $randomstring .= $characters[rand(0, $characterslength - 1)];
     }
-    return $randomString;
+    return $randomstring;
 }

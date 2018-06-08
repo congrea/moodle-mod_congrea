@@ -21,8 +21,9 @@
  * @copyright 2015 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 cors();
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 $filenum = required_param('prvfile', PARAM_INT);
 $fid = required_param('fileBundelId', PARAM_INT);
@@ -58,11 +59,13 @@ function cors() {
     }
     // Access-Control headers are received during OPTIONS requests.
     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-        // May also be using PUT, PATCH, HEAD etc.
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+            // May also be using PUT, PATCH, HEAD etc.
             header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+        }
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
             header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+        }
         exit(0);
     }
 }

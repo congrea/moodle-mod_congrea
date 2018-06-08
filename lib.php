@@ -42,15 +42,24 @@ defined('MOODLE_INTERNAL') || die();
  */
 function congrea_supports($feature) {
     switch ($feature) {
-        case FEATURE_MOD_INTRO: return true;
-        case FEATURE_SHOW_DESCRIPTION: return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE: return false;
-        case FEATURE_GRADE_OUTCOMES: return false;
-        case FEATURE_BACKUP_MOODLE2: return true;
-        case FEATURE_GROUPS: return true;
-        case FEATURE_GROUPINGS: return true;
-        case FEATURE_GROUPMEMBERSONLY: return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
         default:
             return null;
     }
@@ -143,8 +152,8 @@ function congrea_delete_instance($id) {
         foreach ($congreafiles as $cfile) {
             $vcsession = $cfile->vcsessionkey;
             $dir = $filepath . $vcsession;
-            // Delete recorded files
-            congrea_deleteDirectory($filepath);
+            // Delete recorded files.
+            congrea_deletedirectory($filepath);
         }
         $DB->delete_records('congrea_files', array('vcid' => $congrea->id));
     }
@@ -256,7 +265,7 @@ function congrea_get_file_info($browser, $areas, $course, $cm, $context, $filear
  *
  * @param string $dir path of directory where file store
  */
-function congrea_deleteDirectory($dir) {
+function congrea_deletedirectory($dir) {
     if (!file_exists($dir)) {
         return true;
     }
@@ -267,9 +276,9 @@ function congrea_deleteDirectory($dir) {
         if ($item == '.' || $item == '..') {
             continue;
         }
-        if (!congrea_deleteDirectory($dir . "/" . $item)) {
+        if (!congrea_deletedirectory($dir . "/" . $item)) {
             chmod($dir . "/" . $item, 0777);
-            if (!congrea_deleteDirectory($dir . "/" . $item)) {
+            if (!congrea_deletedirectory($dir . "/" . $item)) {
                 return false;
             }
         };
