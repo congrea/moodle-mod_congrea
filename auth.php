@@ -1,49 +1,62 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function my_curl_request($url, $post_data, $key, $secret) {
+defined('MOODLE_INTERNAL') || die();
+
+function my_curl_request($url, $postdata, $key, $secret) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
         'x-api-key: ' . $key,
         'x-congrea-secret: ' . $secret,
     ));
     curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_PROXY, false);
     $result = @curl_exec($ch);
     curl_close($ch);
     return $result;
 }
-// Send auth detail to server
-$authusername = substr(str_shuffle(MD5(microtime())), 0, 20);
-$authpassword = substr(str_shuffle(MD5(microtime())), 0, 20);
+// Send auth detail to server.
+$authusername = substr(str_shuffle(md5(microtime())), 0, 20);
+$authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
 $licensekey = $cgapi;
 $secret = $cgsecret;
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$post_data = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => 't', 'room' => $room);
-$post_data = json_encode($post_data);
-//echo $post_data;
-$rid = my_curl_request("https://api.congrea.net/backend/auth", $post_data, $licensekey, $secret);
-// var_dump( $rid);exit;
+$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => 't', 'room' => $room);
+$postdata = json_encode($postdata);
+
+$rid = my_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
 if (!$rid = json_decode($rid)) {
     echo "{\"error\": \"403\"}";
     exit;
-} elseif (isset($rid->message)) {
+} else if (isset($rid->message)) {
     echo "{\"error\": \"$rid->message\"}";
     exit;
-} elseif (!isset($rid->result)) {
+} else if (!isset($rid->result)) {
     echo "{\"error\": \"invalid\"}";
     exit;
 }
-
 $rid = "wss://$rid->result";
 ?>
-
 <script type="text/javascript">
 <?php echo "var wbUser = {};"; ?>
 <?php echo " wbUser.auth_user='" . $authusername . "';"; ?>

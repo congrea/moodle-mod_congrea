@@ -53,10 +53,8 @@ class mod_congrea_upload_file extends moodleform {
         global $CFG;
         $cm = $this->cm;
         $mform = $this->_form;
-
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
-
         // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
@@ -66,8 +64,6 @@ class mod_congrea_upload_file extends moodleform {
         }
 
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        //$mform->addHelpButton('name', 'congreaname', 'congrea');
-        //$maxbytes = ini_get('post_max_size')*10000000;
         $mform->addElement('filepicker', 'userfile', get_string('file'), null,
                    array('maxbytes' => $CFG->maxbytes, 'accepted_types' => '*'));
         $mform->addRule('userfile', null, 'required');
@@ -77,7 +73,6 @@ class mod_congrea_upload_file extends moodleform {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
         return $errors;
     }
 }
