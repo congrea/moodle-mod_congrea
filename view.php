@@ -145,7 +145,6 @@ echo html_writer::script('', $CFG->wwwroot . '/mod/congrea/popup.js');
 $popupname = 'congreapopup';
 $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
-$popupoptions = "toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
 
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
@@ -183,7 +182,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
 
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
     $form = congrea_online_server($url, $authusername, $authpassword, $role,
-                                $rid, $room, $popupoptions, $popupwidth,
+                                $rid, $room, $popupwidth,
                                 $popupheight, $upload, $down, $info, $cgcolor,
                                 $webapi, $userpicturesrc, $fromcms, $licensekey);
     echo $form;
@@ -223,7 +222,7 @@ foreach ($recordings as $record) {
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid,
-                                                $room, $popupoptions, $popupwidth, $popupheight,
+                                                $room, $popupwidth, $popupheight,
                                                 $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc,
                                                 $licensekey, $id, $vcsid);
     }
