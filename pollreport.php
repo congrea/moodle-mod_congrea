@@ -44,7 +44,7 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 if ($questionid) {
     $questionname = $DB->get_field('congrea_poll_question', 'description', array('id' => $questionid));
-    echo $OUTPUT->heading('Poll Question is: '.$questionname);
+    echo $OUTPUT->heading('Poll Question is: ' . $questionname);
     $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $questionid";
     $optiondata = $DB->get_records_sql($sql);
     foreach ($optiondata as $data) {
@@ -52,7 +52,6 @@ if ($questionid) {
         $userid = $DB->count_records_sql($sql, array('optionid' => $data->id));
         if ($userid > 0) {
             $graphdata[] = array($data->options, $userid);
-            
         }
     }
 } else {
@@ -66,36 +65,37 @@ if (!empty($graphdata)) {
     echo '<script>';
     echo "var myvalue = " . $jsondata . ';';
     echo '</script>';
-?>
-<html>
-  <head>
-    <link type="text/css" href="congrea/styles.css">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    ?>
+    <html>
+        <head>
+            <link type="text/css" href="congrea/styles.css">
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script type="text/javascript">
 
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
+                google.charts.load('current', {'packages': ['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
 
-        var data = google.visualization.arrayToDataTable(myvalue);
+                    var data = google.visualization.arrayToDataTable(myvalue);
 
-        var options = {
-          title: 'Voted So Far'
-        };
+                    var options = {
+                        title: 'Voted So Far'
+                    };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
-        chart.draw(data, options);
-      }
-    </script>
-  </head>
-  <body>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
-  </body>
-</html>
+                    chart.draw(data, options);
+                }
+            </script>
+        </head>
+        <body>
+            <div id="piechart" style="width: 900px; height: 500px;"></div>
+        </body>
+    </html>
 
-<?php }
- if (!empty($questionid) && !empty($optiondata)) {
+<?php
+}
+if (!empty($questionid) && !empty($optiondata)) {
     $sql = "SELECT cpa.*, u.firstname, u.lastname, u.email
                 FROM {congrea_poll_attempts} cpa
                 INNER JOIN
@@ -109,7 +109,7 @@ if (!empty($graphdata)) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;
             if (!empty($optiondata[$userinfo->optionid]->options)) {
-                $option = $optiondata[$userinfo->optionid]->options; // Optiondata variable contain optionid and options text within an array which declare on above. 
+                $option = $optiondata[$userinfo->optionid]->options;
                 $table->data[] = array($username, $email, $option);
             }
         }

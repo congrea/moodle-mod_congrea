@@ -28,16 +28,18 @@
 /**
  * Define the complete congrea structure for backup, with file and id annotations
  */
-class backup_congrea_activity_structure_step extends backup_activity_structure_step {
 
+defined('MOODLE_INTERNAL') || die();
+
+class backup_congrea_activity_structure_step extends backup_activity_structure_step {
     protected function define_structure() {
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $congrea = new backup_nested_element('congrea', array('id'), array(
             'name', 'intro', 'introformat', 'moderatorid',
-            'opentime', 'closetime', 'themecolor', 'audio','pushtotalk','timecreated',
+            'opentime', 'closetime', 'themecolor', 'audio', 'pushtotalk', 'timecreated',
             'timemodified'));
 
         $files = new backup_nested_element('files');
@@ -51,7 +53,7 @@ class backup_congrea_activity_structure_step extends backup_activity_structure_s
         $congrea->add_child($files);
         $files->add_child($file);
 
-        // Define sources
+        // Define sources.
         $congrea->set_source_table('congrea', array('id' => backup::VAR_ACTIVITYID));
 
         if ($userinfo) {
@@ -62,7 +64,7 @@ class backup_congrea_activity_structure_step extends backup_activity_structure_s
         $file->annotate_ids('user', 'userid');
         $congrea->annotate_ids('user', 'moderatorid');
         // Define file annotations.
-        $congrea->annotate_files('mod_congrea', 'intro', null); // This file area hasn't itemid
+        $congrea->annotate_files('mod_congrea', 'intro', null); // This file area hasn't itemid.
 
         // Return the root element (congrea), wrapped into standard activity structure.
         return $this->prepare_activity_structure($congrea);

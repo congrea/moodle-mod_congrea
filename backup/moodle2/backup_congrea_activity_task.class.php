@@ -57,11 +57,11 @@ class backup_congrea_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of congreas
+        // Link to the list of congreas.
         $search = "/(".$base."\/mod\/congrea\/index.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@CONGREAINDEX*$2@$', $content);
 
-        // Link to congrea view by moduleid
+        // Link to congrea view by moduleid.
         $search = "/(".$base."\/mod\/congrea\/view.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@CONGREAVIEWBYID*$2@$', $content);
 

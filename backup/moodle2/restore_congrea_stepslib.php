@@ -20,7 +20,7 @@
  * @copyright 2014 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('MOODLE_INTERNAL') || die();
 /**
  * Define all the restore steps that will be used by the restore_congrea_activity_task
  */
@@ -37,8 +37,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
 
         $paths[] = new restore_path_element('congrea', '/activity/congrea');
         if ($userinfo) {
-            $files = new restore_path_element('congrea_files',
-                                                   '/activity/congrea/files/file');
+            $files = new restore_path_element('congrea_files', '/activity/congrea/files/file');
             $paths[] = $files;
         }
         // Return the paths wrapped into standard activity structure.
@@ -48,7 +47,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     protected function process_congrea($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
         $data->moderatorid = $this->get_mappingid('user', $data->moderatorid);
@@ -74,19 +73,19 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     protected function recurse_copy_files($src, $dst) {
 
         $dir = opendir($src);
-        if (!file_exists ($dst) ) {
+        if (!file_exists($dst)) {
             mkdir($dst, 0777, true);
         }
-        while(false !== ( $file = readdir($dir)) ) {
+        while (false !== ( $file = readdir($dir))) {
             if (( $file != '.' ) && ( $file != '..' )) {
-                if ( is_dir($src . '/' . $file) ) {
+                if (is_dir($src . '/' . $file)) {
                     recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
-                    copy($src . '/' . $file,$dst . '/' . $file);
+                    copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }
         }
-    closedir($dir);
+        closedir($dir);
     }
 
     /**
@@ -97,19 +96,17 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     protected function process_congrea_files($data) {
         global $DB, $CFG;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
-
-
         $olddata = $DB->get_record('congrea_files', array('id' => $data->id));
-        $filepath = "{$CFG->dataroot}/congrea/{$olddata->courseid}/{$olddata->vcid}/".$data->vcsessionkey;
+        $filepath = "{$CFG->dataroot}/congrea/{$olddata->courseid}/{$olddata->vcid}/" . $data->vcsessionkey;
 
         $data->courseid = $this->get_courseid();
         $data->vcid = $this->get_new_parentid('congrea');
-        $vcsessionkey = 'b'.time();
-        // New path where file will be copied
-        $newfilepath = "{$CFG->dataroot}/congrea/{$data->courseid}/{$data->vcid}/".$vcsessionkey;
-        // Copy file to new destination
+        $vcsessionkey = 'b' . time();
+        // New path where file will be copied.
+        $newfilepath = "{$CFG->dataroot}/congrea/{$data->courseid}/{$data->vcid}/" . $vcsessionkey;
+        // Copy file to new destination.
         $this->recurse_copy_files($filepath, $newfilepath);
 
         $data->timecreated = $this->apply_date_offset($data->timecreated);
@@ -138,4 +135,5 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         // Add congrea related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_congrea', 'intro', null);
     }
+
 }

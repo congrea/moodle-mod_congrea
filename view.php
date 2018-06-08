@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,10 +25,10 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$n = optional_param('n', 0, PARAM_INT);  // ... Congrea instance ID - it should be named as the first character of the module.
+$id = optional_param('id', 0, PARAM_INT); // Course_module ID.
+$n = optional_param('n', 0, PARAM_INT);  // Congrea instance ID - it should be named as the first character of the module.
 $delete = optional_param('delete', 0, PARAM_INT);
-$confirm = optional_param('confirm', '', PARAM_ALPHANUM);   //md5 confirmation hash
+$confirm = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
@@ -53,8 +52,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
-//$PAGE->requires->js('/mod/congrea/chrome_extension_check.js');
-// Event log
+// Event log.
 $event = \mod_congrea\event\course_module_viewed::create(array(
             'objectid' => $congrea->id,
             'context' => $context,
@@ -69,31 +67,27 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 // Output starts here.
-
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
 $returnurl = new moodle_url('/mod/congrea/view.php', array('id' => $cm->id));
 
 $recordings = $DB->get_records('congrea_files', array('vcid' => $congrea->id), 'timecreated DESC');
 
-// Delete a selected recording, after confirmation
+// Delete a selected recording, after confirmation.
 if ($delete and confirm_sesskey()) {
     require_capability('mod/congrea:recordingdelete', $context);
-    //require_capability('mod/congrea:addinstance', $context);
     $record = $DB->get_record('congrea_files', array('id' => $delete), '*', MUST_EXIST);
-
     if ($confirm != md5($delete)) {
         echo $OUTPUT->header();
-
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$record->vcsessionname'"), new moodle_url($returnurl, $optionsyes), $returnurl);
+        echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$record->vcsessionname'"),
+                            new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
         $filepath = $CFG->dataroot . "/congrea/" . $record->courseid . "/" . $record->vcid . "/" . $record->vcsessionkey;
-
-        if (mod_congrea_deleteAll($filepath)) {
+        if (mod_congrea_deleteall($filepath)) {
             $DB->delete_records('congrea_files', array('id' => $record->id));
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
@@ -128,11 +122,11 @@ $a->open = userdate($congrea->opentime);
 $a->close = userdate($congrea->closetime);
 $user = $DB->get_record('user', array('id' => $congrea->moderatorid));
 
-$class_name = 'wrapper-button';
+$classname = 'wrapper-button';
 if (($congrea->closetime > time() && $congrea->opentime <= time())) {
-    $class_name .= ' online';
+    $classname .= ' online';
 }
-echo html_writer::start_tag('div', array('class' => $class_name));
+echo html_writer::start_tag('div', array('class' => $classname));
 
 echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $a));
 if (!empty($congrea->moderatorid)) {
@@ -153,17 +147,12 @@ $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
 $popupoptions = "toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
 
-//$themecolor = $congrea->themecolor;
-//$audio = $congrea->audio;
-//$pushtotalk = $congrea->pushtotalk;
-//$anyonepresenter = empty($congrea->moderatorid) ? 1 : 0;
-//$licensekey = 'r9E53R0eJG34REFMyhFun8mZWUQVeT3l5DBGSwQL';
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $room = $course->id . "_" . $cm->id;
     global $USER;
     // Serve online at vidya.io.
-    $url = "https://live.congrea.net";  // Online url
+    $url = "https://live.congrea.net";  // Online url.
     $role = 's'; // Default role.
     $info = false; // Debugging off.
 
@@ -174,8 +163,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
     }
     $mysession = session_id();
-    //$upload = $sendmurl ."/mod/congrea/recording.php?cmid=$cm->id&key=$mysession";
-    // Todo this should be changed with actual server path
+    // Todo this should be changed with actual server path.
     $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
     $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 
@@ -194,21 +182,24 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     }
 
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey);
+    $form = congrea_online_server($url, $authusername, $authpassword, $role,
+                                $rid, $room, $popupoptions, $popupwidth,
+                                $popupheight, $upload, $down, $info, $cgcolor,
+                                $webapi, $userpicturesrc, $fromcms, $licensekey);
     echo $form;
 } else {
-    // congrea closed.
+    // Congrea closed.
     echo $OUTPUT->heading(get_string('sessionclosed', 'congrea'));
 }
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
-//if (has_capability('mod/congrea:addinstance', $context)) {
 if (has_capability('mod/congrea:recordingupload', $context)) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)), get_string('uploadrecordedfile', 'congrea'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)),
+                                get_string('uploadrecordedfile', 'congrea'), 'get');
     echo html_writer::end_tag('div');
 }
-//display list of recorded files
+// Display list of recorded files.
 
 $table = new html_table();
 $table->head = array();
@@ -229,20 +220,18 @@ foreach ($recordings as $record) {
     $row = array();
     $row[] = $record->vcsessionname . ' ' . mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->timecreated);
-
-    //$playurl = new moodle_url($CFG->wwwroot . '/mod/congrea/classroom.php', array('id' => $id, 'vcSid' => $record->id, 'play' => 1));
-    // play button
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
-        //$buttons[] = html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('e/insert_edit_video'), 'alt' => $strplay, 'class' => 'iconsmall hand', 'onclick' => $playpopup));
-        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room, $popupoptions, $popupwidth, $popupheight, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid);
-        ;
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid,
+                                                $room, $popupoptions, $popupwidth, $popupheight,
+                                                $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc,
+                                                $licensekey, $id, $vcsid);
     }
-
-
-    // delete button
+    // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
-        $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->id, 'sesskey' => sesskey())), html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('t/delete'), 'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
+        $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->id, 'sesskey' => sesskey())),
+        html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('t/delete'), 'alt' => $strdelete, 'class' => 'iconsmall')),
+        array('title' => $strdelete));
     }
 
     $row[] = implode(' ', $buttons);
@@ -254,7 +243,6 @@ if (!empty($table->data)) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
-    //echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 }
 echo html_writer::start_tag('div', array('class' => 'clear'));
 echo html_writer::end_tag('div');

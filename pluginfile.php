@@ -19,12 +19,11 @@
  *
  * @package    mod_congrea
  * @subpackage file
- * @copyright  2014 Pinky Sharma 
+ * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // Disable moodle specific debug messages and any errors in output.
-// define('NO_DEBUG_DISPLAY', true);
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot . '/mod/congrea/weblib.php');
@@ -32,5 +31,4 @@ require_once($CFG->dirroot . '/mod/congrea/weblib.php');
 $relativepath = get_file_argument();
 $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
 $preview = optional_param('preview', null, PARAM_ALPHANUM);
-
 congrea_file_path($relativepath, $forcedownload, $preview);

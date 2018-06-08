@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -74,8 +73,6 @@ function xmldb_congrea_upgrade($oldversion) {
     /*
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
-
-        
     if ($oldversion < 2018060200) {
 
         $table = new xmldb_table('congrea_poll_question');
@@ -86,14 +83,11 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
         $table->add_field('createdby', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
         $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
-
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         $table = new xmldb_table('congrea_poll');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -101,49 +95,35 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         $table = new xmldb_table('congrea_poll_question_option');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('options', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         $table = new xmldb_table('congrea_poll_attempts');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('optionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         $table = new xmldb_table('congrea_quiz');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('congreaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
         $table->add_field('quizid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         $table = new xmldb_table('congrea_quiz_grade');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('congreaquiz', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
@@ -153,16 +133,11 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('questionattempted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
         $table->add_field('currectanswer', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
-
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
         upgrade_mod_savepoint(true, 2018060200, 'congrea');
     }
-
     return true;
 }

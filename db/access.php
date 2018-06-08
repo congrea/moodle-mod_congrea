@@ -21,11 +21,9 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-    
     // Ability to add a new quiz to the course.
     'mod/congrea:addinstance' => array(
         'riskbitmask' => RISK_XSS,
@@ -37,8 +35,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
-
-    // Ability to see that the congrea exists, and the basic information
+    // Ability to see that the congrea exists, and the basic information.
     // about it, for example the start date and end date.
     'mod/congrea:view' => array(
         'captype' => 'read',
@@ -51,7 +48,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-       
     // Ability to record a congea session to the course.
     'mod/congrea:dorecording' => array(
         'captype' => 'write',
@@ -62,7 +58,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         )
     ),
-
     // Ability to delete recorded file of congrea session.
     'mod/congrea:recordingdelete' => array(
         'captype' => 'write',
@@ -73,7 +68,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-
     // Ability to upload session file downloaded form congrea
     // due to inablibliy of direct uploading.
     'mod/congrea:recordingupload' => array(
@@ -86,16 +80,14 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
-    //Ability to show poll report
+    // Ability to show poll report.
     'mod/congrea:pollreport' => array(
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-        'teacher' => CAP_ALLOW,
-        'editingteacher' => CAP_ALLOW,
-        'manager' => CAP_ALLOW
-            
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
     // Ability to play recorded session of congrea.
@@ -110,14 +102,12 @@ $capabilities = array(
         )
     ),
     'mod/congrea:quizreport' => array(
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-        'teacher' => CAP_ALLOW,
-        'editingteacher' => CAP_ALLOW,
-        'manager' => CAP_ALLOW
-            
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
 );
