@@ -250,7 +250,8 @@ function poll_update($valparams) {
         $obj = new stdClass();
         $data = json_decode($postdata['editdata']);
         $category = $DB->get_field('congrea_poll_question', 'category', array('id' => "$data->questionid"));
-        $quesiontext = $DB->execute("UPDATE {congrea_poll_question} SET description = '" . $data->question . "' WHERE id = '" . $data->questionid . "'");
+        $quesiontext = $DB->execute("UPDATE {congrea_poll_question} "
+                . "SET description = '" . $data->question . "' WHERE id = '" . $data->questionid . "'");
         if ($quesiontext) {
             foreach ($data->options as $key => $value) {
                 $newoptions = new stdClass();
@@ -514,7 +515,8 @@ function congrea_file_path($args, $forcedownload, $options) {
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
-function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, $filename, array $options = null) {
+function congrea_file_rewrite_pluginfile_urls($text, $file,
+        $contextid, $component, $filearea, $itemid, $filename, array $options = null) {
     global $CFG;
 
     $options = (array) $options;
