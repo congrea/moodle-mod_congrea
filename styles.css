@@ -1,4 +1,4 @@
-#page-mod-congrea-classroom #virtualclassCont{
+#page-mod-congrea-classroom #virtualclassCont {
     margin: 0;
     padding: 0;
 }
@@ -24,136 +24,120 @@
 }
 
 #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page, #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page #page-content  {
-    margin-top : 0;
+    margin-top: 0;
 }
 
 #page-mod-congrea-classroom #page #page-content #region-main {
-    padding : 0;
+    padding: 0;
 }
 #page-mod-congrea-classroom.pagelayout-popup #header-container, #page-mod-congrea-classroom.pagelayout-popup #page #page-navbar,
 #page-mod-congrea-classroom.pagelayout-popup #back-to-top,
 #page-mod-congrea-classroom.pagelayout-popup #page #page-content h1    {
-    display : none;
+    display: none;
 }
 #page-mod-congrea-classroom.pagelayout-popup #page #page-content {
-    width : auto;
+    width: auto;
 }
 
 
 #page-mod-congrea-classroom #page.container-fluid #page-header {
-    display : none !important;
-    margin : 0 !important;
+    display: none !important;
+    margin: 0 !important;
 }
 #page-mod-congrea-classroom #page.container-fluid {
-    max-width : none !important;
+    max-width: none !important;
 }
 #page-mod-congrea-classroom.pagelayout-popup .container-fluid, #page-mod-congrea-classroom.pagelayout-popup #page.container-fluid  {
-    padding-right : 0;
-    padding-left : 0;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 #page-mod-congrea-classroom #usertab_text .icon-arrow-down:after,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-down:after {
-    top : -2px !important;
-    vertical-align : sub !important;
+    top: -2px !important;
+    vertical-align: sub !important;
 }
 #page-mod-congrea-classroom .close {
-    float : left !important;
+    float: left !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool a:hover {
-    text-decoration : none;
+    text-decoration: none;
 }
 #page-mod-congrea-classroom #containerWb #commandToolsWrapper .tool a {
-    padding : 11px 18px 10px !important;
+    padding: 11px 18px 10px !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool.active #speakerPressingAnch #speakerPressingButton,  #page-mod-congrea-classroom #alwaysPress .audioTool.active #speakerPressingAnch {
-    color : #fff;
+    color: #fff;
 }
 #page-mod-congrea-classroom #speakerPressingAnch #speakerPressingtext {
-    top : -11px;
+    top: -11px;
 }
 #page-mod-congrea-classroom #usertab_text .icon-arrow-up:before,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-up:before,  #page-mod-congrea-classroom #usertab_text .icon-arrow-down:after,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-down:after {
-    top : 0 !important;
-    vertical-align : middle !important;
+    top: 0 !important;
+    vertical-align: middle !important;
 }
 #page-mod-congrea-classroom .vmchat_room_bt .inner_bt #chatroom_text {
-    top : 0 !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom #chatroom_bt2 .inner_bt #chatroom_text {
-    margin-top : 0 !important;
+    margin-top: 0 !important;
 }
 #page-mod-congrea-classroom #usertab_icon {
-    margin : 4px 2px 0 0 !important;
+    margin: 4px 2px 0 0 !important;
 }
 #page-mod-congrea-classroom #chat_div .controleCont {
-    margin-top : 2px;
+    margin-top: 2px;
 }
 #page-mod-congrea-classroom .ui-memblist-usr .tooltip:hover:after {
-    bottom : 13px !important;
+    bottom: 13px !important;
 }
 #page-mod-congrea-classroom .ui-widget-header .icon-user:before {
-    font-size : 21px !important;
+    font-size: 21px !important;
 }
 #page-mod-congrea-classroom .ui-memblist-usr a span.chatImg {
-    margin-left : 0 !important;
+    margin-left: 0 !important;
 }
 #page-mod-congrea-classroom .icon-chatImg.enable:before {
-    font-size : 100% !important;
-    top : 0 !important;
+    font-size: 100% !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom .ui-memblist-usr .icon-chatImg:before {
-    top : 0 !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom #audioTest-box #audioTest #audiotestAnch.tooltip:hover:after {
-    bottom : -1.3em !important;
+    bottom: -1.3em !important;
 }
 #page-mod-congrea-classroom #speakerPressOnce #speakerPressonceAnch.tooltip:hover:after {
-    bottom : 0em !important;
+    bottom: 0em !important;
 }
 #page-mod-congrea-classroom #speakerPressing .icon-speakerPressing:before {
-    top : -12px !important;
+    top: -12px !important;
 }
 #page-mod-congrea-classroom .close:focus, #page-mod-congrea-classroom .close:hover {
-    opacity : inherit !important;
+    opacity: inherit !important;
 }
 #page-mod-congrea-classroom .close.tooltip:hover:after {
-    left : 7px !important;
+    left: 7px !important;
 }
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr span {
-    position : relative;
-    top : 3px !important;
+    position: relative;
+    top: 3px !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool.deactive, #audioTest-box .audioTool {
-    padding-bottom : 7px !important;
+    padding-bottom: 7px !important;
 }
-/*
-#page-mod-congrea-classroom .student #chat_div .ui-memblist-usr a.tooltip:hover:after:first-child {
-bottom : -3px !important;
-padding : 0.2em 1em !important;
-font-size : 11.5px !important;
-}
-
-#page-mod-congrea-classroom .controleCont a.tooltip:hover:after {
-        bottom : -28px !important;
-        left : -18px !important;
-}
-#page-mod-congrea-classroom .student .ui-memblist-usr .icon-chatImg:before {
-        left : 0 !important;
-}
-*/
-
 #page-mod-congrea-classroom .ui-memblist-usr .icon-audioEnaOrange:before,  #page-mod-congrea-classroom .ui-memblist-usr .icon-audioEnaGreen:before {
-    font-size : 105% !important;
+    font-size: 105% !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr span.block {
-    min-height : inherit !important;
-    padding : inherit !important;
-    margin-bottom : inherit !important;
-    background-color : transparent !important;
-    border : none !important;
-    border-color : transparent !important;
-    border-radius : 0 !important;
-    box-shadow : none !important;
+    min-height: inherit !important;
+    padding: inherit !important;
+    margin-bottom: inherit !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr.teacher {
@@ -166,9 +150,7 @@ font-size : 11.5px !important;
     }
 }
 
-
 /* Moodle29 css */
-
 
 /* Azuline29 */
 
@@ -176,14 +158,13 @@ font-size : 11.5px !important;
     padding: 0 !important;
 }
 
-#page-mod-congrea-classroom #page-content{
+#page-mod-congrea-classroom #page-content {
     max-width: none !important;
 }
 
-
 /* BCU Responsive */
 
-#page-mod-congrea-classroom .fullin .container{
+#page-mod-congrea-classroom .fullin .container {
     width: 100% !important;
 }
 
@@ -219,23 +200,22 @@ font-size : 11.5px !important;
     padding : 7px 13px !important;
 }
 
-#page-mod-congrea-classroom #virtualclassCont #usertab_icon{
+#page-mod-congrea-classroom #virtualclassCont #usertab_icon {
     margin: 7px 15px 0 0 !important;
 }
-#page-mod-congrea-classroom #virtualclassCont #usertab_text .icon-arrow-up:before, #page-mod-congrea-classroom #virtualclassCont #chatroom_text .icon-arrow-up:before{
+#page-mod-congrea-classroom #virtualclassCont #usertab_text .icon-arrow-up:before, #page-mod-congrea-classroom #virtualclassCont #chatroom_text .icon-arrow-up:before {
     top:0px !important;
 }
 
-#page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-down, #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-up{
-
+#page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-down, #page-mod-congrea-classroom #chatWidget #chatroom_text .icon-arrow-up {
 }
 
-#page-mod-congrea-classroom #virtualclassCont #chatWidget .mySelf span{
+#page-mod-congrea-classroom #virtualclassCont #chatWidget .mySelf span {
     margin-top: 3px !important;
 }
 
 
-#page-mod-congrea-classroom #virtualclassCont .vmchat_room_bt .inner_bt #chatroom_text{
+#page-mod-congrea-classroom #virtualclassCont .vmchat_room_bt .inner_bt #chatroom_text {
     padding-left: 35px !important;
 }
 
@@ -249,7 +229,7 @@ font-size : 11.5px !important;
     top: 0 !important;
 }
 
-#page-mod-congrea-classroom #youtubeUrlContainer #submitURL{
+#page-mod-congrea-classroom #youtubeUrlContainer #submitURL {
     margin-bottom: 0px;
 }
 
@@ -258,7 +238,7 @@ font-size : 11.5px !important;
 }
 
 
-#page-mod-congrea-classroom #virtualclassCont .ui-memblist{
+#page-mod-congrea-classroom #virtualclassCont .ui-memblist {
     bottom: 40px !important;
 }
 
@@ -270,29 +250,29 @@ font-size : 11.5px !important;
     float: left;
 }
 
-#page-mod-congrea-classroom #virtualclassCont #playController{
+#page-mod-congrea-classroom #virtualclassCont #playController {
     width: 700px !important;
 }
 
-#page-mod-congrea-classroom #virtualclassCont #playController button{
+#page-mod-congrea-classroom #virtualclassCont #playController button {
     margin: 0 !important;
     box-shadow: none !important;
 }
-#page-mod-congrea-classroom #virtualclassCont #playController{
+#page-mod-congrea-classroom #virtualclassCont #playController {
     padding: 20px 15px 20px !important;
 }
-#page-mod-congrea-classroom #virtualclassCont #playProgress{
+#page-mod-congrea-classroom #virtualclassCont #playProgress {
     margin-top: 14px !important;
     margin-left: 12px !important;
 
 }
 
-#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear{
+#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear {
     clear: both;
 }
 
 
-#page-mod-congrea-view .wrapper-record-list{
+#page-mod-congrea-view .wrapper-record-list {
     text-align: right;
     padding: 15px 10px;
     border:#ddd 1px solid;
@@ -302,7 +282,7 @@ font-size : 11.5px !important;
 
 #page-mod-congrea-classroom{ padding-top: 0px;}
 
-#page-mod-congrea-classroom #virtualclassCont{
+#page-mod-congrea-classroom #virtualclassCont {
     margin: 0;
     padding: 0;
 }
@@ -312,16 +292,16 @@ font-size : 11.5px !important;
     width : auto !important;
 }
 #page-mod-congrea-classroom.pagelayout-popup #page {
-    padding-top : 0;
+    padding-top: 0;
 }
 #page-mod-congrea-classroom.pagelayout-popup #page-header {
-    margin-bottom : 0;
+    margin-bottom: 0;
     display: none;
 }
 #page-mod-congrea-classroom.pagelayout-popup .inner{
     display: none;
 }
-#page-mod-congrea-classroom.pagelayout-popup .container-fluid{
+#page-mod-congrea-classroom.pagelayout-popup .container-fluid {
     padding-left: 0 !important;
     margin-left: 0 !important;
     max-width: none !important;
@@ -329,142 +309,136 @@ font-size : 11.5px !important;
 
 
 #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page, #page-mod-congrea-classroom #page-mod-congrea-classroom.pagelayout-popup #page #page-content  {
-    margin-top : 0;
+    margin-top: 0;
 }
 
 #page-mod-congrea-classroom #page #page-content #region-main {
-    padding : 0;
+    padding: 0;
 }
 #page-mod-congrea-classroom.pagelayout-popup #header-container, #page-mod-congrea-classroom.pagelayout-popup #page #page-navbar,
 #page-mod-congrea-classroom.pagelayout-popup #back-to-top,
 #page-mod-congrea-classroom.pagelayout-popup #page #page-content h1    {
-    display : none;
+    display: none;
 }
 #page-mod-congrea-classroom.pagelayout-popup #page #page-content {
-    width : auto;
+    width: auto;
 }
 
 
 #page-mod-congrea-classroom #page.container-fluid #page-header {
-    display : none !important;
-    margin : 0 !important;
+    display: none !important;
+    margin: 0 !important;
 }
 #page-mod-congrea-classroom #page.container-fluid {
     max-width : none !important;
 }
 #page-mod-congrea-classroom.pagelayout-popup .container-fluid, #page-mod-congrea-classroom.pagelayout-popup #page.container-fluid  {
-    padding-right : 0;
-    padding-left : 0;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 #page-mod-congrea-classroom #usertab_text .icon-arrow-down:after,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-down:after {
-    top : -2px !important;
+    top: -2px !important;
     vertical-align : sub !important;
 }
 
 #page-mod-congrea-classroom .close {
-    float : left !important;
+    float: left !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool a:hover {
-    text-decoration : none;
+    text-decoration: none;
 }
 #page-mod-congrea-classroom #containerWb #commandToolsWrapper .tool a {
-    padding : 11px 18px 10px !important;
+    padding: 11px 18px 10px !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool.active #speakerPressingAnch #speakerPressingButton,  #page-mod-congrea-classroom #alwaysPress .audioTool.active #speakerPressingAnch {
-    color : #fff;
+    color: #fff;
 }
 #page-mod-congrea-classroom #speakerPressingAnch #speakerPressingtext {
-    top : -11px;
+    top: -11px;
 }
 #page-mod-congrea-classroom #usertab_text .icon-arrow-up:before,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-up:before,  #page-mod-congrea-classroom #usertab_text .icon-arrow-down:after,  #page-mod-congrea-classroom #chatroom_text .icon-arrow-down:after {
-    top : 0 !important;
+    top: 0 !important;
     vertical-align : middle !important;
 }
 #page-mod-congrea-classroom .vmchat_room_bt .inner_bt #chatroom_text {
-    top : 0 !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom #chatroom_bt2 .inner_bt #chatroom_text {
-    margin-top : 0 !important;
+    margin-top: 0 !important;
 }
 
 #page-mod-congrea-classroom #usertab_icon {
-    margin : 4px 2px 0 0 !important;
+    margin: 4px 2px 0 0 !important;
 }
 
 #page-mod-congrea-classroom #chat_div .controleCont {
-    margin-top : 2px;
+    margin-top: 2px;
 }
 #page-mod-congrea-classroom .ui-memblist-usr a span {
-    margin-left : 5px !important;
+    margin-left: 5px !important;
 }
 #page-mod-congrea-classroom .ui-memblist-usr .tooltip:hover:after {
-    bottom : 13px !important;
+    bottom: 13px !important;
 }
 #page-mod-congrea-classroom .ui-widget-header .icon-user:before {
-    font-size : 21px !important;
+    font-size: 21px !important;
 }
 #page-mod-congrea-classroom .ui-memblist-usr a span.chatImg {
-    margin-left : 0 !important;
+    margin-left: 0 !important;
 }
 #page-mod-congrea-classroom .icon-chatImg.enable:before {
-    font-size : 100% !important;
-    top : 0 !important;
+    font-size: 100% !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom .ui-memblist-usr .icon-chatImg:before {
-    top : 0 !important;
+    top: 0 !important;
 }
 #page-mod-congrea-classroom #audioTest-box #audioTest #audiotestAnch.tooltip:hover:after {
-    bottom : -1.3em !important;
+    bottom: -1.3em !important;
 }
 #page-mod-congrea-classroom #speakerPressOnce #speakerPressonceAnch.tooltip:hover:after {
-    bottom : 0em !important;
+    bottom: 0em !important;
 }
 #page-mod-congrea-classroom #speakerPressing .icon-speakerPressing:before {
-    top : -12px !important;
+    top: -12px !important;
 }
 #page-mod-congrea-classroom .close:focus, #page-mod-congrea-classroom .close:hover {
-    opacity : inherit !important;
+    opacity: inherit !important;
 }
 #page-mod-congrea-classroom .close.tooltip:hover:after {
-    left : 7px !important;
+    left: 7px !important;
 }
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr span {
-    position : relative;
-    top : 3px !important;
+    position: relative;
+    top: 3px !important;
 }
 #page-mod-congrea-classroom #alwaysPress .audioTool.deactive, #audioTest-box .audioTool {
-    padding-bottom : 7px !important;
+    padding-bottom: 7px !important;
 }
 #page-mod-congrea-classroom .student #chat_div .ui-memblist-usr a.tooltip:hover:after:first-child {
-    bottom : -3px !important;
-    padding : 0.2em 1em !important;
-    font-size : 11.5px !important;
+    bottom: -3px !important;
+    padding: 0.2em 1em !important;
+    font-size: 11.5px !important;
 }
 
-/*
-#page-mod-congrea-classroom .controleCont a.tooltip:hover:after {
-        bottom : -28px !important;
-        left : -18px !important;
-}
-*/
 #page-mod-congrea-classroom .student .ui-memblist-usr .icon-chatImg:before {
-    left : 0 !important;
+    left: 0 !important;
 }
 
 #page-mod-congrea-classroom .ui-memblist-usr .icon-audioEnaOrange:before,  #page-mod-congrea-classroom .ui-memblist-usr .icon-audioEnaGreen:before {
-    font-size : 105% !important;
+    font-size: 105% !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr span.block {
-    min-height : inherit !important;
-    padding : inherit !important;
-    margin-bottom : inherit !important;
+    min-height: inherit !important;
+    padding: inherit !important;
+    margin-bottom: inherit !important;
     background-color : transparent !important;
-    border : none !important;
-    border-color : transparent !important;
-    border-radius : 0 !important;
-    box-shadow : none !important;
+    border: none !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 #page-mod-congrea-classroom #chat_div .ui-memblist-usr.teacher {
@@ -483,10 +457,10 @@ font-size : 11.5px !important;
 #page-mod-congrea-classroom #virtualclassCont.student[data-currapp="Whiteboard"] #audioWidget, #page-mod-congrea-classroom #virtualclassCont.student[data-currapp="EditorRich"] #audioWidget, #page-mod-congrea-classroom #virtualclassCont.student[data-currapp="EditorCode"] #audioWidget{
     right: -10px !important;
 }
-#page-mod-congrea-classroom #virtualclassCont.student[data-currapp="ScreenShare"]{
+#page-mod-congrea-classroom #virtualclassCont.student[data-currapp="ScreenShare"] {
 
 }
-#audioWidget, #page-mod-congrea-classroom #virtualclassCont.student[data-currapp="Yts"] #audioWidget{
+#audioWidget, #page-mod-congrea-classroom #virtualclassCont.student[data-currapp="Yts"] #audioWidget {
     right: 0px !important;
 }
 
@@ -499,14 +473,14 @@ font-size : 11.5px !important;
 }
 
 
-#page-mod-congrea-classroom #virtualclassCont.studentplayMode #virtualclassEditorCode{
+#page-mod-congrea-classroom #virtualclassCont.studentplayMode #virtualclassEditorCode {
     margin-left: 0 !important;
 }
-#page-mod-congrea-classroom #virtualclassCont.studentplayMode #audioWidget{
+#page-mod-congrea-classroom #virtualclassCont.studentplayMode #audioWidget {
     top: 170px !important;
 }
 
-#page-mod-congrea-classroom #virtualclassCont.studentplayMode .writeModeBox{
+#page-mod-congrea-classroom #virtualclassCont.studentplayMode .writeModeBo{
     top: -60px !important;
 }
 
@@ -517,7 +491,7 @@ font-size : 11.5px !important;
     padding: 0 !important;
 }
 
-#page-mod-congrea-classroom #page-content{
+#page-mod-congrea-classroom #page-conten{
     max-width: none !important;
 }
 
@@ -752,7 +726,7 @@ font-size : 11.5px !important;
     text-shadow: none !important;
 }
 
-#downloadPrgressLabel, #askPlay #askplayMessage{
+#downloadPrgressLabel, #askPlay #askplayMessage {
     color: #555 !important;
 }
 
@@ -760,43 +734,43 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
     text-shadow:none !important;
 }
 
-#virtualclassCont #youtubeUrlContainer #youtubeurl, #virtualclassCont #urlcontainer #presentationurl{
+#virtualclassCont #youtubeUrlContainer #youtubeurl, #virtualclassCont #urlcontainer #presentationurl {
     height: 42px !important;
     font-size: 14px;
 }
 #virtualclassCont #urlcontainer #presentationurl{vertical-align: top;}
-#virtualclassCont[data-currapp="EditorRich"] #beTeacher{
+#virtualclassCont[data-currapp="EditorRich"] #beTeacher {
     right: 12%;
     top: 2% !important;
 }
-#virtualclassCont #youtubeUrlContainer #submitURL{
+#virtualclassCont #youtubeUrlContainer #submitURL {
     font-size: 14px !important;
 }
-#virtualclassCont #commandToolsWrapper{
+#virtualclassCont #commandToolsWrapper {
     height: 47px !important;
 }
 
-#virtualclassOptionsCont .appOptions a.tooltip:hover:after{
+#virtualclassOptionsCont .appOptions a.tooltip:hover:after {
     bottom: -20px!important;
 }
 
-#virtualclassCont .vceditor-dialog-input{
+#virtualclassCont .vceditor-dialog-input {
     padding: 15px 5px !important;
 }
-#virtualclassCont #alwaysPress .audioTool a{
+#virtualclassCont #alwaysPress .audioTool a {
     top: 10px !important;
 }
 #page-mod-congrea-classroom #virtualclassCont #alwaysPress .audioTool.active, #page-mod-congrea-classroom #alwaysPress .audioTool.deactive{
     padding: 15px 13px !important;
 }
-#virtualclassCont div#playControllerCont{
+#virtualclassCont div#playControllerCont {
     min-height: none;
 }
 #virtualclassCont .ui-chatbox-input-box{margin: 4px 5px !important;}
 #page-mod-congrea-classroom #virtualclassCont #virtualclassOptionsCont{
     z-index : 1;
 }
-#page-mod-congrea-view .wrapper-button.online #overrideform,  #page-mod-congrea-view .wrapper-button.online #chromeExtTrigger{
+#page-mod-congrea-view .wrapper-button.online #overrideform,  #page-mod-congrea-view .wrapper-button.online #chromeExtTrigger {
     float:left;
 }
 #page-mod-congrea-view .wrapper-button.online {
@@ -855,7 +829,7 @@ button, input.form-submit, input[type="button"], input[type="submit"], input[typ
     background-repeat : no-repeat;
 }
 
-#page-mod-congrea-view input.playbtn:hover{
+#page-mod-congrea-view input.playbtn:hover {
 }
-#page-mod-congrea-view input.playbtn:focus{
+#page-mod-congrea-view input.playbtn:focus {
 }
