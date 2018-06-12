@@ -29,7 +29,6 @@
  * Define the complete congrea structure for backup, with file and id annotations
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 class backup_congrea_activity_structure_step extends backup_activity_structure_step {
     protected function define_structure() {

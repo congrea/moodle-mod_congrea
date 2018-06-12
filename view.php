@@ -142,45 +142,40 @@ if ($congrea->intro) {
 echo "<br/ >";
 
 echo html_writer::script('', $CFG->wwwroot . '/mod/congrea/popup.js');
+global $USER;
 $popupname = 'congreapopup';
 $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
-
+// Serve online at vidya.io.
+$room = $course->id . "_" . $cm->id;
+$url = "https://live.congrea.net";  // Online url.
+$role = 's'; // Default role.
+$info = false; // Debugging off.
+$mysession = session_id();
+$userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
+$userpicturesrc = $userpicture->out(false);
+$fromcms = true; // Identify congrea is from cms.
+$upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
+$webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
+$down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
+$room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+if (has_capability('mod/congrea:addinstance', $context)) {
+    if ($USER->id == $congrea->moderatorid) {
+        $role = 't';
+    }
+}
+if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
+    $info = true;
+}
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
-    $room = $course->id . "_" . $cm->id;
-    global $USER;
-    // Serve online at vidya.io.
-    $url = "https://live.congrea.net";  // Online url.
-    $role = 's'; // Default role.
-    $info = false; // Debugging off.
-
     $murl = parse_url($CFG->wwwroot);
     if ($murl['scheme'] == 'https') {
         $sendmurl = $CFG->wwwroot;
     } else {
         $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
     }
-    $mysession = session_id();
     // Todo this should be changed with actual server path.
-    $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
-    $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
-
-    $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
-
-    $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
-    $userpicturesrc = $userpicture->out(false);
-    $fromcms = true; // Identify congrea is from cms.
-    if (has_capability('mod/congrea:addinstance', $context)) {
-        if ($USER->id == $congrea->moderatorid) {
-            $role = 't';
-        }
-    }
-    if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
-        $info = true;
-    }
-
-    $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
     $form = congrea_online_server($url, $authusername, $authpassword, $role,
                                 $rid, $room, $popupwidth,
                                 $popupheight, $upload, $down, $info, $cgcolor,
