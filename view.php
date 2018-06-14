@@ -100,12 +100,11 @@ if ($delete and confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 // Send role to auth file.
+$role = 's'; // Default role.
 if (has_capability('mod/congrea:addinstance', $context)) {
     if ($USER->id == $congrea->moderatorid) {
         $role = 't';
     }
-} else {
-    $role = 's';
 }
 // Get congrea api key and Secret key from congrea setting.
 $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
@@ -123,7 +122,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     echo $OUTPUT->footer();
     exit();
 }
-
 
 $a = new stdClass();
 $a->open = userdate($congrea->opentime);
