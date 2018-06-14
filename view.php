@@ -103,9 +103,9 @@ echo $OUTPUT->heading($congrea->name);
 if (has_capability('mod/congrea:addinstance', $context)) {
     if ($USER->id == $congrea->moderatorid) {
         $role = 't';
-    } else {
-        $role = 's';
     }
+} else {
+    $role = 's';
 }
 // Get congrea api key and Secret key from congrea setting.
 $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
