@@ -99,6 +99,14 @@ if ($delete and confirm_sesskey()) {
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
+// Send role to auth file.
+if (has_capability('mod/congrea:addinstance', $context)) {
+    if ($USER->id == $congrea->moderatorid) {
+        $role = 't';
+    } else {
+        $role = 's';
+    }
+}
 // Get congrea api key and Secret key from congrea setting.
 $a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
@@ -143,13 +151,12 @@ echo "<br/ >";
 
 echo html_writer::script('', $CFG->wwwroot . '/mod/congrea/popup.js');
 global $USER;
+// Serve online at vidya.io.
 $popupname = 'congreapopup';
 $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
-// Serve online at vidya.io.
 $room = $course->id . "_" . $cm->id;
-$url = "https://live.congrea.net";  // Online url.
-$role = 's'; // Default role.
+$url = "https://live.congrea.net";
 $info = false; // Debugging off.
 $mysession = session_id();
 $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
@@ -159,11 +166,6 @@ $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mys
 $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-if (has_capability('mod/congrea:addinstance', $context)) {
-    if ($USER->id == $congrea->moderatorid) {
-        $role = 't';
-    }
-}
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = true;
 }

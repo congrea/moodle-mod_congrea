@@ -14,8 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Congrea module authentication
+ * serving for virtual class
+ *
+ * @package    mod_congrea
+ * @copyright  2014 Pinky Sharma
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 function my_curl_request($url, $postdata, $key, $secret) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -40,8 +46,9 @@ $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
 $licensekey = $cgapi;
 $secret = $cgsecret;
+$userrole = $role;
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => 't', 'room' => $room);
+$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole, 'room' => $room);
 $postdata = json_encode($postdata);
 
 $rid = my_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);

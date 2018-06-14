@@ -18,10 +18,7 @@
 /**
  * English strings for congrea
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package    mod_Congrea
+ * @package    mod_congrea
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -14,6 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Congrea module internal API.
+ * serving for virtual class
+ *
+ * @package   mod_congrea
+ * @copyright 2017 Suman Bogati
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Function for set session
+ * serving for virtual class
+ */
 function set_session() {
     if (isset($_GET['key'])) {
         session_id($_GET['key']);
@@ -29,6 +43,10 @@ define('FUNCTIONS_LIST', serialize(array('record_file_save', 'poll_save', 'poll_
       'poll_delete', 'poll_update', 'poll_result', 'poll_option_drop', 'congrea_get_enrolled_users',
       'congrea_quiz', 'congrea_get_quizdata', 'congrea_add_quiz', 'congrea_quiz_result')));
 
+/**
+ * function for set header
+ * serving for virtual class
+ */
 function set_header() {
     header("access-control-allow-origin: *");
 }
@@ -37,22 +55,38 @@ function set_header() {
  * This generally happens when the request is coming from other domain
  * eg:- if the request is coming from l.vidya.io and main domain suman.moodlehub.com
  * it also know as preflight request
- * * */
-
+ * serving for virtual class
+ *
+ */
 function exit_if_request_is_options() {
     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
         exit;
     }
 }
 
+/**
+ * Function to get data by get method
+ * serving for virtual class
+ */
 function received_get_data() {
     return (isset($_GET)) ? $_GET : false;
 }
 
+/**
+ * Function to get data by post method
+ * serving for virtual class
+ */
 function received_post_data() {
     return (isset($_POST)) ? $_POST : false;
 }
 
+/**
+ * Function to validate request
+ * which is invoke by ajax
+ * serving for virtual class
+ *
+ * @return array
+ */
 function validate_request() {
     $cmid = required_param('cmid', PARAM_INT);
     $userid = required_param('user', PARAM_INT);
@@ -84,8 +118,11 @@ function validate_request() {
     return $qstring;
 }
 
-/* The function is executed which is passed by get */
 
+/**
+ * The function is executed which is passed by get
+ * serving for virtual class
+ */
 function execute_action($validparameters) {
     $getdata = received_get_data();
     if ($getdata && isset($getdata['methodname'])) {
