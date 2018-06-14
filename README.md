@@ -8,7 +8,7 @@ It can be used in Moodle as an activity and has features like whiteboard, screen
 Requirements
 ------------
 
-1. Moodle 2.7 and above
+1. Moodle 3.3.0 and above
 2. API key and Secret (received from [congrea.com](https://www.congrea.com/)  at the time of registration)
 
 Installation
