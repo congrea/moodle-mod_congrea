@@ -65,7 +65,6 @@ function congrea_course_teacher_list() {
  * @param boolean $debug
  * @param string $cgcolor
  * @param string $webapi
- * @param string $webapi
  * @param string $userpicturesrc
  * @param string $fromcms
  * @param string $licensekey
@@ -112,7 +111,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param string $authpassword  authentication password
  * @param string $role user role eight student or teacher
  * @param string $rid user authenticated path
- * @param string $room  unique id
+ * @param string $room unique id
  * @param string $popupwidth
  * @param string $popupheight
  * @param string $upload
@@ -120,14 +119,13 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param boolean $debug
  * @param string $cgcolor
  * @param string $webapi
- * @param string $webapi
  * @param string $userpicturesrc
  * @param string $fromcms
  * @param string $licensekey
  * @param int $id
  * @param int $vcsid
  * @return string
-  */
+ */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $popupwidth, $popupheight, $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {

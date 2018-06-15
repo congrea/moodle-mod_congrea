@@ -66,6 +66,8 @@ class mod_congrea_mod_form extends moodleform_mod {
         $teacheroptions = congrea_course_teacher_list();
         if (empty($teacheroptions)) {
             $teacheroptions = "";
+        } else {
+            $teacheroptions[0] = 'Select';
         }
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');

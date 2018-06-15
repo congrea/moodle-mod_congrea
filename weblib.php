@@ -392,8 +392,7 @@ function congrea_quiz($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null,
-                            'id, name, course, timelimit, preferredbehaviour, questionsperpage');
+    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
     if ($quizes) {
         foreach ($quizes as $data) {
             $questiontype = congrea_question_type($data->id); // Check quiz question type is multichoce or not.
@@ -401,24 +400,24 @@ function congrea_quiz($valparams) {
                 $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
                 if ($quizcm->id) {
                     $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id,
-                                                                                        'instance' => $data->id,
-                                                                                        'course' => $data->course));
+                        'instance' => $data->id,
+                        'course' => $data->course));
                     $quizdata[$data->id] = (object) array('id' => $data->id,
-                                                'name' => $data->name,
-                                                'timelimit' => $data->timelimit,
-                                                'preferredbehaviour' => $data->preferredbehaviour,
-                                                'questionsperpage' => $data->questionsperpage,
-                                                'quizstatus' => $quizstatus);
+                                'name' => $data->name,
+                                'timelimit' => $data->timelimit,
+                                'preferredbehaviour' => $data->preferredbehaviour,
+                                'questionsperpage' => $data->questionsperpage,
+                                'quizstatus' => $quizstatus);
                 } else {
                     echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
                 }
             }
         }
-    } else {
-        echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
-    }
-    if ($quizdata) {
-        echo(json_encode($quizdata));
+        if (!empty($quizdata)) {
+            echo(json_encode($quizdata));
+        } else {
+            echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+        }
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
     }
