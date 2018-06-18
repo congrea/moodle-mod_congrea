@@ -29,7 +29,10 @@ require_once($CFG->dirroot . '/mod/congrea/backup/moodle2/backup_congrea_stepsli
 require_once($CFG->dirroot . '/mod/congrea/backup/moodle2/backup_congrea_settingslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the congrea instance
+ * Backup task that provides all the settings and steps to perform one complete backup of the activity.
+ *
+ * @copyright   2014 Pinky Sharma
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_congrea_activity_task extends backup_activity_task {
 

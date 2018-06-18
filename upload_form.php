@@ -29,12 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/congrea/locallib.php');
+
+
 /**
- * Module instance recording upload form
+ * Settings form for the quiz module.
+ *
+ * @copyright  2014 Pinky Sharma
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_congrea_upload_file extends moodleform {
-    /**
-     * Constructor.
+    /*
      * @param moodle_url $submiturl the form action URL.
      * @param object course module object.
      * @param object the congrea object.
@@ -71,7 +75,13 @@ class mod_congrea_upload_file extends moodleform {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
-
+    /**
+     * Validate this form.
+     *
+     * @param array $data submitted data
+     * @param array $files not used
+     * @return array errors
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         return $errors;

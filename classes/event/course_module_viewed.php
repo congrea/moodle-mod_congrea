@@ -25,6 +25,13 @@
 namespace mod_congrea\event;
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_congrea course module viewed event class.
+ *
+ * @package    mod_congrea
+ * @copyright  2014 Pinky Sharma
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class course_module_viewed extends \core\event\course_module_viewed {
     protected function init() {
         $this->data['objecttable'] = 'congrea';

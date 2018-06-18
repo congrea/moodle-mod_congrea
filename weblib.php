@@ -13,8 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Congrea module internal API,
+ * Congrea module internal API.
  * serving for virtual class
  *
  * @package   mod_congrea
@@ -30,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * serving for virtual class
  *
  * @param array $valparams
+ * @return string
  */
 function record_file_save($valparams) {
     global $CFG, $DB;
@@ -315,7 +317,8 @@ function poll_result($valparams) {
 }
 
 /**
- * Returns list of users enrolled into course.
+ * Returns list of users enrolled into course
+ * serving for virtual class
  *
  * @param int $data
  * @return array of user records
@@ -382,15 +385,14 @@ function congrea_get_enrolled_users($data) {
  * Get all quizes with the details (timelimit, ques per page)
  * as an array of object for a specific course.
  *
- * @param array $postdata
- * @return json  quizes as an array of object
+ * @param array $valparams
+ * @return json quizes as an array of object
  */
 function congrea_quiz($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null,
-                            'id, name, course, timelimit, preferredbehaviour, questionsperpage');
+    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
     if ($quizes) {
         foreach ($quizes as $data) {
             $questiontype = congrea_question_type($data->id); // Check quiz question type is multichoce or not.
@@ -398,24 +400,24 @@ function congrea_quiz($valparams) {
                 $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
                 if ($quizcm->id) {
                     $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id,
-                                                                                        'instance' => $data->id,
-                                                                                        'course' => $data->course));
+                        'instance' => $data->id,
+                        'course' => $data->course));
                     $quizdata[$data->id] = (object) array('id' => $data->id,
-                                                'name' => $data->name,
-                                                'timelimit' => $data->timelimit,
-                                                'preferredbehaviour' => $data->preferredbehaviour,
-                                                'questionsperpage' => $data->questionsperpage,
-                                                'quizstatus' => $quizstatus);
+                                'name' => $data->name,
+                                'timelimit' => $data->timelimit,
+                                'preferredbehaviour' => $data->preferredbehaviour,
+                                'questionsperpage' => $data->questionsperpage,
+                                'quizstatus' => $quizstatus);
                 } else {
                     echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
                 }
             }
         }
-    } else {
-        echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
-    }
-    if ($quizdata) {
-        echo(json_encode($quizdata));
+        if (!empty($quizdata)) {
+            echo(json_encode($quizdata));
+        } else {
+            echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
+        }
     } else {
         echo json_encode(array('status' => 0, 'message' => 'Quiz not found'));
     }
@@ -423,6 +425,8 @@ function congrea_quiz($valparams) {
 
 /**
  * function to get quiz question type
+ * serving for virtual class
+ *
  * @param array $quizid
  * @return boolean
  */
@@ -445,8 +449,10 @@ function congrea_question_type($quizid, $type = 'multichoice') {
 }
 
 /**
- * Attach a quiz with congrea activity.
- * @param array $postdata
+ * Attach a quiz with congrea activity
+ * serving for virtual class
+ *
+ * @param array $valparams
  * @return boolean
  */
 function congrea_add_quiz($valparams) {
@@ -470,8 +476,10 @@ function congrea_add_quiz($valparams) {
 }
 
 /**
- * function to save quiz grade in table.
- * @param array $postdata
+ * function to save quiz grade in table
+ * serving for virtual class
+ *
+ * @param array $valparams
  * @return boolean
  */
 function congrea_quiz_result($valparams) {
@@ -496,7 +504,15 @@ function congrea_quiz_result($valparams) {
         }
     }
 }
-
+/**
+ * function to get file path
+ * serving for virtual class
+ *
+ * @param string $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
 function congrea_file_path($args, $forcedownload, $options) {
     global $DB;
     $options = array('preview' => $options);
@@ -514,9 +530,29 @@ function congrea_file_path($args, $forcedownload, $options) {
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
-function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, $filename, array $options = null) {
+/**
+ * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
+ * serving for virtual class
+ *
+ * @param string $text The content that may contain ULRs in need of rewriting.
+ * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
+ * @param int $contextid This parameter and the next two identify the file area to use.
+ * @param string $component
+ * @param string $filearea helps identify the file area.
+ * @param int $itemid helps identify the file area.
+ * @param string $filename helps identify the filename
+ * @param array $options text and file options ('forcehttps'=>false), use reverse = true to reverse the behaviour of the function.
+ * @return string the processed text.
+ */
+function congrea_file_rewrite_pluginfile_urls($text,
+                                            $file,
+                                            $contextid,
+                                            $component,
+                                            $filearea,
+                                            $itemid,
+                                            $filename,
+                                            array $options = null) {
     global $CFG;
-
     $options = (array) $options;
     if (!isset($options['forcehttps'])) {
         $options['forcehttps'] = false;
@@ -539,6 +575,20 @@ function congrea_file_rewrite_pluginfile_urls($text, $file, $contextid, $compone
     return str_replace('@@PLUGINFILE@@/', $replaceurl, $text);
 }
 
+
+/**
+ * function to formate text
+ * serving for virtual class
+ *
+ * @param int $cmid
+ * @param object $questiondata
+ * @param string $text
+ * @param string $formate
+ * @param string $component
+ * @param string $filearea helps identify the file area.
+ * @param int $itemid helps identify the file area.
+ * @return string
+ */
 function congrea_formate_text($cmid, $questiondata, $text, $formate, $component, $filearea, $itemid) {
     global $PAGE, $DB;
 
@@ -568,6 +618,13 @@ function congrea_formate_text($cmid, $questiondata, $text, $formate, $component,
     }
 }
 
+/**
+ * function to convert text in inline
+ * serving for virtual class
+ *
+ * @param string $html
+ * @return string
+ */
 function congrea_make_html_inline($html) {
     $html = preg_replace('~\s*<p>\s*~u', '', $html);
     $html = preg_replace('~\s*</p>\s*~u', '<br />', $html);

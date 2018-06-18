@@ -73,7 +73,7 @@ function congrea_supports($feature) {
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $congrea An object from the form in mod_form.php
+ * @param object stdClass $congrea An object from the form in mod_form.php
  * @param mod_congrea_mod_form $mform
  * @return int The id of the newly inserted congrea record
  */
@@ -93,8 +93,8 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
  * It is safe to rely on PAGE here as we will only ever be within the module
  * context when this is called
  *
- * @param navigation_node $settings
- * @param navigation_node $surveynode
+ * @param $settings
+ * @param $congreanode
  */
 function congrea_extend_settings_navigation($settings, $congreanode) {
     global $PAGE;
@@ -191,20 +191,16 @@ function congrea_grade_item_update(stdClass $congrea, $grades = null) {
     return false;
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
-
-    /* @example */
     $item = array();
     $item['itemname'] = clean_param($congrea->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
     $item['grademax'] = $congrea->grade;
     $item['grademin'] = 0;
-
     grade_update('mod/congrea', $congrea->course, 'mod', 'congrea', $congrea->id, 0, null, $item);
 }
 
 /**
  * Update congrea grades in the gradebook
- *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
  * @param stdClass $congrea instance object with extra cmidnumber and modname property
@@ -219,11 +215,6 @@ function congrea_update_grades(stdClass $congrea, $userid = 0) {
 
     grade_update('mod/congrea', $congrea->course, 'mod', 'congrea', $congrea->id, 0, $grades);
 }
-
-/**
- * File API                                                                   //
- */
-
 /**
  * Returns the lists of all browsable file areas within the given module context
  *

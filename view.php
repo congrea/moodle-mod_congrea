@@ -81,7 +81,7 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$record->vcsessionname'"),
+        echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $record->vcsessionname),
                             new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
@@ -100,7 +100,12 @@ if ($delete and confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 // Get congrea api key and Secret key from congrea setting.
-$a = "$CFG->wwwroot/admin/settings.php?section=modsettingcongrea";
+$a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
+$role = 's'; // Default role.
+if (has_capability('mod/congrea:addinstance', $context) &&
+        ($USER->id == $congrea->moderatorid)) {
+    $role = 't';
+}
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
     $cgcolor = get_config('mod_congrea', 'colorpicker');
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
@@ -115,7 +120,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     echo $OUTPUT->footer();
     exit();
 }
-
 
 $a = new stdClass();
 $a->open = userdate($congrea->opentime);
@@ -139,48 +143,36 @@ if (!empty($congrea->moderatorid)) {
 if ($congrea->intro) {
     echo $OUTPUT->box(format_module_intro('congrea', $congrea, $cm->id), 'generalbox mod_introbox', 'congreaintro');
 }
-echo "<br/ >";
+
+echo html_writer::empty_tag('br');
 
 echo html_writer::script('', $CFG->wwwroot . '/mod/congrea/popup.js');
-$popupname = 'congreapopup';
+
 $popupwidth = 'window.screen.width';
 $popupheight = 'window.screen.height';
-
+// Serve online at vidya.io.
+$url = "https://live.congrea.net";  // Online url.
+$info = false; // Debugging off.
+$mysession = session_id();
+$userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
+$userpicturesrc = $userpicture->out(false);
+$fromcms = true; // Identify congrea is from cms.
+$upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
+$webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
+$down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
+$room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
+    $info = true;
+}
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
-    $room = $course->id . "_" . $cm->id;
-    global $USER;
-    // Serve online at vidya.io.
-    $url = "https://live.congrea.net";  // Online url.
-    $role = 's'; // Default role.
-    $info = false; // Debugging off.
-
     $murl = parse_url($CFG->wwwroot);
     if ($murl['scheme'] == 'https') {
         $sendmurl = $CFG->wwwroot;
     } else {
         $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
     }
-    $mysession = session_id();
     // Todo this should be changed with actual server path.
-    $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
-    $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
-
-    $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
-
-    $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
-    $userpicturesrc = $userpicture->out(false);
-    $fromcms = true; // Identify congrea is from cms.
-    if (has_capability('mod/congrea:addinstance', $context)) {
-        if ($USER->id == $congrea->moderatorid) {
-            $role = 't';
-        }
-    }
-    if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
-        $info = true;
-    }
-
-    $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
     $form = congrea_online_server($url, $authusername, $authpassword, $role,
                                 $rid, $room, $popupwidth,
                                 $popupheight, $upload, $down, $info, $cgcolor,
@@ -190,6 +182,8 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     // Congrea closed.
     echo $OUTPUT->heading(get_string('sessionclosed', 'congrea'));
 }
+
+// Upload congrea recording.
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
 if (has_capability('mod/congrea:recordingupload', $context)) {
@@ -198,21 +192,14 @@ if (has_capability('mod/congrea:recordingupload', $context)) {
                                 get_string('uploadrecordedfile', 'congrea'), 'get');
     echo html_writer::end_tag('div');
 }
+
 // Display list of recorded files.
-
 $table = new html_table();
-$table->head = array();
-$table->colclasses = array();
-$table->head[] = 'Filename';
+$table->head = array('Filename', 'Time created', 'Action', "");
+$table->colclasses = array('centeralign', 'centeralign');
 $table->attributes['class'] = 'admintable generaltable';
-$table->head[] = 'Time Created';
-$table->head[] = get_string('action');
-$table->colclasses[] = 'centeralign';
-$table->head[] = "";
-$table->colclasses[] = 'centeralign';
-
 $table->id = "recorded_data";
-global $USER;
+
 foreach ($recordings as $record) {
     $buttons = array();
     $lastcolumn = '';
@@ -243,8 +230,7 @@ if (!empty($table->data)) {
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
 }
-echo html_writer::start_tag('div', array('class' => 'clear'));
-echo html_writer::end_tag('div');
+echo html_writer::tag('div', "" , array('class' => 'clear'));
 echo html_writer::end_tag('div');
 // Finish the page.
 echo $OUTPUT->footer();

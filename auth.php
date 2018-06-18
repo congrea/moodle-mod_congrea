@@ -13,10 +13,26 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Congrea module for authentication
+ *
+ * @package    mod_congrea
+ * @copyright  2014 Pinky Sharma
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-defined('MOODLE_INTERNAL') || die();
-
-function my_curl_request($url, $postdata, $key, $secret) {
+/*
+ * This function authenticate the user with required
+ * detail and request for sever connection
+ *
+ * @param string $url congrea auth server url
+ * @param array $postdata
+ * @param string licence key
+ * @param string secret
+ *
+ * @return string $resutl json_encoded object
+ */
+function congrea_curl_request($url, $postdata, $key, $secret) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -40,11 +56,11 @@ $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
 $licensekey = $cgapi;
 $secret = $cgsecret;
+$userrole = !empty($role) ? $role : 's';
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => 't', 'room' => $room);
+$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole, 'room' => $room);
 $postdata = json_encode($postdata);
-
-$rid = my_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
+$rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
 if (!$rid = json_decode($rid)) {
     echo "{\"error\": \"403\"}";
     exit;

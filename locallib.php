@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 
 /*
  * Get list of teacher of current course
+ * serving for virtual class
  *
- * @param null
  * @return object
  */
 function congrea_course_teacher_list() {
@@ -56,10 +56,18 @@ function congrea_course_teacher_list() {
  * @param string $authusername  authenticated user
  * @param string $authpassword  authentication password
  * @param string $role user role eight student or teacher
- * @param string $rid  user authenticated path
+ * @param string $rid user authenticated path
  * @param string $room  unique id
- * @param $popupwidth string
- * @param $popupheight string
+ * @param string $popupwidth
+ * @param string $popupheight
+ * @param string $upload
+ * @param string $down
+ * @param boolean $debug
+ * @param string $cgcolor
+ * @param string $webapi
+ * @param string $userpicturesrc
+ * @param string $fromcms
+ * @param string $licensekey
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
@@ -94,6 +102,30 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
 }
 
 // TODO, this function should be merge with congrea_online_server.
+/*
+ * Create form and send sumbitted value to
+ * given url
+ *
+ * @param string $url congrea online url
+ * @param string $authusername  authenticated user
+ * @param string $authpassword  authentication password
+ * @param string $role user role eight student or teacher
+ * @param string $rid user authenticated path
+ * @param string $room unique id
+ * @param string $popupwidth
+ * @param string $popupheight
+ * @param string $upload
+ * @param string $down
+ * @param boolean $debug
+ * @param string $cgcolor
+ * @param string $webapi
+ * @param string $userpicturesrc
+ * @param string $fromcms
+ * @param string $licensekey
+ * @param int $id
+ * @param int $vcsid
+ * @return string
+ */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $popupwidth, $popupheight, $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
@@ -130,11 +162,9 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
 /**
  * Update the calendar entries for this congrea.
  *
- * @param object $congrea - Required to pass this in because it might
- *                          not exist in the database yet.
+ * @param object $congrea
  * @return bool
  */
-
 function mod_congrea_update_calendar($congrea) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
@@ -183,7 +213,6 @@ function mod_congrea_update_calendar($congrea) {
  * recording files of one session has been stored.
  * @return bool
  */
-
 function mod_congrea_deleteall($directory, $empty = false) {
     if (substr($directory, -1) == "/") {
         $directory = substr($directory, 0, -1);
@@ -217,7 +246,7 @@ function mod_congrea_deleteall($directory, $empty = false) {
 /**
  * Returns the rename action.
  *
- * @param cm_info $mod The module to produce editing buttons for
+ * @param $cm The module to produce editing buttons for
  * @param int $sr The section to link back to (used for creating the links)
  * @return The markup for the rename action, or an empty string if not available.
  */
@@ -260,7 +289,6 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
  * @param int $length - length of random string
  * @return bool
  */
-
 function mod_congrea_generaterandomstring($length = 11) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $characterslength = strlen($characters);

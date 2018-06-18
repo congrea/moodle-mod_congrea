@@ -47,6 +47,10 @@ if (file_exists($filepath)) {
 
 echo $data;
 
+/**
+ * The function is to check cors browser
+ * serving for virtual class
+ */
 function cors() {
     // Allow from any origin.
     if (isset($_SERVER['HTTP_ORIGIN'])) {

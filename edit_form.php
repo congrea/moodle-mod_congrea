@@ -31,8 +31,10 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 /**
  * File update name form
+ *
+ * @copyright  2014 Pinky Sharma
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class mod_congrea_edit_name extends moodleform {
 
     /**
@@ -56,6 +58,13 @@ class mod_congrea_edit_name extends moodleform {
         $this->add_action_buttons();
     }
 
+    /**
+     * Validate this form.
+     *
+     * @param array $data submitted data
+     * @param array $files not used
+     * @return array errors
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

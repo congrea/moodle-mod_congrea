@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for restore congrea.
+ *
  * @package    mod_congrea
  * @subpackage backup-moodle2
  * @copyright 2014 Pinky Sharma
@@ -28,6 +30,9 @@ require_once($CFG->dirroot . '/mod/congrea/backup/moodle2/restore_congrea_stepsl
 /**
  * Congrea restore task that provides all the settings and steps to perform one
  * complete restore of the activity
+ *
+ * @copyright 2014 Pinky Sharma
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_congrea_activity_task extends restore_activity_task {
 
@@ -89,7 +94,6 @@ class restore_congrea_activity_task extends restore_activity_task {
      */
     static public function define_restore_log_rules_for_course() {
         $rules = array();
-
         // Fix old wrong uses (missing extension).
         $rules[] = new restore_log_rule('congrea', 'view all', 'index?id={course}', null,
                                         null, null, 'index.php?id={course}');

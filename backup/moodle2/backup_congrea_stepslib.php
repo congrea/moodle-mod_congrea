@@ -22,16 +22,17 @@
  */
 
 /**
- * Define all the backup steps that will be used by the backup_congrea_activity_task
+ * Define all the backup steps that will be used by the backup_congrea_activity_task.
+ *
+ * @copyright 2014 Pinky Sharma
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * Define the complete congrea structure for backup, with file and id annotations
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 class backup_congrea_activity_structure_step extends backup_activity_structure_step {
+    /**
+     * Define the complete congrea structure for backup.
+     *
+     * @return object
+     */
     protected function define_structure() {
         // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');

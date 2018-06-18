@@ -15,21 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for the structure used for restore congrea
  * @package    mod_congrea
  * @subpackage backup-moodle2
  * @copyright 2014 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-/**
- * Define all the restore steps that will be used by the restore_congrea_activity_task
- */
 
 /**
- * Structure step to restore one congrea activity
+ * Define all the restore steps that will be used by the restore_url_activity_task.
+ *
+ * @copyright 2014 Pinky Sharma
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_congrea_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Structure step to restore one congrea activity.
+     *
+     * @return array
+     */
     protected function define_structure() {
 
         $paths = array();
@@ -44,6 +49,12 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process a congrea restore.
+     *
+     * @param object $data The data in object form
+     * @return void
+     */
     protected function process_congrea($data) {
         global $DB;
 
