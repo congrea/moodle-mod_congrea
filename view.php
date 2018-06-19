@@ -148,14 +148,16 @@ echo html_writer::empty_tag('br');
 
 echo html_writer::script('', $CFG->wwwroot . '/mod/congrea/popup.js');
 
-$popupwidth = 'window.screen.width';
-$popupheight = 'window.screen.height';
 // Serve online at vidya.io.
 $url = "https://live.congrea.net";  // Online url.
 $info = false; // Debugging off.
 $mysession = session_id();
-$userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
-$userpicturesrc = $userpicture->out(false);
+if ($USER->picture) {
+    $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
+    $userpicturesrc = $userpicture->out(false);
+} else {
+    $userpicturesrc = 'noimage';
+}
 $fromcms = true; // Identify congrea is from cms.
 $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
 $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
@@ -173,9 +175,9 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
     }
     // Todo this should be changed with actual server path.
+    $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congrea_online_popup');
     $form = congrea_online_server($url, $authusername, $authpassword, $role,
-                                $rid, $room, $popupwidth,
-                                $popupheight, $upload, $down, $info, $cgcolor,
+                                $rid, $room, $upload, $down, $info, $cgcolor,
                                 $webapi, $userpicturesrc, $fromcms, $licensekey);
     echo $form;
 } else {
@@ -209,8 +211,8 @@ foreach ($recordings as $record) {
     $vcsid = $record->id;
     if (has_capability('mod/congrea:playrecording', $context)) {
         $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid,
-                                                $room, $popupwidth, $popupheight,
-                                                $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc,
+                                                $room, $upload, $down, $info,
+                                                $cgcolor, $webapi, $userpicturesrc,
                                                 $licensekey, $id, $vcsid);
     }
     // Delete button.

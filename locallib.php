@@ -58,8 +58,6 @@ function congrea_course_teacher_list() {
  * @param string $role user role eight student or teacher
  * @param string $rid user authenticated path
  * @param string $room  unique id
- * @param string $popupwidth
- * @param string $popupheight
  * @param string $upload
  * @param string $down
  * @param boolean $debug
@@ -71,13 +69,11 @@ function congrea_course_teacher_list() {
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
-            $popupwidth, $popupheight, $upload, $down, $debug = false,
+            $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
-        'onsubmit' => 'return congrea_online_popup(this)',
-        'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
@@ -112,8 +108,6 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param string $role user role eight student or teacher
  * @param string $rid user authenticated path
  * @param string $room unique id
- * @param string $popupwidth
- * @param string $popupheight
  * @param string $upload
  * @param string $down
  * @param boolean $debug
@@ -127,13 +121,11 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @return string
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
-            $popupwidth, $popupheight, $upload, $down, $debug = false,
+            $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post',
-        'onsubmit' => 'return congrea_online_popup(this)',
-        'data-popupwidth' => $popupwidth, 'data-popupheight' => $popupheight));
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
