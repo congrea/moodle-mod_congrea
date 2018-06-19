@@ -18,7 +18,21 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($) {
                 $('#id_s_mod_congrea_colorpicker').val(val);
             });
 
+        },
+        congrea_online_popup: function () {
+            $('#overrideform').submit(function () {
+                var newTab = window.open('', 'popupVc');
+                if (window.newTab && window.newTab.closed === false) {
+                    newTab.focus();
+                    return false;
+                }
+                $(this).attr('target', 'popupVc');
+                if (!newTab) {
+                    return;
+                }
+                newTab.focus();
+                return newTab;
+            });
         }
-
     };
 });

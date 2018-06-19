@@ -6,8 +6,8 @@ module.exports = function (grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'amd/src/presetcolor.js',
-                dest: 'amd/build/presetcolor.min.js'
+                src: 'amd/src/congrea.js',
+                dest: 'amd/build/congrea.min.js'
             }
         }
     });
