@@ -357,9 +357,12 @@ function congrea_get_enrolled_users($data) {
                 if ($userdata) {
                     $user = $userdata->id;
                     $name = $userdata->firstname . ' ' . $userdata->lastname;
-                    $userpicture = moodle_url::make_pluginfile_url(context_user::instance($userdata->id)->id,
-                                                                'user', 'icon', null, '/', 'f2');
-                    $src = $userpicture->out(false);
+                    if ($userdata->picture) { // Check user picture is available or not.
+                        $userpicture = moodle_url::make_pluginfile_url(context_user::instance($userdata->id)->id, 'user', 'icon', null, '/', 'f2');
+                        $src = $userpicture->out(false);
+                    } else {
+                        $src = 'noimage';
+                    }
                     $userlist[] = (object) array('userid' => $user, 'name' => $name, 'img' => $src, 'status' => 0);
                 }
             }
