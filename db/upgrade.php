@@ -129,7 +129,6 @@ function xmldb_congrea_upgrade($oldversion) {
         $field = new xmldb_field('qid');
         if ($dbman->field_exists($table, $field)) {
             $field->set_attributes(XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-            //upgrade_set_timeout(7200);
             $dbman->rename_field($table, $field, 'pollquestion');
         }
 
@@ -147,7 +146,7 @@ function xmldb_congrea_upgrade($oldversion) {
                 foreach ($poll as $data) {
                     $congreapoll = new stdClass();
                     $cm = get_coursemodule_from_id('congrea', $data->cmid, 0, false, MUST_EXIST);
-                    //$congreapoll->id = $data->id;
+                    // $congreapoll->id = $data->id;
                     if ($data->category) {  // poll category.
                         $congreapoll->courseid = $cm->course;
                     } else {
@@ -158,13 +157,13 @@ function xmldb_congrea_upgrade($oldversion) {
                     $congreapoll->pollquestion = $data->description;
                     $congreapoll->createdby = $data->createdby;
                     $congreapoll->timecreated = $data->timecreated;
-                    $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New ID
+                    $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New id.
                     $DB->execute("UPDATE {congrea_poll_question_option} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                     $DB->execute("UPDATE {congrea_poll_attempts} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                 }
             }
 
-            $dbman->drop_table($table); // Delete table
+            $dbman->drop_table($table); // Delete table.
         }
         // Savepoint reached.
         upgrade_mod_savepoint(true, 2018062800, 'congrea');

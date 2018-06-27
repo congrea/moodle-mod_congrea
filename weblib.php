@@ -147,6 +147,7 @@ function poll_save($valparams) {
  * @param array $valparams
  * @return bool true if successful otherwise false
  */
+
 function poll_option_drop($valparams) {
     global $DB;
     list($postdata) = $valparams;
@@ -178,7 +179,7 @@ function poll_data_retrieve($valparams) {
     if (!empty($postdata)) {
         $responsearray = array();
         $pollcategory = json_decode($postdata['category']);
-        if ($pollcategory) {
+        if ($pollcategory) { // Check not zero.
             $cm = get_coursemodule_from_id('congrea', $pollcategory, 0, false, MUST_EXIST);
             $category = $cm->course;
         } else {
@@ -192,8 +193,14 @@ function poll_data_retrieve($valparams) {
                 $result = $DB->record_exists('congrea_poll_attempts', array('qid' => $data->id));
                 $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $data->id";
                 $optiondata = $DB->get_records_sql($sql);
+                if ($data->courseid) { // Category not zero.
+                    $getcm = get_coursemodule_from_instance('congrea', $data->instanceid, $data->courseid, false, MUST_EXIST);
+                    $datacategory = $getcm->id;
+                } else {
+                    $datacategory = 0;
+                }
                 $polllist = array('questionid' => $data->id,
-                    'category' => $data->courseid,
+                    'category' => $datacategory,
                     'createdby' => $data->createdby,
                     'questiontext' => $data->pollquestion,
                     'options' => $optiondata,
@@ -231,8 +238,15 @@ function poll_delete($valparams) {
         list($postdata) = $valparams;
         $id = json_decode($postdata['qid']); // Get question id.
         if ($id) {
-             // Ensures which type of poll(site or course) will be deleted.
-            $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$id"));
+            // Ensures which type of poll(site or course) will be deleted.
+            // $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$id"));
+            $pollcategory = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $id");
+            if ($pollcategory->courseid) { // Category is not zero
+                $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid, $pollcategory->courseid, false, MUST_EXIST);
+                $category = $cm->id;
+            } else {
+                $category = 0;
+            }
             $delresult = $DB->delete_records('congrea_poll_attempts', array('qid' => "$id"));
             $deloptions = $DB->delete_records('congrea_poll_question_option', array('qid' => "$id"));
             if ($deloptions) {
@@ -259,7 +273,14 @@ function poll_update($valparams) {
         $responsearray = array();
         $obj = new stdClass();
         $data = json_decode($postdata['editdata']);
-        $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$data->questionid"));
+        // $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$data->questionid"));
+        $pollcategory = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $data->questionid");
+        if ($pollcategory->courseid) { // Category is not zero
+            $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid, $pollcategory->courseid, false, MUST_EXIST);
+            $category = $cm->id;
+        } else {
+            $category = 0;
+        }
         $quesiontext = $DB->execute("UPDATE {congrea_poll} "
                 . "SET pollquestion = '" . $data->question . "' WHERE id = '" . $data->questionid . "'");
         if ($quesiontext) {
