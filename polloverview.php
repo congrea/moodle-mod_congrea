@@ -42,7 +42,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Congrea poll overview');
-$sql = "SELECT id, description, timecreated from {congrea_poll_question} where cmid = $id";
+$sql = "SELECT id, pollquestion, timecreated from {congrea_poll} where instanceid = $cm->instance";
 $questiondata = $DB->get_records_sql($sql);
 
 if (!empty($questiondata)) {
@@ -50,7 +50,7 @@ if (!empty($questiondata)) {
     $table->head = array('Poll questions', 'Users', 'Time');
     foreach ($questiondata as $data) {
         $questionname = html_writer::link(new moodle_url('/mod/congrea/pollreport.php?cmid=' . $cm->id,
-                                            array('questionid' => $data->id)), $data->description);
+                                            array('questionid' => $data->id)), $data->pollquestion);
         if ($data->id) {
             $sql = "SELECT count(userid) from {congrea_poll_attempts} where qid = ?";
             $totalusers = $DB->count_records_sql($sql, array('qid' => $data->id));
