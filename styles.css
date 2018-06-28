@@ -39,3 +39,12 @@
     background-size: 17px 17px;
     background-repeat: no-repeat;
 }
+#page-mod-congrea-view .navbar .popover-region-toggle img.icon {
+    padding: 12px 10px;
+}
+#page-mod-congrea-view .navbar .search-input-wrapper form input {
+    padding: 14px 8px;
+}
+#page-mod-congrea-view .navbar-inner .search-input-wrapper.nav-link {
+    height: auto;;
+}

@@ -129,6 +129,7 @@ $string['sessionendmsg'] = 'Session has been closed. You may now close your brow
 $string['sessionsschedule'] = 'Schedule for sessions';
 $string['selectcolor'] = 'Select color';
 $string['selectcolor_help'] = 'Choose your own color for your classroom';
+$string['httpserror'] = 'You would not be able to use the Congrea features like quiz, poll and save recorded sessions because your site is not secure.';
 $string['testingbrowser'] = 'Testing Browser Compatibility';
 $string['testinginternetspeed'] = 'Testing Internet Speed';
 $string['testingspeaker'] = 'Testing Speaker';

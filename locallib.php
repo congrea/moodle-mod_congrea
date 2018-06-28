@@ -125,7 +125,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
             $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
+    $form = html_writer::start_tag('form', array('id' => 'overrideform_recording', 'action' => $url, 'method' => 'post'));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));

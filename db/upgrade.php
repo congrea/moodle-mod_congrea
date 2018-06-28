@@ -146,8 +146,7 @@ function xmldb_congrea_upgrade($oldversion) {
                 foreach ($poll as $data) {
                     $congreapoll = new stdClass();
                     $cm = get_coursemodule_from_id('congrea', $data->cmid, 0, false, MUST_EXIST);
-                    // $congreapoll->id = $data->id;
-                    if ($data->category) {  // poll category.
+                    if ($data->category) {  // Poll category.
                         $congreapoll->courseid = $cm->course;
                     } else {
                         $congreapoll->courseid = 0;

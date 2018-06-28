@@ -33,6 +33,22 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($) {
                 newTab.focus();
                 return newTab;
             });
+        },
+        congrea_play_recording: function () {
+            $('#overrideform_recording').submit(function () {
+                var newTab = window.open('', 'popupVc');
+                if (window.newTab && window.newTab.closed === false) {
+                    newTab.focus();
+                    return false;
+                }
+                $(this).attr('target', 'popupVc');
+                if (!newTab) {
+                    return;
+                }
+                newTab.focus();
+                return newTab;
+            });
         }
+
     };
 });
