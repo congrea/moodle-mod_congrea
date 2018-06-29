@@ -75,6 +75,7 @@ function congrea_supports($feature) {
  *
  * @param object stdClass $congrea An object from the form in mod_form.php
  * @param mod_congrea_mod_form $mform
+ * @param object $mform
  * @return int The id of the newly inserted congrea record
  */
 function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
@@ -93,8 +94,8 @@ function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = n
  * It is safe to rely on PAGE here as we will only ever be within the module
  * context when this is called
  *
- * @param $settings
- * @param $congreanode
+ * @param object $settings
+ * @param object $congreanode
  */
 function congrea_extend_settings_navigation($settings, $congreanode) {
     global $PAGE;

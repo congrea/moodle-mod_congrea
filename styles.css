@@ -1,4 +1,5 @@
-#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear {
+#page-mod-congrea-view .wrapper-button .clear,
+#page-mod-congrea-view .wrapper-record-list .clear {
     clear: both;
 }
 #page-mod-congrea-view .wrapper-record-list {
@@ -8,7 +9,8 @@
     border-radius: 5px;
     margin-top: 20px;
 }
-#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear {
+#page-mod-congrea-view .wrapper-button .clear,
+#page-mod-congrea-view .wrapper-record-list .clear {
     clear: both;
 }
 #page-mod-congrea-view .wrapper-button {
@@ -23,7 +25,12 @@
     border-radius: 5px;
     margin-top: 20px;
 }
-#page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c4, #page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c5, #page-mod-congrea-quizreport .generaltable td.cell.c4, #page-mod-congrea-quizreport .generaltable td.cell.c5 {
+#page-mod-congrea-quizreport table.flexible thead th,
+.generaltable thead th.header.c4,
+#page-mod-congrea-quizreport table.flexible thead th,
+.generaltable thead th.header.c5,
+#page-mod-congrea-quizreport .generaltable td.cell.c4,
+#page-mod-congrea-quizreport .generaltable td.cell.c5 {
     text-align: center;
 }
 #page-mod-congrea-view input.playbtn {

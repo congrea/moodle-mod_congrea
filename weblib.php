@@ -110,7 +110,6 @@ function poll_save($valparams) {
                 $question->courseid = 0;
             }
             $question->instanceid = $cm->instance;
-            $question->sessionid = 0;
             $question->pollquestion = $datatosave->question; // Poll q
             $question->createdby = $userid;
             $question->timecreated = time();
