@@ -73,12 +73,12 @@ function xmldb_congrea_upgrade($oldversion) {
     /*
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
-    if ($oldversion < 2018062800) {
+    if ($oldversion < 2018063000) {
         $table = new xmldb_table('congrea_poll');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('pollquestion', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('createdby', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -165,7 +165,7 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->drop_table($table); // Delete table.
         }
         // Savepoint reached.
-        upgrade_mod_savepoint(true, 2018062800, 'congrea');
+        upgrade_mod_savepoint(true, 2018063000, 'congrea');
     }
     return true;
 }

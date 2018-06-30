@@ -34,17 +34,15 @@
     text-align: center;
 }
 #page-mod-congrea-view input.playbtn {
-    background-image:url([[pix:congrea|play]]) !important;
+    background: transparent url([[pix:congrea|play]]) no-repeat top left;
+    background-size: 17px;
     border: none;
     padding-top: 1px;
     float: left;
     margin-right: 5px;
-    background: transparent;
     box-shadow: unset;
     height: 24px;
     margin-top: 3px;
-    background-size: 17px 17px;
-    background-repeat: no-repeat;
 }
 #page-mod-congrea-view .navbar .popover-region-toggle img.icon {
     padding: 12px 10px;

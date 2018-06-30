@@ -734,7 +734,7 @@ function congrea_get_quizdata($valparams) {
                     "qid" => $questiondata->id,
                     "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback :
                     "Your answer is correct.",
-                    "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback : 
+                    "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback :
                     "Your answer is incorrect.",
                     "select_any" => $selectany,
                     "force_checkbox" => $forcecheckbox);
