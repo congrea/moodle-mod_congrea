@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/congrea/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_congrea_upload_file extends moodleform {
-    /*
+    /**
      * @param moodle_url $submiturl the form action URL.
      * @param object course module object.
      * @param object the congrea object.

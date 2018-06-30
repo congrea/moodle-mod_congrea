@@ -156,7 +156,8 @@ function xmldb_congrea_upgrade($oldversion) {
                     $congreapoll->createdby = $data->createdby;
                     $congreapoll->timecreated = $data->timecreated;
                     $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New id.
-                    $DB->execute("UPDATE {congrea_poll_question_option} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
+                    $DB->execute("UPDATE {congrea_poll_question_option} "
+                            . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id ."'");
                     $DB->execute("UPDATE {congrea_poll_attempts} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                 }
             }

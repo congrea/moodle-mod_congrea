@@ -81,7 +81,8 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $record->vcsessionname), new moodle_url($returnurl, $optionsyes), $returnurl);
+        echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $record->vcsessionname),
+                            new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
@@ -193,7 +194,6 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
 }
 // Upload congrea recording.
 echo html_writer::end_tag('div');
-
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
 if (has_capability('mod/congrea:recordingupload', $context)) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));

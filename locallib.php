@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/*
+/**
  * Get list of teacher of current course
  * serving for virtual class
  *
@@ -48,7 +48,7 @@ function congrea_course_teacher_list() {
     return $teachers;
 }
 
-/*
+/**
  * Create form and send sumbitted value to
  * given url and open in popup
  *
@@ -98,7 +98,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
 }
 
 // TODO, this function should be merge with congrea_online_server.
-/*
+/**
  * Create form and send sumbitted value to
  * given url
  *
@@ -203,6 +203,7 @@ function mod_congrea_update_calendar($congrea) {
  *
  * @param string $directory - Path of folder where
  * recording files of one session has been stored.
+ * @param boolean $empty
  * @return bool
  */
 function mod_congrea_deleteall($directory, $empty = false) {
@@ -238,7 +239,8 @@ function mod_congrea_deleteall($directory, $empty = false) {
 /**
  * Returns the rename action.
  *
- * @param $cm The module to produce editing buttons for
+ * @param object $cm The module to produce editing buttons for
+ * @param object $instance
  * @param int $sr The section to link back to (used for creating the links)
  * @return The markup for the rename action, or an empty string if not available.
  */

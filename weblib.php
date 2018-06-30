@@ -68,7 +68,8 @@ function record_file_save($valparams) {
                     $vcfile->vcid = $congrea->id;
                     $vcfile->userid = $userid;
                     $vcfile->vcsessionkey = $vmsession;
-                    $vcfile->vcsessionname = 'vc-' . $course->shortname . '-' . $congrea->name . $cm->id . '-' . date("Ymd") . '-' . date('Hi');
+                    $vcfile->vcsessionname = 'vc-' . $course->shortname . '-' . $congrea->name . $cm->id .
+                            '-' . date("Ymd") . '-' . date('Hi');
                     $vcfile->numoffiles = $filenum;
                     $vcfile->timecreated = time();
                     $DB->insert_record('congrea_files', $vcfile);
@@ -106,11 +107,11 @@ function poll_save($valparams) {
             $question = new stdClass();
             if (!empty($datatosave->category)) { // Poll is course level.
                 $question->courseid = $cm->course;
-            } else { // // Poll is site level.
+            } else { // Poll is site level.
                 $question->courseid = 0;
             }
             $question->instanceid = $cm->instance;
-            $question->pollquestion = $datatosave->question; // Poll q
+            $question->pollquestion = $datatosave->question;
             $question->createdby = $userid;
             $question->timecreated = time();
             $questionid = $DB->insert_record('congrea_poll', $question);
@@ -128,7 +129,7 @@ function poll_save($valparams) {
             $obj->qid = $questionid;
             $obj->question = $question->pollquestion;
             $obj->createdby = $question->createdby;
-            $obj->category = $datatosave->category; // To do
+            $obj->category = $datatosave->category; // To do.
             $obj->options = $responsearray;
             $obj->creatorname = $username;
             $obj->copied = $datatosave->copied;
@@ -240,10 +241,10 @@ function poll_delete($valparams) {
         $id = json_decode($postdata['qid']); // Get question id.
         if ($id) {
             // Ensures which type of poll(site or course) will be deleted.
-            // $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$id"));
             $pollcategory = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $id");
-            if ($pollcategory->courseid) { // Category is not zero
-                $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid, $pollcategory->courseid, false, MUST_EXIST);
+            if ($pollcategory->courseid) { // Category is not zero.
+                $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid,
+                                            $pollcategory->courseid, false, MUST_EXIST);
                 $category = $cm->id;
             } else {
                 $category = 0;
@@ -274,9 +275,8 @@ function poll_update($valparams) {
         $responsearray = array();
         $obj = new stdClass();
         $data = json_decode($postdata['editdata']);
-        // $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$data->questionid"));
         $pollcategory = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $data->questionid");
-        if ($pollcategory->courseid) { // Category is not zero
+        if ($pollcategory->courseid) { // Category is not zero.
             $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid, $pollcategory->courseid, false, MUST_EXIST);
             $category = $cm->id;
         } else {
@@ -389,7 +389,8 @@ function congrea_get_enrolled_users($data) {
                     $user = $userdata->id;
                     $name = $userdata->firstname . ' ' . $userdata->lastname;
                     if ($userdata->picture) { // Check user picture is available or not.
-                        $userpicture = moodle_url::make_pluginfile_url(context_user::instance($userdata->id)->id, 'user', 'icon', null, '/', 'f2');
+                        $userpicture = moodle_url::make_pluginfile_url(context_user::instance($userdata->id)->id,
+                                                                    'user', 'icon', null, '/', 'f2');
                         $src = $userpicture->out(false);
                     } else {
                         $src = 'noimage';
@@ -426,16 +427,16 @@ function congrea_quiz($valparams) {
     global $DB;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
-    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null, 'id, name, course, timelimit, preferredbehaviour, questionsperpage');
+    $quizes = $DB->get_records('quiz', array('course' => $cm->course), null,
+            'id, name, course, timelimit, preferredbehaviour, questionsperpage');
     if ($quizes) {
         foreach ($quizes as $data) {
             $questiontype = congrea_question_type($data->id); // Check quiz question type is multichoce or not.
             if ($questiontype) {
                 $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
                 if ($quizcm->id && $quizcm->visible) {
-                    $quizstatus = $DB->get_field('course_modules', 'deletioninprogress', array('id' => $quizcm->id,
-                        'instance' => $data->id,
-                        'course' => $data->course));
+                    $quizstatus = $DB->get_field('course_modules', 'deletioninprogress',
+                        array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
                     $quizdata[$data->id] = (object) array('id' => $data->id,
                                 'name' => $data->name,
                                 'timelimit' => $data->timelimit,
@@ -460,6 +461,7 @@ function congrea_quiz($valparams) {
  * serving for virtual class
  *
  * @param array $quizid
+ * @param string $type
  * @return boolean
  */
 function congrea_question_type($quizid, $type = 'multichoice') {
@@ -730,8 +732,10 @@ function congrea_get_quizdata($valparams) {
                                 $questiondata->questiontextformat, 'question', 'questiontext', $questiondata->id);
                 $questions[] = array("q" => $questiontext, "a" => $options,
                     "qid" => $questiondata->id,
-                    "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback : "Your answer is correct.",
-                    "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback : "Your answer is incorrect.",
+                    "correct" => !empty($questiondata->options->correctfeedback) ? $questiondata->options->correctfeedback :
+                    "Your answer is correct.",
+                    "incorrect" => !empty($questiondata->options->incorrectfeedback) ? $questiondata->options->incorrectfeedback : 
+                    "Your answer is incorrect.",
                     "select_any" => $selectany,
                     "force_checkbox" => $forcecheckbox);
             }

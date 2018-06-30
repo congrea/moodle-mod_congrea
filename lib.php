@@ -73,12 +73,10 @@ function congrea_supports($feature) {
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object stdClass $congrea An object from the form in mod_form.php
- * @param mod_congrea_mod_form $mform
- * @param object $mform
+ * @param object stdClass $congrea
  * @return int The id of the newly inserted congrea record
  */
-function congrea_add_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
+function congrea_add_instance(stdClass $congrea) {
     global $DB;
 
     $congrea->timecreated = time();
@@ -118,7 +116,7 @@ function congrea_extend_settings_navigation($settings, $congreanode) {
  * will update an existing instance with new data.
  *
  * @param object $congrea An object from the form in mod_form.php
- * @param mod_congrea_mod_form $mform
+ * @param object mod_congrea_mod_form $mform
  * @return boolean Success/Fail
  */
 function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
@@ -169,7 +167,11 @@ function congrea_delete_instance($id) {
  * $return->time = the time they did it
  * $return->info = a short text description
  *
- * @return stdClass|null
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $quiz
+ * @return object|null
  */
 function congrea_user_outline($course, $user, $mod, $congrea) {
 
@@ -185,7 +187,7 @@ function congrea_user_outline($course, $user, $mod, $congrea) {
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
  * @param stdClass $congrea instance object with extra cmidnumber and modname property
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param array|object of grade(s); 'reset' means reset grades in gradebook
  * @return void
  */
 function congrea_grade_item_update(stdClass $congrea, $grades = null) {
@@ -220,7 +222,7 @@ function congrea_update_grades(stdClass $congrea, $userid = 0) {
  * Returns the lists of all browsable file areas within the given module context
  *
  * The file area 'intro' for the activity introduction field is added automatically
- * by {@link file_browser::get_file_info_context_module()}
+ * by {link file_browser::get_file_info_context_module()}
  *
  * @param stdClass $course
  * @param stdClass $cm

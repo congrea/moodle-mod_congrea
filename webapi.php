@@ -51,7 +51,7 @@ function set_header() {
     header("access-control-allow-origin: *");
 }
 
-/* Exit when there is request is happend by options method
+/** Exit when there is request is happend by options method
  * This generally happens when the request is coming from other domain
  * eg:- if the request is coming from l.vidya.io and main domain suman.moodlehub.com
  * it also know as preflight request
@@ -122,6 +122,8 @@ function validate_request() {
 /**
  * The function is executed which is passed by get
  * serving for virtual class
+ *
+ * @param array $validparameters
  */
 function execute_action($validparameters) {
     $getdata = received_get_data();
