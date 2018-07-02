@@ -73,14 +73,25 @@ function xmldb_congrea_upgrade($oldversion) {
     /*
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
-    if ($oldversion < 2018063000) {
+    if ($oldversion < 2018060200) {
+        $table = new xmldb_table('congrea_poll_question');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('category', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('createdby', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
         $table = new xmldb_table('congrea_poll');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('pollquestion', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-        $table->add_field('createdby', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         if (!$dbman->table_exists($table)) {
@@ -124,22 +135,26 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+        upgrade_mod_savepoint(true, 2018060200, 'congrea');
+    }
 
+    if ($oldversion < 2018070200) {
         $table = new xmldb_table('congrea_poll');
         $field = new xmldb_field('qid');
         if ($dbman->field_exists($table, $field)) {
             $field->set_attributes(XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
             $dbman->rename_field($table, $field, 'pollquestion');
         }
-
-        $table = new xmldb_table('congrea_poll');
         $field = new xmldb_field('createdby', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'pollquestion');
-
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
-        $table = new xmldb_table('congrea_poll_question'); // Check table exist.
+        // Change default value
+        $field = new xmldb_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_default($table, $field);
+        }
+        $table = new xmldb_table('congrea_poll_question');
         if ($dbman->table_exists($table)) {
             $poll = $DB->get_records('congrea_poll_question');
             if (!empty($poll)) {
@@ -156,16 +171,15 @@ function xmldb_congrea_upgrade($oldversion) {
                     $congreapoll->createdby = $data->createdby;
                     $congreapoll->timecreated = $data->timecreated;
                     $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New id.
+
                     $DB->execute("UPDATE {congrea_poll_question_option} "
-                            . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id ."'");
+                            . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                     $DB->execute("UPDATE {congrea_poll_attempts} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                 }
             }
-
-            $dbman->drop_table($table); // Delete table.
+            $dbman->drop_table($table);
         }
-        // Savepoint reached.
-        upgrade_mod_savepoint(true, 2018063000, 'congrea');
+        upgrade_mod_savepoint(true, 2018070200, 'congrea');
     }
     return true;
 }
