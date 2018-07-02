@@ -149,7 +149,7 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        // Change default value
+        // Change default value.
         $field = new xmldb_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
         if ($dbman->field_exists($table, $field)) {
             $dbman->change_field_default($table, $field);

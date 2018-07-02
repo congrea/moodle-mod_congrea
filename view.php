@@ -196,6 +196,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
 if (has_capability('mod/congrea:recordingupload', $context)) {
+    echo html_writer::tag('div', get_string('uplaodvcp', 'congrea'), array('font color' => 'red'));
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)),
                                             get_string('uploadrecordedfile', 'congrea'), 'get');

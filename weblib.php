@@ -326,7 +326,9 @@ function poll_result($valparams) {
         $data = json_decode($postdata['saveResult']);
         if ($data->qid) {
             $questionid = $data->qid;
-            $category = $DB->get_field('congrea_poll', 'courseid', array('id' => "$data->qid"));
+            $category = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $data->qid");
+            $cm = get_coursemodule_from_instance('congrea', $category->instanceid,
+                                            $category->courseid, false, MUST_EXIST);
             if ($data->list) {
                 foreach ($data->list as $optiondata) {
                     foreach ($optiondata as $userid => $optionid) {
@@ -339,7 +341,7 @@ function poll_result($valparams) {
                         }
                     }
                 }
-                echo $category;
+                echo $cm->id;
             }
         }
     } else {

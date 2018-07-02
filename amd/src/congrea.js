@@ -35,7 +35,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($){
             });
         },
         congrea_play_recording: function (){
-            $('#overrideform_recording').submit(function (){
+            $('.playAct').submit(function (){
                 var newTab = window.open('', 'popupVc');
                 if (window.newTab && window.newTab.closed === false) {
                     newTab.focus();
