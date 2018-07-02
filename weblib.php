@@ -326,9 +326,14 @@ function poll_result($valparams) {
         $data = json_decode($postdata['saveResult']);
         if ($data->qid) {
             $questionid = $data->qid;
-            $category = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $data->qid");
-            $cm = get_coursemodule_from_instance('congrea', $category->instanceid,
-                                            $category->courseid, false, MUST_EXIST);
+            $pollcategory = $DB->get_record_sql("SELECT courseid, instanceid FROM {congrea_poll} WHERE id = $data->qid");
+            if ($pollcategory->courseid) { // Category is not zero.
+                $cm = get_coursemodule_from_instance('congrea', $pollcategory->instanceid,
+                                                    $pollcategory->courseid, false, MUST_EXIST);
+                $category = $cm->id;
+            } else {
+                $category = 0;
+            }
             if ($data->list) {
                 foreach ($data->list as $optiondata) {
                     foreach ($optiondata as $userid => $optionid) {
@@ -341,7 +346,7 @@ function poll_result($valparams) {
                         }
                     }
                 }
-                echo $cm->id;
+                echo $category;
             }
         }
     } else {
