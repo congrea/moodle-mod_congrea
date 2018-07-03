@@ -1,4 +1,5 @@
-#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear {
+#page-mod-congrea-view .wrapper-button .clear,
+#page-mod-congrea-view .wrapper-record-list .clear {
     clear: both;
 }
 #page-mod-congrea-view .wrapper-record-list {
@@ -8,7 +9,8 @@
     border-radius: 5px;
     margin-top: 20px;
 }
-#page-mod-congrea-view .wrapper-button .clear, #page-mod-congrea-view .wrapper-record-list .clear {
+#page-mod-congrea-view .wrapper-button .clear,
+#page-mod-congrea-view .wrapper-record-list .clear {
     clear: both;
 }
 #page-mod-congrea-view .wrapper-button {
@@ -23,19 +25,31 @@
     border-radius: 5px;
     margin-top: 20px;
 }
-#page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c4, #page-mod-congrea-quizreport table.flexible thead th, .generaltable thead th.header.c5, #page-mod-congrea-quizreport .generaltable td.cell.c4, #page-mod-congrea-quizreport .generaltable td.cell.c5 {
+#page-mod-congrea-quizreport table.flexible thead th,
+.generaltable thead th.header.c4,
+#page-mod-congrea-quizreport table.flexible thead th,
+.generaltable thead th.header.c5,
+#page-mod-congrea-quizreport .generaltable td.cell.c4,
+#page-mod-congrea-quizreport .generaltable td.cell.c5 {
     text-align: center;
 }
 #page-mod-congrea-view input.playbtn {
-    background-image:url([[pix:congrea|play]]) !important;
+    background: transparent url([[pix:congrea|play]]) no-repeat top left;
+    background-size: 17px;
     border: none;
     padding-top: 1px;
     float: left;
     margin-right: 5px;
-    background: transparent;
     box-shadow: unset;
     height: 24px;
     margin-top: 3px;
-    background-size: 17px 17px;
-    background-repeat: no-repeat;
+}
+#page-mod-congrea-view .navbar .popover-region-toggle img.icon {
+    padding: 12px 10px;
+}
+#page-mod-congrea-view .navbar .search-input-wrapper form input {
+    padding: 14px 8px;
+}
+#page-mod-congrea-view .navbar-inner .search-input-wrapper.nav-link {
+    height: auto;;
 }

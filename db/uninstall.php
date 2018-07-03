@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @see uninstall_plugin()
+ * Uninstall congrea module.
  *
- * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_congrea
+ * @copyright 2014 Pinky Sharma, Vidyamantra Edusystem Pvt Ltd.
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Custom uninstallation procedure
+ * Custom uninstallation procedure.
  */
 function xmldb_congrea_uninstall() {
     return true;
