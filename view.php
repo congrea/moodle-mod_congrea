@@ -180,7 +180,6 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
         $sendmurl = str_replace("http://", "https://", $CFG->wwwroot);
     }
     // Todo this should be changed with actual server path.
-    $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congrea_online_popup');
     $form = congrea_online_server($url, $authusername, $authpassword,
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
