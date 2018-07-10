@@ -44,6 +44,12 @@
     height: 24px;
     margin-top: 3px;
 }
+#page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
+	max-width:300px; 
+	}
+#page-mod-congrea-view td.cell.c2 form#overrideform input[name="submit"]:focus {
+	outline:none;
+}
 #page-mod-congrea-view .navbar .popover-region-toggle img.icon {
     padding: 12px 10px;
 }
