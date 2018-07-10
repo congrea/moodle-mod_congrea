@@ -129,6 +129,7 @@ $string['sessionendmsg'] = 'Session has been closed. You may now close your brow
 $string['sessionsschedule'] = 'Schedule for sessions';
 $string['selectcolor'] = 'Select color';
 $string['selectcolor_help'] = 'Choose your own color for your classroom';
+$string['httpserror'] = 'Warning!  HTTPS (ssl) is required for Congrea. It is detected that at present Moodle is not running on https and hence some features of Congrea may not work.';
 $string['testingbrowser'] = 'Testing Browser Compatibility';
 $string['testinginternetspeed'] = 'Testing Internet Speed';
 $string['testingspeaker'] = 'Testing Speaker';
@@ -144,6 +145,7 @@ $string['uploadrecordedfile'] = 'Upload recorded file';
 $string['uploadedsessionOk'] = 'Click "Ok" to start a new Session.';
 $string['usersactivity'] = 'User activity (Events by user)';
 $string['videoquality'] = 'Video Quality';
+$string['uplaodvcp'] = 'Files that are not recorded in Congrea are not supported.';
 $string['wheretoruncongrea'] = 'From where to serve congrea App';
 $string['waitmsgconnect'] = 'Please wait a whlie. Application is trying to connect.';
 $string['wrongkey'] = 'Congrea api key is wrong. Go to <a href="{$a}">Congrea Settings</a> for configure again.';

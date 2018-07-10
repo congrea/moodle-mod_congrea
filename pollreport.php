@@ -43,7 +43,7 @@ $PAGE->navbar->add('Poll overview', new moodle_url('/mod/congrea/polloverview.ph
 $PAGE->set_context($context);
 echo $OUTPUT->header();
 if ($questionid) {
-    $questionname = $DB->get_field('congrea_poll_question', 'description', array('id' => $questionid));
+    $questionname = $DB->get_field('congrea_poll', 'pollquestion', array('id' => $questionid));
     echo $OUTPUT->heading('Poll Question is: ' . $questionname);
     $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $questionid";
     $optiondata = $DB->get_records_sql($sql);

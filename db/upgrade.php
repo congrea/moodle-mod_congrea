@@ -74,7 +74,6 @@ function xmldb_congrea_upgrade($oldversion) {
      * Finally, return of upgrade result (true, all went good) to Moodle.
      */
     if ($oldversion < 2018060200) {
-
         $table = new xmldb_table('congrea_poll_question');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
@@ -84,7 +83,6 @@ function xmldb_congrea_upgrade($oldversion) {
         $table->add_field('createdby', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
         $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -138,6 +136,50 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->create_table($table);
         }
         upgrade_mod_savepoint(true, 2018060200, 'congrea');
+    }
+
+    if ($oldversion < 2018070200) {
+        $table = new xmldb_table('congrea_poll');
+        $field = new xmldb_field('qid');
+        if ($dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+            $dbman->rename_field($table, $field, 'pollquestion');
+        }
+        $field = new xmldb_field('createdby', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'pollquestion');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Change default value.
+        $field = new xmldb_field('sessionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_default($table, $field);
+        }
+        $table = new xmldb_table('congrea_poll_question');
+        if ($dbman->table_exists($table)) {
+            $poll = $DB->get_records('congrea_poll_question');
+            if (!empty($poll)) {
+                foreach ($poll as $data) {
+                    $congreapoll = new stdClass();
+                    $cm = get_coursemodule_from_id('congrea', $data->cmid, 0, false, MUST_EXIST);
+                    if ($data->category) {  // Poll category.
+                        $congreapoll->courseid = $cm->course;
+                    } else {
+                        $congreapoll->courseid = 0;
+                    }
+                    $congreapoll->instanceid = $cm->instance;
+                    $congreapoll->pollquestion = $data->description;
+                    $congreapoll->createdby = $data->createdby;
+                    $congreapoll->timecreated = $data->timecreated;
+                    $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New id.
+
+                    $DB->execute("UPDATE {congrea_poll_question_option} "
+                            . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
+                    $DB->execute("UPDATE {congrea_poll_attempts} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
+                }
+            }
+            $dbman->drop_table($table);
+        }
+        upgrade_mod_savepoint(true, 2018070200, 'congrea');
     }
     return true;
 }

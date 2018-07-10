@@ -24,8 +24,6 @@
 /**
  * Define all the backup steps that will be used by the backup_congrea_activity_task.
  *
- * @copyright 2014 Pinky Sharma
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_congrea_activity_structure_step extends backup_activity_structure_step {
     /**

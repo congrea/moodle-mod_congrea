@@ -23,10 +23,8 @@
  */
 
 /**
- * Define all the restore steps that will be used by the restore_url_activity_task.
+ * Define all the restore steps that will be used by the restore_congrea_activity_task.
  *
- * @copyright 2014 Pinky Sharma
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_congrea_activity_structure_step extends restore_activity_structure_step {
 
@@ -81,6 +79,15 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Copy files from one location
+     * to another location
+     *
+     * @param string $src path of source file
+     * @param string $dst path of destination
+     *
+     * @return void
+     */
     protected function recurse_copy_files($src, $dst) {
 
         $dir = opendir($src);
