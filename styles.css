@@ -39,3 +39,9 @@
     background-size: 17px 17px;
     background-repeat: no-repeat;
 }
+#page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
+	max-width:300px; 
+	}
+#page-mod-congrea-view td.cell.c2 form#overrideform input[name="submit"]:focus {
+	outline:none;
+}
