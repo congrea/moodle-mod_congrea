@@ -144,8 +144,8 @@ $string['uploadedsession'] = 'Your session has ended, you may now close the wind
 $string['uploadrecordedfile'] = 'Upload recorded file';
 $string['uploadedsessionOk'] = 'Click "Ok" to start a new Session.';
 $string['usersactivity'] = 'User activity (Events by user)';
+$string['unsupportedfiletype'] = 'Invalid file type, only Congrea session recordings {.vcp} are supported.';
 $string['videoquality'] = 'Video Quality';
-$string['uplaodvcp'] = 'Files that are not recorded in Congrea are not supported.';
 $string['wheretoruncongrea'] = 'From where to serve congrea App';
 $string['waitmsgconnect'] = 'Please wait a whlie. Application is trying to connect.';
 $string['wrongkey'] = 'Congrea api key is wrong. Go to <a href="{$a}">Congrea Settings</a> for configure again.';

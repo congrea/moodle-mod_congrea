@@ -84,6 +84,16 @@ class mod_congrea_upload_file extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $supportedtypes = array('vcp');
+        $files = $this->get_draft_files('userfile');
+        if ($files) {
+            foreach ($files as $file) {
+                if (!in_array(strtolower(preg_replace('/^.*\./', '', $file->get_filename())), $supportedtypes)) {
+                    $errors['userfile'] = get_string('unsupportedfiletype', 'congrea');
+                }
+            }
+        }
         return $errors;
     }
+
 }
