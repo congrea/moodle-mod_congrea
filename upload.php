@@ -16,7 +16,7 @@
 
 /**
  * Upload and save recorded file of congrea session
- * which is downloaded, when online files are serving
+ *
  *
  * @package    mod_congrea
  * @copyright  2014 Pinky Sharma

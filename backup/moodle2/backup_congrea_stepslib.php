@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/** Class for the structure used for backup congrea.
+ *
  * @package    mod_congrea
  * @subpackage backup-moodle2
  * @copyright 2014 Pinky Sharma
@@ -24,6 +25,8 @@
 /**
  * Define all the backup steps that will be used by the backup_congrea_activity_task.
  *
+ * @copyright 2014 Pinky Sharma
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_congrea_activity_structure_step extends backup_activity_structure_step {
     /**

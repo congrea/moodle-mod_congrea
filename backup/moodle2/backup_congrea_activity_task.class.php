@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_congrea_activity_task class
+ * Defines backup_congrea_activity_task.
  *
  * @package     mod_congrea
  * @category    backup

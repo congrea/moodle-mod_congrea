@@ -27,8 +27,8 @@
  *
  * @param string $url congrea auth server url
  * @param array $postdata
- * @param string licence key
- * @param string secret
+ * @param string $key
+ * @param string $secret
  *
  * @return string $resutl json_encoded object
  */

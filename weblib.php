@@ -16,7 +16,7 @@
 
 /**
  * Congrea module internal API.
- * serving for virtual class
+ *
  *
  * @package   mod_congrea
  * @copyright 2017 Suman Bogati, Ravi Kumar
