@@ -51,5 +51,16 @@
     padding: 14px 8px;
 }
 #page-mod-congrea-view .navbar-inner .search-input-wrapper.nav-link {
-    height: auto;;
+    height: auto;
+}
+#page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
+    max-width:300px;
+}
+#page-mod-congrea-view td.cell.c2 form input[name="submit"]:focus {
+    outline:none;
+}
+@media (max-width:1100px) {
+    #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
+        max-width:280px;
+    }
 }

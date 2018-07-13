@@ -138,7 +138,7 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018060200, 'congrea');
     }
 
-    if ($oldversion < 2018070200) {
+    if ($oldversion < 2018071200) {
         $table = new xmldb_table('congrea_poll');
         $field = new xmldb_field('qid');
         if ($dbman->field_exists($table, $field)) {
@@ -160,26 +160,29 @@ function xmldb_congrea_upgrade($oldversion) {
             if (!empty($poll)) {
                 foreach ($poll as $data) {
                     $congreapoll = new stdClass();
-                    $cm = get_coursemodule_from_id('congrea', $data->cmid, 0, false, MUST_EXIST);
-                    if ($data->category) {  // Poll category.
-                        $congreapoll->courseid = $cm->course;
-                    } else {
-                        $congreapoll->courseid = 0;
+                    $cm = get_coursemodule_from_id('congrea', $data->cmid, 0, false);
+                    if (!empty($cm)) {
+                        if ($data->category) {  // Poll category.
+                            $congreapoll->courseid = $cm->course;
+                        } else {
+                            $congreapoll->courseid = 0;
+                        }
+                        $congreapoll->instanceid = $cm->instance;
+                        $congreapoll->pollquestion = $data->description;
+                        $congreapoll->createdby = $data->createdby;
+                        $congreapoll->timecreated = $data->timecreated;
+                        if ($pollid = $DB->insert_record('congrea_poll', $congreapoll)) {
+                            $DB->execute("UPDATE {congrea_poll_question_option} "
+                                    . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
+                            $DB->execute("UPDATE {congrea_poll_attempts} "
+                                    . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
+                        }
                     }
-                    $congreapoll->instanceid = $cm->instance;
-                    $congreapoll->pollquestion = $data->description;
-                    $congreapoll->createdby = $data->createdby;
-                    $congreapoll->timecreated = $data->timecreated;
-                    $pollid = $DB->insert_record('congrea_poll', $congreapoll); // New id.
-
-                    $DB->execute("UPDATE {congrea_poll_question_option} "
-                            . "SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
-                    $DB->execute("UPDATE {congrea_poll_attempts} SET qid = '" . $pollid . "' WHERE qid = '" . $data->id . "'");
                 }
             }
             $dbman->drop_table($table);
         }
-        upgrade_mod_savepoint(true, 2018070200, 'congrea');
+        upgrade_mod_savepoint(true, 2018071200, 'congrea');
     }
     return true;
 }

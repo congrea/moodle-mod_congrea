@@ -38,11 +38,11 @@ require_once($CFG->dirroot . '/mod/congrea/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_congrea_upload_file extends moodleform {
-    /**
-     * @param moodle_url $submiturl the form action URL.
-     * @param object course module object.
-     * @param object the congrea object.
-     * @param context the congrea context.
+    /** Constructor
+     * @param moodle_url $submiturl
+     * @param object $cm
+     * @param object $congrea
+     * @param context $context
      */
     public function __construct($submiturl, $cm, $congrea, $context) {
         $this->cm = $cm;
@@ -84,6 +84,16 @@ class mod_congrea_upload_file extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $supportedtypes = array('vcp');
+        $files = $this->get_draft_files('userfile');
+        if ($files) {
+            foreach ($files as $file) {
+                if (!in_array(strtolower(preg_replace('/^.*\./', '', $file->get_filename())), $supportedtypes)) {
+                    $errors['userfile'] = get_string('unsupportedfiletype', 'congrea');
+                }
+            }
+        }
         return $errors;
     }
+
 }

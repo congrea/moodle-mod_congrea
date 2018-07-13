@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/** Structure setting step congrea activity
+ *
  * @package    mod_congrea
  * @subpackage backup-moodle2
  * @copyright 2014 Pinky Sharma

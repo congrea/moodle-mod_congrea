@@ -17,7 +17,7 @@
 /**
  * The mod_virtualcalss instance list viewed event.
  *
- * @package    mod_virtualcalss
+ * @package    mod_congrea
  * @copyright  2015 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -73,10 +73,10 @@ function congrea_supports($feature) {
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object stdClass $congrea
+ * @param object $congrea
  * @return int The id of the newly inserted congrea record
  */
-function congrea_add_instance(stdClass $congrea) {
+function congrea_add_instance($congrea) {
     global $DB;
 
     $congrea->timecreated = time();
@@ -116,10 +116,10 @@ function congrea_extend_settings_navigation($settings, $congreanode) {
  * will update an existing instance with new data.
  *
  * @param object $congrea An object from the form in mod_form.php
- * @param object mod_congrea_mod_form $mform
+ * @param object $mform
  * @return boolean Success/Fail
  */
-function congrea_update_instance(stdClass $congrea, mod_congrea_mod_form $mform = null) {
+function congrea_update_instance($congrea, $mform = null) {
     global $DB;
     $congrea->timemodified = time();
     $congrea->id = $congrea->instance;
@@ -156,6 +156,23 @@ function congrea_delete_instance($id) {
         }
         $DB->delete_records('congrea_files', array('vcid' => $congrea->id));
     }
+    if ($poll = $DB->get_records('congrea_poll', array('instanceid' => $congrea->id))) {
+        foreach ($poll as $polldata) {
+            $DB->delete_records('congrea_poll_attempts', array('qid' => $polldata->id));
+            if (!$DB->delete_records('congrea_poll_question_option', array('qid' => $polldata->id))) {
+                return false;
+            }
+        }
+        $DB->delete_records('congrea_poll', array('instanceid' => $congrea->id));
+    }
+    if ($quiz = $DB->get_records('congrea_quiz', array('congreaid' => $congrea->id))) {
+        foreach ($quiz as $quizdata) {
+            if (!$DB->delete_records('congrea_quiz_grade', array('congreaquiz' => $quizdata->id))) {
+                return false;
+            }
+        }
+        $DB->delete_records('congrea_quiz', array('congreaid' => $congrea->id));
+    }
     $DB->delete_records('congrea', array('id' => $congrea->id));
     return true;
 }
@@ -170,7 +187,7 @@ function congrea_delete_instance($id) {
  * @param object $course
  * @param object $user
  * @param object $mod
- * @param object $quiz
+ * @param object $congrea
  * @return object|null
  */
 function congrea_user_outline($course, $user, $mod, $congrea) {
@@ -186,11 +203,11 @@ function congrea_user_outline($course, $user, $mod, $congrea) {
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
- * @param stdClass $congrea instance object with extra cmidnumber and modname property
- * @param array|object of grade(s); 'reset' means reset grades in gradebook
+ * @param object $congrea
+ * @param array|object $grades
  * @return void
  */
-function congrea_grade_item_update(stdClass $congrea, $grades = null) {
+function congrea_grade_item_update($congrea, $grades = null) {
     return false;
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
@@ -214,7 +231,7 @@ function congrea_update_grades(stdClass $congrea, $userid = 0) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/gradelib.php');
 
-    $grades = array(); // Populate array of grade objects indexed by userid. @example .
+    $grades = array(); // Populate array of grade objects indexed by userid.
 
     grade_update('mod/congrea', $congrea->course, 'mod', 'congrea', $congrea->id, 0, $grades);
 }

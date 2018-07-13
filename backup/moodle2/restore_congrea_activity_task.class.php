@@ -28,8 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/congrea/backup/moodle2/restore_congrea_stepslib.php'); // Because it exists (must).
 
 /**
- * Congrea restore task that provides all the settings and steps to perform one
- * complete restore of the activity
+ * Congrea restore task that provides all the settings.
  *
  * @copyright 2014 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

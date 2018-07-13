@@ -114,7 +114,6 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param string $cgcolor
  * @param string $webapi
  * @param string $userpicturesrc
- * @param string $fromcms
  * @param string $licensekey
  * @param int $id
  * @param int $vcsid

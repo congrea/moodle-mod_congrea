@@ -25,6 +25,8 @@
 /**
  * Define all the restore steps that will be used by the restore_congrea_activity_task.
  *
+ * @copyright 2014 Pinky Sharma
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_congrea_activity_structure_step extends restore_activity_structure_step {
 
@@ -148,7 +150,10 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         // sub plugin file areas attached to the submissionid.
         $this->set_mapping('congrea_files', $oldid, $newitemid, true);
     }
-
+    /**
+     * Process after execute
+     *
+     */
     protected function after_execute() {
         // Add congrea related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_congrea', 'intro', null);
