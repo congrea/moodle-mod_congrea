@@ -138,7 +138,7 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018060200, 'congrea');
     }
 
-    if ($oldversion < 2018071200) {
+    if ($oldversion < 2018071700) {
         $table = new xmldb_table('congrea_poll');
         $field = new xmldb_field('qid');
         if ($dbman->field_exists($table, $field)) {
@@ -182,7 +182,7 @@ function xmldb_congrea_upgrade($oldversion) {
             }
             $dbman->drop_table($table);
         }
-        upgrade_mod_savepoint(true, 2018071200, 'congrea');
+        upgrade_mod_savepoint(true, 2018071700, 'congrea');
     }
     return true;
 }

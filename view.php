@@ -152,7 +152,7 @@ if ($congrea->intro) {
 echo html_writer::empty_tag('br');
 
 // Serve online at vidya.io.
-$url = "https://live.congrea.net";  // Online url.
+$url = "https://live.congrea.net"; // Online url.
 $info = false; // Debugging off.
 $mysession = session_id();
 if ($USER->picture) {

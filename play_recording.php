@@ -21,8 +21,9 @@
  * @copyright 2015 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-cors();
+
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+cors();
 
 $filenum = required_param('prvfile', PARAM_INT);
 $fid = required_param('fileBundelId', PARAM_INT);
