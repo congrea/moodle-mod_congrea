@@ -36,6 +36,7 @@ if ($id) {
 } else {
     print_error('You must specify a course_module ID or an instance ID');
 }
+require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 $file = $DB->get_record('congrea_files', array('id' => $fid));
