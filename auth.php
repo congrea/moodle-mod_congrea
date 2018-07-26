@@ -20,7 +20,7 @@
  * @copyright  2014 Pinky Sharma
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('MOODLE_INTERNAL') || die;
 /**
  * This function authenticate the user with required
  * detail and request for sever connection

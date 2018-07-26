@@ -23,18 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-/**
- * Function for set session
- * serving for virtual class
- */
-function set_session() {
-    if (isset($_GET['key'])) {
-        session_id($_GET['key']);
-    }
-}
-
-set_session();
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require('weblib.php');
 
@@ -48,7 +36,13 @@ define('FUNCTIONS_LIST', serialize(array('record_file_save', 'poll_save', 'poll_
  * serving for virtual class
  */
 function set_header() {
-    header("access-control-allow-origin: *");
+    if (isset($_SERVER["HTTP_ORIGIN"])) {
+        header("access-control-allow-origin:" . $_SERVER["HTTP_ORIGIN"]);
+        header("Access-Control-Allow-Credentials: true");
+    } else {
+        header("access-control-allow-origin: https://live.congrea.net");
+        header("Access-Control-Allow-Credentials: true");
+    }
 }
 
 /** Exit when there is request is happend by options method
@@ -145,7 +139,7 @@ function execute_action($validparameters) {
 set_header();
 
 exit_if_request_is_options();
-
+require_login();
 $validparams = validate_request();
 
 execute_action($validparams);

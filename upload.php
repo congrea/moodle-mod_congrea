@@ -57,6 +57,9 @@ require_once('upload_form.php');
 $submiturl = new moodle_url('/mod/congrea/upload.php', array('id' => $cm->id));
 $mform = new mod_congrea_upload_file($submiturl, $cm, $congrea, $context);
 
+if ($mform->is_cancelled()) {
+    redirect($CFG->wwwroot.'/mod/congrea/view.php?id='.$cm->id);
+}
 if ($fromform = $mform->get_data()) {
     $vcsession = mod_congrea_generaterandomstring();
     $name = $mform->get_new_filename('userfile');

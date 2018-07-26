@@ -152,9 +152,8 @@ if ($congrea->intro) {
 echo html_writer::empty_tag('br');
 
 // Serve online at vidya.io.
-$url = "https://live.congrea.net";  // Online url.
+$url = "https://live.congrea.net"; // Online url.
 $info = false; // Debugging off.
-$mysession = session_id();
 if ($USER->picture) {
     $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
     $userpicturesrc = $userpicture->out(false);
@@ -162,7 +161,7 @@ if ($USER->picture) {
     $userpicturesrc = 'noimage';
 }
 $fromcms = true; // Identify congrea is from cms.
-$upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&key=$mysession&methodname=record_file_save";
+$upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&methodname=record_file_save";
 $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;

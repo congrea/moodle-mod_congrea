@@ -21,7 +21,7 @@
  * @copyright 2014 Pinky Sharma
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('MOODLE_INTERNAL') || die();
 /**
  * Define all the restore steps that will be used by the restore_congrea_activity_task.
  *
@@ -123,7 +123,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
 
         $data->courseid = $this->get_courseid();
         $data->vcid = $this->get_new_parentid('congrea');
-        $vcsessionkey = 'b' . time();
+        $vcsessionkey = $data->vcsessionkey;
         // New path where file will be copied.
         $newfilepath = "{$CFG->dataroot}/congrea/{$data->courseid}/{$data->vcid}/" . $vcsessionkey;
         // Copy file to new destination.
