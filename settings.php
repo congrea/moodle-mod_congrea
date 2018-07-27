@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
             '#001e67' => 'Midnight Blue', '#692173' => 'Honey Flower', '#511030' => 'Heath', '#0066b0' => 'Endeavour');
     $settings->add(new admin_setting_configselect('mod_congrea/preset', get_string('preset', 'congrea'),
                                                 get_string('presetd', 'congrea'), '#34404c', $choices));
-    $PAGE->requires->js_call_amd('mod_congrea/congrea', 'presetcolor');
+    $PAGE->requires->js_call_amd('mod_congrea/congrea', 'presetColor');
     $previewconfig = null;
     $settings->add(new admin_setting_configcolourpicker('mod_congrea/colorpicker', get_string('colorpicker', 'congrea'),
                                                     get_string('colorpickerd', 'congrea'), '#021317', $previewconfig));

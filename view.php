@@ -165,8 +165,8 @@ $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&methodna
 $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$PAGE->requires->js_call_amd('mod_congrea/congrea', 'congrea_online_popup');
-$PAGE->requires->js_call_amd('mod_congrea/congrea', 'congrea_play_recording');
+$PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaOnlinePopup');
+$PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaPlayRecording');
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = true;
 }
