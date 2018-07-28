@@ -54,13 +54,14 @@
     height: auto;
 }
 #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
-    max-width:300px;
+    max-width: 300px;
 }
 #page-mod-congrea-view td.cell.c2 form input[name="submit"]:focus {
-    outline:none;
+    outline: none;
 }
-@media (max-width:1100px) {
+
+@media (max-width: 1100px) {
     #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
-        max-width:264px;
+        max-width: 264px;
     }
 }
