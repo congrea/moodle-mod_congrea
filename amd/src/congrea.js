@@ -27,11 +27,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     return false;
                 }
                 $(this).attr('target', 'popupVc');
-                if (!newTab) {
-                    return;
+                if (newTab) {
+                    newTab.focus();
+                    return newTab;
                 }
-                newTab.focus();
-                return newTab;
             });
         },
         congreaPlayRecording: function() {
@@ -42,11 +41,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     return false;
                 }
                 $(this).attr('target', 'popupVc');
-                if (!newTab) {
-                    return;
+                if (newTab) {
+                    newTab.focus();
+                    return newTab;
                 }
-                newTab.focus();
-                return newTab;
             });
         }
 
