@@ -431,7 +431,7 @@ function congrea_get_enrolled_users($data) {
  * @return json quizes as an array of object
  */
 function congrea_quiz($valparams) {
-    global $DB;
+    global $DB, $CFG;
     list($postdata) = $valparams;
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
     $quizes = $DB->get_records('quiz', array('course' => $cm->course), null,
@@ -442,8 +442,11 @@ function congrea_quiz($valparams) {
             if ($questiontype) {
                 $quizcm = get_coursemodule_from_instance('quiz', $data->id, $data->course, false, MUST_EXIST);
                 if ($quizcm->id && $quizcm->visible) {
-                    $quizstatus = $DB->get_field('course_modules', 'deletioninprogress',
-                        array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
+                    $quizstatus = 0;
+                    if ($CFG->version >= 2016120500) { // Compare with moodle32 version.
+                        $quizstatus = $DB->get_field('course_modules', 'deletioninprogress',
+                            array('id' => $quizcm->id, 'instance' => $data->id, 'course' => $data->course));
+                    }
                     $quizdata[$data->id] = (object) array('id' => $data->id,
                                 'name' => $data->name,
                                 'timelimit' => $data->timelimit,
