@@ -218,8 +218,13 @@ foreach ($recordings as $record) {
     }
     // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
+        if ($CFG->version < 2017051500) { // Compare to moodle33 vesion.
+            $imageurl = $OUTPUT->pix_url('t/delete'); // Only support below moodle33 version.
+        } else {
+            $imageurl = $OUTPUT->image_url('t/delete'); // Support moodle33 above.
+        }
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->id, 'sesskey' => sesskey())),
-                        html_writer::empty_tag('img', array('src' => $OUTPUT->image_url('t/delete'),
+                        html_writer::empty_tag('img', array('src' => $imageurl,
                         'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
     }
     $row[] = implode(' ', $buttons);

@@ -14,23 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of congrea
+ * Pix icon handler for Totara
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package    mod_congrea
- * @copyright  2015 Pinky Sharma
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_congrea
+ * @copyright 2018 Ravi kumar
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018081100;      // The current module version (Date: YYYYMMDDXX).
-$plugin->release = '2.8.2 (Build: 2018072800)';
-$plugin->requires = 2015111600.00;      // Requires this Moodle version.(3.0+).
-$plugin->cron = 0;               // Period for cron to check this module (secs).
-$plugin->component = 'mod_congrea'; // To check on upgrade, that module sits in correct place.
-$plugin->maturity = MATURITY_STABLE;
+$icons = array(
+    'mod_congrea|icon' => array(
+            'data' => array(
+                    'classes' => 'fa-circle',
+                ),
+        ),
+);
