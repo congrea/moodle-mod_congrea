@@ -104,6 +104,8 @@ $url = parse_url($CFG->wwwroot);
 if ($url['scheme'] !== 'https') {
     echo html_writer::tag('div', get_string('httpserror', 'congrea'), array('class' => 'alert alert-error'));
 }
+// Get audio status.
+$audiostatus = $congrea->audio;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
@@ -182,7 +184,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $form = congrea_online_server($url, $authusername, $authpassword,
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
-                                    $userpicturesrc, $fromcms, $licensekey);
+                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus);
     echo $form;
 } else {
     // Congrea closed.

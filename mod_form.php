@@ -71,6 +71,11 @@ class mod_congrea_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
+        // Audio settings.
+        $options = array(0 => get_string('disableAudio', 'congrea'),
+            1 => get_string('enableAudio', 'congrea'));
+        $mform->addElement('select', 'audio', get_string('audio', 'congrea'), $options);
+        $mform->addHelpButton('audio', 'audio', 'congrea');
         // Schedule fo session.
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
         $mform->addElement('date_time_selector', 'opentime', get_string('opentime', 'congrea'));

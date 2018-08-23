@@ -66,11 +66,12 @@ function congrea_course_teacher_list() {
  * @param string $userpicturesrc
  * @param string $fromcms
  * @param string $licensekey
+ * @param string $audiostatus
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey) {
+            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
@@ -91,6 +92,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'fromcms', 'value' => $fromcms));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audiostatus', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
          'value' => get_string('joinroom', 'congrea')));
     $form .= html_writer::end_tag('form');
