@@ -40,14 +40,34 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 $file = $DB->get_record('congrea_files', array('id' => $fid));
-$filepath = $CFG->dataroot . "/congrea/" . $file->courseid . "/" . $file->vcid . "/" . $file->vcsessionkey . "/vc." . $filenum;
-if (file_exists($filepath)) {
-    $data = file_get_contents($filepath);
-} else {
-    $data = "VCE3"; // Filenotfound.
+$filename = 'vc.'.$filenum;
+if (!empty($file)) {
+    $sql = "SELECT * from {files} where contextid = '$context->id' AND component = 'mod_congrea' "
+        . "AND filename = '$filename' AND itemid = '$congrea->id' AND source = '$file->vcsessionkey'";
+    $filedata = $DB->get_records_sql($sql);
+    if (!empty($filedata)) {
+        foreach ($filedata as $fdata) {
+            if ($fdata->filename != "." && $fdata->filename != "..") {
+                $fs = get_file_storage();
+                $fileinfo = array(
+                    'component' => 'mod_congrea', // Usually = table name.
+                    'filearea' => 'congrea_rec', // Usually = table name.
+                    'itemid' => $congrea->id, // Usually = ID of row in table.
+                    'contextid' => $context->id, // ID of context.
+                    'filepath' => "/$file->vcsessionkey/", // Any path beginning and ending.
+                    'filename' => $filename);
+                $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+                                    $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+                if ($file) {
+                    $data = $file->get_content();
+                } else {
+                     $data = "VCE3"; // Filenotfound.
+                }
+                echo $data;
+            }
+        }
+    }
 }
-
-echo $data;
 
 /**
  * The function is to check cors browser

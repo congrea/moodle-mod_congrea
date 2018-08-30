@@ -86,8 +86,31 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $filepath = $CFG->dataroot . "/congrea/" . $record->courseid . "/" . $record->vcid . "/" . $record->vcsessionkey;
-        if (mod_congrea_deleteall($filepath)) {
+        $fs = get_file_storage();
+        $component = 'mod_congrea';
+        $filearea = 'congrea_rec';
+        $filepath = "/$record->vcsessionkey/";
+        $totalfiles = $record->numoffiles;
+        for ($i = 1; $i <= $totalfiles; $i++) {
+            $filename = $filename = "vc." . $i;
+            $fileinfo = array(
+                'contextid' => $context->id,
+                'component' => $component,
+                'filearea' => $filearea,
+                'itemid' => $record->vcid,
+                'filepath' => $filepath,
+                'filename' => $filename,
+                'mimetype' => 'application/vcp',
+                'source' => $record->vcsessionkey
+            );
+
+            $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+                                $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+            if ($file) {
+                $sucess = $file->delete();
+            }
+        }
+        if ($sucess) {
             $DB->delete_records('congrea_files', array('id' => $record->id));
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
@@ -97,6 +120,7 @@ if ($delete and confirm_sesskey()) {
         }
     }
 }
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 // Validate https.
