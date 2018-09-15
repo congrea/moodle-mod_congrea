@@ -107,6 +107,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         if (!isset($data->numoffiles)) {
             $data->numoffiles = 0;
         }
+        $newitemid = $DB->insert_record('congrea_files', $data);
         // Note - the old contextid is required in order to be able to restore files stored in
         // sub plugin file areas attached to the submissionid.
         $this->set_mapping('congrea_files', $oldid, $newitemid, true);
