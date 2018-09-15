@@ -89,8 +89,6 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         global $DB, $CFG;
         $data = (object) $data;
         $oldid = $data->id;
-        $olddata = $DB->get_record('congrea_files', array('id' => $data->id));
-
         $data->courseid = $this->get_courseid();
         $data->vcid = $this->get_new_parentid('congrea');
         $vcsessionkey = $data->vcsessionkey;
@@ -120,7 +118,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     protected function after_execute() {
         // Add congrea related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_congrea', 'intro', null);
-        $this->add_related_files('mod_congrea', 'congrea_rec', null);
+        $this->add_related_files('mod_congrea', 'congrea_rec', 'congrea');
     }
 
 }
