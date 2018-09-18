@@ -69,10 +69,13 @@ $string['deleterecordingfile'] = 'Are you sure that you want to delete the recor
 $string['disableAudio'] = 'Disable audio';
 $string['deletepolloption'] = 'Delete operation is Unsucessfull';
 $string['disableAudio'] = 'Disable';
+$string['disablevideo'] = 'Disable';
+
 
 $string['enableAudio'] = 'Unmute';
 $string['enablespeaker'] = 'Enable Audio';
 $string['enableAudio'] = 'Enable';
+$string['enablevideo'] = 'Enable';
 $string['event'] = 'Event';
 $string['eventsmosttriggered'] = 'Most triggered events';
 $string['eventsbymonth'] = 'Events by month ({$a})';
@@ -147,6 +150,8 @@ $string['uploadedsessionOk'] = 'Click "Ok" to start a new Session.';
 $string['usersactivity'] = 'User activity (Events by user)';
 $string['unsupportedfiletype'] = 'Invalid file type, only Congrea session recordings {.vcp} are supported.';
 $string['videoquality'] = 'Video Quality';
+$string['video'] = 'video';
+$string['video_help'] = 'If enable , By default video of all student will be enabled.';
 $string['wheretoruncongrea'] = 'From where to serve congrea App';
 $string['waitmsgconnect'] = 'Please wait a whlie. Application is trying to connect.';
 $string['wrongkey'] = 'Congrea api key is wrong. Go to <a href="{$a}">Congrea Settings</a> for configure again.';
