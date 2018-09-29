@@ -87,25 +87,11 @@ if ($delete and confirm_sesskey()) {
         die;
     } else if (data_submitted()) {
         $fs = get_file_storage();
-        $component = 'mod_congrea';
-        $filearea = 'congrea_rec';
-        $filepath = "/$record->vcsessionkey/";
         $totalfiles = $record->numoffiles;
         for ($i = 1; $i <= $totalfiles; $i++) {
             $filename = $filename = "vc." . $i;
-            $fileinfo = array(
-                'contextid' => $context->id,
-                'component' => $component,
-                'filearea' => $filearea,
-                'itemid' => $record->vcid,
-                'filepath' => $filepath,
-                'filename' => $filename,
-                'mimetype' => 'application/vcp',
-                'source' => $record->vcsessionkey
-            );
-
-            $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-                                $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+            $file = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec',
+                                $record->vcid, "/$record->vcsessionkey/", $filename);
             if ($file) {
                 $sucess = $file->delete();
             }

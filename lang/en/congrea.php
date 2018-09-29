@@ -68,14 +68,12 @@ $string['downloadsession'] = 'Please wait while recording is downloaded.';
 $string['deleterecordingfile'] = 'Are you sure that you want to delete the recorded file <br> "{$a}"?';
 $string['disableAudio'] = 'Disable audio';
 $string['deletepolloption'] = 'Delete operation is Unsucessfull';
-$string['disableAudio'] = 'Disable';
-$string['disablevideo'] = 'Disable';
+$string['disable'] = 'Disable';
 
 
 $string['enableAudio'] = 'Unmute';
 $string['enablespeaker'] = 'Enable Audio';
-$string['enableAudio'] = 'Enable';
-$string['enablevideo'] = 'Enable';
+$string['enable'] = 'Enable';
 $string['event'] = 'Event';
 $string['eventsmosttriggered'] = 'Most triggered events';
 $string['eventsbymonth'] = 'Events by month ({$a})';

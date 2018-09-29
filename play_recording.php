@@ -39,25 +39,17 @@ if ($id) {
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-$file = $DB->get_record('congrea_files', array('id' => $fid));
+$vcsessionkey = $DB->get_field('congrea_files', 'vcsessionkey', array('id' => $fid));
 $filename = 'vc.'.$filenum;
-if (!empty($file)) {
-    $sql = "SELECT * from {files} where contextid = '$context->id' AND component = 'mod_congrea' "
-        . "AND filename = '$filename' AND itemid = '$congrea->id' AND source = '$file->vcsessionkey'";
-    $filedata = $DB->get_records_sql($sql);
+if (!empty($vcsessionkey)) {
+    $filedata = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'mod_congrea',
+        'filename' => $filename, 'itemid' => $congrea->id, 'source' => $vcsessionkey));
     if (!empty($filedata)) {
         foreach ($filedata as $fdata) {
             if ($fdata->filename != "." && $fdata->filename != "..") {
                 $fs = get_file_storage();
-                $fileinfo = array(
-                    'component' => 'mod_congrea', // Usually = table name.
-                    'filearea' => 'congrea_rec', // Usually = table name.
-                    'itemid' => $congrea->id, // Usually = ID of row in table.
-                    'contextid' => $context->id, // ID of context.
-                    'filepath' => "/$file->vcsessionkey/", // Any path beginning and ending.
-                    'filename' => $filename);
-                $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-                                    $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+                $file = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec',
+                                    $congrea->id, "/$vcsessionkey/", $filename);
                 if ($file) {
                     $data = $file->get_content();
                 } else {
@@ -66,7 +58,11 @@ if (!empty($file)) {
                 echo $data;
             }
         }
+    } else {
+        print_error('file is not found in moodle file api');
     }
+} else {
+    print_error('Invalid request');
 }
 
 /**

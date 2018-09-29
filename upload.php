@@ -124,6 +124,8 @@ if ($fromform = $mform->get_data()) {
                 }
             }
         }
+    } else {
+        print_error('Error occurred during file upload.');
     }
     redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
 }
