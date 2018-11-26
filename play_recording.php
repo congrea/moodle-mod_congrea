@@ -39,15 +39,31 @@ if ($id) {
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-$file = $DB->get_record('congrea_files', array('id' => $fid));
-$filepath = $CFG->dataroot . "/congrea/" . $file->courseid . "/" . $file->vcid . "/" . $file->vcsessionkey . "/vc." . $filenum;
-if (file_exists($filepath)) {
-    $data = file_get_contents($filepath);
+$vcsessionkey = $DB->get_field('congrea_files', 'vcsessionkey', array('id' => $fid));
+$filename = 'vc.'.$filenum;
+if (!empty($vcsessionkey)) {
+    $filedata = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'mod_congrea',
+        'filename' => $filename, 'itemid' => $congrea->id, 'source' => $vcsessionkey));
+    if (!empty($filedata)) {
+        foreach ($filedata as $fdata) {
+            if ($fdata->filename != "." && $fdata->filename != "..") {
+                $fs = get_file_storage();
+                $file = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec',
+                                    $congrea->id, "/$vcsessionkey/", $filename);
+                if ($file) {
+                    $data = $file->get_content();
+                } else {
+                     $data = "VCE3"; // Filenotfound.
+                }
+                echo $data;
+            }
+        }
+    } else {
+        print_error('file is not found in moodle file api');
+    }
 } else {
-    $data = "VCE3"; // Filenotfound.
+    print_error('Invalid request');
 }
-
-echo $data;
 
 /**
  * The function is to check cors browser

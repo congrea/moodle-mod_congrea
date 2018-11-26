@@ -57,7 +57,6 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
      */
     protected function process_congrea($data) {
         global $DB;
-
         $data = (object) $data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
@@ -82,53 +81,17 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     }
 
     /**
-     * Copy files from one location
-     * to another location
-     *
-     * @param string $src path of source file
-     * @param string $dst path of destination
-     *
-     * @return void
-     */
-    protected function recurse_copy_files($src, $dst) {
-
-        $dir = opendir($src);
-        if (!file_exists($dst)) {
-            mkdir($dst, 0777, true);
-        }
-        while (false !== ( $file = readdir($dir))) {
-            if (( $file != '.' ) && ( $file != '..' )) {
-                if (is_dir($src . '/' . $file)) {
-                    recurse_copy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
-    }
-
-    /**
      * Process a congrea files restore
      * @param object $data The data in object form
      * @return void
      */
     protected function process_congrea_files($data) {
         global $DB, $CFG;
-
         $data = (object) $data;
         $oldid = $data->id;
-        $olddata = $DB->get_record('congrea_files', array('id' => $data->id));
-        $filepath = "{$CFG->dataroot}/congrea/{$olddata->courseid}/{$olddata->vcid}/" . $data->vcsessionkey;
-
         $data->courseid = $this->get_courseid();
         $data->vcid = $this->get_new_parentid('congrea');
         $vcsessionkey = $data->vcsessionkey;
-        // New path where file will be copied.
-        $newfilepath = "{$CFG->dataroot}/congrea/{$data->courseid}/{$data->vcid}/" . $vcsessionkey;
-        // Copy file to new destination.
-        $this->recurse_copy_files($filepath, $newfilepath);
-
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         if ($data->userid > 0) {
             $data->userid = $this->get_mappingid('user', $data->userid);
@@ -144,7 +107,6 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
         if (!isset($data->numoffiles)) {
             $data->numoffiles = 0;
         }
-
         $newitemid = $DB->insert_record('congrea_files', $data);
         // Note - the old contextid is required in order to be able to restore files stored in
         // sub plugin file areas attached to the submissionid.
@@ -157,6 +119,7 @@ class restore_congrea_activity_structure_step extends restore_activity_structure
     protected function after_execute() {
         // Add congrea related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_congrea', 'intro', null);
+        $this->add_related_files('mod_congrea', 'congrea_rec', 'congrea');
     }
 
 }

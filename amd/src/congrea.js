@@ -31,6 +31,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     newTab.focus();
                     return newTab;
                 }
+                return true;
             });
         },
         congreaPlayRecording: function() {
@@ -45,6 +46,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     newTab.focus();
                     return newTab;
                 }
+                return true;
             });
         }
 

@@ -86,8 +86,17 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $filepath = $CFG->dataroot . "/congrea/" . $record->courseid . "/" . $record->vcid . "/" . $record->vcsessionkey;
-        if (mod_congrea_deleteall($filepath)) {
+        $fs = get_file_storage();
+        $totalfiles = $record->numoffiles;
+        for ($i = 1; $i <= $totalfiles; $i++) {
+            $filename = $filename = "vc." . $i;
+            $file = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec',
+                                $record->vcid, "/$record->vcsessionkey/", $filename);
+            if ($file) {
+                $sucess = $file->delete();
+            }
+        }
+        if ($sucess) {
             $DB->delete_records('congrea_files', array('id' => $record->id));
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
@@ -97,6 +106,7 @@ if ($delete and confirm_sesskey()) {
         }
     }
 }
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 // Validate https.
@@ -104,6 +114,9 @@ $url = parse_url($CFG->wwwroot);
 if ($url['scheme'] !== 'https') {
     echo html_writer::tag('div', get_string('httpserror', 'congrea'), array('class' => 'alert alert-error'));
 }
+// Get audio status.
+$audiostatus = $congrea->audio;
+$videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
@@ -182,7 +195,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $form = congrea_online_server($url, $authusername, $authpassword,
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
-                                    $userpicturesrc, $fromcms, $licensekey);
+                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus);
     echo $form;
 } else {
     // Congrea closed.

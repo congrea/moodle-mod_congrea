@@ -139,20 +139,19 @@ function congrea_update_instance($congrea, $mform = null) {
  * @return boolean Success/Failure
  */
 function congrea_delete_instance($id) {
-    global $DB, $CFG;
-
+    global $DB, $CFG, $COURSE;
     if (!$congrea = $DB->get_record('congrea', array('id' => $id))) {
         return false;
     }
     // Delete any dependent records here.
     if ($congreafiles = $DB->get_records('congrea_files', array('vcid' => $congrea->id))) {
-        $filepath = "{$CFG->dataroot}/congrea/{$congrea->course}/{$congrea->id}/";
-
+        $fs = get_file_storage();
         foreach ($congreafiles as $cfile) {
-            $vcsession = $cfile->vcsessionkey;
-            $dir = $filepath . $vcsession;
-            // Delete recorded files.
-            congrea_deletedirectory($filepath);
+            $cm = get_coursemodule_from_instance('congrea', $congrea->id, $COURSE->id, false);
+            if (!empty($cm)) {
+                $context = context_module::instance($cm->id);
+                $fs->delete_area_files($context->id, 'mod_congrea', 'congrea_rec', $cfile->vcid);
+            }
         }
         $DB->delete_records('congrea_files', array('vcid' => $congrea->id));
     }

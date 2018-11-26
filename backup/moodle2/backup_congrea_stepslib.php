@@ -43,7 +43,6 @@ class backup_congrea_activity_structure_step extends backup_activity_structure_s
             'name', 'intro', 'introformat', 'moderatorid',
             'opentime', 'closetime', 'themecolor', 'audio', 'pushtotalk', 'timecreated',
             'timemodified'));
-
         $files = new backup_nested_element('files');
         $file = new backup_nested_element('file', array('id'),
                                                 array('userid',
@@ -67,8 +66,11 @@ class backup_congrea_activity_structure_step extends backup_activity_structure_s
         $congrea->annotate_ids('user', 'moderatorid');
         // Define file annotations.
         $congrea->annotate_files('mod_congrea', 'intro', null); // This file area hasn't itemid.
-
+        if ($userinfo) {
+            $congrea->annotate_files('mod_congrea', 'congrea_rec', null);
+        }
         // Return the root element (congrea), wrapped into standard activity structure.
         return $this->prepare_activity_structure($congrea);
     }
+
 }

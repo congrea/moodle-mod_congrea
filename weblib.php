@@ -49,13 +49,31 @@ function record_file_save($valparams) {
     $basefilepath = $CFG->dataroot . "/congrea"; // Place to save recording files.
     if (has_capability('mod/congrea:dorecording', $context)) {
         if ($data) {
-            $filepath = $basefilepath . "/" . $course->id . "/" . $congrea->id . "/" . $vmsession;
-            // Create folder if not exist.
-            if (!file_exists($filepath)) {
-                mkdir($filepath, 0777, true);
-            }
             $filename = "vc." . $filenum;
-            if (file_put_contents($filepath . '/' . $filename, $data) != false) {
+            $fs = get_file_storage();
+            // Prepare file record object.
+            $component = 'mod_congrea';
+            $filearea = 'congrea_rec';
+            $filepath = "/$vmsession/";
+            $fileinfo = array(
+                'contextid' => $context->id,
+                'component' => $component,
+                'filearea' => $filearea,
+                'itemid' => $congrea->id,
+                'filepath' => $filepath,
+                'filename' => $filename,
+                'mimetype' => 'application/vcp',
+                'source' => $vmsession,
+                'userid' => $userid);
+            if ($existing = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec', $cm->instance, $filepath, $filename)) {
+                if ($existing) {
+                    $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'duplicate');
+                    echo json_encode($unsuccess);
+                    return false;
+                }
+            }
+            $sucess = $fs->create_file_from_string($fileinfo, $data);
+            if (!empty($sucess)) {
                 // Save file record in database.
                 if ($filenum > 1) {
                     // Update record.
@@ -74,10 +92,10 @@ function record_file_save($valparams) {
                     $vcfile->timecreated = time();
                     $DB->insert_record('congrea_files', $vcfile);
                 }
-                echo "done";
             } else {
-                echo 'VCE5'; // Unable to record data.
+                echo 'Unable to save file';
             }
+            echo "done";
         } else {
             echo 'VCE4'; // No data for recording.
         }
