@@ -42,8 +42,10 @@ $context = context_module::instance($cm->id);
 $vcsessionkey = $DB->get_field('congrea_files', 'vcsessionkey', array('id' => $fid));
 $filename = 'vc.'.$filenum;
 if (!empty($vcsessionkey)) {
-    $filedata = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'mod_congrea',
-        'filename' => $filename, 'itemid' => $congrea->id, 'source' => $vcsessionkey));
+    $sql = "SELECT * FROM {files} where contextid = $context->id and component = 'mod_congrea' " ."and " .
+            $DB->sql_compare_text('filename') . " = '$filename' and itemid = $congrea->id " ."and " .
+            $DB->sql_compare_text('source') . " = '$vcsessionkey'";
+    $filedata = $DB->get_records_sql($sql);
     if (!empty($filedata)) {
         foreach ($filedata as $fdata) {
             if ($fdata->filename != "." && $fdata->filename != "..") {
