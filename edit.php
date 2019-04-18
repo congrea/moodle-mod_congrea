@@ -31,8 +31,8 @@ require_once(dirname(__FILE__) . '/edit_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT); // Congrea instance ID - it should be named as the first character of the module.
-$update = optional_param('update', 0, PARAM_INT);
-
+$update = optional_param('update', ' ', PARAM_CLEANHTML); // Session name.
+$sessionname = optional_param('sessionname', '',  PARAM_CLEANHTML);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -44,7 +44,6 @@ if ($id) {
 } else {
     print_error('You must specify a course_module ID or an instance ID');
 }
-
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
@@ -54,22 +53,30 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
-$vcfile = $DB->get_record('congrea_files', array('id' => $update));
+$room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+$key = get_config('mod_congrea', 'cgapi');
 $mform = new mod_congrea_edit_name($CFG->wwwroot . '/mod/congrea/edit.php?id=' . $cm->id . '&update=' . $update);
 
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-    $vcfile->vcsessionname = $fromform->name;
-    $DB->update_record('congrea_files', $vcfile);
-    redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
+    $sessionname = $fromform->name;
+    $postdata = json_encode(array('room' => $room, 'name' => $sessionname, 'session' => $update));
+    $result = curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key);
+    $sucess = json_decode($result);
+    $returnurl = redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
+    if ($sucess->data == "success") {
+        $OUTPUT->notification($returnurl, get_string('updated', '', $sessionname, 'notifysucess'));
+    } else {
+        $OUTPUT->notification($returnurl, get_string('notupdated', '', $sessionname));
+    }
 }
 // Output starts here.
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 $data = new stdClass;
-$data->name = $vcfile->vcsessionname;
+$data->name = $sessionname;
 $mform->set_data($data);
 $mform->display();
 // Finish the page.

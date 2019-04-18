@@ -121,11 +121,12 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param string $licensekey
  * @param int $id
  * @param int $vcsid
+ * @param string $recordingsession
  * @return string
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid) {
+            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'playRec'.$vcsid, 'class' => 'playAct',
@@ -148,9 +149,10 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
-         'value' => ''));
+         'value' => '', 'title' => 'Play'));
     $form .= html_writer::end_tag('form');
     return $form;
 }
@@ -269,7 +271,7 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
         // We will not display link if we are on some other-course page (where we should not see this module anyway).
         return html_writer::span(
             html_writer::link(
-                new moodle_url($baseurl, array('update' => $instance->id)),
+                new moodle_url($baseurl, array('update' => $instance->session, 'sessionname' => $instance->name)),
                 $OUTPUT->pix_icon('t/editstring', '', 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => '')),
                 array(
                     'class' => 'editing_title',
@@ -295,4 +297,40 @@ function mod_congrea_generaterandomstring($length = 11) {
         $randomstring .= $characters[rand(0, $characterslength - 1)];
     }
     return $randomstring;
+}
+/**
+ * This function authenticate the user with required
+ * detail and request for sever connection
+ *
+ * @param string $url congrea auth server url
+ * @param array $postdata
+ * @param string $key
+ * @param string $secret
+ *
+ * @return string $resutl json_encoded object
+ */
+function curl_request($url, $postdata, $key, $secret = false) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    if ($secret) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+            'x-api-key:' . $key,
+            'x-congrea-secret:' . $secret,
+        ));
+    } else {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+            'x-api-key:' . $key,
+        ));
+    }
+    curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_PROXY, false);
+    $result = @curl_exec($ch);
+    curl_close($ch);
+    return $result;
 }
