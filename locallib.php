@@ -267,7 +267,7 @@ function mod_congrea_module_get_rename_action($cm, $instance, $sr = null) {
     if ($sr !== null) {
         $baseurl->param('sr', $sr);
     }
-    if ($hasmanageactivities || ($USER->id == $instance->userid)) {
+    if ($hasmanageactivities) {
         // We will not display link if we are on some other-course page (where we should not see this module anyway).
         return html_writer::span(
             html_writer::link(

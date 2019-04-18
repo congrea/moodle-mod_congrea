@@ -232,7 +232,7 @@ foreach ($recording->Items as $record) {
                                                 $vcsid, $record->session);
     }
     // Delete button.
-    if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
+    if (has_capability('mod/congrea:recordingdelete', $context)) {
         if ($CFG->version < 2017051500) { // Compare to moodle33 vesion.
             $imageurl = $OUTPUT->pix_url('t/delete'); // Only support below moodle33 version.
         } else {
