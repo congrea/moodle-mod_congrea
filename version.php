@@ -28,8 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018092200; // The current module version (Date: YYYYMMDDXX).
-$plugin->release = '3.0 (Build: 2018081100)';
+$plugin->version   = 2019041900; // The current module version (Date: YYYYMMDDXX).
+$plugin->release = '3.1 (Build: 2019041900)';
 $plugin->requires = 2015111600.00;      // Requires this Moodle version.(3.0+).
 $plugin->cron = 0;               // Period for cron to check this module (secs).
 $plugin->component = 'mod_congrea'; // To check on upgrade, that module sits in correct place.

@@ -204,6 +204,7 @@ if (!empty($result)) {
     $recording = json_decode($data->data);
 }
 if (!empty($recording->Items)) {
+    rsort($recording->Items);
     echo $OUTPUT->heading('Recorded sessions');
 } else {
     echo $OUTPUT->heading('There are no recording to show');
