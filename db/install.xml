@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/congrea/db" VERSION="20180918" COMMENT="XMLDB file for Moodle mod/congrea"
+<XMLDB PATH="mod/congrea/db" VERSION="20190419" COMMENT="XMLDB file for Moodle mod/congrea"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -27,21 +27,6 @@
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="congrea_files" COMMENT="store recording files">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="course id"/>
-        <FIELD NAME="vcid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="vcsessionkey" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="vcsessionname" TYPE="char" LENGTH="225" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="numoffiles" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
     </TABLE>
     <TABLE NAME="congrea_poll" COMMENT="this table is used for congrea poll">
       <FIELDS>

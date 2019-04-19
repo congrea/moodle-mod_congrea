@@ -76,8 +76,6 @@ $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
 $returnurl = new moodle_url('/mod/congrea/view.php', array('id' => $cm->id));
 
-$recordings = $DB->get_records('congrea_files', array('vcid' => $congrea->id), 'timecreated DESC');
-
 // Delete a selected recording, after confirmation.
 if ($delete and confirm_sesskey()) {
     require_capability('mod/congrea:recordingdelete', $context);
@@ -90,7 +88,6 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
         $postdata = json_encode(array('room' => $room, 'session' => $delete));
         $result = curl_request("https://api.congrea.net/backend/deleterecording", $postdata, $key);
         $sucess = json_decode($result);
