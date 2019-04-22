@@ -68,11 +68,12 @@ function congrea_course_teacher_list() {
  * @param string $licensekey
  * @param string $audiostatus
  * @param string $videostatus
+ * @param string $recordingstatus
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus) {
+            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus, $recordingstatus = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
@@ -95,6 +96,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recordingstatus', 'value' => $recordingstatus));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
          'value' => get_string('joinroom', 'congrea')));
     $form .= html_writer::end_tag('form');
@@ -122,11 +124,12 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param int $id
  * @param int $vcsid
  * @param string $recordingsession
+ * @param string $enablerecording
  * @return string
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false) {
+            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false, $enablerecording = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'playRec'.$vcsid, 'class' => 'playAct',
@@ -150,6 +153,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recordingstatus', 'value' => $enablerecording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
          'value' => '', 'title' => 'Play'));

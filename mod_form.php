@@ -81,6 +81,12 @@ class mod_congrea_mod_form extends moodleform_mod {
             0 => get_string('disable', 'congrea'));
         $mform->addElement('select', 'video', get_string('video', 'congrea'), $options);
         $mform->addHelpButton('video', 'video', 'congrea');
+        // Congrea recording.
+        if (get_config('mod_congrea', 'cgrecording')) { // If admin seeting is enabled.
+            $mform->addElement('header', 'general', get_string('congrearecseeting', 'congrea'));
+            $mform->addElement('advcheckbox', 'cgrecording', get_string('cgrecording', 'congrea'), ' ' , null , array(0, 1));
+            $mform->addHelpButton('cgrecording', 'cgrecording', 'congrea');
+        }
         // Schedule fo session.
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
         $mform->addElement('date_time_selector', 'opentime', get_string('opentime', 'congrea'));

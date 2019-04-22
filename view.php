@@ -75,7 +75,6 @@ $completion->set_module_viewed($cm);
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
 $returnurl = new moodle_url('/mod/congrea/view.php', array('id' => $cm->id));
-
 // Delete a selected recording, after confirmation.
 if ($delete and confirm_sesskey()) {
     require_capability('mod/congrea:recordingdelete', $context);
@@ -188,7 +187,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $form = congrea_online_server($url, $authusername, $authpassword,
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
-                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus);
+                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus, $congrea->cgrecording);
     echo $form;
 } else {
     // Congrea closed.
@@ -227,7 +226,7 @@ foreach ($recording->Items as $record) {
                                                 $rid, $room, $upload, $down,
                                                 $info, $cgcolor, $webapi,
                                                 $userpicturesrc, $licensekey, $id,
-                                                $vcsid, $record->session);
+                                                $vcsid, $record->session, $congrea->cgrecording);
     }
     // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context)) {

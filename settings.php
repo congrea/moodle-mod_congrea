@@ -31,6 +31,9 @@ if ($ADMIN->fulltree) {
                                            get_string('cgapid', 'congrea'), ''));
     $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'),
                                                         get_string('cgsecretd', 'congrea'), ''));
+    // Congrea recording.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/cgrecording', get_string('cgrecording', 'congrea'),
+                                                        get_string('cgrecordingd', 'congrea'), 0));
     // Colourpicker Settings.
     $choices = array('#021317' => 'Black Pearl', '#003056' => 'Prussian Blue', '#424f9b' => 'Chambray',
             '#001e67' => 'Midnight Blue', '#692173' => 'Honey Flower', '#511030' => 'Heath', '#0066b0' => 'Endeavour');
