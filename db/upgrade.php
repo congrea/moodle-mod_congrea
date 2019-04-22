@@ -194,7 +194,7 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2019041900, 'congrea');
+        upgrade_mod_savepoint(true, 2019042200, 'congrea');
     }
     return true;
 }
