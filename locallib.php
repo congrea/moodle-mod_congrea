@@ -96,7 +96,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recordingstatus', 'value' => $recordingstatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recordingstatus));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
          'value' => get_string('joinroom', 'congrea')));
     $form .= html_writer::end_tag('form');
@@ -153,7 +153,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recordingstatus', 'value' => $enablerecording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $enablerecording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
          'value' => '', 'title' => 'Play'));
