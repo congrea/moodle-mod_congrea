@@ -43,7 +43,6 @@ $string['congreatiming'] = 'Virtual class timing : <b> {$a->open} </b> to <b> {$
 $string['congrea:addinstance'] = 'Add a new congrea';
 $string['congrea:dorecording'] = 'Save recoding';
 $string['congrea:recordingdelete'] = 'Delete recording';
-$string['congrea:recordingupload'] = 'Upload recorded file';
 $string['congrea:view'] = 'View congrea';
 $string['congrea:pollreport'] = 'Congrea poll report';
 $string['congrea:quizreport'] = 'Congrea quiz report';
