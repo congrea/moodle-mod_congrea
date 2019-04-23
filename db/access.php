@@ -68,17 +68,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    // Ability to upload session file downloaded form congrea
-    // due to inablibliy of direct uploading.
-    'mod/congrea:recordingupload' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
     // Ability to show poll report.
     'mod/congrea:pollreport' => array(
         'captype' => 'read',
