@@ -27,8 +27,9 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT);  // Congrea instance ID - it should be named as the first character of the module.
-$delete = optional_param('delete', 0, PARAM_INT);
+$delete = optional_param('delete', 0, PARAM_CLEANHTML);
 $confirm = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
+$recname = optional_param('recname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
 
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
@@ -51,6 +52,10 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+$key = get_config('mod_congrea', 'cgapi');
+$secret = get_config('mod_congrea', 'cgsecretpassword');
+$room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Event log.
 $event = \mod_congrea\event\course_module_viewed::create(array(
@@ -70,43 +75,30 @@ $completion->set_module_viewed($cm);
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
 $returnurl = new moodle_url('/mod/congrea/view.php', array('id' => $cm->id));
-
-$recordings = $DB->get_records('congrea_files', array('vcid' => $congrea->id), 'timecreated DESC');
-
 // Delete a selected recording, after confirmation.
 if ($delete and confirm_sesskey()) {
     require_capability('mod/congrea:recordingdelete', $context);
-    $record = $DB->get_record('congrea_files', array('id' => $delete), '*', MUST_EXIST);
     if ($confirm != md5($delete)) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $record->vcsessionname),
+        echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $recname),
                             new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $fs = get_file_storage();
-        $totalfiles = $record->numoffiles;
-        for ($i = 1; $i <= $totalfiles; $i++) {
-            $filename = $filename = "vc." . $i;
-            $file = $fs->get_file($context->id, 'mod_congrea', 'congrea_rec',
-                                $record->vcid, "/$record->vcsessionkey/", $filename);
-            if ($file) {
-                $sucess = $file->delete();
-            }
-        }
-        if ($sucess) {
-            $DB->delete_records('congrea_files', array('id' => $record->id));
+        $postdata = json_encode(array('room' => $room, 'session' => $delete));
+        $result = curl_request("https://api.congrea.net/backend/deleterecording", $postdata, $key);
+        $sucess = json_decode($result);
+        if ($sucess->data == "success") {
             \core\session\manager::gc(); // Remove stale sessions.
             redirect($returnurl);
         } else {
             \core\session\manager::gc(); // Remove stale sessions.
-            echo $OUTPUT->notification($returnurl, get_string('deletednot', '', $record->vcsessionname));
+            $OUTPUT->notification($returnurl, get_string('deletednot', '', $recname));
         }
     }
 }
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 // Validate https.
@@ -195,7 +187,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $form = congrea_online_server($url, $authusername, $authpassword,
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
-                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus);
+                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus, $congrea->cgrecording);
     echo $form;
 } else {
     // Congrea closed.
@@ -204,47 +196,54 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
 // Upload congrea recording.
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
-if (has_capability('mod/congrea:recordingupload', $context)) {
-    echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/congrea/upload.php', array('id' => $id)),
-                                            get_string('uploadrecordedfile', 'congrea'), 'get');
-    echo html_writer::end_tag('div');
+$postdata = json_encode(array('room' => $room));
+$result = curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
+if (!empty($result)) {
+    $data = json_decode($result);
+    $recording = json_decode($data->data);
 }
-// Display list of recorded files.
+if (!empty($recording->Items)) {
+    rsort($recording->Items);
+    echo $OUTPUT->heading('Recorded sessions');
+} else {
+    echo $OUTPUT->heading('There are no recording to show');
+}
 $table = new html_table();
 $table->head = array('Filename', 'Time created', 'Action', "");
 $table->colclasses = array('centeralign', 'centeralign');
 $table->attributes['class'] = 'admintable generaltable';
 $table->id = "recorded_data";
-foreach ($recordings as $record) {
+$dateformat = get_string('strftimerecentfull', 'langconfig').' %Z';
+foreach ($recording->Items as $record) {
     $buttons = array();
     $lastcolumn = '';
     $row = array();
-    $row[] = $record->vcsessionname . ' ' . mod_congrea_module_get_rename_action($cm, $record);
-    $row[] = userdate($record->timecreated);
-    $vcsid = $record->id;
+    $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
+    $row[] = userdate($record->time / 1000); // Todo: for exact time.
+    $vcsid = $record->key_room; // Todo.
     if (has_capability('mod/congrea:playrecording', $context)) {
         $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role,
                                                 $rid, $room, $upload, $down,
                                                 $info, $cgcolor, $webapi,
-                                                $userpicturesrc, $licensekey, $id, $vcsid);
+                                                $userpicturesrc, $licensekey, $id,
+                                                $vcsid, $record->session, $congrea->cgrecording);
     }
     // Delete button.
-    if (has_capability('mod/congrea:recordingdelete', $context) || ($record->userid == $USER->id)) {
+    if (has_capability('mod/congrea:recordingdelete', $context)) {
         if ($CFG->version < 2017051500) { // Compare to moodle33 vesion.
             $imageurl = $OUTPUT->pix_url('t/delete'); // Only support below moodle33 version.
         } else {
             $imageurl = $OUTPUT->image_url('t/delete'); // Support moodle33 above.
         }
-        $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->id, 'sesskey' => sesskey())),
-                        html_writer::empty_tag('img', array('src' => $imageurl,
+        $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->session,
+                        'recname' => $record->name, 'sesskey' => sesskey())),
+                         html_writer::empty_tag('img', array('src' => $imageurl,
                         'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
     }
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
     $table->data[] = $row;
 }
-
 if (!empty($table->data)) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     echo html_writer::table($table);
@@ -252,6 +251,5 @@ if (!empty($table->data)) {
 }
 echo html_writer::tag('div', "", array('class' => 'clear'));
 echo html_writer::end_tag('div');
-
 // Finish the page.
 echo $OUTPUT->footer();
