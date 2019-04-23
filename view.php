@@ -213,7 +213,6 @@ $table->head = array('Filename', 'Time created', 'Action', "");
 $table->colclasses = array('centeralign', 'centeralign');
 $table->attributes['class'] = 'admintable generaltable';
 $table->id = "recorded_data";
-$dateformat = get_string('strftimerecentfull', 'langconfig').' %Z';
 foreach ($recording->Items as $record) {
     $buttons = array();
     $lastcolumn = '';
