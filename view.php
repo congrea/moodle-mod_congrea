@@ -26,11 +26,13 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
+$report = optional_param('report', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT);  // Congrea instance ID - it should be named as the first character of the module.
 $delete = optional_param('delete', 0, PARAM_CLEANHTML);
 $confirm = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $recname = optional_param('recname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
-
+$session = optional_param('session', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
+$sessionname = optional_param('sessionname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -202,10 +204,12 @@ if (!empty($result)) {
     $data = json_decode($result);
     $recording = json_decode($data->data);
 }
-if (!empty($recording->Items)) {
+if (!empty($recording->Items) and !$session) {
     rsort($recording->Items);
     echo $OUTPUT->heading('Recorded sessions');
-} else {
+} else if($session)  {
+    echo $OUTPUT->heading(get_string('sessionareport', 'mod_congrea'));
+} else  {
     echo $OUTPUT->heading('There are no recording to show');
 }
 $table = new html_table();
@@ -217,6 +221,7 @@ foreach ($recording->Items as $record) {
     $buttons = array();
     $lastcolumn = '';
     $row = array();
+    $arow = array();
     $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->time / 1000); // Todo: for exact time.
     $vcsid = $record->key_room; // Todo.
@@ -239,14 +244,42 @@ foreach ($recording->Items as $record) {
                          html_writer::empty_tag('img', array('src' => $imageurl,
                         'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
     }
+    if (has_capability('mod/congrea:recordingdelete', $context)) {
+    $buttons[] = html_writer::link(new moodle_url('/mod/congrea/view.php?id=' . $cm->id,
+                array('session' => $record->session, 'sessionname' => $record->name)), get_string('attendencereport', 'mod_congrea'));
+    }
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
     $table->data[] = $row;
+    if($session) {
+        $table = new html_table();
+        $table->head = array('Student Name', 'Attendence');
+        $table->colclasses = array('centeralign', 'centeralign');
+        $table->attributes['class'] = 'admintable generaltable';
+        $apiurl = 'https://api.congrea.net/t/analytics/attendance';
+        $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room);
+        $attendencestatus = json_decode($data);
+        $users = congrea_get_enrolled_users($id);
+        //echo '<pre>'; print_r($users); exit;
+        //echo '<pre>'; print_r($attendencestatus->attendance); exit;
+        foreach($attendencestatus->attendance as $sattendence) {
+             $username = $DB->get_field('user', 'username', array('id' =>  $sattendence->uid));
+             if(!empty($sattendence->connect)) {
+                 $attendence = 'P';
+             }  else {
+                $attendence = 'A';
+             }
+             $table->data[] = array($username, $attendence);
+        }
+    }
 }
-if (!empty($table->data)) {
+if (!empty($table->data) and !$session) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
+}
+if (!empty($table) and $session) {
+    echo html_writer::table($table);
 }
 echo html_writer::tag('div', "", array('class' => 'clear'));
 echo html_writer::end_tag('div');

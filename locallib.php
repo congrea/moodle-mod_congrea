@@ -338,3 +338,102 @@ function curl_request($url, $postdata, $key, $secret = false) {
     curl_close($ch);
     return $result;
 }
+/**
+ * This function authenticate the user with required
+ * detail and request for sever connection
+ *
+ * @param string $url congrea auth server url
+ * @param array $postdata
+ * @param string $key
+ * @param string $secret
+ *
+ * @return string $resutl json_encoded object
+ */
+function attendence_curl_request($apiurl, $sessionid, $key, $authpass, $authuser, $room) {
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+    CURLOPT_URL => "$apiurl",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => "{\"session\":\"$sessionid\"}",
+    CURLOPT_HTTPHEADER => array(
+        "cache-control: no-cache",
+        "content-type: application/json",
+        "x-api-key: $key",
+        "x-congrea-authpass: $authpass",
+        "x-congrea-authuser: $authuser",
+        "x-congrea-room: $room"
+    ),
+    ));
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    if ($err) {
+    return "cURL Error #:" . $err;
+    } else {
+    return $response;
+    }
+}
+/**
+ * Returns list of users enrolled into course
+ * serving for virtual class
+ *
+ * @param int $data
+ * @return array of user records
+ */
+function congrea_get_enrolled_users($cmid) {
+    global $DB, $OUTPUT, $CFG;
+    if (!empty($cmid)) {
+        //list($cmid) = $data;
+        if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+            print_error('Course Module ID was incorrect');
+        }
+        $context = context_module::instance($cm->id);
+        $withcapability = '';
+        $groupid = 0;
+        $userfields = "u.*";
+        $orderby = null;
+        $limitfrom = 0;
+        $limitnum = 0;
+        $onlyactive = false;
+        list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
+        $sql = "SELECT $userfields
+             FROM {user} u
+             JOIN ($esql) je ON je.id = u.id
+            WHERE u.deleted = 0";
+
+        if ($orderby) {
+            $sql = "$sql ORDER BY $orderby";
+        } else {
+            list($sort, $sortparams) = users_order_by_sql('u');
+            $sql = "$sql ORDER BY $sort";
+            $params = array_merge($params, $sortparams);
+        }
+        $list = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        if (!empty($list)) {
+            foreach ($list as $userdata) {
+                if ($userdata) {
+                    $user = $userdata->id;
+                    $name = $userdata->firstname . ' ' . $userdata->lastname;
+                    $userlist[] = $user;
+                }
+            }
+            if (!empty($userlist)) {
+                return $userlist; // Return list of enrolled users.
+            } else {
+                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                echo json_encode($unsuccess);
+            }
+        } else {
+            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+            echo json_encode($unsuccess);
+        }
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+        echo json_encode($unsuccess);
+    }
+}

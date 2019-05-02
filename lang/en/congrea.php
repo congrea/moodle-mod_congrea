@@ -156,3 +156,6 @@ $string['cgrecording'] = 'Enable session recording';
 $string['cgrecording_help'] = 'If enabled, allows automatic recording of your congrea sessions for this activity.';
 $string['cgrecordingd'] = 'If enabled, you can choose to allow automatic session recording in your Congrea activities.';
 $string['congrearecseeting'] = 'Congrea recording';
+$string['attendencereport'] = 'Attendence report';
+$string['sessionareport'] = 'Session Attendence Report';
+
