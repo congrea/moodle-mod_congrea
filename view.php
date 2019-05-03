@@ -254,7 +254,7 @@ foreach ($recording->Items as $record) {
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
     if (!get_role($COURSE->id, $USER->id)) { // Report for student.
-        $table->head = array('Filename', 'Time created', 'Action', "Attendence Report");
+        $table->head = array('Filename', 'Time created', 'Action', "Attendence");
         $table->attributes['class'] = 'admintable generaltable studentEnd';
         $apiurl = 'https://api.congrea.net/data/analytics/attendance';
         $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
@@ -308,7 +308,7 @@ if (!empty($table) and $session) {
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
     $upsentuser = $countenroluser - $presentnroluser;
-    $present = '<b> Students Upsent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
+    $present = '<b> Students Absent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');

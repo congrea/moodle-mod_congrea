@@ -63,8 +63,8 @@
     font-size: 20px;
     margin-top: 0;
 }
-table .studentEnd tbody tr td.c3 {
-    display: none;
+table.studentEnd tbody tr td.c3 {
+    display: none !important;
 }
 table.studentEnd tbody tr td.c4 p {
     padding-left: 15px;
