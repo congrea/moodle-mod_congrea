@@ -339,56 +339,60 @@ function curl_request($url, $postdata, $key, $secret = false) {
     return $result;
 }
 /**
- * This function authenticate the user with required
+ * This function authenticate the user attendence
  * detail and request for sever connection
  *
- * @param string $url congrea auth server url
- * @param array $postdata
+ * @param string $apiurl congrea auth server url
+ * @param string $sessionid
  * @param string $key
- * @param string $secret
+ * @param string $authpass
+ * @param string $authuser
+ * @param string $room
+ * @param int $uid
  *
  * @return string $resutl json_encoded object
  */
-function attendence_curl_request($apiurl, $sessionid, $key, $authpass, $authuser, $room) {
+function attendence_curl_request($apiurl, $sessionid, $key, $authpass, $authuser, $room, $uid = false) {
     $curl = curl_init();
+    $data = json_encode(array('session' => $sessionid, 'uid' => $uid));
     curl_setopt_array($curl, array(
-    CURLOPT_URL => "$apiurl",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "POST",
-    CURLOPT_POSTFIELDS => "{\"session\":\"$sessionid\"}",
-    CURLOPT_HTTPHEADER => array(
-        "cache-control: no-cache",
-        "content-type: application/json",
-        "x-api-key: $key",
-        "x-congrea-authpass: $authpass",
-        "x-congrea-authuser: $authuser",
-        "x-congrea-room: $room"
-    ),
+        CURLOPT_URL => "$apiurl",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => array(
+            "cache-control: no-cache",
+            "content-type: application/json",
+            "x-api-key: $key",
+            "x-congrea-authpass: $authpass",
+            "x-congrea-authuser: $authuser",
+            "x-congrea-room: $room"
+        ),
     ));
     $response = curl_exec($curl);
     $err = curl_error($curl);
     curl_close($curl);
     if ($err) {
-    return "cURL Error #:" . $err;
+        return "cURL Error #:" . $err;
     } else {
-    return $response;
+        return $response;
     }
 }
 /**
  * Returns list of users enrolled into course
  * serving for virtual class
  *
- * @param int $data
+ * @param int $cmid
+ * @param int $courseid
  * @return array of user records
  */
-function congrea_get_enrolled_users($cmid) {
+function congrea_get_enrolled_users($cmid, $courseid) {
     global $DB, $OUTPUT, $CFG;
     if (!empty($cmid)) {
-        //list($cmid) = $data;
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
             print_error('Course Module ID was incorrect');
         }
@@ -418,8 +422,10 @@ function congrea_get_enrolled_users($cmid) {
             foreach ($list as $userdata) {
                 if ($userdata) {
                     $user = $userdata->id;
-                    $name = $userdata->firstname . ' ' . $userdata->lastname;
-                    $userlist[] = $user;
+                    $teacherid = get_role($courseid, $userdata->id);
+                    if (!$teacherid) {
+                        $userlist[] = $user;
+                    }
                 }
             }
             if (!empty($userlist)) {
@@ -436,4 +442,27 @@ function congrea_get_enrolled_users($cmid) {
         $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
         echo json_encode($unsuccess);
     }
+}
+
+/**
+ * Get user role.
+ * serving for virtual class
+ *
+ * @param int $courseid
+ * @param int $userid
+ * @return int of user id
+ */
+function get_role($courseid, $userid) {
+    $rolestr = array();
+    $context = context_course::instance($courseid);
+    $roles = get_user_roles($context, $userid);
+    foreach ($roles as $role) {
+        $rolestr[] = role_get_name($role, $context);
+    }
+    if (!in_array("Student", $rolestr)) {
+        return $userid;
+    } else {
+        return false;
+    }
+
 }

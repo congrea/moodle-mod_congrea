@@ -51,11 +51,13 @@ function congrea_curl_request($url, $postdata, $key, $secret) {
     curl_close($ch);
     return $result;
 }
+
 // Send auth detail to server.
 $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
 $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
 $licensekey = $cgapi;
 $secret = $cgsecret;
+$recordingstatus = !empty($recording) ? $recording : 0;
 $userrole = !empty($role) ? $role : 's';
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
 $postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole, 'room' => $room);
