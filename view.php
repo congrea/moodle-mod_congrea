@@ -256,7 +256,7 @@ foreach ($recording->Items as $record) {
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
     if (!get_role($COURSE->id, $USER->id)) { // Report for student.
-        $table->head = array('Filename', 'Time created', 'Action', "Attendence");
+        $table->head = array('Filename', 'Time created', 'Action', "Attandence");
         $table->attributes['class'] = 'admintable generaltable studentEnd';
         $apiurl = 'https://api.congrea.net/data/analytics/attendance';
         $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
@@ -270,7 +270,7 @@ foreach ($recording->Items as $record) {
     $table->data[] = $row;
     if ($session) { // Student Report according to session.
         $table = new html_table();
-        $table->head = array('Student Name', 'Attendence', 'Presence');
+        $table->head = array('Student Name', 'Attandence', 'Presence');
         $table->colclasses = array('centeralign', 'centeralign');
         $table->attributes['class'] = 'admintable generaltable';
         $apiurl = 'https://api.congrea.net/t/analytics/attendance';
@@ -280,8 +280,8 @@ foreach ($recording->Items as $record) {
         $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
         if (!empty($attendencestatus)) {
             foreach ($attendencestatus->attendance as $sattendence) {
-                if (!get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher
-                    if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset.
+                if (!get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher.
+                    if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
                         $attendence[] = $sattendence->uid;
                         $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
                         $username = $studentname->firstname . ' ' . $studentname->lastname;
@@ -289,7 +289,7 @@ foreach ($recording->Items as $record) {
                         $disconnect = json_decode($sattendence->disconnect);
                         if (!empty($sessionstatus)) {
                             $studenttotaltime = calctime($connect, $disconnect,
-                                $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                            $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
                         }
                         if (!empty($studenttotaltime) and $sessionstatus->totalsessiontime >= $studenttotaltime) {
                             $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;

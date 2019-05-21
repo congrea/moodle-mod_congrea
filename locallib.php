@@ -460,7 +460,7 @@ function get_role($courseid, $userid) {
     foreach ($roles as $role) {
         $rolestr[] = role_get_name($role, $context);
     }
-    if (!in_array("Student", $rolestr)) {
+    if (!in_array("Student", $rolestr)) { // TODO.
         return $userid;
     } else {
         return false;
@@ -606,7 +606,7 @@ function calc_student_time($connect, $disconnect) {
     $sum = 0;
     for ($i = 0; $i < count($connect); $i++) {
         if ($disconnect[$i] >= $connect[$i]) {
-            $studenttime = (abs($disconnect[$i] - $connect[$i]) / 60);
+            $studenttime = round((abs($disconnect[$i] - $connect[$i]) / 60));
             $sum = $studenttime + $sum;
         }
     }
