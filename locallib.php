@@ -454,6 +454,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
  */
 function get_role($courseid, $userid) {
     $rolestr = array();
+    $adminrole = array();
     $context = context_course::instance($courseid);
     $roles = get_user_roles($context, $userid);
     foreach ($roles as $role) {
@@ -465,4 +466,145 @@ function get_role($courseid, $userid) {
         return false;
     }
 
+}
+
+/**
+ * Get total session time.
+ * serving for virtual class
+ *
+ * @param object $attendance
+ * @return user object
+ */
+function get_total_session_time($attendance) {
+    if (!empty($attendance)) {
+        foreach ($attendance as $data) {
+            $connect = json_decode($data->connect);
+            $disconnect = json_decode($data->disconnect);
+            if (!empty($connect)) {
+                $connecttime[] = current($connect);
+            }
+            if (!empty($disconnect)) {
+                $disconnecttime[] = end($disconnect);
+            }
+        }
+    }
+    if (!empty($connecttime) and ! empty($disconnecttime)) {
+        $sessionstarttime = min($connecttime);
+        $sessionendtime = max($disconnecttime);
+        $totaltime = round(($sessionendtime - $sessionstarttime) / 60); // Total session time in minutes.
+        return (object) array('totalsessiontime' => $totaltime,
+                'sessionstarttime' => $sessionstarttime, 'sessionendtime' => $sessionendtime);
+    }
+}
+
+/**
+ * Get total student time.
+ * serving for virtual class
+ *
+ * @param array $connect
+ * @param array $disconnect
+ * @param int $x
+ * @param int $y
+ * @return int minutes of student.
+ */
+function calctime($connect, $disconnect, $x, $y) {
+    if (!empty($connect)) {
+        sort($connect);
+    }
+    if (!empty($disconnect)) {
+        sort($disconnect);
+    }
+    // Step-2 Do we need x in connect.
+    if (empty($connect)) {
+        $connect[] = $x;
+    }
+    // Step-3 Do we need y in disconnect.
+    if (empty($disconnect)) {
+        $disconnect[] = $y;
+    }
+
+    if (!empty($connect) and ! empty($disconnect)) {
+        if ($connect[0] > $disconnect[0]) {
+            $connect[0] = $x;
+        }
+    }
+    $lastconnect = count($connect) - 1;
+    $lastdisconnect = count($disconnect) - 1;
+
+    if ($connect[$lastconnect] > $disconnect[$lastdisconnect]) {
+        $disconnect[$lastconnect] = $y;
+    }
+    // Step 4 work on middle values.
+    $clen = count($connect);
+    $dlen = count($disconnect);
+
+    $tlen = $clen;
+    if ($tlen < $dlen) {
+        $tlen = $dlen;
+    }
+    $lastcon = 0;
+    $lastdis = 0;
+
+    for ($i = 0; $i < $tlen; $i++) {
+        // Validate all pairs.
+        if (!empty($connect[$i])) { // If connect exists.
+            if ($connect[$i] < $lastdis) { // If connect smaller than last disconnect.
+                $connect[$i] = $lastdis;
+            }
+            if (empty($disconnect[$i])) { // If disconnect pair is empty.
+                // TODO handle this case
+                $disconnect[$i] = $y; // max value of session.
+            }
+            if ($disconnect[$i] < $connect[$i]) { // If connect larger than disconnect.
+                $disconnect[$i] = $connect[$i + 1];
+            }
+
+            $lastcon = $connect[$i];
+        } else {
+            unset($disconnect[$i - 1]); // Beoz of array sort.
+        }
+
+        if (!empty($disconnect[$i])) { // If disconnect exists.
+            if ($disconnect[$i] < $lastcon) {
+                $disconnect[$i] = $y;
+            }
+
+            if (empty($connect[$i])) { // If connect pair is empty.
+                // TODO handle this case
+                unset($disconnect[$i - 1]); // Becoz of array sort.
+            }
+            if ($disconnect[$i] > $y) {
+                $disconnect[$i] = $y;
+            }
+
+            $lastdis = $disconnect[$i];
+        } else {
+            $disconnect[$i] = $y;
+            $lastdis = $disconnect[$i];
+        }
+    }
+    $connect = array_values($connect);
+    $disconnect = array_values($disconnect);
+    if (!empty($connect) and ! empty($disconnect)) {
+        return calc_student_time($connect, $disconnect);
+    }
+}
+
+/**
+ * Get total student time.
+ * serving for virtual class
+ *
+ * @param array $connect
+ * @param array $disconnect
+ * @return int minutes of student.
+ */
+function calc_student_time($connect, $disconnect) {
+    $sum = 0;
+    for ($i = 0; $i < count($connect); $i++) {
+        if ($disconnect[$i] >= $connect[$i]) {
+            $studenttime = (abs($disconnect[$i] - $connect[$i]) / 60);
+            $sum = $studenttime + $sum;
+        }
+    }
+    return $sum;
 }

@@ -222,6 +222,8 @@ $table->id = "recorded_data";
 foreach ($recording->Items as $record) {
     $buttons = array();
     $attendence = array();
+    $connecttime = array();
+    $disconnecttime = array();
     $lastcolumn = '';
     $row = array();
     $arow = array();
@@ -268,31 +270,40 @@ foreach ($recording->Items as $record) {
     $table->data[] = $row;
     if ($session) { // Student Report according to session.
         $table = new html_table();
-        $table->head = array('Student Name', 'Attendence');
+        $table->head = array('Student Name', 'Attendence', 'Presence');
         $table->colclasses = array('centeralign', 'centeralign');
         $table->attributes['class'] = 'admintable generaltable';
         $apiurl = 'https://api.congrea.net/t/analytics/attendance';
         $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room);
         $attendencestatus = json_decode($data);
+        $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
         $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
         if (!empty($attendencestatus)) {
             foreach ($attendencestatus->attendance as $sattendence) {
-                if (isset($sattendence->connect) || isset($sattendence->disconnect)) {
-                    $teacherid = get_role($COURSE->id, $sattendence->uid);
-                    if (!$teacherid) {
-                        $attendence[] = $sattendence->uid;
-                        $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
-                        $username = $studentname->firstname . ' ' . $studentname->lastname;
-                        $table->data[] = array($username, '<p style="color:green;">P</p>');
+                if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) {
+                    $attendence[] = $sattendence->uid;
+                    $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
+                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                    $connect = json_decode($sattendence->connect);
+                    $disconnect = json_decode($sattendence->disconnect);
+                    if (!empty($sessionstatus)) {
+                        $studenttotaltime = calctime($connect, $disconnect,
+                            $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                    }
+                    if (!empty($studenttotaltime)) {
+                        $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;
+                    } else {
+                        $presence = '-';
                     }
                 }
+                $table->data[] = array($username, '<p style="color:green;">P</p>', round($presence) . '%');
             }
             if (!empty($attendence) and ! empty($enrolusers)) {
                 $result = array_diff($enrolusers, $attendence);
                 foreach ($result as $data) {
                     $studentname = $DB->get_record('user', array('id' => $data));
                     $username = $studentname->firstname . ' ' . $studentname->lastname;
-                    $table->data[] = array($username, '<p style="color:red;">A</p>');
+                    $table->data[] = array($username, '<p style="color:red;">A</p>', '-');
                 }
             }
         }
