@@ -26,11 +26,13 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
+$report = optional_param('report', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT);  // Congrea instance ID - it should be named as the first character of the module.
 $delete = optional_param('delete', 0, PARAM_CLEANHTML);
 $confirm = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $recname = optional_param('recname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
-
+$session = optional_param('session', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
+$sessionname = optional_param('sessionname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -55,6 +57,7 @@ $PAGE->set_context($context);
 $key = get_config('mod_congrea', 'cgapi');
 $secret = get_config('mod_congrea', 'cgsecretpassword');
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+
 
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Event log.
@@ -112,6 +115,7 @@ $videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
+$recording = $congrea->cgrecording;
 if (has_capability('mod/congrea:addinstance', $context) &&
         ($USER->id == $congrea->moderatorid)) {
     $role = 't';
@@ -202,9 +206,11 @@ if (!empty($result)) {
     $data = json_decode($result);
     $recording = json_decode($data->data);
 }
-if (!empty($recording->Items)) {
+if (!empty($recording->Items) and ! $session) {
     rsort($recording->Items);
     echo $OUTPUT->heading('Recorded sessions');
+} else if ($session) {
+    echo $OUTPUT->heading(get_string('sessionareport', 'mod_congrea'));
 } else {
     echo $OUTPUT->heading('There are no recording to show');
 }
@@ -215,8 +221,12 @@ $table->attributes['class'] = 'admintable generaltable';
 $table->id = "recorded_data";
 foreach ($recording->Items as $record) {
     $buttons = array();
+    $attendence = array();
+    $connecttime = array();
+    $disconnecttime = array();
     $lastcolumn = '';
     $row = array();
+    $arow = array();
     $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->time / 1000); // Todo: for exact time.
     $vcsid = $record->key_room; // Todo.
@@ -239,12 +249,78 @@ foreach ($recording->Items as $record) {
                          html_writer::empty_tag('img', array('src' => $imageurl,
                         'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
     }
+    if (has_capability('mod/congrea:recordingdelete', $context)) {
+        $buttons[] = html_writer::link(new moodle_url('/mod/congrea/view.php?id=' . $cm->id,
+             array('session' => $record->session)), get_string('attendencereport', 'mod_congrea'));
+    }
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
+    if (!get_role($COURSE->id, $USER->id)) { // Report for student.
+        $table->head = array('Filename', 'Time created', 'Action', "Attendence");
+        $table->attributes['class'] = 'admintable generaltable studentEnd';
+        $apiurl = 'https://api.congrea.net/data/analytics/attendance';
+        $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
+        $attendencestatus = json_decode($data);
+        if (!empty($attendencestatus->attendance)) {
+            $row[] = '<p style="color:green;">P</p>';
+        } else {
+            $row[] = '<p style="color:red;">A</p>';
+        }
+    }
     $table->data[] = $row;
+    if ($session) { // Student Report according to session.
+        $table = new html_table();
+        $table->head = array('Student Name', 'Attendence', 'Presence');
+        $table->colclasses = array('centeralign', 'centeralign');
+        $table->attributes['class'] = 'admintable generaltable';
+        $apiurl = 'https://api.congrea.net/t/analytics/attendance';
+        $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room);
+        $attendencestatus = json_decode($data);
+        $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
+        $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
+        if (!empty($attendencestatus)) {
+            foreach ($attendencestatus->attendance as $sattendence) {
+                if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) {
+                    $attendence[] = $sattendence->uid;
+                    $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
+                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                    $connect = json_decode($sattendence->connect);
+                    $disconnect = json_decode($sattendence->disconnect);
+                    if (!empty($sessionstatus)) {
+                        $studenttotaltime = calctime($connect, $disconnect,
+                            $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                    }
+                    if (!empty($studenttotaltime)) {
+                        $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;
+                    } else {
+                        $presence = '-';
+                    }
+                }
+                $table->data[] = array($username, '<p style="color:green;">P</p>', round($presence) . '%');
+            }
+            if (!empty($attendence) and ! empty($enrolusers)) {
+                $result = array_diff($enrolusers, $attendence);
+                foreach ($result as $data) {
+                    $studentname = $DB->get_record('user', array('id' => $data));
+                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                    $table->data[] = array($username, '<p style="color:red;">A</p>', '-');
+                }
+            }
+        }
+    }
 }
-if (!empty($table->data)) {
+if (!empty($table->data) and !$session) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+    echo html_writer::table($table);
+    echo html_writer::end_tag('div');
+}
+if (!empty($table) and $session) {
+    echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+    $countenroluser = count($enrolusers);
+    $presentnroluser = count($attendence);
+    $upsentuser = $countenroluser - $presentnroluser;
+    $present = '<b> Students Absent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
+    echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
 }

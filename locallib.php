@@ -338,3 +338,273 @@ function curl_request($url, $postdata, $key, $secret = false) {
     curl_close($ch);
     return $result;
 }
+/**
+ * This function authenticate the user attendence
+ * detail and request for sever connection
+ *
+ * @param string $apiurl congrea auth server url
+ * @param string $sessionid
+ * @param string $key
+ * @param string $authpass
+ * @param string $authuser
+ * @param string $room
+ * @param int $uid
+ *
+ * @return string $resutl json_encoded object
+ */
+function attendence_curl_request($apiurl, $sessionid, $key, $authpass, $authuser, $room, $uid = false) {
+    $curl = curl_init();
+    $data = json_encode(array('session' => $sessionid, 'uid' => $uid));
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "$apiurl",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => array(
+            "cache-control: no-cache",
+            "content-type: application/json",
+            "x-api-key: $key",
+            "x-congrea-authpass: $authpass",
+            "x-congrea-authuser: $authuser",
+            "x-congrea-room: $room"
+        ),
+    ));
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    if ($err) {
+        return "cURL Error #:" . $err;
+    } else {
+        return $response;
+    }
+}
+/**
+ * Returns list of users enrolled into course
+ * serving for virtual class
+ *
+ * @param int $cmid
+ * @param int $courseid
+ * @return array of user records
+ */
+function congrea_get_enrolled_users($cmid, $courseid) {
+    global $DB, $OUTPUT, $CFG;
+    if (!empty($cmid)) {
+        if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
+            print_error('Course Module ID was incorrect');
+        }
+        $context = context_module::instance($cm->id);
+        $withcapability = '';
+        $groupid = 0;
+        $userfields = "u.*";
+        $orderby = null;
+        $limitfrom = 0;
+        $limitnum = 0;
+        $onlyactive = false;
+        list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
+        $sql = "SELECT $userfields
+             FROM {user} u
+             JOIN ($esql) je ON je.id = u.id
+            WHERE u.deleted = 0";
+
+        if ($orderby) {
+            $sql = "$sql ORDER BY $orderby";
+        } else {
+            list($sort, $sortparams) = users_order_by_sql('u');
+            $sql = "$sql ORDER BY $sort";
+            $params = array_merge($params, $sortparams);
+        }
+        $list = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        if (!empty($list)) {
+            foreach ($list as $userdata) {
+                if ($userdata) {
+                    $user = $userdata->id;
+                    $teacherid = get_role($courseid, $userdata->id);
+                    if (!$teacherid) {
+                        $userlist[] = $user;
+                    }
+                }
+            }
+            if (!empty($userlist)) {
+                return $userlist; // Return list of enrolled users.
+            } else {
+                $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+                echo json_encode($unsuccess);
+            }
+        } else {
+            $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+            echo json_encode($unsuccess);
+        }
+    } else {
+        $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
+        echo json_encode($unsuccess);
+    }
+}
+
+/**
+ * Get user role.
+ * serving for virtual class
+ *
+ * @param int $courseid
+ * @param int $userid
+ * @return int of user id
+ */
+function get_role($courseid, $userid) {
+    $rolestr = array();
+    $adminrole = array();
+    $context = context_course::instance($courseid);
+    $roles = get_user_roles($context, $userid);
+    foreach ($roles as $role) {
+        $rolestr[] = role_get_name($role, $context);
+    }
+    if (!in_array("Student", $rolestr)) {
+        return $userid;
+    } else {
+        return false;
+    }
+
+}
+
+/**
+ * Get total session time.
+ * serving for virtual class
+ *
+ * @param object $attendance
+ * @return user object
+ */
+function get_total_session_time($attendance) {
+    if (!empty($attendance)) {
+        foreach ($attendance as $data) {
+            $connect = json_decode($data->connect);
+            $disconnect = json_decode($data->disconnect);
+            if (!empty($connect)) {
+                $connecttime[] = current($connect);
+            }
+            if (!empty($disconnect)) {
+                $disconnecttime[] = end($disconnect);
+            }
+        }
+    }
+    if (!empty($connecttime) and ! empty($disconnecttime)) {
+        $sessionstarttime = min($connecttime);
+        $sessionendtime = max($disconnecttime);
+        $totaltime = round(($sessionendtime - $sessionstarttime) / 60); // Total session time in minutes.
+        return (object) array('totalsessiontime' => $totaltime,
+                'sessionstarttime' => $sessionstarttime, 'sessionendtime' => $sessionendtime);
+    }
+}
+
+/**
+ * Get total student time.
+ * serving for virtual class
+ *
+ * @param array $connect
+ * @param array $disconnect
+ * @param int $x
+ * @param int $y
+ * @return int minutes of student.
+ */
+function calctime($connect, $disconnect, $x, $y) {
+    if (!empty($connect)) {
+        sort($connect);
+    }
+    if (!empty($disconnect)) {
+        sort($disconnect);
+    }
+    // Step-2 Do we need x in connect.
+    if (empty($connect)) {
+        $connect[] = $x;
+    }
+    // Step-3 Do we need y in disconnect.
+    if (empty($disconnect)) {
+        $disconnect[] = $y;
+    }
+
+    if (!empty($connect) and ! empty($disconnect)) {
+        if ($connect[0] > $disconnect[0]) {
+            $connect[0] = $x;
+        }
+    }
+    $lastconnect = count($connect) - 1;
+    $lastdisconnect = count($disconnect) - 1;
+
+    if ($connect[$lastconnect] > $disconnect[$lastdisconnect]) {
+        $disconnect[$lastconnect] = $y;
+    }
+    // Step 4 work on middle values.
+    $clen = count($connect);
+    $dlen = count($disconnect);
+
+    $tlen = $clen;
+    if ($tlen < $dlen) {
+        $tlen = $dlen;
+    }
+    $lastcon = 0;
+    $lastdis = 0;
+
+    for ($i = 0; $i < $tlen; $i++) {
+        // Validate all pairs.
+        if (!empty($connect[$i])) { // If connect exists.
+            if ($connect[$i] < $lastdis) { // If connect smaller than last disconnect.
+                $connect[$i] = $lastdis;
+            }
+            if (empty($disconnect[$i])) { // If disconnect pair is empty.
+                // TODO handle this case
+                $disconnect[$i] = $y; // max value of session.
+            }
+            if ($disconnect[$i] < $connect[$i]) { // If connect larger than disconnect.
+                $disconnect[$i] = $connect[$i + 1];
+            }
+
+            $lastcon = $connect[$i];
+        } else {
+            unset($disconnect[$i - 1]); // Beoz of array sort.
+        }
+
+        if (!empty($disconnect[$i])) { // If disconnect exists.
+            if ($disconnect[$i] < $lastcon) {
+                $disconnect[$i] = $y;
+            }
+
+            if (empty($connect[$i])) { // If connect pair is empty.
+                // TODO handle this case
+                unset($disconnect[$i - 1]); // Becoz of array sort.
+            }
+            if ($disconnect[$i] > $y) {
+                $disconnect[$i] = $y;
+            }
+
+            $lastdis = $disconnect[$i];
+        } else {
+            $disconnect[$i] = $y;
+            $lastdis = $disconnect[$i];
+        }
+    }
+    $connect = array_values($connect);
+    $disconnect = array_values($disconnect);
+    if (!empty($connect) and ! empty($disconnect)) {
+        return calc_student_time($connect, $disconnect);
+    }
+}
+
+/**
+ * Get total student time.
+ * serving for virtual class
+ *
+ * @param array $connect
+ * @param array $disconnect
+ * @return int minutes of student.
+ */
+function calc_student_time($connect, $disconnect) {
+    $sum = 0;
+    for ($i = 0; $i < count($connect); $i++) {
+        if ($disconnect[$i] >= $connect[$i]) {
+            $studenttime = (abs($disconnect[$i] - $connect[$i]) / 60);
+            $sum = $studenttime + $sum;
+        }
+    }
+    return $sum;
+}
