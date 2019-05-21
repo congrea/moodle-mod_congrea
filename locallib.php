@@ -481,9 +481,11 @@ function get_total_session_time($attendance) {
             $connect = json_decode($data->connect);
             $disconnect = json_decode($data->disconnect);
             if (!empty($connect)) {
+                sort($connect);
                 $connecttime[] = current($connect);
             }
             if (!empty($disconnect)) {
+                sort($disconnect);
                 $disconnecttime[] = end($disconnect);
             }
         }
@@ -553,10 +555,12 @@ function calctime($connect, $disconnect, $x, $y) {
             }
             if (empty($disconnect[$i])) { // If disconnect pair is empty.
                 // TODO handle this case
-                $disconnect[$i] = $y; // max value of session.
+                $disconnect[$i] = $y; // Max value of session.
             }
             if ($disconnect[$i] < $connect[$i]) { // If connect larger than disconnect.
-                $disconnect[$i] = $connect[$i + 1];
+                if (!empty($connect[$i + 1])) {
+                    $disconnect[$i] = $connect[$i + 1];
+                }
             }
 
             $lastcon = $connect[$i];

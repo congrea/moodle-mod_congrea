@@ -280,23 +280,25 @@ foreach ($recording->Items as $record) {
         $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
         if (!empty($attendencestatus)) {
             foreach ($attendencestatus->attendance as $sattendence) {
-                if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) {
-                    $attendence[] = $sattendence->uid;
-                    $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
-                    $username = $studentname->firstname . ' ' . $studentname->lastname;
-                    $connect = json_decode($sattendence->connect);
-                    $disconnect = json_decode($sattendence->disconnect);
-                    if (!empty($sessionstatus)) {
-                        $studenttotaltime = calctime($connect, $disconnect,
-                            $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                if (!get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher
+                    if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset.
+                        $attendence[] = $sattendence->uid;
+                        $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
+                        $username = $studentname->firstname . ' ' . $studentname->lastname;
+                        $connect = json_decode($sattendence->connect);
+                        $disconnect = json_decode($sattendence->disconnect);
+                        if (!empty($sessionstatus)) {
+                            $studenttotaltime = calctime($connect, $disconnect,
+                                $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                        }
+                        if (!empty($studenttotaltime) and $sessionstatus->totalsessiontime >= $studenttotaltime) {
+                            $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;
+                        } else {
+                            $presence = '-';
+                        }
                     }
-                    if (!empty($studenttotaltime)) {
-                        $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;
-                    } else {
-                        $presence = '-';
-                    }
+                    $table->data[] = array($username, '<p style="color:green;">P</p>', round($presence) . '%');
                 }
-                $table->data[] = array($username, '<p style="color:green;">P</p>', round($presence) . '%');
             }
             if (!empty($attendence) and ! empty($enrolusers)) {
                 $result = array_diff($enrolusers, $attendence);
