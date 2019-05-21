@@ -432,15 +432,15 @@ function congrea_get_enrolled_users($cmid, $courseid) {
                 return $userlist; // Return list of enrolled users.
             } else {
                 $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-                echo json_encode($unsuccess);
+                json_encode($unsuccess);
             }
         } else {
             $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-            echo json_encode($unsuccess);
+            json_encode($unsuccess);
         }
     } else {
         $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-        echo json_encode($unsuccess);
+        json_encode($unsuccess);
     }
 }
 
