@@ -69,11 +69,13 @@ function congrea_course_teacher_list() {
  * @param string $audiostatus
  * @param string $videostatus
  * @param string $recordingstatus
+ * @param boolean $joinbutton
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus, $recordingstatus = false) {
+            $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
+            $recordingstatus = false, $joinbutton = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
@@ -97,8 +99,10 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recordingstatus));
-    $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-         'value' => get_string('joinroom', 'congrea')));
+    if (!$joinbutton) {
+        $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                    'value' => get_string('joinroom', 'congrea')));
+    }
     $form .= html_writer::end_tag('form');
     return $form;
 }
@@ -156,7 +160,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $enablerecording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
-         'value' => '', 'title' => 'Play'));
+                    'value' => '', 'title' => 'Play'));
     $form .= html_writer::end_tag('form');
     return $form;
 }
@@ -423,7 +427,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
                 if ($userdata) {
                     $user = $userdata->id;
                     $teacherid = get_role($courseid, $userdata->id);
-                    if (!$teacherid) {
+                    if (!$teacherid) { // Ignore Teacher.
                         $userlist[] = $user;
                     }
                 }
@@ -432,15 +436,15 @@ function congrea_get_enrolled_users($cmid, $courseid) {
                 return $userlist; // Return list of enrolled users.
             } else {
                 $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-                echo json_encode($unsuccess);
+                json_encode($unsuccess);
             }
         } else {
             $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-            echo json_encode($unsuccess);
+            json_encode($unsuccess);
         }
     } else {
         $unsuccess = array('status' => '0', 'code' => 200, 'message' => 'Failed');
-        echo json_encode($unsuccess);
+        json_encode($unsuccess);
     }
 }
 
@@ -460,14 +464,12 @@ function get_role($courseid, $userid) {
     foreach ($roles as $role) {
         $rolestr[] = role_get_name($role, $context);
     }
-    if (!in_array("Student", $rolestr)) {
+    if (!in_array("Student", $rolestr)) { // TODO.
         return $userid;
     } else {
         return false;
     }
-
 }
-
 /**
  * Get total session time.
  * serving for virtual class
@@ -481,9 +483,11 @@ function get_total_session_time($attendance) {
             $connect = json_decode($data->connect);
             $disconnect = json_decode($data->disconnect);
             if (!empty($connect)) {
+                sort($connect);
                 $connecttime[] = current($connect);
             }
             if (!empty($disconnect)) {
+                sort($disconnect);
                 $disconnecttime[] = end($disconnect);
             }
         }
@@ -553,10 +557,12 @@ function calctime($connect, $disconnect, $x, $y) {
             }
             if (empty($disconnect[$i])) { // If disconnect pair is empty.
                 // TODO handle this case
-                $disconnect[$i] = $y; // max value of session.
+                $disconnect[$i] = $y; // Max value of session.
             }
             if ($disconnect[$i] < $connect[$i]) { // If connect larger than disconnect.
-                $disconnect[$i] = $connect[$i + 1];
+                if (!empty($connect[$i + 1])) {
+                    $disconnect[$i] = $connect[$i + 1];
+                }
             }
 
             $lastcon = $connect[$i];
@@ -602,7 +608,7 @@ function calc_student_time($connect, $disconnect) {
     $sum = 0;
     for ($i = 0; $i < count($connect); $i++) {
         if ($disconnect[$i] >= $connect[$i]) {
-            $studenttime = (abs($disconnect[$i] - $connect[$i]) / 60);
+            $studenttime = round((abs($disconnect[$i] - $connect[$i]) / 60));
             $sum = $studenttime + $sum;
         }
     }
