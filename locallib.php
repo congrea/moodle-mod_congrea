@@ -465,9 +465,7 @@ function get_role($courseid, $userid) {
     } else {
         return false;
     }
-
 }
-
 /**
  * Get total session time.
  * serving for virtual class
