@@ -116,8 +116,8 @@ $videostatus = $congrea->video;
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
 $recording = $congrea->cgrecording;
-if (has_capability('mod/congrea:addinstance', $context) &&
-        ($USER->id == $congrea->moderatorid)) {
+// Dorecording have manager and teacher and nonediting teacher Permission.
+if (has_capability('mod/congrea:dorecording', $context)) {
     $role = 't';
 }
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {

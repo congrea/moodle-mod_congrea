@@ -423,7 +423,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
                 if ($userdata) {
                     $user = $userdata->id;
                     $teacherid = get_role($courseid, $userdata->id);
-                    if (!$teacherid) {
+                    if (!$teacherid) { // Ignore Teacher.
                         $userlist[] = $user;
                     }
                 }
