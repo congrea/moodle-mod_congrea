@@ -286,7 +286,7 @@ foreach ($recording->Items as $record) {
 // Student Report according to session.
 if ($session) {
     $table = new html_table();
-    $table->head = array('Student Name', 'Attandence', 'Presence');
+    $table->head = array('Student Name', 'Attendance', 'Presence');
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
