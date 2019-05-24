@@ -263,7 +263,7 @@ foreach ($recording->Items as $record) {
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
     if (!get_role($COURSE->id, $USER->id)) { // Report for student.
-        $table->head = array('Filename', 'Time created', 'Action', "Attandence");
+        $table->head = array('Filename', 'Time created', 'Action', "Attendance");
         $table->attributes['class'] = 'admintable generaltable studentEnd';
         $apiurl = 'https://api.congrea.net/data/analytics/attendance';
         $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
@@ -309,7 +309,7 @@ if ($session) {
             }
             $table->data[] = array($username, date('y-m-d h:i:s', $studentsstatus->starttime),
                 date('y-m-d h:i:s', $studentsstatus->endtime), $studentsstatus->totalspenttime . ' ' . 'minutes',
-                round($presence) . '%', '<p style="color:green;">P</p>');
+                round($presence) . '%', '<p style="color:green;"><b>P</b></p>');
         }
         if (!empty($attendence)) {
             if (!empty($enrolusers)) {
@@ -324,7 +324,7 @@ if ($session) {
                 } else {
                     $username = get_string('nouser', 'mod_congrea');
                 }
-                $table->data[] = array($username, '-', '-', '-', '-', '<p style="color:red;">A</p>');
+                $table->data[] = array($username, '-', '-', '-', '-', '<p style="color:red;"><b>A</b></p>');
             }
         } else {
             echo get_string('absentuser', 'mod_congrea');
