@@ -289,7 +289,7 @@ if ($session) {
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
     if (!empty($attendencestatus) and ! empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
-            if (!get_role($COURSE->id, $USER->id)) {
+            if (get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher.
                 continue;
             }
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
