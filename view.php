@@ -279,7 +279,7 @@ foreach ($recording->Items as $record) {
 // Student Report according to session.
 if ($session) {
     $table = new html_table();
-    $table->head = array('Student Name', 'Start Time', 'Exit Time', 'Duration Attended', 'Presence', 'Attendance');
+    $table->head = array('Name', 'Start Time', 'Exit Time', 'Duration Attended', 'Presence', 'Attendance');
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
@@ -289,14 +289,11 @@ if ($session) {
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
     if (!empty($attendencestatus) and ! empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
-            if (get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher.
-                continue;
-            }
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
                 $attendence[] = $sattendence->uid; // Collect present user id for calculate absent user.
                 $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
                 if (!empty($studentname)) {
-                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                    $username = $studentname->firstname . ' ' . $studentname->lastname; // Todo-for function.
                 } else {
                     $username = get_string('nouser', 'mod_congrea');
                 }
@@ -322,7 +319,11 @@ if ($session) {
             }
             foreach ($result as $data) {
                 $studentname = $DB->get_record('user', array('id' => $data));
-                $username = $studentname->firstname . ' ' . $studentname->lastname;
+                if (!empty($studentname)) {
+                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                } else {
+                    $username = get_string('nouser', 'mod_congrea');
+                }
                 $table->data[] = array($username, '-', '-', '-', '-', '<p style="color:red;">A</p>');
             }
         } else {

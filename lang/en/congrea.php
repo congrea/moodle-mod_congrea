@@ -161,5 +161,5 @@ $string['sessionareport'] = 'Session Attendance Report';
 $string['notenrol'] = 'Not Enrolled any user';
 $string['absentuser'] = '<b> Not any users are Present <b>';
 $string['absentsessionuser'] = '<b> Not any user present in this session.<b>';
-$string['nouser'] = 'not found username';
+$string['nouser'] = 'User name not found';
 
