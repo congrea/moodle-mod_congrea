@@ -57,7 +57,7 @@ $PAGE->set_context($context);
 $key = get_config('mod_congrea', 'cgapi');
 $secret = get_config('mod_congrea', 'cgsecretpassword');
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-
+$room = '82_2143';
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Event log.
 $event = \mod_congrea\event\course_module_viewed::create(array(
@@ -290,7 +290,7 @@ if ($session) {
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
     if (!empty($attendencestatus) and ! empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
-            if ($congrea->moderatorid == $sattendence->uid) { // Ignore Presenter.
+            if (!get_role($COURSE->id, $USER->id)) {
                 continue;
             }
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.

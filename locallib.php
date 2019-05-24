@@ -426,7 +426,10 @@ function congrea_get_enrolled_users($cmid, $courseid) {
             foreach ($list as $userdata) {
                 if ($userdata) {
                     $user = $userdata->id;
-                    $userlist[] = $user;
+                    $teacherid = get_role($courseid, $userdata->id);
+                    if (!$teacherid) { // Ignore Teacher.
+                        $userlist[] = $user;
+                    }
                 }
             }
             if (!empty($userlist)) {
