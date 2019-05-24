@@ -60,7 +60,6 @@ $secret = $cgsecret;
 $recordingstatus = !empty($recording) ? $recording : 0;
 $userrole = !empty($role) ? $role : 's';
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$room = '82_2143';
 $postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole, 'room' => $room);
 $postdata = json_encode($postdata);
 $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);

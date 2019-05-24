@@ -57,7 +57,6 @@ $PAGE->set_context($context);
 $key = get_config('mod_congrea', 'cgapi');
 $secret = get_config('mod_congrea', 'cgsecretpassword');
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$room = '82_2143';
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Event log.
 $event = \mod_congrea\event\course_module_viewed::create(array(
