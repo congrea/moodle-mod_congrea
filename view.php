@@ -58,7 +58,6 @@ $key = get_config('mod_congrea', 'cgapi');
 $secret = get_config('mod_congrea', 'cgsecretpassword');
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
 
-
 echo '<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ijhofagnokdeoghaohcekchijfeffbjl">';
 // Event log.
 $event = \mod_congrea\event\course_module_viewed::create(array(
@@ -178,7 +177,6 @@ $fromcms = true; // Identify congrea is from cms.
 $upload = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id . "&methodname=record_file_save";
 $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
-$room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
 $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaOnlinePopup');
 $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaPlayRecording');
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
@@ -226,7 +224,7 @@ if (!empty($recording->Items) and ! $session) {
     echo $OUTPUT->heading('There are no recording to show');
 }
 $table = new html_table();
-$table->head = array('Filename', 'Time created', 'Action', "");
+$table->head = array('Filename', 'Time created', 'Action');
 $table->colclasses = array('centeralign', 'centeralign');
 $table->attributes['class'] = 'admintable generaltable';
 $table->id = "recorded_data";
@@ -248,7 +246,7 @@ foreach ($recording->Items as $record) {
                                                 $userpicturesrc, $licensekey, $id,
                                                 $vcsid, $record->session, $congrea->cgrecording);
     }
-    // Attendance button
+    // Attendance button.
     if (has_capability('mod/congrea:recordingdelete', $context)) { // TODO.
         $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('session' => $record->session)),
@@ -257,11 +255,7 @@ foreach ($recording->Items as $record) {
     }
     // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context)) {
-        if ($CFG->version < 2017051500) { // Compare to moodle33 vesion.
-            $imageurl = $OUTPUT->pix_url('t/delete'); // Only support below moodle33 version.
-        } else {
-            $imageurl = $OUTPUT->image_url('t/delete'); // Support moodle33 above.
-        }
+        $imageurl = "$CFG->wwwroot/mod/congrea/pix/delete.png";
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->session,
                         'recname' => $record->name, 'sesskey' => sesskey())),
                          html_writer::empty_tag('img', array('src' => $imageurl,
@@ -286,44 +280,57 @@ foreach ($recording->Items as $record) {
 // Student Report according to session.
 if ($session) {
     $table = new html_table();
-    $table->head = array('Student Name', 'Attendance', 'Presence');
+    $table->head = array('Student Name', 'Start Time', 'Exit Time', 'Duration Attended', 'Presence', 'Attendance');
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
-    $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room);
+    $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room); // TODO.
     $attendencestatus = json_decode($data);
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
-    if (!empty($attendencestatus)) {
+    if (!empty($attendencestatus) and ! empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
-            if (!get_role($COURSE->id, $sattendence->uid)) { // Ignore Teacher.
-                if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
-                    $attendence[] = $sattendence->uid;
-                    $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
-                    $username = $studentname->firstname . ' ' . $studentname->lastname;
-                    $connect = json_decode($sattendence->connect);
-                    $disconnect = json_decode($sattendence->disconnect);
-                    if (!empty($sessionstatus)) {
-                        $studenttotaltime = calctime($connect, $disconnect,
-                        $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
-                    }
-                    if (!empty($studenttotaltime) and $sessionstatus->totalsessiontime >= $studenttotaltime) {
-                        $presence = ($studenttotaltime * 100) / $sessionstatus->totalsessiontime;
-                    } else {
-                        $presence = '-';
-                    }
-                }
-                $table->data[] = array($username, '<p style="color:green;">P</p>', round($presence) . '%');
+            if ($congrea->moderatorid == $sattendence->uid) { // Ignore Presenter.
+                continue;
             }
+            if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
+                $attendence[] = $sattendence->uid; // Collect present user id for calculate absent user.
+                $studentname = $DB->get_record('user', array('id' => $sattendence->uid));
+                if (!empty($studentname)) {
+                    $username = $studentname->firstname . ' ' . $studentname->lastname;
+                } else {
+                    $username = get_string('nouser', 'mod_congrea');
+                }
+                $connect = json_decode($sattendence->connect);
+                $disconnect = json_decode($sattendence->disconnect);
+                $studentsstatus = calctime($connect, $disconnect, $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                if (!empty($studentsstatus->totalspenttime) and
+                        $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime) {
+                    $presence = ($studentsstatus->totalspenttime * 100) / $sessionstatus->totalsessiontime;
+                } else {
+                    $presence = '-';
+                }
+            }
+            $table->data[] = array($username, date('y-m-d h:i:s', $studentsstatus->starttime),
+                date('y-m-d h:i:s', $studentsstatus->endtime), $studentsstatus->totalspenttime . ' ' . 'minutes',
+                round($presence) . '%', '<p style="color:green;">P</p>');
         }
-        if (!empty($attendence) and ! empty($enrolusers)) {
-            $result = array_diff($enrolusers, $attendence);
+        if (!empty($attendence)) {
+            if (!empty($enrolusers)) {
+                $result = array_diff($enrolusers, $attendence);
+            } else {
+                echo get_string('notenrol', 'mod_congrea');
+            }
             foreach ($result as $data) {
                 $studentname = $DB->get_record('user', array('id' => $data));
                 $username = $studentname->firstname . ' ' . $studentname->lastname;
-                $table->data[] = array($username, '<p style="color:red;">A</p>', '-');
+                $table->data[] = array($username, '-', '-', '-', '-', '<p style="color:red;">A</p>');
             }
+        } else {
+            echo get_string('absentuser', 'mod_congrea');
         }
+    } else {
+        echo get_string('absentsessionuser', 'mod_congrea');
     }
 }
 
@@ -333,12 +340,13 @@ if (!empty($table->data) and !$session) {
     echo html_writer::end_tag('div');
 }
 
-if (!empty($table) and $session) {
+if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
     $upsentuser = $countenroluser - $presentnroluser;
-    $present = '<b> Students Absent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
+    $present = '<b> Session Duration: </b>' . $sessionstatus->totalsessiontime.' '.
+    'minutes'.'</br>'.'<b> Students Absent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');

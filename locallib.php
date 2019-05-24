@@ -426,10 +426,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
             foreach ($list as $userdata) {
                 if ($userdata) {
                     $user = $userdata->id;
-                    $teacherid = get_role($courseid, $userdata->id);
-                    if (!$teacherid) { // Ignore Teacher.
-                        $userlist[] = $user;
-                    }
+                    $userlist[] = $user;
                 }
             }
             if (!empty($userlist)) {
@@ -497,7 +494,7 @@ function get_total_session_time($attendance) {
         $sessionendtime = max($disconnecttime);
         $totaltime = round(($sessionendtime - $sessionstarttime) / 60); // Total session time in minutes.
         return (object) array('totalsessiontime' => $totaltime,
-                'sessionstarttime' => $sessionstarttime, 'sessionendtime' => $sessionendtime);
+                'sessionstarttime' => $sessionstarttime, 'sessionendtime' => $sessionendtime); // TODO.
     }
 }
 
@@ -592,7 +589,10 @@ function calctime($connect, $disconnect, $x, $y) {
     $connect = array_values($connect);
     $disconnect = array_values($disconnect);
     if (!empty($connect) and ! empty($disconnect)) {
-        return calc_student_time($connect, $disconnect);
+        $starttime = min($connect); // Student start time.
+        $endtime = max($disconnect); // Student exit time.
+        $totaltime = calc_student_time($connect, $disconnect); // Total time of student.
+        return (object) array('totalspenttime' => $totaltime, 'starttime' => $starttime, 'endtime' => $endtime);
     }
 }
 

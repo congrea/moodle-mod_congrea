@@ -33,17 +33,6 @@
 #page-mod-congrea-quizreport .generaltable td.cell.c5 {
     text-align: center;
 }
-#page-mod-congrea-view input.playbtn {
-    background: transparent url([[pix:congrea|play]]) no-repeat top left;
-    background-size: 17px;
-    border: none;
-    padding-top: 1px;
-    float: left;
-    margin-right: 5px;
-    box-shadow: unset;
-    height: 24px;
-    margin-top: 3px;
-}
 #page-mod-congrea-view .navbar .popover-region-toggle img.icon {
     padding: 12px 10px;
 }
@@ -69,8 +58,43 @@ table.studentEnd tbody tr td.c3 {
 table.studentEnd tbody tr td.c4 p {
     padding-left: 15px;
 }
+#page-mod-congrea-view input.playbtn {
+    background: transparent url([[pix:congrea|play]]) no-repeat top left;
+    background-size: 16px;
+    border: none;
+    padding-top: 1px;
+    float: left;
+    margin-right: 10px;
+    box-shadow: unset;
+    height: 20px;
+    margin-top: 3px;
+    opacity: .6;
+}
+#page-mod-congrea-view img.attend {
+    width: 17px;
+    opacity: .6;
+}
+table#recorded_data a[title="Delete"] img.iconsmall {
+    padding: 0;
+    width: 20px;
+    height: 20px ;
+    margin-left: 10px;
+    opacity: .6;
+}
+#page-mod-congrea-quizreport .wrapper-record-list .generaltable td.cell.c4, .wrapper-record-list .generaltable thead th.header.c4 {
+    text-align: left;
+}
+#page-mod-congrea-view .wrapper-record-list .generaltable .lastcol {
+    text-align: center;
+}
+#page-mod-congrea-view table.studentEnd tbody tr td.c4 p {
+    padding-left: 0;
+}
 @media (max-width: 1100px) {
     #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
         max-width: 264px;
+    }
+    #page-mod-congrea-view .wrapper-record-list table td.cell.c2 {
+        width: 92px;
     }
 }
