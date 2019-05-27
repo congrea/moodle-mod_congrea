@@ -158,4 +158,8 @@ $string['cgrecordingd'] = 'If enabled, you can choose to allow automatic session
 $string['congrearecseeting'] = 'Congrea recording';
 $string['attendencereport'] = 'Attendance report';
 $string['sessionareport'] = 'Session Attendance Report';
+$string['notenrol'] = 'No any user is enrolled in this course';
+$string['absentuser'] = 'No any user present in this session';
+$string['absentsessionuser'] = 'No any user present in this session';
+$string['nouser'] = 'User name not found';
 
