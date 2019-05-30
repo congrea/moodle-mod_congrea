@@ -78,7 +78,6 @@ function congrea_supports($feature) {
  */
 function congrea_add_instance($congrea) {
     global $DB;
-
     $congrea->timecreated = time();
     $vclass = $DB->insert_record('congrea', $congrea);
     $congrea->id = $vclass;

@@ -71,7 +71,7 @@ $event->trigger();
 // Mark viewed by user (if required).
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-
+//echo $congrea->disableuserlist; exit;
 // Output starts here.
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
@@ -114,7 +114,7 @@ $videostatus = $congrea->video;
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
 $recording = $congrea->cgrecording;
-
+//echo $congrea->disableraisehand; exit;
 // Dorecording have manager and teacher and nonediting teacher Permission.
 if (has_capability('mod/congrea:addinstance', $context) &&
         ($USER->id == $congrea->moderatorid)) {
@@ -181,6 +181,76 @@ $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaPlayRecording');
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = true;
 }
+
+if (get_config('mod_congrea', 'allowoverride')) { // If override on.
+    // General Settings.
+    $allowoverride = get_config('mod_congrea', 'allowoverride');
+    $disableattendeeav = $congrea->disableattendeeav;
+    $disableattendeepc = $congrea->disableattendeepc;
+    $disableattendeegc = $congrea->disableattendeegc;
+    $disableraisehand = $congrea->disableraisehand;
+    $disableuserlist = $congrea->disableuserlist;
+    // Recording Settings.
+    if ($congrea->enablerecording) { // If enable recording.
+        $enablerecording = $congrea->enablerecording;
+        $recallowpresentoravcontrol = $congrea->recallowpresentoravcontrol;
+        $showpresentorrecordingstatus = $congrea->showpresentorrecordingstatus;
+        $recdisableattendeeav = $congrea->recdisableattendeeav;
+        $recallowattendeeavcontrol = $congrea->recallowattendeeavcontrol;
+        $showattendeerecordingstatus = $congrea->showattendeerecordingstatus;
+        $trimrecordings = $congrea->trimrecordings;
+    } else {
+        $enablerecording = 0;
+        $recallowpresentoravcontrol = 0;
+        $showpresentorrecordingstatus = 0;
+        $recdisableattendeeav = 0;
+        $recallowattendeeavcontrol = 0;
+        $showattendeerecordingstatus = 0;
+        $trimrecordings = 0;
+    }
+} else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
+    // General Settings.
+    $allowoverride = 0; 
+    $disableattendeeav = get_config('mod_congrea', 'disableattendeeav');
+    $disableattendeepc = get_config('mod_congrea', 'disableattendeepc');
+    $disableattendeegc = get_config('mod_congrea', 'disableattendeegc');
+    $disableraisehand = get_config('mod_congrea', 'disableraisehand');
+    $disableuserlist = get_config('mod_congrea', 'disableuserlist');
+    if(get_config('mod_congrea', 'enablerecording')) {
+        $enablerecording = get_config('mod_congrea', 'enablerecording');
+        $recallowpresentoravcontrol = get_config('mod_congrea', 'recAllowpresentorAVcontrol');
+        $showpresentorrecordingstatus = get_config('mod_congrea', 'recShowPresentorRecordingStatus');
+        $recdisableattendeeav = get_config('mod_congrea', 'recDisableAttendeeAV');
+        $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
+        $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
+        $trimrecordings = get_config('mod_congrea', 'trimRecordings');
+    } else {        
+        $enablerecording = 0;
+        $recallowpresentoravcontrol = 0;
+        $showpresentorrecordingstatus = 0;
+        $recdisableattendeeav = 0;
+        $recallowattendeeavcontrol = 0;
+        $showattendeerecordingstatus = 0;
+        $trimrecordings = 0;
+    }
+}
+
+$variableobject = (object) array('allowoverride' => $allowoverride,
+            'disableattendeeav' => $disableattendeeav,
+            'disableattendeepc' => $disableattendeepc,
+            'disableattendeegc' => $disableattendeegc,
+            'disableraisehand' => $disableraisehand,
+            'disableuserlist' => $disableuserlist,
+            'enablerecording' => $enablerecording,
+            'recallowpresentoravcontrol' => $recallowpresentoravcontrol,
+            'showpresentorrecordingstatus' => $showpresentorrecordingstatus,
+            'recdisableattendeeav' => $recdisableattendeeav,
+            'recallowattendeeavcontrol' => $recallowattendeeavcontrol,
+            'showattendeerecordingstatus' => $showattendeerecordingstatus,
+            'trimrecordings' => $trimrecordings,
+            'x5' => 0, 'x6' => 0, 'x7' => 0
+);
+$hexcode = settingsToHex($variableobject);
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $murl = parse_url($CFG->wwwroot);
@@ -199,7 +269,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
                                     $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
-                                    $congrea->cgrecording, $joinbutton);
+                                    $congrea->cgrecording, $hexcode, $joinbutton);
     echo $form;
 } else {
     // Congrea closed.
@@ -243,7 +313,7 @@ foreach ($recording->Items as $record) {
                                                 $rid, $room, $upload, $down,
                                                 $info, $cgcolor, $webapi,
                                                 $userpicturesrc, $licensekey, $id,
-                                                $vcsid, $record->session, $congrea->cgrecording);
+                                                $vcsid, $record->session, $congrea->cgrecording, $hexcode);
     }
     // Attendance button.
     if (has_capability('mod/congrea:recordingdelete', $context)) { // TODO.
