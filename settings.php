@@ -49,6 +49,9 @@ if ($ADMIN->fulltree) {
     // Congrea disableattendeeav default off
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeeav', get_string('disableattendeeav', 'mod_congrea'),
                                                       get_string('disableattendeeav_help', 'mod_congrea'), 0));
+    // Congrea disableattendee video default off
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeevideo', get_string('disableattendeevideo', 'mod_congrea'),
+                                                      get_string('disableattendeevideo_help', 'mod_congrea'), 0));
     // Congrea disableattendeepc default off
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeepc', get_string('disableattendeepc', 'mod_congrea'),
                                                       get_string('disableattendeepc_help', 'mod_congrea'), 0));
@@ -85,6 +88,5 @@ if ($ADMIN->fulltree) {
                                                         get_string('showAttendeeRecordingStatus_help', 'congrea'), 0));
     // Congrea trimRecordings default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings', get_string('trimRecordings', 'congrea'),
-                                                        get_string('trimRecordings_help', 'congrea'), 1));
-      
+                                                        get_string('trimRecordings_help', 'congrea'), 1));      
 }

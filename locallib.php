@@ -76,7 +76,7 @@ function congrea_course_teacher_list() {
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
-            $recordingstatus = false, $hexcode, $joinbutton = false) {
+            $recording = false, $hexcode, $joinbutton = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
@@ -99,7 +99,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recordingstatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     if (!$joinbutton) {
         $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
@@ -135,7 +135,7 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false, $enablerecording = false, $hexcode) {
+            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false, $recording = false, $hexcode) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'playRec'.$vcsid, 'class' => 'playAct',
@@ -159,7 +159,7 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $enablerecording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
@@ -627,21 +627,21 @@ function calc_student_time($connect, $disconnect) {
 function settingsToHex($variablesobject) {
     $localSettings = array();
     $localSettings[0] = $variablesobject->allowoverride;
-    $localSettings[1] = $variablesobject->disableattendeeav;
-    $localSettings[2] = $variablesobject->disableattendeepc;
-    $localSettings[3] = $variablesobject->disableattendeegc;
-    $localSettings[4] = $variablesobject->disableraisehand;
-    $localSettings[5] = $variablesobject->disableuserlist;
-    $localSettings[6] = $variablesobject->enablerecording;
-    $localSettings[7] = $variablesobject->recallowpresentoravcontrol;
-    $localSettings[8] = $variablesobject->showpresentorrecordingstatus;
-    $localSettings[9] = $variablesobject->recdisableattendeeav;
-    $localSettings[10] = $variablesobject->recallowattendeeavcontrol;
-    $localSettings[11] = $variablesobject->showattendeerecordingstatus;
-    $localSettings[12] = $variablesobject->trimrecordings;
-    $localSettings[13] = $variablesobject->x5;
-    $localSettings[14] = $variablesobject->x6;
-    $localSettings[15] = $variablesobject->x7;
+    $localSettings[1] = $variablesobject->disableattendeeaudio;
+    $localSettings[2] = $variablesobject->disableattendeevideo;
+    $localSettings[3] = $variablesobject->disableattendeepc;
+    $localSettings[4] = $variablesobject->disableattendeegc;
+    $localSettings[5] = $variablesobject->disableraisehand;
+    $localSettings[6] = $variablesobject->disableuserlist;
+    $localSettings[7] = $variablesobject->enablerecording;
+    $localSettings[8] = $variablesobject->recallowpresentoravcontrol;
+    $localSettings[9] = $variablesobject->showpresentorrecordingstatus;
+    $localSettings[10] = $variablesobject->recdisableattendeeav;
+    $localSettings[11] = $variablesobject->recallowattendeeavcontrol;
+    $localSettings[12] = $variablesobject->showattendeerecordingstatus;
+    $localSettings[13] = $variablesobject->trimrecordings;
+    $localSettings[14] = $variablesobject->x5;
+    $localSettings[15] = $variablesobject->x6;
     return binaryToHex(join('', $localSettings));
 }
 
@@ -685,7 +685,7 @@ function binaryToHex($s) {
             $accum = $accum * 2 + intval($s[$k], 10);
         }
         // Three bits, value cannot exceed 2^3 - 1 = 7, just convert.
-        $ret = strval($accum) . $ret;
+        $ret = strval($accum) . $ret; // todo.
     }
     return $ret;
 }
