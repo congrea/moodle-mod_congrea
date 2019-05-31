@@ -60,7 +60,8 @@ $secret = $cgsecret;
 $recording = $recordingstatus;
 $userrole = !empty($role) ? $role : 's';
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole, 'room' => $room, 'recording' => $recording);
+$postdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $userrole,
+            'room' => $room, 'recording' => $recording);
 $postdata = json_encode($postdata);
 $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
 if (!$rid = json_decode($rid)) {

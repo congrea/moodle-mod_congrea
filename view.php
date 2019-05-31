@@ -118,7 +118,6 @@ if ($congrea->enablerecording) {
 } else {
     $recordingstatus = false;
 }
-//echo $congrea->disableraisehand; exit;
 // Dorecording have manager and teacher and nonediting teacher Permission.
 if (has_capability('mod/congrea:addinstance', $context) &&
         ($USER->id == $congrea->moderatorid)) {
@@ -215,7 +214,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     }
 } else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
     // General Settings.
-    $allowoverride = 0; 
+    $allowoverride = 0;
     $disableattendeeav = get_config('mod_congrea', 'disableattendeeav');
     $disableattendeevideo = get_config('mod_congrea', 'disableattendeevideo');
     $disableattendeepc = get_config('mod_congrea', 'disableattendeepc');
@@ -265,7 +264,7 @@ $variableobject = (object) array('allowoverride' => $allowoverride,
             'trimrecordings' => $trimrecordings,
             'x5' => 0, 'x6' => 0
 );
-$hexcode = settingstohex($variableobject);
+$hexcode = settingstohex($variableobject); // Todo- for validation.
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $murl = parse_url($CFG->wwwroot);
@@ -321,7 +320,7 @@ foreach ($recording->Items as $record) {
     $row = array();
     $arow = array();
     $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
-    $row[] = userdate($record->time / 1000); // Todo: for exact time.
+    $row[] = userdate($record->time / 1000); // Todo.
     $vcsid = $record->key_room; // Todo.
     if (has_capability('mod/congrea:playrecording', $context)) {
         $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role,

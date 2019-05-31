@@ -68,7 +68,7 @@ function congrea_course_teacher_list() {
  * @param string $licensekey
  * @param string $audiostatus
  * @param string $videostatus
- * @param string $recordingstatus
+ * @param string $recording
  * @param string $hexcode
  * @param boolean $joinbutton
  * @return string
@@ -130,7 +130,8 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param int $id
  * @param int $vcsid
  * @param string $recordingsession
- * @param string $enablerecording
+ * @param string $recording
+ * @param string $hexcode
  * @return string
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
@@ -652,7 +653,6 @@ function settingstohex($variablesobject) {
  * @param object $s
  * @return string.
  */
-
 function binarytohex($s) {
     $i;
     $k;
@@ -667,7 +667,7 @@ function binarytohex($s) {
                 return false;
             }
             // Compute the length 4 substring.
-            $accum = $accum * 2 + intval($part[$k], 10); // ParseInt. 
+            $accum = $accum * 2 + intval($part[$k], 10); // Parseint.
         }
         if ($accum >= 10) {
             // A to F.
