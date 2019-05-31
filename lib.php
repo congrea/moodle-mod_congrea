@@ -134,7 +134,6 @@ function congrea_update_instance($congrea, $mform = null) {
     if ($congrea->recallowattendeeavcontrol) {
         $congrea->showattendeerecordingstatus = 1;
     }
-    //echo $congrea->recallowpresentoravcontrol; exit;
     $status = $DB->update_record('congrea', $congrea);
     mod_congrea_update_calendar($congrea);
     return $status;

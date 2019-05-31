@@ -265,7 +265,7 @@ $variableobject = (object) array('allowoverride' => $allowoverride,
             'trimrecordings' => $trimrecordings,
             'x5' => 0, 'x6' => 0
 );
-$hexcode = settingsToHex($variableobject);
+$hexcode = settingstohex($variableobject);
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $murl = parse_url($CFG->wwwroot);

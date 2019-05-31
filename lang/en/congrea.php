@@ -189,4 +189,4 @@ $string['recAllowattendeeAVcontrol_help'] = 'Allow attendees to control A/V sett
 $string['showAttendeeRecordingStatus'] = 'Show Attendee RecordingStatus';
 $string['showAttendeeRecordingStatus_help'] = ' Show recording status to attendees';
 $string['trimRecordings'] = 'Trim Recordings';
-$string['trimRecordings_help'] = 'Trim recordings where A/V is marked off'; 
+$string['trimRecordings_help'] = 'Trim recordings where A/V is marked off';

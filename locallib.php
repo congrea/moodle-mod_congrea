@@ -624,25 +624,25 @@ function calc_student_time($connect, $disconnect) {
  * @param object $variablesobject
  * @return string.
  */
-function settingsToHex($variablesobject) {
-    $localSettings = array();
-    $localSettings[0] = $variablesobject->allowoverride;
-    $localSettings[1] = $variablesobject->disableattendeeaudio;
-    $localSettings[2] = $variablesobject->disableattendeevideo;
-    $localSettings[3] = $variablesobject->disableattendeepc;
-    $localSettings[4] = $variablesobject->disableattendeegc;
-    $localSettings[5] = $variablesobject->disableraisehand;
-    $localSettings[6] = $variablesobject->disableuserlist;
-    $localSettings[7] = $variablesobject->enablerecording;
-    $localSettings[8] = $variablesobject->recallowpresentoravcontrol;
-    $localSettings[9] = $variablesobject->showpresentorrecordingstatus;
-    $localSettings[10] = $variablesobject->recdisableattendeeav;
-    $localSettings[11] = $variablesobject->recallowattendeeavcontrol;
-    $localSettings[12] = $variablesobject->showattendeerecordingstatus;
-    $localSettings[13] = $variablesobject->trimrecordings;
-    $localSettings[14] = $variablesobject->x5;
-    $localSettings[15] = $variablesobject->x6;
-    return binaryToHex(join('', $localSettings));
+function settingstohex($variablesobject) {
+    $localsettings = array();
+    $localsettings[0] = $variablesobject->allowoverride;
+    $localsettings[1] = $variablesobject->disableattendeeaudio;
+    $localsettings[2] = $variablesobject->disableattendeevideo;
+    $localsettings[3] = $variablesobject->disableattendeepc;
+    $localsettings[4] = $variablesobject->disableattendeegc;
+    $localsettings[5] = $variablesobject->disableraisehand;
+    $localsettings[6] = $variablesobject->disableuserlist;
+    $localsettings[7] = $variablesobject->enablerecording;
+    $localsettings[8] = $variablesobject->recallowpresentoravcontrol;
+    $localsettings[9] = $variablesobject->showpresentorrecordingstatus;
+    $localsettings[10] = $variablesobject->recdisableattendeeav;
+    $localsettings[11] = $variablesobject->recallowattendeeavcontrol;
+    $localsettings[12] = $variablesobject->showattendeerecordingstatus;
+    $localsettings[13] = $variablesobject->trimrecordings;
+    $localsettings[14] = $variablesobject->x5;
+    $localsettings[15] = $variablesobject->x6;
+    return binarytohex(join('', $localsettings));
 }
 
 /**
@@ -653,7 +653,7 @@ function settingsToHex($variablesobject) {
  * @return string.
  */
 
-function binaryToHex($s) {
+function binarytohex($s) {
     $i;
     $k;
     $part;
