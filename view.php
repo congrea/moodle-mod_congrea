@@ -188,7 +188,7 @@ if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
 if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     // General Settings.
     $allowoverride = get_config('mod_congrea', 'allowoverride');
-    $disableattendeeav = $congrea->disableattendeeav; // Todo for rename.
+    $disableattendeeaudio = $congrea->disableattendeeaudio; // Todo for rename.
     $disableattendeevideo = $congrea->disableattendeevideo;
     $disableattendeepc = $congrea->disableattendeepc;
     $disableattendeegc = $congrea->disableattendeegc;
@@ -215,7 +215,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
 } else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
     // General Settings.
     $allowoverride = 0;
-    $disableattendeeav = get_config('mod_congrea', 'disableattendeeav');
+    $disableattendeeaudio = get_config('mod_congrea', 'disableattendeeaudio');
     $disableattendeevideo = get_config('mod_congrea', 'disableattendeevideo');
     $disableattendeepc = get_config('mod_congrea', 'disableattendeepc');
     $disableattendeegc = get_config('mod_congrea', 'disableattendeegc');
@@ -249,7 +249,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
 }
 
 $variableobject = (object) array('allowoverride' => $allowoverride,
-            'disableattendeeaudio' => $disableattendeeav,
+            'disableattendeeaudio' => $disableattendeeaudio,
             'disableattendeevideo' => $disableattendeevideo,
             'disableattendeepc' => $disableattendeepc,
             'disableattendeegc' => $disableattendeegc,

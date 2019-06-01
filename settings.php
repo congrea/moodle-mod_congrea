@@ -44,19 +44,22 @@ if ($ADMIN->fulltree) {
     // Congrea allowoverride default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/allowoverride', get_string('cgallowoverride', 'mod_congrea'),
                                                       get_string('cgallowoverride_help', 'mod_congrea'), 1));
-    // Congrea disableattendeeav default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeeav', get_string('disableattendeeav', 'mod_congrea'),
-                                                      get_string('disableattendeeav_help', 'mod_congrea'), 0));
-    // Congrea disableattendeepc default off.
+    // Congrea disable attendee audio default off.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeeaudio',
+    get_string('disableattendeeaudio', 'mod_congrea'), get_string('disableattendeeaudio_help', 'mod_congrea'), 0));
+    // Congrea disable attendee video default off.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeevideo',
+    get_string('disableattendeevideo', 'mod_congrea'), get_string('disableattendeevideo_help', 'mod_congrea'), 0));
+    // Congrea disable attendee pc default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeepc', get_string('disableattendeepc', 'mod_congrea'),
                                                       get_string('disableattendeepc_help', 'mod_congrea'), 0));
-    // Congrea disableattendeepc default off.
+    // Congrea disable attendee gc default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeegc', get_string('disableattendeegc', 'mod_congrea'),
                                                       get_string('disableattendeegc_help', 'mod_congrea'), 0));
-    // Congrea disableraisehand default on.
+    // Congrea disable raise hand default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableraisehand', get_string('disableraisehand', 'mod_congrea'),
                                                       get_string('disableraisehand_help', 'mod_congrea'), 1));
-    // Congrea disableuserlist default on.
+    // Congrea disable user list default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/disableuserlist', get_string('disableuserlist', 'mod_congrea'),
                                                       get_string('disableuserlist_help', 'mod_congrea'), 1));
     // Recordings Section.
