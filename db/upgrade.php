@@ -196,41 +196,41 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019042200, 'congrea');
     }
-    if ($oldversion < 2019060100) {
+    if ($oldversion < 2019060400) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
-        $field = new xmldb_field('disableattendeeaudio',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'pushtotalk');
+        $field = new xmldb_field('studentaudio',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'pushtotalk');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee video field Default 0.
-        $field = new xmldb_field('disableattendeevideo',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'disableattendeeaudio');
+        $field = new xmldb_field('studentvideo',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee private chat field Default 0.
-        $field = new xmldb_field('disableattendeepc',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'disableattendeevideo');
+        $field = new xmldb_field('studentpc',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee group chat field Default 0.
-        $field = new xmldb_field('disableattendeegc',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'disableattendeepc');
+        $field = new xmldb_field('studentgc',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentpc');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable raise hand field Default 1.
-        $field = new xmldb_field('disableraisehand',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'disableattendeegc');
+        $field = new xmldb_field('raisehand',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentgc');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable user list field Default 1.
-        $field = new xmldb_field('disableuserlist',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'disableraisehand');
+        $field = new xmldb_field('userlist',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'raisehand');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -253,8 +253,8 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         // Add rec disable attendee av field Default 0.
-        $field = new xmldb_field('recdisableattendeeav',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'showpresentorrecordingstatus');
+        $field = new xmldb_field('recattendeeav',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'showpresentorrecordingstatus');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -272,11 +272,11 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         // Add trim recordings field Default 0.
         $field = new xmldb_field('trimrecordings',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'showattendeerecordingstatus');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'showattendeerecordingstatus');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2019060100, 'congrea');
+        upgrade_mod_savepoint(true, 2019060400, 'congrea');
     }
     return true;
 }

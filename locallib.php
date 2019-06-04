@@ -628,16 +628,16 @@ function calc_student_time($connect, $disconnect) {
 function settingstohex($variablesobject) {
     $localsettings = array();
     $localsettings[0] = $variablesobject->allowoverride;
-    $localsettings[1] = $variablesobject->disableattendeeaudio;
-    $localsettings[2] = $variablesobject->disableattendeevideo;
-    $localsettings[3] = $variablesobject->disableattendeepc;
-    $localsettings[4] = $variablesobject->disableattendeegc;
-    $localsettings[5] = $variablesobject->disableraisehand;
-    $localsettings[6] = $variablesobject->disableuserlist;
+    $localsettings[1] = $variablesobject->studentaudio;
+    $localsettings[2] = $variablesobject->studentvideo;
+    $localsettings[3] = $variablesobject->studentpc;
+    $localsettings[4] = $variablesobject->studentgc;
+    $localsettings[5] = $variablesobject->raisehand;
+    $localsettings[6] = $variablesobject->userlist;
     $localsettings[7] = $variablesobject->enablerecording;
     $localsettings[8] = $variablesobject->recallowpresentoravcontrol;
     $localsettings[9] = $variablesobject->showpresentorrecordingstatus;
-    $localsettings[10] = $variablesobject->recdisableattendeeav;
+    $localsettings[10] = $variablesobject->recattendeeav;
     $localsettings[11] = $variablesobject->recallowattendeeavcontrol;
     $localsettings[12] = $variablesobject->showattendeerecordingstatus;
     $localsettings[13] = $variablesobject->trimrecordings;

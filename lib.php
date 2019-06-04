@@ -79,10 +79,10 @@ function congrea_supports($feature) {
 function congrea_add_instance($congrea) {
     global $DB;
     $congrea->timecreated = time();
-    if ($congrea->recallowpresentoravcontrol) {
+    if (!empty($congrea->recallowpresentoravcontrol)) {
         $congrea->showpresentorrecordingstatus = 1;
     }
-    if ($congrea->recallowattendeeavcontrol) {
+    if (!empty($congrea->recallowattendeeavcontrol)) {
         $congrea->showattendeerecordingstatus = 1;
     }
     $vclass = $DB->insert_record('congrea', $congrea);
@@ -128,10 +128,10 @@ function congrea_update_instance($congrea, $mform = null) {
     global $DB;
     $congrea->timemodified = time();
     $congrea->id = $congrea->instance;
-    if ($congrea->recallowpresentoravcontrol) {
+    if (!empty($congrea->recallowpresentoravcontrol)) {
         $congrea->showpresentorrecordingstatus = 1;
     }
-    if ($congrea->recallowattendeeavcontrol) {
+    if (!empty($congrea->recallowattendeeavcontrol)) {
         $congrea->showattendeerecordingstatus = 1;
     }
     $status = $DB->update_record('congrea', $congrea);

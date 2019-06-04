@@ -40,48 +40,59 @@ if ($ADMIN->fulltree) {
     $previewconfig = null;
     $settings->add(new admin_setting_configcolourpicker('mod_congrea/colorpicker',
             get_string('colorpicker', 'congrea'), get_string('colorpickerd', 'congrea'), '#021317', $previewconfig));
-    $settings->add(new admin_setting_heading('mod_congrea/general_settings', get_string('generalsection', 'congrea'), ''));
+    // Override Section.
+    $settings->add(new admin_setting_heading('mod_congrea/override_section', get_string('overrideheading', 'congrea'), ''));
     // Congrea allowoverride default on.
+    $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfiguration', 'congrea'),
+                                            get_string('congreaconfigurationd', 'congrea'), ''));
     $settings->add(new admin_setting_configcheckbox('mod_congrea/allowoverride', get_string('cgallowoverride', 'mod_congrea'),
                                                       get_string('cgallowoverride_help', 'mod_congrea'), 1));
+    // Student management.
+    $settings->add(new admin_setting_heading('mod_congrea/student_management', get_string('studentm', 'congrea'), ''));
     // Congrea disable attendee audio default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeeaudio',
-    get_string('disableattendeeaudio', 'mod_congrea'), get_string('disableattendeeaudio_help', 'mod_congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/studentaudio',
+    get_string('studentaudio', 'mod_congrea'), get_string('studentaudio_help', 'mod_congrea'), 1));
     // Congrea disable attendee video default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeevideo',
-    get_string('disableattendeevideo', 'mod_congrea'), get_string('disableattendeevideo_help', 'mod_congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/studentvideo',
+    get_string('studentvideo', 'mod_congrea'), get_string('studentvideo_help', 'mod_congrea'), 1));
     // Congrea disable attendee pc default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeepc', get_string('disableattendeepc', 'mod_congrea'),
-                                                      get_string('disableattendeepc_help', 'mod_congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/studentpc', get_string('studentpc', 'mod_congrea'),
+                                                      get_string('studentpc_help', 'mod_congrea'), 1));
     // Congrea disable attendee gc default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableattendeegc', get_string('disableattendeegc', 'mod_congrea'),
-                                                      get_string('disableattendeegc_help', 'mod_congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/studentgc', get_string('studentgc', 'mod_congrea'),
+                                                      get_string('studentgc_help', 'mod_congrea'), 1));
     // Congrea disable raise hand default on.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableraisehand', get_string('disableraisehand', 'mod_congrea'),
-                                                      get_string('disableraisehand_help', 'mod_congrea'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/raisehand', get_string('raisehand', 'mod_congrea'),
+                                                      get_string('raisehand_help', 'mod_congrea'), 1));
     // Congrea disable user list default on.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/disableuserlist', get_string('disableuserlist', 'mod_congrea'),
-                                                      get_string('disableuserlist_help', 'mod_congrea'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/userlist', get_string('userlist', 'mod_congrea'),
+                                                      get_string('userlist_help', 'mod_congrea'), 1));
     // Recordings Section.
     $settings->add(new admin_setting_heading('mod_congrea/recording_header', get_string('recordingsection', 'congrea'), ''));
     // Congrea recording default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/enablerecording', get_string('cgrecording', 'congrea'),
-                                                        get_string('cgrecordingd', 'congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/enablerecording', get_string('enablerecording', 'congrea'),
+                                                        get_string('enablerecording_help', 'congrea'), 0));
+    // Session recording for teacher.
+    $settings->add(new admin_setting_heading('mod_congrea/trecording_header',
+    get_string('trecordingsection', 'congrea'), ''));
     // Congrea recAllowpresentorAVcontrol default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/recAllowpresentorAVcontrol',
     get_string('recAllowpresentorAVcontrol', 'congrea'), get_string('recAllowpresentorAVcontrol_help', 'congrea'), 1));
     // Congrea recShowPresentorRecordingStatus default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/recShowPresentorRecordingStatus',
     get_string('recShowPresentorRecordingStatus', 'congrea'), get_string('recShowPresentorRecordingStatus_help', 'congrea'), 1));
+    // Student recording session.
+    $settings->add(new admin_setting_heading('mod_congrea/srecording_header', get_string('srecordingsection', 'congrea'), ''));
     // Congrea recDisableAttendeeAV default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/recDisableAttendeeAV',
-    get_string('recDisableAttendeeAV', 'congrea'), get_string('recDisableAttendeeAV_help', 'congrea'), 0));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/recattendeeav',
+    get_string('recattendeeav', 'congrea'), get_string('recattendeeav_help', 'congrea'), 1));
     // Congrea recAllowattendeeAVcontrol default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/recAllowattendeeAVcontrol',
     get_string('recAllowattendeeAVcontrol', 'congrea'), get_string('recAllowattendeeAVcontrol_help', 'congrea'), 0));
     // Congrea recAllowattendeeAVcontrol default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/showAttendeeRecordingStatus',
     get_string('showAttendeeRecordingStatus', 'congrea'), get_string('showAttendeeRecordingStatus_help', 'congrea'), 0));
+    $settings->add(new admin_setting_heading('mod_congrea/recordingcontrol_header', get_string('recordingcontrol', 'congrea'), ''));
     // Congrea trimRecordings default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings', get_string('trimRecordings', 'congrea'),
                                                         get_string('trimRecordings_help', 'congrea'), 1));

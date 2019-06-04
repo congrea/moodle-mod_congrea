@@ -188,18 +188,18 @@ if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
 if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     // General Settings.
     $allowoverride = get_config('mod_congrea', 'allowoverride');
-    $disableattendeeaudio = $congrea->disableattendeeaudio; // Todo for rename.
-    $disableattendeevideo = $congrea->disableattendeevideo;
-    $disableattendeepc = $congrea->disableattendeepc;
-    $disableattendeegc = $congrea->disableattendeegc;
-    $disableraisehand = $congrea->disableraisehand;
-    $disableuserlist = $congrea->disableuserlist;
+    $studentaudio = $congrea->studentaudio; // Todo for rename.
+    $studentvideo = $congrea->studentvideo;
+    $studentpc = $congrea->studentpc;
+    $studentgc = $congrea->studentgc;
+    $raisehand = $congrea->raisehand;
+    $userlist = $congrea->userlist;
     // Recording Settings.
     if ($congrea->enablerecording) { // If enable recording.
         $enablerecording = $congrea->enablerecording;
         $recallowpresentoravcontrol = $congrea->recallowpresentoravcontrol;
         $showpresentorrecordingstatus = $congrea->showpresentorrecordingstatus;
-        $recdisableattendeeav = $congrea->recdisableattendeeav;
+        $recattendeeav = $congrea->recattendeeav;
         $recallowattendeeavcontrol = $congrea->recallowattendeeavcontrol;
         $showattendeerecordingstatus = $congrea->showattendeerecordingstatus;
         $trimrecordings = $congrea->trimrecordings;
@@ -207,7 +207,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $enablerecording = 0;
         $recallowpresentoravcontrol = 0;
         $showpresentorrecordingstatus = 0;
-        $recdisableattendeeav = 0;
+        $recattendeeav = 0;
         $recallowattendeeavcontrol = 0;
         $showattendeerecordingstatus = 0;
         $trimrecordings = 0;
@@ -215,12 +215,12 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
 } else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
     // General Settings.
     $allowoverride = 0;
-    $disableattendeeaudio = get_config('mod_congrea', 'disableattendeeaudio');
-    $disableattendeevideo = get_config('mod_congrea', 'disableattendeevideo');
-    $disableattendeepc = get_config('mod_congrea', 'disableattendeepc');
-    $disableattendeegc = get_config('mod_congrea', 'disableattendeegc');
-    $disableraisehand = get_config('mod_congrea', 'disableraisehand');
-    $disableuserlist = get_config('mod_congrea', 'disableuserlist');
+    $studentaudio = get_config('mod_congrea', 'studentaudio');
+    $studentvideo = get_config('mod_congrea', 'studentvideo');
+    $studentpc = get_config('mod_congrea', 'studentpc');
+    $studentgc = get_config('mod_congrea', 'studentgc');
+    $raisehand = get_config('mod_congrea', 'raisehand');
+    $userlist = get_config('mod_congrea', 'userlist');
     if (get_config('mod_congrea', 'enablerecording')) {
         $enablerecording = get_config('mod_congrea', 'enablerecording');
         $recallowpresentoravcontrol = get_config('mod_congrea', 'recAllowpresentorAVcontrol');
@@ -229,7 +229,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         } else {
             $showpresentorrecordingstatus = get_config('mod_congrea', 'recShowPresentorRecordingStatus');
         }
-        $recdisableattendeeav = get_config('mod_congrea', 'recDisableAttendeeAV');
+        $recattendeeav = get_config('mod_congrea', 'recattendeeav');
         $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
         if ($recallowattendeeavcontrol) {
             $showattendeerecordingstatus = 1;
@@ -241,7 +241,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $enablerecording = 0;
         $recallowpresentoravcontrol = 0;
         $showpresentorrecordingstatus = 0;
-        $recdisableattendeeav = 0;
+        $recattendeeav = 0;
         $recallowattendeeavcontrol = 0;
         $showattendeerecordingstatus = 0;
         $trimrecordings = 0;
@@ -249,16 +249,16 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
 }
 
 $variableobject = (object) array('allowoverride' => $allowoverride,
-            'disableattendeeaudio' => $disableattendeeaudio,
-            'disableattendeevideo' => $disableattendeevideo,
-            'disableattendeepc' => $disableattendeepc,
-            'disableattendeegc' => $disableattendeegc,
-            'disableraisehand' => $disableraisehand,
-            'disableuserlist' => $disableuserlist,
+            'studentaudio' => $studentaudio,
+            'studentvideo' => $studentvideo,
+            'studentpc' => $studentpc,
+            'studentgc' => $studentgc,
+            'raisehand' => $raisehand,
+            'userlist' => $userlist,
             'enablerecording' => $enablerecording,
             'recallowpresentoravcontrol' => $recallowpresentoravcontrol,
             'showpresentorrecordingstatus' => $showpresentorrecordingstatus,
-            'recdisableattendeeav' => $recdisableattendeeav,
+            'recattendeeav' => $recattendeeav,
             'recallowattendeeavcontrol' => $recallowattendeeavcontrol,
             'showattendeerecordingstatus' => $showattendeerecordingstatus,
             'trimrecordings' => $trimrecordings,
@@ -387,6 +387,8 @@ if ($session) {
                 if (!empty($studentsstatus->totalspenttime) and
                         $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime) {
                     $presence = ($studentsstatus->totalspenttime * 100) / $sessionstatus->totalsessiontime;
+                } else if ($studentsstatus->totalspenttime > $sessionstatus->totalsessiontime) {
+                    $presence = 100; // Special case handle.
                 } else {
                     $presence = '-';
                 }
