@@ -236,7 +236,7 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         // Add enable recording field Default 0.
         $field = new xmldb_field('enablerecording',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'disableuserlist');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userlist');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -260,7 +260,7 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         // Add rec allow attendee av control field Default 0.
         $field = new xmldb_field('recallowattendeeavcontrol',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'recdisableattendeeav');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'recattendeeav');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
