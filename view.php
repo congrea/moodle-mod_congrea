@@ -264,6 +264,7 @@ $variableobject = (object) array('allowoverride' => $allowoverride,
             'trimrecordings' => $trimrecordings,
             'x5' => 0, 'x6' => 0
 );
+//echo '<pre>';print_r($variableobject); exit; 
 $hexcode = settingstohex($variableobject); // Todo- for validation.
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {

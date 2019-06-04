@@ -685,7 +685,7 @@ function binarytohex($s) {
             $accum = $accum * 2 + intval($s[$k], 10);
         }
         // Three bits, value cannot exceed 2^3 - 1 = 7, just convert.
-        $ret = strval($accum) . $ret; // todo.
+        $ret = strval($accum) . $ret; // Todo.
     }
     return $ret;
 }

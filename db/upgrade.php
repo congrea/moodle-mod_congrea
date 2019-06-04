@@ -200,7 +200,7 @@ function xmldb_congrea_upgrade($oldversion) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
         $field = new xmldb_field('studentaudio',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'pushtotalk');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
