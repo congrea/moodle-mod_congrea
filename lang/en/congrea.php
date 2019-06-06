@@ -178,7 +178,7 @@ $string['raisehand_help'] = 'If enabled, allows students to notify the teacher f
 . 'session using Raise Hand feature.';
 $string['userlist'] = 'User list visibility';
 $string['userlist_help'] = 'If enabled, allows students to view the list of attendees during a session.';
-$string['recordingsection'] = 'Recording Settings';
+$string['recordingsection'] = 'Recording settings';
 $string['generalsection'] = 'General Settings';
 $string['recAllowpresentorAVcontrol'] = 'Teacher’s control over A/V recording';
 $string['recAllowpresentorAVcontrol_help'] = 'If enabled, allows the teacher to control A/V recording i.e.,'
@@ -204,13 +204,13 @@ $string['trimRecordings_help'] = 'If enabled, allows session recording to be sto
 . ' the session’s recording.<br/><b>Note: </b>If a teacher has enabled Control/Trim Recording and took some sessions and then decided '
 . 'to disable this setting, then it will get disabled across the site and earlier recorded sessions will get updated and will contain '
 . 'trimmed portion in the recordings.';
-$string['overrideheading'] = 'Override Settings ';
-$string['studentm'] = 'Student Management';
-$string['studentm_help'] = 'Student Management';
+$string['overrideheading'] = 'Override settings ';
+$string['studentm'] = 'Student management';
+$string['studentm_help'] = 'Student management';
 $string['enablerecording'] = 'Session Recording';
 $string['enablerecording_help'] = 'If enabled, allows automatic session recording for all the sessions across the site.';
-$string['trecordingsection'] = 'Teacher Recording Allowances';
+$string['trecordingsection'] = 'Teacher recording allowances';
 $string['trecordingsection_help'] = '<b>Teacher Settings</b> - These settings will affect the recording rights of teacher.';
-$string['srecordingsection'] = 'Student Recording Allowances';
+$string['srecordingsection'] = 'Student recording allowances';
 $string['srecordingsection_help'] = '<b>Student Settings</b> - These settings will affect the recording rights of students.';
-$string['recordingcontrol'] = 'Recording Control';
+$string['recordingcontrol'] = 'Recording control';
