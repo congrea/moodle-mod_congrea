@@ -196,7 +196,7 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019042200, 'congrea');
     }
-    if ($oldversion < 2019060400) {
+    if ($oldversion < 2019060700) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
         $field = new xmldb_field('studentaudio',
@@ -276,7 +276,7 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2019060400, 'congrea');
+        upgrade_mod_savepoint(true, 2019060700, 'congrea');
     }
     return true;
 }

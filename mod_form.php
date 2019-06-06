@@ -162,7 +162,7 @@ class mod_congrea_mod_form extends moodleform_mod {
                 } else {
                     $mform->setDefault('recattendeeav', 0);
                 }
-                $mform->disabledIf('recdisableattendeeav', 'enablerecording', 'notchecked');
+                $mform->disabledIf('recattendeeav', 'enablerecording', 'notchecked');
                 // Allow attendees to control A/V settings.
                 $mform->addElement('advcheckbox', 'recallowattendeeavcontrol',
                         get_string('recAllowattendeeAVcontrol', 'congrea'), ' ', null);
@@ -172,6 +172,7 @@ class mod_congrea_mod_form extends moodleform_mod {
                 } else {
                     $mform->setDefault('recallowattendeeavcontrol', 0);
                 }
+                $mform->disabledIf('recallowattendeeavcontrol', 'recattendeeav', 'notchecked');
                 $mform->disabledIf('recallowattendeeavcontrol', 'enablerecording', 'notchecked');
                 // Show recording status to attendees.
                 $mform->addElement('advcheckbox', 'showattendeerecordingstatus',
