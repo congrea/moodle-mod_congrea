@@ -196,5 +196,87 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019042200, 'congrea');
     }
+    if ($oldversion < 2019060700) {
+        $table = new xmldb_table('congrea');
+        // Add disable attendee audio field Default 0.
+        $field = new xmldb_field('studentaudio',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add disable attendee video field Default 0.
+        $field = new xmldb_field('studentvideo',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add disable attendee private chat field Default 0.
+        $field = new xmldb_field('studentpc',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add disable attendee group chat field Default 0.
+        $field = new xmldb_field('studentgc',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentpc');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add disable raise hand field Default 1.
+        $field = new xmldb_field('raisehand',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentgc');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add disable user list field Default 1.
+        $field = new xmldb_field('userlist',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'raisehand');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add enable recording field Default 0.
+        $field = new xmldb_field('enablerecording',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userlist');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add rec allow presentor av control field Default 1.
+        $field = new xmldb_field('recallowpresentoravcontrol',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'enablerecording');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add show presentor recording status field Default 1.
+        $field = new xmldb_field('showpresentorrecordingstatus',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'recallowpresentoravcontrol');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add rec disable attendee av field Default 0.
+        $field = new xmldb_field('recattendeeav',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'showpresentorrecordingstatus');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add rec allow attendee av control field Default 0.
+        $field = new xmldb_field('recallowattendeeavcontrol',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'recattendeeav');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add show attendee recording status field Default 0.
+        $field = new xmldb_field('showattendeerecordingstatus',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'recallowattendeeavcontrol');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add trim recordings field Default 0.
+        $field = new xmldb_field('trimrecordings',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'showattendeerecordingstatus');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2019060700, 'congrea');
+    }
     return true;
 }

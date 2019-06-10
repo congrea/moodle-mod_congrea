@@ -71,7 +71,6 @@ $event->trigger();
 // Mark viewed by user (if required).
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-
 // Output starts here.
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
@@ -113,8 +112,12 @@ $videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
-$recording = $congrea->cgrecording;
 
+if ($congrea->enablerecording) {
+    $recordingstatus = true;
+} else {
+    $recordingstatus = false;
+}
 // Dorecording have manager and teacher and nonediting teacher Permission.
 if (has_capability('mod/congrea:addinstance', $context) &&
         ($USER->id == $congrea->moderatorid)) {
@@ -181,6 +184,91 @@ $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaPlayRecording');
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = true;
 }
+
+if (get_config('mod_congrea', 'allowoverride')) { // If override on.
+    // General Settings.
+    $allowoverride = get_config('mod_congrea', 'allowoverride');
+    $studentaudio = $congrea->studentaudio; // Todo for rename.
+    $studentvideo = $congrea->studentvideo;
+    $studentpc = $congrea->studentpc;
+    $studentgc = $congrea->studentgc;
+    $raisehand = $congrea->raisehand;
+    $userlist = $congrea->userlist;
+    // Recording Settings.
+    if ($congrea->enablerecording) { // If enable recording.
+        $enablerecording = $congrea->enablerecording;
+        $recallowpresentoravcontrol = $congrea->recallowpresentoravcontrol;
+        $showpresentorrecordingstatus = $congrea->showpresentorrecordingstatus;
+        $recattendeeav = $congrea->recattendeeav;
+        $recallowattendeeavcontrol = $congrea->recallowattendeeavcontrol;
+        $showattendeerecordingstatus = $congrea->showattendeerecordingstatus;
+        $trimrecordings = $congrea->trimrecordings;
+    } else {
+        $enablerecording = 0;
+        $recallowpresentoravcontrol = 0;
+        $showpresentorrecordingstatus = 0;
+        $recattendeeav = 0;
+        $recallowattendeeavcontrol = 0;
+        $showattendeerecordingstatus = 0;
+        $trimrecordings = 0;
+    }
+} else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
+    // General Settings.
+    $allowoverride = 0;
+    $studentaudio = get_config('mod_congrea', 'studentaudio');
+    $studentvideo = get_config('mod_congrea', 'studentvideo');
+    $studentpc = get_config('mod_congrea', 'studentpc');
+    $studentgc = get_config('mod_congrea', 'studentgc');
+    $raisehand = get_config('mod_congrea', 'raisehand');
+    $userlist = get_config('mod_congrea', 'userlist');
+    if (get_config('mod_congrea', 'enablerecording')) {
+        $enablerecording = get_config('mod_congrea', 'enablerecording');
+        $recallowpresentoravcontrol = get_config('mod_congrea', 'recAllowpresentorAVcontrol');
+        if ($recallowpresentoravcontrol) {
+            $showpresentorrecordingstatus = 1;
+        } else {
+            $showpresentorrecordingstatus = get_config('mod_congrea', 'recShowPresentorRecordingStatus');
+        }
+        $recattendeeav = get_config('mod_congrea', 'recattendeeav');
+        if (!$recattendeeav) { // If students A/V recording is off then Student’s control over A/V recording should be off.
+            $recallowattendeeavcontrol = 0;
+        } else {
+            $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
+        }
+        if ($recallowattendeeavcontrol) {
+            $showattendeerecordingstatus = 1;
+        } else {
+            $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
+        }
+        $trimrecordings = get_config('mod_congrea', 'trimRecordings');
+    } else {
+        $enablerecording = 0;
+        $recallowpresentoravcontrol = 0;
+        $showpresentorrecordingstatus = 0;
+        $recattendeeav = 0;
+        $recallowattendeeavcontrol = 0;
+        $showattendeerecordingstatus = 0;
+        $trimrecordings = 0;
+    }
+}
+
+$variableobject = (object) array('allowoverride' => $allowoverride,
+            'studentaudio' => $studentaudio,
+            'studentvideo' => $studentvideo,
+            'studentpc' => $studentpc,
+            'studentgc' => $studentgc,
+            'raisehand' => $raisehand,
+            'userlist' => $userlist,
+            'enablerecording' => $enablerecording,
+            'recallowpresentoravcontrol' => $recallowpresentoravcontrol,
+            'showpresentorrecordingstatus' => $showpresentorrecordingstatus,
+            'recattendeeav' => $recattendeeav,
+            'recallowattendeeavcontrol' => $recallowattendeeavcontrol,
+            'showattendeerecordingstatus' => $showattendeerecordingstatus,
+            'trimrecordings' => $trimrecordings,
+            'x5' => 0, 'x6' => 0
+);
+$hexcode = settingstohex($variableobject); // Todo- for validation.
 // Check congrea is open.
 if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     $murl = parse_url($CFG->wwwroot);
@@ -199,7 +287,7 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
                                     $role, $rid, $room, $upload,
                                     $down, $info, $cgcolor, $webapi,
                                     $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
-                                    $congrea->cgrecording, $joinbutton);
+                                    $recordingstatus, $hexcode, $joinbutton);
     echo $form;
 } else {
     // Congrea closed.
@@ -236,14 +324,14 @@ foreach ($recording->Items as $record) {
     $row = array();
     $arow = array();
     $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
-    $row[] = userdate($record->time / 1000); // Todo: for exact time.
+    $row[] = userdate($record->time / 1000); // Todo.
     $vcsid = $record->key_room; // Todo.
     if (has_capability('mod/congrea:playrecording', $context)) {
         $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role,
                                                 $rid, $room, $upload, $down,
                                                 $info, $cgcolor, $webapi,
                                                 $userpicturesrc, $licensekey, $id,
-                                                $vcsid, $record->session, $congrea->cgrecording);
+                                                $vcsid, $record->session, $recordingstatus, $hexcode);
     }
     // Attendance button.
     if (has_capability('mod/congrea:recordingdelete', $context)) { // TODO.
@@ -303,6 +391,8 @@ if ($session) {
                 if (!empty($studentsstatus->totalspenttime) and
                         $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime) {
                     $presence = ($studentsstatus->totalspenttime * 100) / $sessionstatus->totalsessiontime;
+                } else if ($studentsstatus->totalspenttime > $sessionstatus->totalsessiontime) {
+                    $presence = 100; // Special case handle.
                 } else {
                     $presence = '-';
                 }

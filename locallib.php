@@ -68,14 +68,15 @@ function congrea_course_teacher_list() {
  * @param string $licensekey
  * @param string $audiostatus
  * @param string $videostatus
- * @param string $recordingstatus
+ * @param string $recording
+ * @param string $hexcode
  * @param boolean $joinbutton
  * @return string
  */
 function congrea_online_server($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
             $cgcolor, $webapi, $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
-            $recordingstatus = false, $joinbutton = false) {
+            $recording = false, $hexcode, $joinbutton = false) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
@@ -98,7 +99,8 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recordingstatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     if (!$joinbutton) {
         $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
                     'value' => get_string('joinroom', 'congrea')));
@@ -128,12 +130,13 @@ function congrea_online_server($url, $authusername, $authpassword, $role, $rid, 
  * @param int $id
  * @param int $vcsid
  * @param string $recordingsession
- * @param string $enablerecording
+ * @param string $recording
+ * @param string $hexcode
  * @return string
  */
 function congrea_online_server_play($url, $authusername, $authpassword, $role, $rid, $room,
             $upload, $down, $debug = false,
-            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false, $enablerecording = false) {
+            $cgcolor, $webapi, $userpicturesrc, $licensekey, $id, $vcsid, $recordingsession = false, $recording = false, $hexcode) {
     global $USER;
     $username = $USER->firstname.' '.$USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'playRec'.$vcsid, 'class' => 'playAct',
@@ -157,7 +160,8 @@ function congrea_online_server_play($url, $authusername, $authpassword, $role, $
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $enablerecording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
                     'value' => '', 'title' => 'Play'));
@@ -613,4 +617,75 @@ function calc_student_time($connect, $disconnect) {
         }
     }
     return $sum;
+}
+/**
+ * Get Setting to hex.
+ * serving for virtual class
+ *
+ * @param object $variablesobject
+ * @return string.
+ */
+function settingstohex($variablesobject) {
+    $localsettings = array();
+    $localsettings[0] = $variablesobject->allowoverride;
+    $localsettings[1] = $variablesobject->studentaudio;
+    $localsettings[2] = $variablesobject->studentvideo;
+    $localsettings[3] = $variablesobject->studentpc;
+    $localsettings[4] = $variablesobject->studentgc;
+    $localsettings[5] = $variablesobject->raisehand;
+    $localsettings[6] = $variablesobject->userlist;
+    $localsettings[7] = $variablesobject->enablerecording;
+    $localsettings[8] = $variablesobject->recallowpresentoravcontrol;
+    $localsettings[9] = $variablesobject->showpresentorrecordingstatus;
+    $localsettings[10] = $variablesobject->recattendeeav;
+    $localsettings[11] = $variablesobject->recallowattendeeavcontrol;
+    $localsettings[12] = $variablesobject->showattendeerecordingstatus;
+    $localsettings[13] = $variablesobject->trimrecordings;
+    $localsettings[14] = $variablesobject->x5;
+    $localsettings[15] = $variablesobject->x6;
+    return binarytohex(join('', $localsettings));
+}
+
+/**
+ * Get Binary to hex.
+ * serving for virtual class
+ *
+ * @param object $s
+ * @return string.
+ */
+function binarytohex($s) {
+    $i;
+    $k;
+    $part;
+    $accum;
+    $ret = '';
+    for ($i = strlen($s) - 1; $i >= 3; $i -= 4) {
+        $part = substr($s, $i + 1 - 4, 4);
+        $accum = 0;
+        for ($k = 0; $k < 4; $k += 1) {
+            if ($part[$k] !== '0' && $part[$k] !== '1') {
+                return false;
+            }
+            // Compute the length 4 substring.
+            $accum = $accum * 2 + intval($part[$k], 10); // Parseint.
+        }
+        if ($accum >= 10) {
+            // A to F.
+            $ret = chr($accum - 10 + ord('A'[0])) . $ret;
+        } else {
+            // 0 to 9
+            $ret = strval($accum) . $ret; // Todo.
+        }
+    }
+    if ($i >= 0) {
+        for ($k = 0; $k <= $i; $k += 1) {
+            if ($s[$k] !== '0' && $s[$k] !== '1') {
+                return false;
+            }
+            $accum = $accum * 2 + intval($s[$k], 10);
+        }
+        // Three bits, value cannot exceed 2^3 - 1 = 7, just convert.
+        $ret = strval($accum) . $ret; // Todo.
+    }
+    return $ret;
 }
