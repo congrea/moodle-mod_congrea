@@ -53,7 +53,7 @@
     margin-top: 0;
 }
 table.studentEnd tbody tr td.c3 {
-    display: none !important;
+    display: none;
 }
 table.studentEnd tbody tr td.c4 p {
     padding-left: 15px;
@@ -77,11 +77,12 @@ table.studentEnd tbody tr td.c4 p {
 table#recorded_data a[title="Delete"] img.iconsmall {
     padding: 0;
     width: 20px;
-    height: 20px ;
+    height: 20px;
     margin-left: 10px;
     opacity: .6;
 }
-#page-mod-congrea-quizreport .wrapper-record-list .generaltable td.cell.c4, .wrapper-record-list .generaltable thead th.header.c4 {
+#page-mod-congrea-quizreport .wrapper-record-list .generaltable td.cell.c4,
+.wrapper-record-list .generaltable thead th.header.c4 {
     text-align: left;
 }
 #page-mod-congrea-view .wrapper-record-list .generaltable .lastcol {
@@ -90,6 +91,7 @@ table#recorded_data a[title="Delete"] img.iconsmall {
 #page-mod-congrea-view table.studentEnd tbody tr td.c4 p {
     padding-left: 0;
 }
+
 @media (max-width: 1100px) {
     #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
         max-width: 264px;

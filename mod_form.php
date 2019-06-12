@@ -123,78 +123,76 @@ class mod_congrea_mod_form extends moodleform_mod {
                 $mform->setDefault('userlist', 0);
             }
             // Congrea recording settings.
-            if (get_config('mod_congrea', 'enablerecording')) { // Enable recording is on then all setting of rec are show.
-                $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));
-                $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null); // Enablerecording.
-                $mform->addHelpButton('enablerecording', 'cgrecording', 'congrea');
-                if (get_config('mod_congrea', 'enablerecording')) {
-                    $mform->setDefault('enablerecording', 1);
-                } else {
-                    $mform->setDefault('enablerecording', 0);
-                }
-                // Allow presentor to control A/V recording (button in live session.
-                $mform->addElement('advcheckbox', 'recallowpresentoravcontrol',
-                                get_string('recAllowpresentorAVcontrol', 'congrea'), ' ', null);
-                $mform->addHelpButton('recallowpresentoravcontrol', 'recAllowpresentorAVcontrol', 'congrea');
-                if (get_config('mod_congrea', 'recAllowpresentorAVcontrol')) {
-                    $mform->setDefault('recallowpresentoravcontrol', 1);
-                } else {
-                    $mform->setDefault('recallowpresentoravcontrol', 0);
-                }
-                $mform->disabledIf('recallowpresentoravcontrol', 'enablerecording', 'notchecked');
-                // Show recording status to presentor.
-                $mform->addElement('advcheckbox', 'showpresentorrecordingstatus',
-                        get_string('recShowPresentorRecordingStatus', 'congrea'), ' ', null);
-                $mform->addHelpButton('showpresentorrecordingstatus', 'recShowPresentorRecordingStatus', 'congrea');
-                if (get_config('mod_congrea', 'recShowPresentorRecordingStatus')) {
-                    $mform->setDefault('showpresentorrecordingstatus', 1);
-                } else {
-                    $mform->setDefault('showpresentorrecordingstatus', 0);
-                }
-                $mform->disabledIf('showpresentorrecordingstatus', 'enablerecording', 'notchecked');
-                $mform->disabledIf('showpresentorrecordingstatus', 'recallowpresentoravcontrol', 'checked');
-                // Disable attendee A/V in recording.
-                $mform->addElement('advcheckbox', 'recattendeeav',
-                        get_string('recattendeeav', 'congrea'), ' ', null);
-                $mform->addHelpButton('recattendeeav', 'recattendeeav', 'congrea');
-                if (get_config('mod_congrea', 'recattendeeav')) {
-                    $mform->setDefault('recattendeeav', 1);
-                } else {
-                    $mform->setDefault('recattendeeav', 0);
-                }
-                $mform->disabledIf('recattendeeav', 'enablerecording', 'notchecked');
-                // Allow attendees to control A/V settings.
-                $mform->addElement('advcheckbox', 'recallowattendeeavcontrol',
-                        get_string('recAllowattendeeAVcontrol', 'congrea'), ' ', null);
-                $mform->addHelpButton('recallowattendeeavcontrol', 'recAllowattendeeAVcontrol', 'congrea');
-                if (get_config('mod_congrea', 'recAllowattendeeAVcontrol')) {
-                    $mform->setDefault('recallowattendeeavcontrol', 1);
-                } else {
-                    $mform->setDefault('recallowattendeeavcontrol', 0);
-                }
-                $mform->disabledIf('recallowattendeeavcontrol', 'recattendeeav', 'notchecked');
-                $mform->disabledIf('recallowattendeeavcontrol', 'enablerecording', 'notchecked');
-                // Show recording status to attendees.
-                $mform->addElement('advcheckbox', 'showattendeerecordingstatus',
-                        get_string('showAttendeeRecordingStatus', 'congrea'), ' ', null);
-                $mform->addHelpButton('showattendeerecordingstatus', 'showAttendeeRecordingStatus', 'congrea');
-                if (get_config('mod_congrea', 'showAttendeeRecordingStatus')) {
-                    $mform->setDefault('showattendeerecordingstatus', 1);
-                } else {
-                    $mform->setDefault('showattendeerecordingstatus', 0);
-                }
-                $mform->disabledIf('showattendeerecordingstatus', 'enablerecording', 'notchecked');
-                $mform->disabledIf('showattendeerecordingstatus', 'recallowattendeeavcontrol', 'checked');
-                // Trim recordings where A/V is marked off.
-                $mform->addElement('advcheckbox', 'trimrecordings', get_string('trimRecordings', 'congrea'), ' ', null);
-                $mform->addHelpButton('trimrecordings', 'trimRecordings', 'congrea');
-                if (get_config('mod_congrea', 'trimRecordings')) {
-                    $mform->setDefault('trimrecordings', 1);
-                } else {
-                    $mform->setDefault('trimrecordings', 0);
-                }
-                $mform->disabledIf('trimrecordings', 'enablerecording', 'notchecked');
+            $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));
+            $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null); // Enablerecording.
+            $mform->addHelpButton('enablerecording', 'cgrecording', 'congrea');
+            if (get_config('mod_congrea', 'enablerecording')) {
+                $mform->setDefault('enablerecording', 1);
+            } else {
+                $mform->setDefault('enablerecording', 0);
             }
+            // Allow presentor to control A/V recording (button in live session.
+            $mform->addElement('advcheckbox', 'recallowpresentoravcontrol',
+                            get_string('recAllowpresentorAVcontrol', 'congrea'), ' ', null);
+            $mform->addHelpButton('recallowpresentoravcontrol', 'recAllowpresentorAVcontrol', 'congrea');
+            if (get_config('mod_congrea', 'recAllowpresentorAVcontrol')) {
+                $mform->setDefault('recallowpresentoravcontrol', 1);
+            } else {
+                $mform->setDefault('recallowpresentoravcontrol', 0);
+            }
+            $mform->disabledIf('recallowpresentoravcontrol', 'enablerecording', 'notchecked');
+            // Show recording status to presentor.
+            $mform->addElement('advcheckbox', 'showpresentorrecordingstatus',
+                    get_string('recShowPresentorRecordingStatus', 'congrea'), ' ', null);
+            $mform->addHelpButton('showpresentorrecordingstatus', 'recShowPresentorRecordingStatus', 'congrea');
+            if (get_config('mod_congrea', 'recShowPresentorRecordingStatus')) {
+                $mform->setDefault('showpresentorrecordingstatus', 1);
+            } else {
+                $mform->setDefault('showpresentorrecordingstatus', 0);
+            }
+            $mform->disabledIf('showpresentorrecordingstatus', 'enablerecording', 'notchecked');
+            $mform->disabledIf('showpresentorrecordingstatus', 'recallowpresentoravcontrol', 'checked');
+            // Disable attendee A/V in recording.
+            $mform->addElement('advcheckbox', 'recattendeeav',
+                    get_string('recattendeeav', 'congrea'), ' ', null);
+            $mform->addHelpButton('recattendeeav', 'recattendeeav', 'congrea');
+            if (get_config('mod_congrea', 'recattendeeav')) {
+                $mform->setDefault('recattendeeav', 1);
+            } else {
+                $mform->setDefault('recattendeeav', 0);
+            }
+            $mform->disabledIf('recattendeeav', 'enablerecording', 'notchecked');
+            // Allow attendees to control A/V settings.
+            $mform->addElement('advcheckbox', 'recallowattendeeavcontrol',
+                    get_string('recAllowattendeeAVcontrol', 'congrea'), ' ', null);
+            $mform->addHelpButton('recallowattendeeavcontrol', 'recAllowattendeeAVcontrol', 'congrea');
+            if (get_config('mod_congrea', 'recAllowattendeeAVcontrol')) {
+                $mform->setDefault('recallowattendeeavcontrol', 1);
+            } else {
+                $mform->setDefault('recallowattendeeavcontrol', 0);
+            }
+            $mform->disabledIf('recallowattendeeavcontrol', 'recattendeeav', 'notchecked');
+            $mform->disabledIf('recallowattendeeavcontrol', 'enablerecording', 'notchecked');
+            // Show recording status to attendees.
+            $mform->addElement('advcheckbox', 'showattendeerecordingstatus',
+                    get_string('showAttendeeRecordingStatus', 'congrea'), ' ', null);
+            $mform->addHelpButton('showattendeerecordingstatus', 'showAttendeeRecordingStatus', 'congrea');
+            if (get_config('mod_congrea', 'showAttendeeRecordingStatus')) {
+                $mform->setDefault('showattendeerecordingstatus', 1);
+            } else {
+                $mform->setDefault('showattendeerecordingstatus', 0);
+            }
+            $mform->disabledIf('showattendeerecordingstatus', 'enablerecording', 'notchecked');
+            $mform->disabledIf('showattendeerecordingstatus', 'recallowattendeeavcontrol', 'checked');
+            // Trim recordings where A/V is marked off.
+            $mform->addElement('advcheckbox', 'trimrecordings', get_string('trimRecordings', 'congrea'), ' ', null);
+            $mform->addHelpButton('trimrecordings', 'trimRecordings', 'congrea');
+            if (get_config('mod_congrea', 'trimRecordings')) {
+                $mform->setDefault('trimrecordings', 1);
+            } else {
+                $mform->setDefault('trimrecordings', 0);
+            }
+            $mform->disabledIf('trimrecordings', 'enablerecording', 'notchecked');
         }
         // Schedule fo session.
         $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
