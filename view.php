@@ -122,7 +122,7 @@ if ($congrea->enablerecording) {
 if (has_capability('mod/congrea:addinstance', $context) &&
         ($USER->id == $congrea->moderatorid)) {
     $role = 't';
-} else if (has_capability('mod/congrea:dorecording', $context) and $session) {
+} else if (has_capability('mod/congrea:attendance', $context) and $session) {
     $role = 't';
 }
 
@@ -318,11 +318,8 @@ $table->id = "recorded_data";
 foreach ($recording->Items as $record) {
     $buttons = array();
     $attendence = array();
-    $connecttime = array();
-    $disconnecttime = array();
     $lastcolumn = '';
     $row = array();
-    $arow = array();
     $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->time / 1000); // Todo.
     $vcsid = $record->key_room; // Todo.
@@ -334,7 +331,7 @@ foreach ($recording->Items as $record) {
                                                 $vcsid, $record->session, $recordingstatus, $hexcode);
     }
     // Attendance button.
-    if (has_capability('mod/congrea:recordingdelete', $context)) { // TODO.
+    if (has_capability('mod/congrea:attendance', $context)) {
         $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('session' => $record->session)),
                          html_writer::empty_tag('img', array('src' => $imageurl,
@@ -350,7 +347,7 @@ foreach ($recording->Items as $record) {
     }
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
-    if (!get_role($COURSE->id, $USER->id)) { // Report for student.
+    if (!has_capability('mod/congrea:attendance', $context)) { // Report for student.
         $table->head = array('Filename', 'Time created', 'Action', "Attendance");
         $table->attributes['class'] = 'admintable generaltable studentEnd';
         $apiurl = 'https://api.congrea.net/data/analytics/attendance';
@@ -367,7 +364,7 @@ foreach ($recording->Items as $record) {
 // Student Report according to session.
 if ($session) {
     $table = new html_table();
-    $table->head = array('Name', 'Start Time', 'Exit Time', 'Duration Attended', 'Presence', 'Attendance');
+    $table->head = array('Name', 'Start time', 'Exit time', 'Duration attended', 'Presence', 'Attendance');
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
@@ -435,8 +432,8 @@ if (!empty($table) and $session and $sessionstatus) {
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
     $upsentuser = $countenroluser - $presentnroluser;
-    $present = '<b> Session Duration: </b>' . $sessionstatus->totalsessiontime.' '.
-    'minutes'.'</br>'.'<b> Students Absent: </b>'. $upsentuser .'</br>'. '<b> Students Present: </b>' . $presentnroluser;
+    $present = '<b> Session duration: </b>' . $sessionstatus->totalsessiontime.' '.
+    'minutes'.'</br>'.'<b> Students absent: </b>'. $upsentuser .'</br>'. '<b> Students present: </b>' . $presentnroluser;
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
