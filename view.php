@@ -112,11 +112,18 @@ $videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
-
-if ($congrea->enablerecording || get_config('mod_congrea', 'enablerecording')) {
-    $recordingstatus = true;
-} else {
-    $recordingstatus = false;
+if (get_config('mod_congrea', 'allowoverride')) { // If override on.
+    if ($congrea->enablerecording) { // From individual.
+        $recordingstatus = true;
+    } else {
+        $recordingstatus = false;
+    }
+} else { // If override off.
+    if (get_config('mod_congrea', 'enablerecording')) {
+        $recordingstatus = true;
+    } else {
+        $recordingstatus = false;
+    }
 }
 // Dorecording have manager and teacher and nonediting teacher Permission.
 if (has_capability('mod/congrea:addinstance', $context) &&
@@ -212,7 +219,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $showattendeerecordingstatus = 0;
         $trimrecordings = 0;
     }
-} else if (!get_config('mod_congrea', 'allowoverride')) { // If override off.
+} else { // If override off.
     // General Settings.
     $allowoverride = 0;
     $studentaudio = get_config('mod_congrea', 'studentaudio');
