@@ -113,7 +113,7 @@ $videostatus = $congrea->video;
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
 
-if ($congrea->enablerecording) {
+if ($congrea->enablerecording || get_config('mod_congrea', 'enablerecording')) {
     $recordingstatus = true;
 } else {
     $recordingstatus = false;
