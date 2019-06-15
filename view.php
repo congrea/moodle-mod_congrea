@@ -112,17 +112,37 @@ $videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
+
 if (get_config('mod_congrea', 'allowoverride')) { // If override on.
-    if ($congrea->enablerecording) { // From individual.
-        $recordingstatus = true;
+    if (has_capability('mod/congrea:addinstance', $context) &&
+            ($USER->id == $congrea->moderatorid)) {
+        if ($congrea->enablerecording) { // From individual setting.
+            $recordingstatus = true;
+        } else {
+            $recordingstatus = false;
+        }
     } else {
-        $recordingstatus = false;
+        if ($congrea->recattendeeav && $congrea->enablerecording) { // For student.
+            $recordingstatus = true;
+        } else {
+            $recordingstatus = false;
+        }
     }
 } else { // If override off.
-    if (get_config('mod_congrea', 'enablerecording')) {
-        $recordingstatus = true;
+    if (has_capability('mod/congrea:addinstance', $context) &&
+            ($USER->id == $congrea->moderatorid)) {
+        if (get_config('mod_congrea', 'enablerecording')) {
+            $recordingstatus = true;
+        } else {
+            $recordingstatus = false;
+        }
     } else {
-        $recordingstatus = false;
+        if (get_config('mod_congrea', 'recattendeeav') &&
+                get_config('mod_congrea', 'enablerecording')) { // For student.
+            $recordingstatus = true;
+        } else {
+            $recordingstatus = false;
+        }
     }
 }
 // Dorecording have manager and teacher and nonediting teacher Permission.
