@@ -152,6 +152,16 @@ class mod_congrea_mod_form extends moodleform_mod {
             }
             $mform->disabledIf('showpresentorrecordingstatus', 'enablerecording', 'notchecked');
             $mform->disabledIf('showpresentorrecordingstatus', 'recallowpresentoravcontrol', 'checked');
+            // Attendeerecording setting.
+            $mform->addElement('advcheckbox', 'attendeerecording',
+                    get_string('attendeerecording', 'congrea'), ' ', null);
+            $mform->addHelpButton('attendeerecording', 'attendeerecording', 'congrea');
+            if (get_config('mod_congrea', 'attendeerecording')) {
+                $mform->setDefault('attendeerecording', 1);
+            } else {
+                $mform->setDefault('attendeerecording', 0);
+            }
+            $mform->disabledIf('attendeerecording', 'enablerecording', 'notchecked');
             // Disable attendee A/V in recording.
             $mform->addElement('advcheckbox', 'recattendeeav',
                     get_string('recattendeeav', 'congrea'), ' ', null);
@@ -161,6 +171,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('recattendeeav', 0);
             }
+            $mform->disabledIf('recattendeeav', 'attendeerecording', 'notchecked');
             $mform->disabledIf('recattendeeav', 'enablerecording', 'notchecked');
             // Allow attendees to control A/V settings.
             $mform->addElement('advcheckbox', 'recallowattendeeavcontrol',
@@ -171,6 +182,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('recallowattendeeavcontrol', 0);
             }
+            $mform->disabledIf('recallowattendeeavcontrol', 'attendeerecording', 'notchecked');
             $mform->disabledIf('recallowattendeeavcontrol', 'recattendeeav', 'notchecked');
             $mform->disabledIf('recallowattendeeavcontrol', 'enablerecording', 'notchecked');
             // Show recording status to attendees.

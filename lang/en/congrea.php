@@ -210,3 +210,5 @@ $string['trecordingsection_help'] = '<b>Teacher Settings</b> - These settings wi
 $string['srecordingsection'] = 'Student recording allowances';
 $string['srecordingsection_help'] = '<b>Student Settings</b> - These settings will affect the recording rights of students.';
 $string['recordingcontrol'] = 'Recording control';
+$string['attendeerecording'] = 'Students Recording';
+$string['attendeerecording_help'] = 'If enabled, allows student’s activities during a session to be recorded.';

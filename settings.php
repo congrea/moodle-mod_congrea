@@ -83,7 +83,10 @@ if ($ADMIN->fulltree) {
     get_string('recShowPresentorRecordingStatus', 'congrea'), get_string('recShowPresentorRecordingStatus_help', 'congrea'), 1));
     // Student recording session.
     $settings->add(new admin_setting_heading('mod_congrea/srecording_header', get_string('srecordingsection', 'congrea'), ''));
-    // Congrea recDisableAttendeeAV default off.
+    // Congrea attendeerecording default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/attendeerecording',
+    get_string('attendeerecording', 'congrea'), get_string('attendeerecording_help', 'congrea'), 1));
+    // Congrea recattendeeav default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/recattendeeav',
     get_string('recattendeeav', 'congrea'), get_string('recattendeeav_help', 'congrea'), 1));
     // Congrea recAllowattendeeAVcontrol default off.

@@ -641,7 +641,7 @@ function settingstohex($variablesobject) {
     $localsettings[11] = $variablesobject->recallowattendeeavcontrol;
     $localsettings[12] = $variablesobject->showattendeerecordingstatus;
     $localsettings[13] = $variablesobject->trimrecordings;
-    $localsettings[14] = $variablesobject->x5;
+    $localsettings[14] = $variablesobject->attendeerecording;
     $localsettings[15] = $variablesobject->x6;
     return binarytohex(join('', $localsettings));
 }

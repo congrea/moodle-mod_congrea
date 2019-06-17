@@ -30,9 +30,9 @@ $report = optional_param('report', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT);  // Congrea instance ID - it should be named as the first character of the module.
 $delete = optional_param('delete', 0, PARAM_CLEANHTML);
 $confirm = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
-$recname = optional_param('recname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
-$session = optional_param('session', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
-$sessionname = optional_param('sessionname', '',  PARAM_CLEANHTML);   // Md5 confirmation hash.
+$recname = optional_param('recname', '', PARAM_CLEANHTML);   // Md5 confirmation hash.
+$session = optional_param('session', '', PARAM_CLEANHTML);   // Md5 confirmation hash.
+$sessionname = optional_param('sessionname', '', PARAM_CLEANHTML);   // Md5 confirmation hash.
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -83,7 +83,7 @@ if ($delete and confirm_sesskey()) {
         echo $OUTPUT->heading($strdelete . " " . $congrea->name);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
         echo $OUTPUT->confirm(get_string('deleterecordingfile', 'mod_congrea', $recname),
-                            new moodle_url($returnurl, $optionsyes), $returnurl);
+        new moodle_url($returnurl, $optionsyes), $returnurl);
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
@@ -122,7 +122,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
             $recordingstatus = false;
         }
     } else {
-        if ($congrea->recattendeeav && $congrea->enablerecording) { // For student.
+        if ($congrea->attendeerecording && $congrea->enablerecording) { // For student.
             $recordingstatus = true;
         } else {
             $recordingstatus = false;
@@ -137,7 +137,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
             $recordingstatus = false;
         }
     } else {
-        if (get_config('mod_congrea', 'recattendeeav') &&
+        if (get_config('mod_congrea', 'attendeerecording') &&
                 get_config('mod_congrea', 'enablerecording')) { // For student.
             $recordingstatus = true;
         } else {
@@ -226,6 +226,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $enablerecording = $congrea->enablerecording;
         $recallowpresentoravcontrol = $congrea->recallowpresentoravcontrol;
         $showpresentorrecordingstatus = $congrea->showpresentorrecordingstatus;
+        $attendeerecording = $congrea->attendeerecording;
         $recattendeeav = $congrea->recattendeeav;
         $recallowattendeeavcontrol = $congrea->recallowattendeeavcontrol;
         $showattendeerecordingstatus = $congrea->showattendeerecordingstatus;
@@ -234,6 +235,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $enablerecording = 0;
         $recallowpresentoravcontrol = 0;
         $showpresentorrecordingstatus = 0;
+        $attendeerecording = 0;
         $recattendeeav = 0;
         $recallowattendeeavcontrol = 0;
         $showattendeerecordingstatus = 0;
@@ -256,7 +258,14 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         } else {
             $showpresentorrecordingstatus = get_config('mod_congrea', 'recShowPresentorRecordingStatus');
         }
-        $recattendeeav = get_config('mod_congrea', 'recattendeeav');
+        $attendeerecording = get_config('mod_congrea', 'attendeerecording');
+        if (!$attendeerecording) { // Attendee recording off.
+            $recattendeeav = 0;
+            $recallowattendeeavcontrol = 0;
+        } else {
+            $recattendeeav = get_config('mod_congrea', 'recattendeeav');
+            $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
+        }
         if (!$recattendeeav) { // If students A/V recording is off then Student’s control over A/V recording should be off.
             $recallowattendeeavcontrol = 0;
         } else {
@@ -272,6 +281,7 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         $enablerecording = 0;
         $recallowpresentoravcontrol = 0;
         $showpresentorrecordingstatus = 0;
+        $attendeerecording = 0;
         $recattendeeav = 0;
         $recallowattendeeavcontrol = 0;
         $showattendeerecordingstatus = 0;
@@ -293,7 +303,7 @@ $variableobject = (object) array('allowoverride' => $allowoverride,
             'recallowattendeeavcontrol' => $recallowattendeeavcontrol,
             'showattendeerecordingstatus' => $showattendeerecordingstatus,
             'trimrecordings' => $trimrecordings,
-            'x5' => 0, 'x6' => 0
+            'attendeerecording' => $attendeerecording, 'x6' => 0
 );
 $hexcode = settingstohex($variableobject); // Todo- for validation.
 // Check congrea is open.
@@ -310,11 +320,9 @@ if ($congrea->closetime > time() && $congrea->opentime <= time()) {
     } else {
         $joinbutton = false;
     }
-    $form = congrea_online_server($url, $authusername, $authpassword,
-                                    $role, $rid, $room, $upload,
-                                    $down, $info, $cgcolor, $webapi,
-                                    $userpicturesrc, $fromcms, $licensekey, $audiostatus, $videostatus,
-                                    $recordingstatus, $hexcode, $joinbutton);
+    $form = congrea_online_server($url, $authusername, $authpassword, $role, $rid,
+    $room, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $fromcms,
+    $licensekey, $audiostatus, $videostatus, $recordingstatus, $hexcode, $joinbutton);
     echo $form;
 } else {
     // Congrea closed.
@@ -347,30 +355,27 @@ foreach ($recording->Items as $record) {
     $attendence = array();
     $lastcolumn = '';
     $row = array();
-    $row[] = $record->name . ' ' .mod_congrea_module_get_rename_action($cm, $record);
+    $row[] = $record->name . ' ' . mod_congrea_module_get_rename_action($cm, $record);
     $row[] = userdate($record->time / 1000); // Todo.
     $vcsid = $record->key_room; // Todo.
     if (has_capability('mod/congrea:playrecording', $context)) {
-        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role,
-                                                $rid, $room, $upload, $down,
-                                                $info, $cgcolor, $webapi,
-                                                $userpicturesrc, $licensekey, $id,
-                                                $vcsid, $record->session, $recordingstatus, $hexcode);
+        $buttons[] = congrea_online_server_play($url, $authusername, $authpassword, $role, $rid,
+        $room, $upload, $down, $info, $cgcolor, $webapi, $userpicturesrc, $licensekey, $id,
+        $vcsid, $record->session, $recordingstatus, $hexcode);
     }
     // Attendance button.
     if (has_capability('mod/congrea:attendance', $context)) {
         $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('session' => $record->session)),
-                         html_writer::empty_tag('img', array('src' => $imageurl,
-                        'alt' => 'Attendance Report', 'class' => 'attend')), array('title' => 'Attendance Report'));
+                html_writer::empty_tag('img', array('src' => $imageurl,
+                'alt' => 'Attendance Report', 'class' => 'attend')), array('title' => 'Attendance Report'));
     }
     // Delete button.
     if (has_capability('mod/congrea:recordingdelete', $context)) {
         $imageurl = "$CFG->wwwroot/mod/congrea/pix/delete.png";
         $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete' => $record->session,
-                        'recname' => $record->name, 'sesskey' => sesskey())),
-                         html_writer::empty_tag('img', array('src' => $imageurl,
-                        'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
+                    'recname' => $record->name, 'sesskey' => sesskey())), html_writer::empty_tag('img', array('src' => $imageurl,
+                    'alt' => $strdelete, 'class' => 'iconsmall')), array('title' => $strdelete));
     }
     $row[] = implode(' ', $buttons);
     $row[] = $lastcolumn;
@@ -448,7 +453,7 @@ if ($session) {
     }
 }
 
-if (!empty($table->data) and !$session) {
+if (!empty($table->data) and ! $session) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
@@ -459,8 +464,8 @@ if (!empty($table) and $session and $sessionstatus) {
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
     $upsentuser = $countenroluser - $presentnroluser;
-    $present = '<b> Session duration: </b>' . $sessionstatus->totalsessiontime.' '.
-    'minutes'.'</br>'.'<b> Students absent: </b>'. $upsentuser .'</br>'. '<b> Students present: </b>' . $presentnroluser;
+    $present = '<b> Session duration: </b>' . $sessionstatus->totalsessiontime . ' ' .
+    'minutes' . '</br>' . '<b> Students absent: </b>' . $upsentuser . '</br>' . '<b> Students present: </b>' . $presentnroluser;
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
