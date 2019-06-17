@@ -259,24 +259,22 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
             $showpresentorrecordingstatus = get_config('mod_congrea', 'recShowPresentorRecordingStatus');
         }
         $attendeerecording = get_config('mod_congrea', 'attendeerecording');
-        if (!$attendeerecording) { // Attendee recording off.
+        if ($attendeerecording) { // Attendee recording on.
+            $recattendeeav = get_config('mod_congrea', 'recattendeeav');
+            if (!$recattendeeav) { // If students A/V recording is off then Student’s control over A/V recording should be off.
+                $recallowattendeeavcontrol = 0;
+            } else {
+                $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
+            }
+            if ($recallowattendeeavcontrol) {
+                $showattendeerecordingstatus = 1;
+            } else {
+                $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
+            }
+        } else { // Attendee recording off.
             $recattendeeav = 0;
             $recallowattendeeavcontrol = 0;
             $showattendeerecordingstatus = 0;
-        } else {
-            $recattendeeav = get_config('mod_congrea', 'recattendeeav');
-            $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
-            $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
-        }
-        if (!$recattendeeav) { // If students A/V recording is off then Student’s control over A/V recording should be off.
-            $recallowattendeeavcontrol = 0;
-        } else {
-            $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
-        }
-        if ($recallowattendeeavcontrol) {
-            $showattendeerecordingstatus = 1;
-        } else {
-            $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
         }
         $trimrecordings = get_config('mod_congrea', 'trimRecordings');
     } else {
