@@ -278,5 +278,14 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019060700, 'congrea');
     }
+    if ($oldversion < 2019061702) {
+        $table = new xmldb_table('congrea');
+        $field = new xmldb_field('attendeerecording',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'recattendeeav');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2019061702, 'congrea');
+    }
     return true;
 }

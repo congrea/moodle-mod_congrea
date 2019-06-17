@@ -82,6 +82,11 @@ function congrea_add_instance($congrea) {
     if (!empty($congrea->recallowpresentoravcontrol)) {
         $congrea->showpresentorrecordingstatus = 1;
     }
+    if (empty($congrea->attendeerecording)) {
+        $congrea->recattendeeav = 0;
+        $congrea->recallowattendeeavcontrol = 0;
+        $congrea->showattendeerecordingstatus = 0;
+    }
     if (empty($congrea->recattendeeav)) {
         $congrea->recallowattendeeavcontrol = 0;
     }
@@ -133,6 +138,11 @@ function congrea_update_instance($congrea, $mform = null) {
     $congrea->id = $congrea->instance;
     if (!empty($congrea->recallowpresentoravcontrol)) {
         $congrea->showpresentorrecordingstatus = 1;
+    }
+    if (empty($congrea->attendeerecording)) {
+        $congrea->recattendeeav = 0;
+        $congrea->recallowattendeeavcontrol = 0;
+        $congrea->showattendeerecordingstatus = 0;
     }
     if (empty($congrea->recattendeeav)) {
         $congrea->recallowattendeeavcontrol = 0;
