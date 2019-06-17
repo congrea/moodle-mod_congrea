@@ -119,10 +119,8 @@ $string['preset'] = 'Preset color';
 $string['presetd'] = 'Select preset color';
 $string['quantity'] = 'quantity';
 $string['quizreport'] = 'Quiz report';
-
 $string['replay'] = 'Re-play';
 $string['replay_message'] = 'Thanks for watching.';
-
 $string['silencedetect'] = 'Silence Detection';
 $string['selectteacher'] = 'Select teacher';
 $string['selectteacher_help'] = 'Select teacher as a moderator for virtual classroom';
@@ -170,36 +168,27 @@ $string['studentaudio_help'] = 'If enabled, allows students to provide their aud
 $string['studentvideo'] = 'Student’s video';
 $string['studentvideo_help'] = 'If enabled, allows video input from students during the session.';
 $string['studentpc'] = 'Private chat';
-$string['studentpc_help'] = 'If enabled, allows students to have private chat i.e., one on one discussion with the '
-. 'attendees during the session.';
+$string['studentpc_help'] = 'If enabled, allows students to have private chat i.e., one on one discussion with the attendees during the session.';
 $string['studentgc'] = 'Group chat';
 $string['studentgc_help'] = 'If enabled, allows students to participate in group chat/discussion during the session.';
 $string['raisehand'] = 'Raise hand';
-$string['raisehand_help'] = 'If enabled, allows students to notify the teacher for any query or comment during the live '
-. 'session using Raise Hand feature.';
+$string['raisehand_help'] = 'If enabled, allows students to notify the teacher for any query or comment during the live session using Raise Hand feature.';
 $string['userlist'] = 'User list visibility';
 $string['userlist_help'] = 'If enabled, allows students to view the list of attendees during a session.';
 $string['recordingsection'] = 'Recording settings';
 $string['generalsection'] = 'General Settings';
 $string['recAllowpresentorAVcontrol'] = 'Teacher’s control over A/V recording';
-$string['recAllowpresentorAVcontrol_help'] = 'If enabled, allows the teacher to control A/V recording i.e.,'
-. ' teacher can anytime stop and start whole session’s A/V recording during a live session.';
+$string['recAllowpresentorAVcontrol_help'] = 'If enabled, allows the teacher to control A/V recording i.e., teacher can anytime stop and start whole session’s A/V recording during a live session.';
 $string['recShowPresentorRecordingStatus'] = 'Recording status visibility to teacher';
-$string['recShowPresentorRecordingStatus_help'] = 'If enabled, allows the visibility of recording status to the teacher i.e., '
-. 'they will have a continuous feed of whether the session is being recorded or not on their Congrea screen';
+$string['recShowPresentorRecordingStatus_help'] = 'If enabled, allows the visibility of recording status to the teacher i.e., they will have a continuous feed of whether the session is being recorded or not on their Congrea screen';
 $string['recattendeeav'] = 'Students A/V recording ';
-$string['recattendeeav_help'] = 'If enabled, allows students A/V recording during the session i.e., all the binary data such as audio,'
-. ' video and screen sharing will be recorded in the session recording.';
+$string['recattendeeav_help'] = 'If enabled, allows students A/V recording during the session i.e., all the binary data such as audio, video and screen sharing will be recorded in the session recording.';
 $string['recAllowattendeeAVcontrol'] = 'Student’s control over A/V recording';
-$string['recAllowattendeeAVcontrol_help'] = 'If enabled, allows students to control their A/V recording i.e.,'
-. 'they can anytime stop and start their own A/V recording during a live session.';
+$string['recAllowattendeeAVcontrol_help'] = 'If enabled, allows students to control their A/V recording i.e., they can anytime stop and start their own A/V recording during a live session.';
 $string['showAttendeeRecordingStatus'] = 'Recording status visibility to student';
-$string['showAttendeeRecordingStatus_help'] = 'If enabled, allows the visibility of recording status to the students i.e.,'
-. ' they will have a continuous feed of whether the session is being recorded or not on their Congrea screen.';
+$string['showAttendeeRecordingStatus_help'] = 'If enabled, allows the visibility of recording status to the students i.e., they will have a continuous feed of whether the session is being recorded or not on their Congrea screen.';
 $string['trimRecordings'] = 'Trim  recording';
-$string['trimRecordings_help'] = 'If enabled, allows session recording to be stopped/trimmed whenever A/V has been disabled i.e.,'
-. ' whenever the teacher has stopped A/V recording during the session that particular duration will not be recorded or trimmed from'
-. ' the session’s recording.';
+$string['trimRecordings_help'] = 'If enabled, allows session recording to be stopped/trimmed whenever A/V has been disabled i.e., whenever the teacher has stopped A/V recording during the session that particular duration will not be recorded or trimmed from the session’s recording.';
 $string['overrideheading'] = 'Override settings ';
 $string['studentm'] = 'Student management';
 $string['studentm_help'] = 'Student management';
