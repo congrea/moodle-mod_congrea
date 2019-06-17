@@ -194,6 +194,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('showattendeerecordingstatus', 0);
             }
+            $mform->disabledIf('showattendeerecordingstatus', 'attendeerecording', 'notchecked');
             $mform->disabledIf('showattendeerecordingstatus', 'enablerecording', 'notchecked');
             $mform->disabledIf('showattendeerecordingstatus', 'recallowattendeeavcontrol', 'checked');
             // Trim recordings where A/V is marked off.

@@ -85,6 +85,7 @@ function congrea_add_instance($congrea) {
     if (empty($congrea->attendeerecording)) {
         $congrea->recattendeeav = 0;
         $congrea->recallowattendeeavcontrol = 0;
+        $congrea->showattendeerecordingstatus = 0;
     }
     if (empty($congrea->recattendeeav)) {
         $congrea->recallowattendeeavcontrol = 0;
@@ -141,6 +142,7 @@ function congrea_update_instance($congrea, $mform = null) {
     if (empty($congrea->attendeerecording)) {
         $congrea->recattendeeav = 0;
         $congrea->recallowattendeeavcontrol = 0;
+        $congrea->showattendeerecordingstatus = 0;
     }
     if (empty($congrea->recattendeeav)) {
         $congrea->recallowattendeeavcontrol = 0;

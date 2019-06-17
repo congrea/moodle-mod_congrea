@@ -262,9 +262,11 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         if (!$attendeerecording) { // Attendee recording off.
             $recattendeeav = 0;
             $recallowattendeeavcontrol = 0;
+            $showattendeerecordingstatus = 0;
         } else {
             $recattendeeav = get_config('mod_congrea', 'recattendeeav');
             $recallowattendeeavcontrol = get_config('mod_congrea', 'recAllowattendeeAVcontrol');
+            $showattendeerecordingstatus = get_config('mod_congrea', 'showAttendeeRecordingStatus');
         }
         if (!$recattendeeav) { // If students A/V recording is off then Student’s control over A/V recording should be off.
             $recallowattendeeavcontrol = 0;
