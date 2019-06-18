@@ -1,20 +1,20 @@
 #page-mod-congrea-view .wrapper-button .clear,
 #page-mod-congrea-view .wrapper-record-list .clear {
-  clear: both;
+    clear: both;
 }
 
 #page-mod-congrea-view .wrapper-button {
-  padding: 20px 15px;
-  border: #ddd 1px solid;
-  border-radius: 5px;
+    padding: 20px 15px;
+    border: #ddd 1px solid;
+    border-radius: 5px;
 }
 
 #page-mod-congrea-view .wrapper-record-list {
-  text-align: left;
-  padding: 15px 10px;
-  border: #ddd 1px solid;
-  border-radius: 5px;
-  margin-top: 20px;
+    text-align: left;
+    padding: 15px 10px;
+    border: #ddd 1px solid;
+    border-radius: 5px;
+    margin-top: 20px;
 }
 
 #page-mod-congrea-quizreport table.flexible thead th,
@@ -22,104 +22,104 @@
 .generaltable thead th.header.c5,
 #page-mod-congrea-quizreport .generaltable td.cell.c4,
 #page-mod-congrea-quizreport .generaltable td.cell.c5 {
-  text-align: center;
+    text-align: center;
 }
 
 #page-mod-congrea-view .navbar .popover-region-toggle img.icon {
-  padding: 12px 10px;
+    padding: 12px 10px;
 }
 
 #page-mod-congrea-view .navbar .search-input-wrapper form input {
-  padding: 14px 8px;
+    padding: 14px 8px;
 }
 
 #page-mod-congrea-view .navbar-inner .search-input-wrapper.nav-link {
-  height: auto;
+    height: auto;
 }
 
 #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
-  max-width: 300px;
+    max-width: 300px;
 }
 
 #page-mod-congrea-view td.cell.c2 form input[name="submit"]:focus {
-  outline: none;
+    outline: none;
 }
 
 #page-mod-congrea-view .wrapper-record-list h2 {
-  font-size: 20px;
-  margin-top: 0;
+    font-size: 20px;
+    margin-top: 0;
 }
 
 table.studentEnd tbody tr td.c3 {
-  display: none;
+    display: none;
 }
 
 table.studentEnd tbody tr td.c4 p {
-  padding-left: 15px;
+    padding-left: 15px;
 }
 
 #page-mod-congrea-view input.playbtn {
-  background: transparent url([[pix:congrea|play]]) no-repeat top left;
-  background-size: 14px;
-  width: 17px;
-  border: none;
-  padding-top: 1px;
-  float: left;
-  margin-right: 15px;
-  box-shadow: unset;
-  height: 20px;
-  margin-top: 3px;
-  opacity: 0.6;
-  cursor: pointer;
+    background: transparent url([[pix:congrea|play]]) no-repeat top left;
+    background-size: 14px;
+    width: 17px;
+    border: none;
+    padding-top: 1px;
+    float: left;
+    margin-right: 15px;
+    box-shadow: unset;
+    height: 20px;
+    margin-top: 3px;
+    opacity: 0.6;
+    cursor: pointer;
 }
 
 #page-mod-congrea-view #recorded_data.studentEnd input.playbtn {
-  float: none;
-  margin-right: 0;
+    float: none;
+    margin-right: 0;
 }
 
 #page-mod-congrea-view img.attend {
-  width: 16px;
-  opacity: 0.6;
+    width: 16px;
+    opacity: 0.6;
 }
 
 table#recorded_data a[title="Delete"] img.iconsmall {
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  margin-left: 13px;
-  opacity: 0.6;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    margin-left: 13px;
+    opacity: 0.6;
 }
 
 #page-mod-congrea-quizreport .wrapper-record-list .generaltable td.cell.c4,
 .wrapper-record-list .generaltable thead th.header.c4 {
-  text-align: left;
+    text-align: left;
 }
 
 #page-mod-congrea-view .wrapper-record-list .generaltable .lastcol {
-  text-align: center;
+    text-align: center;
 }
 
 #page-mod-congrea-view table.studentEnd tbody tr td.c4 p {
-  padding-left: 0;
+    padding-left: 0;
 }
 
 #page-mod-congrea-view .wrapper-record-list table td.cell.c2 {
-  width: 130px;
+    width: 130px;
 }
 
 #recorded_data.studentEnd thead tr th.header.c2,
 #page-mod-congrea-view .wrapper-record-list #recorded_data.studentEnd td.cell.c2,
 #page-mod-congrea-view .wrapper-record-list #recorded_data.studentEnd td.cell.c4 {
-  text-align: center;
+    text-align: center;
 }
 
 @media (max-width: 1100px) {
-  #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
-    max-width: 264px;
-  }
+    #page-mod-congrea-view .wrapper-record-list table td.centeralign.cell.c0 {
+        max-width: 264px;
+    }
 
-  #page-mod-congrea-view .wrapper-record-list table td.cell.c2 {
-    width: 110px;
-  }
+    #page-mod-congrea-view .wrapper-record-list table td.cell.c2 {
+        width: 110px;
+    }
 }
