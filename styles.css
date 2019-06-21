@@ -123,3 +123,11 @@ table#recorded_data a[title="Delete"] img.iconsmall {
         width: 110px;
     }
 }
+
+/** ======= Firefox ======== **/
+
+@-moz-document url-prefix() {
+    .wrapper-record-list #recorded_data tbody td form {
+        display: inline;
+    }
+}
