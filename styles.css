@@ -123,3 +123,9 @@ table#recorded_data a[title="Delete"] img.iconsmall {
         width: 110px;
     }
 }
+
+@-moz-document url-prefix() {
+    .wrapper-record-list #recorded_data tbody td form {
+        display: inline;
+    }
+}
