@@ -40,6 +40,7 @@ function xmldb_congrea_upgrade($oldversion) {
     global $DB, $CFG;
 
     require_once($CFG->libdir . '/db/upgradelib.php');
+	require_once($CFG->dirroot . '/mod/congrea/locallib.php'); //@@@		  
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
@@ -199,44 +200,51 @@ function xmldb_congrea_upgrade($oldversion) {
     if ($oldversion < 2019060700) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
-        $field = new xmldb_field('studentaudio',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');
+        /*$field = new xmldb_field('studentaudio',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');*/
+		$field = new xmldb_field(
+                'studentaudio', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime'
+        ); //@@@
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee video field Default 0.
-        $field = new xmldb_field('studentvideo',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');
+        /*$field = new xmldb_field('studentvideo',
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');*/
+		$field = new xmldb_field(
+                'studentvideo', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio'
+        ); //@@@			 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee private chat field Default 0.
-        $field = new xmldb_field('studentpc',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo');
+        $field = new xmldb_field(
+			'studentpc', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo'
+		);								 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee group chat field Default 0.
         $field = new xmldb_field('studentgc',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentpc');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentpc');				 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable raise hand field Default 1.
         $field = new xmldb_field('raisehand',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentgc');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentgc');		 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable user list field Default 1.
         $field = new xmldb_field('userlist',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'raisehand');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'raisehand');					 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add enable recording field Default 0.
         $field = new xmldb_field('enablerecording',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userlist');
+        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userlist');				 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -249,6 +257,8 @@ function xmldb_congrea_upgrade($oldversion) {
         // Add show presentor recording status field Default 1.
         $field = new xmldb_field('showpresentorrecordingstatus',
         XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'recallowpresentoravcontrol');
+
+		
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -264,7 +274,7 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        // Add show attendee recording status field Default 0.
+        // Add show attendee recording status field Default 0.							  
         $field = new xmldb_field('showattendeerecordingstatus',
         XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'recallowattendeeavcontrol');
         if (!$dbman->field_exists($table, $field)) {
@@ -287,5 +297,46 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
     }
+	/*
+if ($oldversion < 2019082800) {
+        $table = new xmldb_table('congrea_sessions');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('timeduration', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('isrepeat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('repeattype', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('additional', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('teacherid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_field('congreaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+            $table = new xmldb_table('congrea');
+            if ($dbman->table_exists($table)) {
+                $congreadata = $DB->get_records('congrea');
+                if (!empty($congreadata)) {
+                    foreach ($congreadata as $data) {
+                        $congreaold = new stdClass();
+                        $congreaold->starttime = time(); // Giving present time to start till 24 hours.
+                        $enddate = strtotime(date('Y-m-d H:i:s', strtotime("+1440 minutes", $congreaold->starttime)));
+                        $congreaold->endtime = $enddate;
+                        $congreaold->timeduration = round((abs($congreaold->endtime - $congreaold->starttime) / 60));
+                        $congreaold->isrepeat = 0;
+                        $congreaold->repeattype = 0;
+                        $congreaold->additional = 'none';
+                        $congreaold->teacherid = $data->moderatorid;
+                        $congreaold->congreaid = $data->id;
+                        $sessionid = $DB->insert_record('congrea_sessions', $congreaold);
+                        mod_congrea_update_calendar_on_upgarde($data->name, $congreaold->starttime, $enddate, $data->course, $data->moderatorid, $data->id, $sessionid,  $congreaold->timeduration);
+                    }
+                }
+            }
+        }
+        upgrade_mod_savepoint(true, 2019082800, 'congrea');
+    }*/
+    return true;
+}
+	
     return true;
 }
