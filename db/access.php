@@ -107,7 +107,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-   'mod/congrea:sessionedit' => array(
+    'mod/congrea:sessionedit' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -124,5 +124,5 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
-    ),			
+    ),
 );

@@ -32,7 +32,7 @@ require_once(dirname(__FILE__) . '/edit_form.php');
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
 $n = optional_param('n', 0, PARAM_INT); // Congrea instance ID - it should be named as the first character of the module.
 $update = optional_param('update', ' ', PARAM_CLEANHTML); // Session name.
-$sessionname = optional_param('sessionname', '',  PARAM_CLEANHTML);
+$sessionname = optional_param('sessionname', '', PARAM_CLEANHTML);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -59,13 +59,13 @@ $mform = new mod_congrea_edit_name($CFG->wwwroot . '/mod/congrea/edit.php?id=' .
 
 if ($mform->is_cancelled()) {
     // Do nothing.
-    redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
+    redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true)));
 } else if ($fromform = $mform->get_data()) {
     $sessionname = $fromform->name;
     $postdata = json_encode(array('room' => $room, 'name' => $sessionname, 'session' => $update));
     $result = curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key);
     $sucess = json_decode($result);
-    $returnurl = redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id)));
+    $returnurl = redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true)));
     if ($sucess->data == "success") {
         $OUTPUT->notification($returnurl, get_string('updated', '', $sessionname, 'notifysucess'));
     } else {

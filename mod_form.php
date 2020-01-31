@@ -61,16 +61,6 @@ class mod_congrea_mod_form extends moodleform_mod {
         } else {
             $this->add_intro_editor(); // Moodle.2.8.9 or earlier.
         }
-        // Adding the rest of congrea settings
-        // Adding list of teachers.
-        $teacheroptions = congrea_course_teacher_list();
-        if (empty($teacheroptions)) {
-            $teacheroptions = "";
-        } else {
-            $teacheroptions[0] = 'Select';
-        }
-        $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
-        $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         if (get_config('mod_congrea', 'allowoverride')) { // If admin allowoverride is enabled then all settings is show.
             // congrea General Settings.
             $mform->addElement('header', 'general', get_string('studentm', 'congrea'));
@@ -133,7 +123,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             }
             // Allow presentor to control A/V recording (button in live session.
             $mform->addElement('advcheckbox', 'recallowpresentoravcontrol',
-                            get_string('recAllowpresentorAVcontrol', 'congrea'), ' ', null);
+                    get_string('recAllowpresentorAVcontrol', 'congrea'), ' ', null);
             $mform->addHelpButton('recallowpresentoravcontrol', 'recAllowpresentorAVcontrol', 'congrea');
             if (get_config('mod_congrea', 'recAllowpresentorAVcontrol')) {
                 $mform->setDefault('recallowpresentoravcontrol', 1);
@@ -153,8 +143,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             $mform->disabledIf('showpresentorrecordingstatus', 'enablerecording', 'notchecked');
             $mform->disabledIf('showpresentorrecordingstatus', 'recallowpresentoravcontrol', 'checked');
             // Attendeerecording setting.
-            $mform->addElement('advcheckbox', 'attendeerecording',
-                    get_string('attendeerecording', 'congrea'), ' ', null);
+            $mform->addElement('advcheckbox', 'attendeerecording', get_string('attendeerecording', 'congrea'), ' ', null);
             $mform->addHelpButton('attendeerecording', 'attendeerecording', 'congrea');
             if (get_config('mod_congrea', 'attendeerecording')) {
                 $mform->setDefault('attendeerecording', 1);
@@ -163,8 +152,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             }
             $mform->disabledIf('attendeerecording', 'enablerecording', 'notchecked');
             // Disable attendee A/V in recording.
-            $mform->addElement('advcheckbox', 'recattendeeav',
-                    get_string('recattendeeav', 'congrea'), ' ', null);
+            $mform->addElement('advcheckbox', 'recattendeeav', get_string('recattendeeav', 'congrea'), ' ', null);
             $mform->addHelpButton('recattendeeav', 'recattendeeav', 'congrea');
             if (get_config('mod_congrea', 'recattendeeav')) {
                 $mform->setDefault('recattendeeav', 1);
@@ -207,39 +195,9 @@ class mod_congrea_mod_form extends moodleform_mod {
             }
             $mform->disabledIf('trimrecordings', 'enablerecording', 'notchecked');
         }
-        // Schedule fo session.
-        $mform->addElement('header', 'general', get_string('sessionsschedule', 'congrea'));
-        $mform->addElement('date_time_selector', 'opentime', get_string('opentime', 'congrea'));
-        $mform->addRule('opentime', null, 'required', null, 'client');
-        $mform->addElement('date_time_selector', 'closetime', get_string('closetime', 'congrea'));
-        $mform->addRule('closetime', null, 'required', null, 'client');
         $this->standard_coursemodule_elements();
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
-    }
-
-    /**
-     * Validate this form.
-     *
-     * @param array $data submitted data
-     * @param array $files not used
-     * @return array errors
-     */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        // Check open and close times are consistent.
-        if ($data['opentime'] != 0 && $data['closetime'] != 0 &&
-                $data['closetime'] < $data['opentime']) {
-            $errors['closetime'] = get_string('closebeforeopen', 'congrea');
-        }
-        if ($data['opentime'] != 0 && $data['closetime'] == 0) {
-            $errors['closetime'] = get_string('closenotset', 'congrea');
-        }
-        if ($data['opentime'] != 0 && $data['closetime'] != 0 &&
-                $data['closetime'] == $data['opentime']) {
-            $errors['closetime'] = get_string('closesameopen', 'congrea');
-        }
-        return $errors;
     }
 
 }

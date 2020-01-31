@@ -45,11 +45,6 @@
     outline: none;
 }
 
-#page-mod-congrea-view .wrapper-record-list h2 {
-    font-size: 20px;
-    margin-top: 0;
-}
-
 table.studentEnd tbody tr td.c3 {
     display: none;
 }
@@ -121,7 +116,11 @@ table#recorded_data a[title="Delete"] img.iconsmall {
 
     #page-mod-congrea-view .wrapper-record-list table td.cell.c2 {
         width: 110px;
+    }    
+    #page-mod-congrea-view .wrapper-record-list .generaltable.attendance {
+        font-size: 14px;
     }
+
 }
 
 @-moz-document url-prefix() {
@@ -129,3 +128,29 @@ table#recorded_data a[title="Delete"] img.iconsmall {
         display: inline;
     }
 }
+body#page-mod-congrea-sessionsettings #page-content fieldset #id_timeduration_timeunit option[value="604800"],
+body#page-mod-congrea-sessionsettings #page-content fieldset #id_timeduration_timeunit option[value="86400"],
+body#page-mod-congrea-sessionsettings #page-content fieldset #id_timeduration_timeunit option[value="1"] {
+    display: none;
+}
+body#page-mod-congrea-sessionsettings .generaltable th.header.c4,
+body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
+#page-mod-congrea-view .wrapper-record-list .admintable.generaltable thead th.header.c5 {
+    text-align: left;
+}
+
+#page-mod-congrea-view .wrapper-record-list .admintable.generaltable.attendance thead th.header.c5,
+.wrapper-record-list .generaltable.attendance thead th.header.c4,
+#page-mod-congrea-view .wrapper-record-list .generaltable.attendance .c4,
+.wrapper-record-list .generaltable.attendance thead th.header.c3,
+#page-mod-congrea-view .wrapper-record-list .generaltable.attendance .c3 {
+    text-align: center;
+}
+
+#page-mod-congrea-view .wrapper-record-list table.generaltable.attendance td.cell.c2 {
+    width: auto;
+}
+#page-mod-congrea-sessionsettings #page-wrapper table.generaltable tbody tr.pastsessions {
+    color:lightgrey;
+}
+
