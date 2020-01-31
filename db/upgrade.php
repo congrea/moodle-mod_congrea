@@ -297,46 +297,38 @@ function xmldb_congrea_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
     }
-	/*
-if ($oldversion < 2019082800) {
-        $table = new xmldb_table('congrea_sessions');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('timeduration', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('isrepeat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
-        $table->add_field('repeattype', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, 0, null, null);
-        $table->add_field('additional', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, 0, null, null);
-        $table->add_field('teacherid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
-        $table->add_field('congreaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-            $table = new xmldb_table('congrea');
-            if ($dbman->table_exists($table)) {
-                $congreadata = $DB->get_records('congrea');
-                if (!empty($congreadata)) {
-                    foreach ($congreadata as $data) {
-                        $congreaold = new stdClass();
-                        $congreaold->starttime = time(); // Giving present time to start till 24 hours.
-                        $enddate = strtotime(date('Y-m-d H:i:s', strtotime("+1440 minutes", $congreaold->starttime)));
-                        $congreaold->endtime = $enddate;
-                        $congreaold->timeduration = round((abs($congreaold->endtime - $congreaold->starttime) / 60));
-                        $congreaold->isrepeat = 0;
-                        $congreaold->repeattype = 0;
-                        $congreaold->additional = 'none';
-                        $congreaold->teacherid = $data->moderatorid;
-                        $congreaold->congreaid = $data->id;
-                        $sessionid = $DB->insert_record('congrea_sessions', $congreaold);
-                        mod_congrea_update_calendar_on_upgarde($data->name, $congreaold->starttime, $enddate, $data->course, $data->moderatorid, $data->id, $sessionid,  $congreaold->timeduration);
-                    }
-                }
-            }
+	// To get all records from the congrea table and put them to event table
+    if ($oldversion < 2020013010.7) {
+		$congrearecords = $DB->get_records('congrea');
+		//$module = $DB->get_records('modules');
+		foreach ($congrearecords as $record) {				
+			$event = new stdClass();
+			$event->name = $record->name;
+			$event->courseid = $record->course;
+			$event->format = 1;
+			$event->timestart = $record->opentime;
+			$event->timeduration = $record->closetime - $record->opentime;
+            $event->userid = $record->moderatorid;
+            $event->instance = $record->id;
+            $event->modulename = 'congrea';
+            $event->eventype = 'start session';
+			//$diff = round(($record->closetime - $record->opentime) / (24*60*60));
+			$event->description = 'Legacy session open till ' . date('d-m-Y', $record->closetime);
+			$DB->insert_record('event', $event, $returnid=true, $bulk=false);
         }
-        upgrade_mod_savepoint(true, 2019082800, 'congrea');
-    }*/
-    return true;
-}
-	
+        /// Drop field
+        // Removed the 'moderatorid' column from 'congrea'.
+        $table = new xmldb_table('congrea');
+        $field = new xmldb_field('moderatorid');
+        $dbman->drop_field($table, $field);
+
+        $field = new xmldb_field('opentime');
+        $dbman->drop_field($table, $field);
+
+        $field = new xmldb_field('closetime');
+        $dbman->drop_field($table, $field);
+		// Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020013010.7,'congrea');
+    }
     return true;
 }
