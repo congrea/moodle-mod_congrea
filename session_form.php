@@ -72,7 +72,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
-        $mform->addElement('advcheckbox', 'addmultiple', get_string('repeatsessions', 'congrea'), 'Repeat this session', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
         /* $mform->addElement('checkbox', 'addmultiple', '', get_string('repeatsessions', 'congrea'));
         $mform->addHelpButton('addmultiple', 'repeatsessions', 'congrea'); */
 
@@ -104,7 +104,7 @@ class mod_congrea_session_form extends moodleform {
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if ($data['timeduration'] == 0) {
+        if ($data['timeduration'] == 0 || !(filter_var($data['timeduration'], FILTER_VALIDATE_INT))) {
             $errors['timeduration'] = get_string('errortimeduration', 'congrea');
         }
         $durationinminutes = round($data['timeduration'] / 60);

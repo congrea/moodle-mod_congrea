@@ -113,7 +113,7 @@ if ($mform->is_cancelled()) {
         $data->description = $fromform->week . ' weeks/ ' . $days;
     } else { // Single Event.
         $data->repeatid = 0;
-        $data->description = 'Single session';
+        $data->description = '-';
 
     }
     $presenter = $fromform->moderatorid; // MD:
@@ -174,7 +174,7 @@ congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:sessionesetting', $context)) {
     $options = array();
-    if ($sessionsettings && !$edit) {
+    if ($sessionsettings && !$edit && !($action == 'addsession')) {
         echo $OUTPUT->single_button(
             $returnurl->out(
                 true,
@@ -208,7 +208,7 @@ if ($edit) {
         foreach($recordlist as $record) {
             if (($record->timestart + $record->timeduration) < time()){
                 $record->repeatid = 0;
-                $record->description = 'Single session';
+                $record->description = '-';
                 $DB->update_record('event', $record);
                 $weeks--;
                 continue; 
@@ -271,8 +271,13 @@ if (!empty($sessionlist)) {
                     $pastsessions[] = $list;
                     continue;
                 }
-            } */
-            $row[] = ($list->timeduration / 60) . ' ' . 'Minutes';
+            } */            
+            if ($list->timeduration > 86400) {
+                $row[] = 'Legacy session';
+            } else{
+                $row[] = ($list->timeduration / 60) . ' ' . 'mins';
+            }
+            //$row[] = floor($list->timeduration / 3600) . gmdate("i", $list->timeduration % 3600);
             $moderatorid = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($moderatorid)) {
                 $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
@@ -281,14 +286,16 @@ if (!empty($sessionlist)) {
             }
             $row[] = $username;
             $row[] = $list->description;
-            $buttons[] = html_writer::link(
-                new moodle_url(
-                    '/mod/congrea/sessionsettings.php',
-                    array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
-                ),
-                'Edit',
-                array('class' => 'actionlink exportpage')
-            );
+            if ($list->timeduration < 86400) {
+                $buttons[] = html_writer::link(
+                        new moodle_url(
+                            '/mod/congrea/sessionsettings.php',
+                            array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
+                        ),
+                        'Edit',
+                        array('class' => 'actionlink exportpage')
+                );
+            }
             $buttons[] = html_writer::link(
                 new moodle_url(
                     '/mod/congrea/sessionsettings.php',

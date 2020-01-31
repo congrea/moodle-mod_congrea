@@ -298,7 +298,7 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
     }
 	// To get all records from the congrea table and put them to event table
-    if ($oldversion < 2020013010.7) {
+    if ($oldversion < 2020013010.8) {
 		$congrearecords = $DB->get_records('congrea');
 		//$module = $DB->get_records('modules');
 		foreach ($congrearecords as $record) {				
@@ -313,7 +313,7 @@ function xmldb_congrea_upgrade($oldversion) {
             $event->modulename = 'congrea';
             $event->eventype = 'start session';
 			//$diff = round(($record->closetime - $record->opentime) / (24*60*60));
-			$event->description = 'Legacy session open till ' . date('d-m-Y', $record->closetime);
+			$event->description = 'Open till ' . date('d-m-Y', $record->closetime);
 			$DB->insert_record('event', $event, $returnid=true, $bulk=false);
         }
         /// Drop field
@@ -328,7 +328,7 @@ function xmldb_congrea_upgrade($oldversion) {
         $field = new xmldb_field('closetime');
         $dbman->drop_field($table, $field);
 		// Main savepoint reached.
-        upgrade_mod_savepoint(true, 2020013010.7,'congrea');
+        upgrade_mod_savepoint(true, 2020013010.8,'congrea');
     }
     return true;
 }
