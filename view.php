@@ -221,15 +221,18 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
 }
 
 $a = new stdClass();
-$enddate = date('Y-m-d', $sessionendtime);
-$next_date = date('Y-m-d', strtotime($enddate .' +1 day'));
+
+//$next_date = date('Y-m-d', strtotime($enddate .' +1 day'));
 $a->timestart = userdate($sessionstarttime);
 $a->endtime = $sessionstarttime + $duration;
-if ($next_date > $enddate) {
-    $a->endtime = userdate($sessionendtime);
-} else {
+$start = strtotime($sessionstarttime);
+$end = strtotime($sessionendtime);
+if (userdate($start,'%I:%M %p') == userdate($end , '%I:%M %p')) {
     $a->endtime = userdate($sessionendtime, '%I:%M %p');
-}
+} 
+if ($duration > 86400) {
+    $a->endtime = userdate($sessionendtime);
+} 
 $user = $DB->get_record('user', array('id' => $teacherid));
 $classname = 'wrapper-button';
 if (($sessionstarttime > time() && $sessionstarttime <= time())) {
