@@ -254,7 +254,7 @@ if ($action == 'addsession' || $edit ) {
 echo $OUTPUT->heading('Schedules');
 $table = new html_table();
 $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
-$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id)); 
+$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id)); 
 usort($sessionlist, "compare_dates_scheduled_list");
 $currenttime = time();
 if (!empty($sessionlist)) {
