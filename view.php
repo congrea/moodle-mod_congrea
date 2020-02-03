@@ -406,22 +406,14 @@ if ($sessionendtime > time() && $sessionstarttime <= time()) {
     }
 }
 // Upload congrea recording.
-$postdata = json_encode(array('room' => $room));
-//$postdata2 = json_encode(array('room' => $room, 'session' => $session));
-//$postdata3 = json_encode(array('upload' => $upload));
-//usort($sessionlist, "compare_dates_scheduled_list");														
+$postdata = json_encode(array('room' => $room));													
 if ($psession) {
     // Recorded session
-    /*     $psql = "SELECT id, timestart, timeduration, userid from {event}"
-        . " where instance = $congrea->id and modulename = 'congrea' and (timestart + (timeduration)) < $time";
-    $pastsessions =  $DB->get_records_sql($psql); */
     echo html_writer::end_tag('div');
     echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
     $result = curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
     $data = json_decode($result);
     $recording = json_decode($data->data);
-    //$attend = attendence_curl_request("https://api.congrea.net/data/analytics/attendance", $session, $key, $authpassword, $authusername, $room);
-    //$attendencestatus = json_decode($attend);
     $data = attendence_curl_request('https://api.congrea.net/data/analytics/attendance', $session, $key, $authpassword, $authusername, $room, $USER->id);
     $attendencestatus = json_decode($data);										   
     if (!empty($result)) {
@@ -442,29 +434,7 @@ if ($psession) {
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $table->id = "recorded_data";
-    /*     foreach ($pastsessions as $pastsession) {
-        $buttons = array();
-        $attendence = array();
-        $lastcolumn = '';
-        $row = array();
-        $row[] = '-';
-        $row[] = $pastsessionname = strtotime($pastsession->timestart); // Todo.
-        //$vcsid = $record->key_room; // Todo.
-        $row[] = '-';
-        if (has_capability('mod/congrea:recordingdelete', $context)) {
-            $imageurl = "$CFG->wwwroot/mod/congrea/pix/delete.png";
-            $buttons[] = html_writer::link(new moodle_url($returnurl, array(
-                'delete' => $record->session,
-                'recname' => $record->name, 'sesskey' => sesskey()
-            )), html_writer::empty_tag('img', array(
-                'src' => $imageurl,
-                'alt' => $strdelete, 'class' => 'iconsmall'
-            )), array('title' => $strdelete));
-        }
-        $row[] = implode(' ', $buttons);
-        $row[] = $lastcolumn;
-        $table->data[] = $row;
-    } */
+
     foreach ($recording->Items as $record) {
         $buttons = array();
         $attendence = array();
@@ -549,7 +519,7 @@ if ($session) {
 
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users
-
+    $later_enrolled = 0;
     if (!empty($attendencestatus) and !empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
@@ -652,6 +622,7 @@ if ($session) {
                     $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart); //Check if user ie enrolled later
                     if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)){
                         $table->data[] = array($username, '<p style="color:green;">Enrolled Later</p>', '-', '-', $recviewed);
+                        $later_enrolled++;
                     } else {
                         $table->data[] = array($username, '<p style="color:red;">A</p>', '-', '-', $recviewed);
                     }
@@ -673,18 +644,11 @@ if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
-    $absentuser = $countenroluser - $presentnroluser;
+    $absentuser = $countenroluser - $presentnroluser - $later_enrolled;
 
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
-    /* Check enrollment time of user
-    if(!($DB->get_record('user_enrolments', array('enrolid' => $COURSE->id, 'userid' => $user->id)))){
-        echo "not enrolled";
-    } else{
-        $normal_st_date = date('Y-m-d', $user_enroll_data->timestart); //course start date
-        $normal_end_date = date('Y-m-d', $user_enroll_data->timeend);//course end date
 
-    } */
-    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br>' . '<strong> Students present: </strong>' . $presentnroluser . '</br></br>';
+    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong>Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong>Participants absent: </strong>' . $absentuser . '</br>' . '<strong>Participants present: </strong>' . $presentnroluser . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
