@@ -85,10 +85,10 @@ if ($delete) {
             $DB->delete_records('event', array('id' => $delete));
         }
         $instances = $DB->get_records('event', array('id' => $cm->instance));
-        if (empty($instances)) {
+        /* if (empty($instances)) {
             congrea_delete_instance($cm->instance);
         }
-       // die;
+       die; */
     }
 } // End Delete Sessions
 
@@ -108,8 +108,8 @@ if ($mform->is_cancelled()) {
     $data->modulename = 'congrea';
     $data->instance = $congrea->id;
     $data->eventtype = 'session start'; // TODO:
-    $durationinminutes = round($fromform->timeduration / 60);
-    $timeduration = $durationinminutes * 60;
+    $durationinminutes = $fromform->timeduration;
+    $timeduration = $durationinminutes*60;
     $endtime = $data->timestart + $timeduration;
     $data->timeduration = $timeduration;
 
@@ -220,7 +220,7 @@ if ($edit) {
             } else {
                 $formdata = new stdClass;
                 $formdata->fromsessiondate = $record->timestart;
-                $formdata->timeduration = $record->timeduration;
+                $formdata->timeduration = $record->timeduration/60;
                 $formdata->week = $weeks;
                 $formdata->addmultiple = 1;
                 $formdata->moderatorid = $record->userid;
@@ -234,7 +234,7 @@ if ($edit) {
         $record = $DB->get_record('event', array('id' => $edit));
         $formdata = new stdClass;
         $formdata->fromsessiondate = $record->timestart;
-        $formdata->timeduration = $record->timeduration;
+        $formdata->timeduration = $record->timeduration/60;
         $formdata->week = intval($record->description);
         $formdata->addmultiple = 0;
         $formdata->week = 1;
