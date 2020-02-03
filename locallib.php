@@ -26,6 +26,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
+require_once dirname(__FILE__) . '/lib.php';
 
 //define('NO_DAYS', 0);
 define('SEVEN_DAYS', 1);

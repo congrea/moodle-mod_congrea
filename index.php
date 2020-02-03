@@ -51,7 +51,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
-if (! $congreas = get_all_instances_in_course('congrea', $course)) {
+if (!$congreas = get_all_instances_in_course('congrea', $course)) {
     notice(get_string('nocongreas', 'congrea'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 

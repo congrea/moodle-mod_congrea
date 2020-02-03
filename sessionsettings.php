@@ -65,7 +65,7 @@ $PAGE->set_context($context);
 if ($delete) {
     require_login($course, false, $cm);
     $submiturl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => $sessionsettings));
-    $returnurl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => $sessionsettings));
+    $returnurl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id,'sessionsettings' => true));
     if ($confirm != $delete) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading(format_string($congrea->name));
@@ -82,12 +82,18 @@ if ($delete) {
         if (!empty($event)) {
             $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
         } else {
-           $DB->delete_records('event', array('id' => $delete));
+            $DB->delete_records('event', array('id' => $delete));
         }
+        $instances = $DB->get_records('event', array('id' => $cm->instance));
+        if (empty($instances)) {
+            congrea_delete_instance($cm->instance);
+        }
+       // die;
     }
 } // End Delete Sessions
 
-$mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings, 'edit' => $edit, 'action' => $action, 'congreaid' => $congrea->id));
+//$mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings, 'edit' => $edit, 'action' => $action, 'congreaid' => $congrea->instance));
+$mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings, 'edit' => $edit, 'action' => $action));
 
 if ($mform->is_cancelled()) {
     // Do nothing.
@@ -155,11 +161,10 @@ if ($mform->is_cancelled()) {
                     repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
                 }
                 $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
-            } 
-        } else {
-            // single sessions
-            $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
+            }
         }
+        // single sessions
+        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
     }
     redirect($returnurl);
 } // Else if end, end reading data from form
@@ -249,7 +254,7 @@ if ($action == 'addsession' || $edit ) {
 echo $OUTPUT->heading('Schedules');
 $table = new html_table();
 $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
-$sessionlist = $DB->get_records('event', array('modulename' => 'congrea')); 
+$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id)); 
 usort($sessionlist, "compare_dates_scheduled_list");
 $currenttime = time();
 if (!empty($sessionlist)) {

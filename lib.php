@@ -165,9 +165,9 @@ function congrea_update_instance($congrea, $mform = null) {
  */
 function congrea_delete_instance($id) {
     global $DB, $CFG, $COURSE;
-/*     if (!$congrea = $DB->get_record('congrea', array('id' => $id))) {
+    if (!$congrea = $DB->get_record('congrea', array('id' => $id))) {
         return false;
-    } */
+    }
     if ($poll = $DB->get_records('congrea_poll', array('instanceid' => $congrea->id))) {
         foreach ($poll as $polldata) {
             $DB->delete_records('congrea_poll_attempts', array('qid' => $polldata->id));
@@ -184,11 +184,11 @@ function congrea_delete_instance($id) {
             }
         }
         $DB->delete_records('congrea_quiz', array('congreaid' => $congrea->id));
-    }
-    //$DB->delete_records('congrea_sessions', array('congreaid' => $congrea->id)); // MD
-    $DB->delete_records('course_modules', array('instance' => $congrea->id)); // md
-    $DB->delete_records('congrea', array('id' => $congrea->id));
+    }  
     $DB->delete_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id));
+    $DB->delete_record('congrea', array('id' => $congrea->id));
+    $DB->delete_record('course_modules', array('instance' => $congrea->id));
+    rebuild_course_cache($courseid, false);
     return true;
 }
 

@@ -47,7 +47,7 @@ class mod_congrea_session_form extends moodleform {
         $sessionsettings = $this->_customdata['sessionsettings'];
         $edit = $this->_customdata['edit'];
         $action = $this->_customdata['action'];
-        $congreaid = $this->_customdata['congreaid'];
+        //$congreaid = $this->_customdata['congreaid'];
 
         $mform->addElement('hidden', 'sessionsettings', $sessionsettings);
         $mform->setType('sessionsettings', PARAM_INT);
@@ -60,28 +60,34 @@ class mod_congrea_session_form extends moodleform {
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
         }
-        $mform->setType('congreaid', PARAM_INT);
-        $mform->addElement('hidden', 'congreaid', $congreaid);
+        //$mform->setType('congreaid', PARAM_INT);
+        //$mform->addElement('hidden', 'congreaid', $congreaid);
 
         $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
         $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
-        $mform->addElement('duration', 'timeduration', get_string('timeduration', 'congrea'), array('optional' => false));
+        $mform->setType('timeduration',PARAM_INT);
+        $textsize ='size="8"';
+        $mform->addElement('text', 'timeduration', get_string('timeduration', 'congrea'), $textsize);
+        $mform->createElement('static', 'min', 'minutes', get_string('min', 'congrea'));
+    
         $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list();
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
+        //$opt = array('Hours', 'Minutes');
+
         $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-        /* $mform->addElement('checkbox', 'addmultiple', '', get_string('repeatsessions', 'congrea'));
-        $mform->addHelpButton('addmultiple', 'repeatsessions', 'congrea'); */
+        //$mform->addElement('checkbox', 'addmultiple', '', get_string('repeatsessions', 'congrea'), $opt);
+        //$mform->addHelpButton('addmultiple', 'repeatsessions', 'congrea');
 
         $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('week', 'congrea'));
-        $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(' '), false);
+        $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(''), false);
         //$mform->setDefault('weeks', 1);
         $mform->hideIf('weeks', 'addmultiple', 'notchecked');
 
@@ -104,7 +110,8 @@ class mod_congrea_session_form extends moodleform {
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if ($data['timeduration'] == 0 || !(filter_var($data['timeduration'], FILTER_VALIDATE_INT))) {
+        if ($data['timeduration'] == 0) {
+		if ($data['timeduration'] == 0 || !(filter_var($data['timeduration'], FILTER_VALIDATE_INT))) {
             $errors['timeduration'] = get_string('errortimeduration', 'congrea');
         }
         $durationinminutes = round($data['timeduration'] / 60);
@@ -126,6 +133,6 @@ class mod_congrea_session_form extends moodleform {
             $repeat = 0;
         }
         return $errors;
+        }
     }
-
 }

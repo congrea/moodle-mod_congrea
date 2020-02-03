@@ -200,20 +200,16 @@ function xmldb_congrea_upgrade($oldversion) {
     if ($oldversion < 2019060700) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
-        /*$field = new xmldb_field('studentaudio',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');*/
 		$field = new xmldb_field(
                 'studentaudio', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime'
-        ); //@@@
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee video field Default 0.
-        /*$field = new xmldb_field('studentvideo',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');*/
 		$field = new xmldb_field(
                 'studentvideo', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio'
-        ); //@@@			 
+        );		 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -298,37 +294,46 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
     }
 	// To get all records from the congrea table and put them to event table
-    if ($oldversion < 2020013010.8) {
-		$congrearecords = $DB->get_records('congrea');
-		//$module = $DB->get_records('modules');
-		foreach ($congrearecords as $record) {				
-			$event = new stdClass();
-			$event->name = $record->name;
-			$event->courseid = $record->course;
-			$event->format = 1;
-			$event->timestart = $record->opentime;
-			$event->timeduration = $record->closetime - $record->opentime;
-            $event->userid = $record->moderatorid;
-            $event->instance = $record->id;
-            $event->modulename = 'congrea';
-            $event->eventype = 'start session';
-			//$diff = round(($record->closetime - $record->opentime) / (24*60*60));
-			$event->description = 'Open till ' . date('d-m-Y', $record->closetime);
-			$DB->insert_record('event', $event, $returnid=true, $bulk=false);
-        }
-        /// Drop field
-        // Removed the 'moderatorid' column from 'congrea'.
+    if ($oldversion < 2020013010.9) {
         $table = new xmldb_table('congrea');
-        $field = new xmldb_field('moderatorid');
-        $dbman->drop_field($table, $field);
+        if ($dbman->table_exists($table)) {
+            $congrearecords = $DB->get_records('congrea');
+            if (!empty($congrearecords)) {
+		        foreach ($congrearecords as $record) {				
+		        	$event = new stdClass();
+		        	$event->name = $record->name;
+		        	$event->courseid = $record->course;
+		        	$event->format = 1;
+		        	$event->timestart = $record->opentime;
+		        	$event->timeduration = $record->closetime - $record->opentime;
+                    $event->userid = $record->moderatorid;
+                    $event->instance = $record->id;
+                    $event->modulename = 'congrea';
+                    $event->eventype = 'start session';
+		        	$event->description = 'Open till ' . date('d-m-Y', $record->closetime);
+		        	$DB->insert_record('event', $event, $returnid=true, $bulk=false);
+                }
+            }
+            /// Drop field
+            // Removed the 'moderatorid' column from 'congrea'.
+            $table = new xmldb_table('congrea');
+            $field = new xmldb_field('moderatorid');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
 
-        $field = new xmldb_field('opentime');
-        $dbman->drop_field($table, $field);
+            $field = new xmldb_field('opentime');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
 
-        $field = new xmldb_field('closetime');
-        $dbman->drop_field($table, $field);
+            $field = new xmldb_field('closetime');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
 		// Main savepoint reached.
-        upgrade_mod_savepoint(true, 2020013010.8,'congrea');
+        upgrade_mod_savepoint(true, 2020013010.9,'congrea');
     }
     return true;
 }
