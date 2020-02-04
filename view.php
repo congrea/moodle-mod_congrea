@@ -618,7 +618,8 @@ if ($session) {
                     $recviewed = '-';
                 }
                 if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) { // check
-                    $teachername = $username;
+                    $teacherinfo = $DB->get_record('user', array('id' => $teacherid));
+                    $teachername = $teacherinfo->firstname . ' ' . $teacherinfo->lastname ;
                     $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>A</b></p>', '-', '-', $recviewed);
                 } else {
                     $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
@@ -647,11 +648,14 @@ if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     $countenroluser = count($enrolusers);
     $presentnroluser = count($attendence);
-    $absentuser = $countenroluser - $presentnroluser - $later_enrolled;
+    $absentuser = $countenroluser - $presentnroluser;
+    //$user = $DB->get_record('user', array('id' => $teacherid));
 
+    /* $teacherinfo = $DB->get_record('user', array('id' => $teacherid));
+    $teachername = $teacherinfo->firstname . ' ' . $teacherinfo->lastname ; */
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
 
-    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong>Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong>Participants absent: </strong>' . $absentuser . '</br>' . '<strong>Participants present: </strong>' . $presentnroluser . '</br></br>';
+    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' .$teacherid . '</strong></br><strong>Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong>Participants absent: </strong>' . $absentuser . '</br>' . '<strong>Participants present: </strong>' . $presentnroluser . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');

@@ -84,11 +84,6 @@ if ($delete) {
         } else {
             $DB->delete_records('event', array('id' => $delete));
         }
-        $instances = $DB->get_records('event', array('id' => $cm->instance));
-        /* if (empty($instances)) {
-            congrea_delete_instance($cm->instance);
-        }
-       die; */
     }
 } // End Delete Sessions
 
