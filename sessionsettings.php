@@ -87,7 +87,6 @@ if ($delete) {
     }
 } // End Delete Sessions
 
-//$mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings, 'edit' => $edit, 'action' => $action, 'congreaid' => $congrea->instance));
 $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings, 'edit' => $edit, 'action' => $action));
 
 if ($mform->is_cancelled()) {
@@ -104,9 +103,9 @@ if ($mform->is_cancelled()) {
     $data->instance = $congrea->id;
     $data->eventtype = 'session start'; // TODO:
     $durationinminutes = $fromform->timeduration;
-    $timeduration = $durationinminutes*60;
+    $timeduration = $durationinminutes;
     $endtime = $data->timestart + $timeduration;
-    $data->timeduration = $timeduration;
+    $data->timeduration = $timeduration * 60;
 
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
@@ -160,6 +159,7 @@ if ($mform->is_cancelled()) {
         }
         // single sessions
         $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
+        $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
     }
     redirect($returnurl);
 } // Else if end, end reading data from form
@@ -196,7 +196,7 @@ if ($edit) {
     //$table->head = array('Editing schedule:');
     $record = $DB->get_record('event', array('id' => $edit));
     $row = array();       
-    $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .userdate(($record->timestart + $record->timeduration), '%I:%M %p') . '</strong>';
+    $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .userdate(($record->timestart + $record->timeduration/60), '%I:%M %p') . '</strong>';
     $table->data[] = $row;
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
@@ -272,11 +272,11 @@ if (!empty($sessionlist)) {
                     continue;
                 }
             } */            
-            if ($list->timeduration > 86400) {
+           /*  if (($list->timeduration > 86400) && ($timestart < $currenttime)) {
                 $row[] = 'Legacy session';
-            } else{
+            } else{ */
                 $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-            }
+           /*  } */
             //$row[] = floor($list->timeduration / 3600) . gmdate("i", $list->timeduration % 3600);
             $moderatorid = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($moderatorid)) {

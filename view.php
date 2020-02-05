@@ -222,7 +222,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
 
 $a = new stdClass();
 
-//$next_date = date('Y-m-d', strtotime($enddate .' +1 day'));
 $a->timestart = userdate($sessionstarttime);
 $a->endtime = $sessionstarttime + $duration;
 $start = strtotime($sessionstarttime);
@@ -618,21 +617,20 @@ if ($session) {
                     $recviewed = '-';
                 }
                 if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) { // check
-                    $teacherinfo = $DB->get_record('user', array('id' => $teacherid));
-                    $teachername = $teacherinfo->firstname . ' ' . $teacherinfo->lastname ;
+                    $teachername = $username;
                     $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>A</b></p>', '-', '-', $recviewed);
                 } else {
                     $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
                     $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart); //Check if user ie enrolled later
                     if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)){
-                        $table->data[] = array($username, '<p style="color:green;">Enrolled Later</p>', '-', '-', $recviewed);
+                        $table->data[] = array($username, '<p style="color:green;">Enrolled later</p>', '-', '-', $recviewed);
                         $later_enrolled++;
                     } else {
                         $table->data[] = array($username, '<p style="color:red;">A</p>', '-', '-', $recviewed);
                     }
                 }
             }
-        } else {
+        }  else {
             echo get_string('absentuser', 'mod_congrea');
         }
     } else {
@@ -646,16 +644,12 @@ if (!empty($table->data) and !$session) {
 }
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    $countenroluser = count($enrolusers);
+    $countenroluser = count($enrolusers) - $later_enrolled;
     $presentnroluser = count($attendence);
     $absentuser = $countenroluser - $presentnroluser;
-    //$user = $DB->get_record('user', array('id' => $teacherid));
-
-    /* $teacherinfo = $DB->get_record('user', array('id' => $teacherid));
-    $teachername = $teacherinfo->firstname . ' ' . $teacherinfo->lastname ; */
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
 
-    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' .$teacherid . '</strong></br><strong>Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong>Participants absent: </strong>' . $absentuser . '</br>' . '<strong>Participants present: </strong>' . $presentnroluser . '</br></br>';
+    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br>' . '<strong> Students present: </strong>' . $presentnroluser . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
