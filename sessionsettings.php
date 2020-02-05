@@ -104,8 +104,9 @@ if ($mform->is_cancelled()) {
     $data->eventtype = 'session start'; // TODO:
     $durationinminutes = $fromform->timeduration;
     $timeduration = $durationinminutes*60;
-    $endtime = $data->timestart + $timeduration;
-    $data->timeduration = $timeduration * 60;
+    $data->timeduration = $durationinminutes * 60;
+    $endtime = $data->timestart + $data->timeduration;
+    
 
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
