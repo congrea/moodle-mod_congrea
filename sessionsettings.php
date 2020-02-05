@@ -103,7 +103,7 @@ if ($mform->is_cancelled()) {
     $data->instance = $congrea->id;
     $data->eventtype = 'session start'; // TODO:
     $durationinminutes = $fromform->timeduration;
-    $timeduration = $durationinminutes;
+    $timeduration = $durationinminutes*60;
     $endtime = $data->timestart + $timeduration;
     $data->timeduration = $timeduration * 60;
 
