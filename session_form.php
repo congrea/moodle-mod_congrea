@@ -65,22 +65,18 @@ class mod_congrea_session_form extends moodleform {
 
         $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
         $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
-        $mform->setType('timeduration',PARAM_INT);
-        $textsize ='size="8"';
-        $mform->addElement('text', 'timeduration', get_string('timeduration', 'congrea'), $textsize);
-        $mform->createElement('static', 'min', 'minutes', get_string('min', 'congrea'));
-    
-        $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
+        
+        $mform->setType('timeduration', PARAM_INT);
+        $durationfield = array();
+        $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
+        $durationfield[] =& $mform->createElement('static', '', '', '<span>minutes</span>');
+        $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list();
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
-        //$opt = array('Hours', 'Minutes');
-
         $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-        //$mform->addElement('checkbox', 'addmultiple', '', get_string('repeatsessions', 'congrea'), $opt);
-        //$mform->addHelpButton('addmultiple', 'repeatsessions', 'congrea');
 
         $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
@@ -88,7 +84,6 @@ class mod_congrea_session_form extends moodleform {
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('week', 'congrea'));
         $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(''), false);
-        //$mform->setDefault('weeks', 1);
         $mform->hideIf('weeks', 'addmultiple', 'notchecked');
 
         $this->add_action_buttons();
@@ -104,21 +99,14 @@ class mod_congrea_session_form extends moodleform {
     public function validation($data, $files) {
         global $DB;
         $errors = parent::validation($data, $files);
-
+        $durationinminutes = 0;
+        $durationinminutes = $data['timeduration'];
         $currentdate = time();
         $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if ($data['timeduration'] == 0) {
-		if ($data['timeduration'] == 0 || !(filter_var($data['timeduration'], FILTER_VALIDATE_INT))) {
-            $errors['timeduration'] = get_string('errortimeduration', 'congrea');
-        }
-        $durationinminutes = round($data['timeduration'] / 60);
-        if ($durationinminutes < 10) {
-            $errors['timeduration'] = get_string('errordurationlimit', 'congrea');
-        }
-        if ($durationinminutes > 1439) { // Minutes of 24 hours.
+        if (($durationinminutes == 0) || ($durationinminutes < 10) || ($durationinminutes > 1439 )) {
             $errors['timeduration'] = get_string('errortimeduration', 'congrea');
         }
         if(empty($data['moderatorid'])) {
@@ -126,13 +114,11 @@ class mod_congrea_session_form extends moodleform {
         }
         $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
         $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-
         if(!empty($data['week'])) {
             $repeat = $data['week'];
         } else {
             $repeat = 0;
         }
         return $errors;
-        }
     }
 }
