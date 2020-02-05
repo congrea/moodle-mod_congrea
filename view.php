@@ -618,7 +618,7 @@ if ($session) {
                 }
                 if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) { // check
                     $teachername = $username;
-                    $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>A</b></p>', '-', '-', $recviewed);
+                    $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>Presenter</b></p>', '-', '-', $recviewed);
                 } else {
                     $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
                     $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart); //Check if user ie enrolled later
