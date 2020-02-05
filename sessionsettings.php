@@ -264,7 +264,11 @@ if (!empty($sessionlist)) {
                 $pastsessions[] = $list;
                 continue;
             }
-            $row[] = ($list->timeduration / 60) . ' ' . 'mins';
+            if ($list->timeduration > 86400) {
+                $row[] = 'Legacy session';
+            } else {
+                $row[] = ($list->timeduration / 60) . ' ' . 'mins';
+            }
             $moderatorid = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($moderatorid)) {
                 $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
