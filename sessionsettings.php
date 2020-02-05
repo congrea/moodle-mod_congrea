@@ -131,7 +131,7 @@ if ($mform->is_cancelled()) {
             $DB->update_record('event', $dataobject);
             $day = date('D', $fromform->fromsessiondate);
             $weeks = $fromform->week;
-            $upcomingdates = reapeat_date_list($fromform->fromsessiondate, $weeks);
+            $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
             foreach ($upcomingdates as $startdate) {
                 repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
             }
@@ -150,7 +150,7 @@ if ($mform->is_cancelled()) {
                 $DB->update_record('event', $dataobject);
                 $day = date('D', $fromform->fromsessiondate);
                 $weeks = $fromform->week;
-                $upcomingdates = reapeat_date_list($fromform->fromsessiondate, $weeks);
+                $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
                 foreach ($upcomingdates as $startdate) {
                     repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
                 }
@@ -263,21 +263,7 @@ if (!empty($sessionlist)) {
                 $pastsessions[] = $list;
                 continue;
             }
-            /* if (!empty($list->repeatid)) { // Repeated past sessions
-                $days = 7 * ($list->repeattype - 1);
-                $date = date('Y-m-d H:i:s', $list->endtime);
-                $past = date('Y-m-d  H:i:s', strtotime($date . '+' . $days . ' days'));
-                if (strtotime($past) < $currenttime) {
-                    $pastsessions[] = $list;
-                    continue;
-                }
-            } */            
-           /*  if (($list->timeduration > 86400) && ($timestart < $currenttime)) {
-                $row[] = 'Legacy session';
-            } else{ */
-                $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-           /*  } */
-            //$row[] = floor($list->timeduration / 3600) . gmdate("i", $list->timeduration % 3600);
+            $row[] = ($list->timeduration / 60) . ' ' . 'mins';
             $moderatorid = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($moderatorid)) {
                 $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.

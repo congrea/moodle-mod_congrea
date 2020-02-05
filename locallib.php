@@ -819,7 +819,7 @@ function binarytohex($s)
  * @param int $weeks
  * @return array
  */
-function reapeat_date_list($startdate, $weeks)
+function repeat_date_list($startdate, $weeks)
 {
     $nextdate = array();
     $count = 1;

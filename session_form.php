@@ -47,8 +47,6 @@ class mod_congrea_session_form extends moodleform {
         $sessionsettings = $this->_customdata['sessionsettings'];
         $edit = $this->_customdata['edit'];
         $action = $this->_customdata['action'];
-        //$congreaid = $this->_customdata['congreaid'];
-
         $mform->addElement('hidden', 'sessionsettings', $sessionsettings);
         $mform->setType('sessionsettings', PARAM_INT);
         $mform->addElement('hidden', 'id', $id);
@@ -60,8 +58,6 @@ class mod_congrea_session_form extends moodleform {
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
         }
-        //$mform->setType('congreaid', PARAM_INT);
-        //$mform->addElement('hidden', 'congreaid', $congreaid);
 
         $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
         $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');

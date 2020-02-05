@@ -563,7 +563,7 @@ if ($session) {
                 $rectotalviewedpercent = 0;
                 $recviewed = '-';
             }
-            if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) { /// Check $teacherid
+            if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) {
                 $teachername = $username;
                 if (!empty($studentsstatus->totalspenttime)) {
                     $table->data[] = array(
@@ -616,12 +616,12 @@ if ($session) {
                     $rectotalviewedpercent = 0;
                     $recviewed = '-';
                 }
-                if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) { // check
+                if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) {
                     $teachername = $username;
-                    $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>Presenter</b></p>', '-', '-', $recviewed);
+                    $table->data[] = array('<strong>' . $teachername . '</strong>', '<p style="color:red;"><b>A</b></p>', '-', '-', $recviewed);
                 } else {
                     $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
-                    $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart); //Check if user ie enrolled later
+                    $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart); //Check if user is enrolled later
                     if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)){
                         $table->data[] = array($username, '<p style="color:green;">Enrolled later</p>', '-', '-', $recviewed);
                         $later_enrolled++;
