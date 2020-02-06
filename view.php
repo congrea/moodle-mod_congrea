@@ -648,8 +648,12 @@ if (!empty($table) and $session and $sessionstatus) {
     $presentnroluser = count($attendence);
     $absentuser = $countenroluser - $presentnroluser;
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
-
-    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br>' . '<strong> Students present: </strong>' . $presentnroluser . '</br></br>';
+    if (!empty($teachername)){
+        $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong>Teacher: ' . $teachername . '</strong></br><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br>' . '<strong> Students present: </strong>' . $presentnroluser . '</br></br>';
+    } else {
+        $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A', $sessionstatus->sessionendtime) . '</strong></h5><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br>' . '<strong> Students present: </strong>' . $presentnroluser . '</br></br>';
+    }
+    
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
