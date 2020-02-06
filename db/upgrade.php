@@ -294,7 +294,7 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
     }
 	// To get all records from the congrea table and put them to event table
-    if ($oldversion < 2020013010.7) {
+    if ($oldversion < 2020020600) {
         $table = new xmldb_table('congrea');
         if ($dbman->table_exists($table)) {
             $congrearecords = $DB->get_records('congrea');
@@ -333,7 +333,7 @@ function xmldb_congrea_upgrade($oldversion) {
             }
         }
 		// Main savepoint reached.
-        upgrade_mod_savepoint(true, 2020013010.7,'congrea');
+        upgrade_mod_savepoint(true, 2020020600,'congrea');
     }
     return true;
 }
