@@ -61,7 +61,6 @@ class mod_congrea_session_form extends moodleform {
 
         $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
         $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
-        
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
@@ -105,12 +104,12 @@ class mod_congrea_session_form extends moodleform {
         if (($durationinminutes == 0) || ($durationinminutes < 10) || ($durationinminutes > 1439 )) {
             $errors['timeduration'] = get_string('errortimeduration', 'congrea');
         }
-        if(empty($data['moderatorid'])) {
+        if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
         }
         $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
         $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-        if(!empty($data['week'])) {
+        if (!empty($data['week'])) {
             $repeat = $data['week'];
         } else {
             $repeat = 0;

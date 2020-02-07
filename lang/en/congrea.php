@@ -218,7 +218,6 @@ $string['time'] = 'Time:';
 $string['from'] = 'from:';
 $string['repeatsession'] = 'Repeat sessions';
 $string['repeatsessions'] = 'If you want to schedule multiple sessions';
-//$string['repeatsessions_help'] = 'Enable to repeat the session.';
 $string['repeattype'] = 'Repeat type';
 $string['repeattype_help'] = 'Repeat type';
 $string['sessionenddate'] = 'Session end date';
