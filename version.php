@@ -29,8 +29,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2020020701; // The current module version (Date: YYYYMMDDXX).
-$plugin->release = 'v3.5.0-rc3 (Build: 2020020701)';
-$plugin->requires = 2018051700;      // Requires this Moodle version.(3.0+).
+$plugin->release = 'v3.5.0-r1 (Build: 2020020701)';
+$plugin->requires = 2018051700;      // Requires this Moodle version.(3.5+).
 $plugin->cron = 0;               // Period for cron to check this module (secs).
 $plugin->component = 'mod_congrea'; // To check on upgrade, that module sits in correct place.
-$plugin->maturity = MATURITY_RC;
+$plugin->maturity = MATURITY_STABLE;
