@@ -278,9 +278,9 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     $studentvideo = $congrea->studentvideo;
     $studentpc = $congrea->studentpc;
     $studentgc = $congrea->studentgc;
+    $askquestion = $congrea->askquestion;
     $userlist = $congrea->userlist;
     $qamarknotes = $congrea->qamarknotes;
-    $askquestion = $congrea->askquestion;
     $qaanswer = $congrea->qaanswer;
     $qacomment = $congrea->qacomment;
     $qaupvote = $congrea->qaupvote;
@@ -311,9 +311,9 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     $studentvideo = get_config('mod_congrea', 'studentvideo');
     $studentpc = get_config('mod_congrea', 'studentpc');
     $studentgc = get_config('mod_congrea', 'studentgc');
+    $askquestion = get_config('mod_congrea', 'askQuestion');
     $userlist = get_config('mod_congrea', 'userlist');
     $qamarknotes = get_config('mod_congrea', 'qaMarkNotes');
-    $askquestion = get_config('mod_congrea', 'askQuestion');
     $qaanswer = get_config('mod_congrea', 'qaAnswer');
     $qacomment = get_config('mod_congrea', 'qaComment');
     $qaupvote = get_config('mod_congrea', 'qaUpvote');
@@ -363,12 +363,8 @@ $variableobject = (object) array(
     'studentvideo' => $studentvideo,
     'studentpc' => $studentpc,
     'studentgc' => $studentgc,
-    'userlist' => $userlist,
-    'qamarknotes' => $qamarknotes,
     'askquestion' => $askquestion,
-    'qaanswer' => $qaanswer,
-    'qacomment' => $qacomment,
-    'qaupvote' => $qaupvote,
+    'userlist' => $userlist,
     'enablerecording' => $enablerecording,
     'recallowpresentoravcontrol' => $recallowpresentoravcontrol,
     'showpresentorrecordingstatus' => $showpresentorrecordingstatus,
@@ -376,7 +372,11 @@ $variableobject = (object) array(
     'recallowattendeeavcontrol' => $recallowattendeeavcontrol,
     'showattendeerecordingstatus' => $showattendeerecordingstatus,
     'trimrecordings' => $trimrecordings,
-    'attendeerecording' => $attendeerecording, 'x6' => 0
+    'attendeerecording' => $attendeerecording,
+    'qamarknotes' => $qamarknotes,
+    'qaanswer' => $qaanswer,
+    'qacomment' => $qacomment,
+    'qaupvote' => $qaupvote, 'x6' => 0
 );
 $hexcode = settingstohex($variableobject); // Todo- for validation.
 if ($psession) {
