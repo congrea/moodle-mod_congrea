@@ -325,19 +325,19 @@ function xmldb_congrea_upgrade($oldversion) {
             if ($dbman->field_exists($table, $field)) {
                 $dbman->drop_field($table, $field);
             }
-            $field = new xmldb_field('raisehand');
-            if ($dbman->field_exists($table, $field)) {
-                $dbman->drop_field($table, $field);
-            }
         }
         // Main savepoint reached.
         upgrade_mod_savepoint(true, 2020020701, 'congrea');
     }
-    // To get all records from the congrea table and put them to event table.
+    // To get new settings and drop raisehand field.
     if ($oldversion < 2020020702) {
         $table = new xmldb_table('congrea');
+        $field = new xmldb_field('raisehand');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
         // Add Bookmark & Notes field Default 1.
-        $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'userlist');
+        $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'timemodified');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
