@@ -744,17 +744,21 @@ function settingstohex($variablesobject) {
     $localsettings[2] = $variablesobject->studentvideo;
     $localsettings[3] = $variablesobject->studentpc;
     $localsettings[4] = $variablesobject->studentgc;
-    $localsettings[5] = $variablesobject->raisehand;
     $localsettings[6] = $variablesobject->userlist;
-    $localsettings[7] = $variablesobject->enablerecording;
-    $localsettings[8] = $variablesobject->recallowpresentoravcontrol;
-    $localsettings[9] = $variablesobject->showpresentorrecordingstatus;
-    $localsettings[10] = $variablesobject->recattendeeav;
-    $localsettings[11] = $variablesobject->recallowattendeeavcontrol;
-    $localsettings[12] = $variablesobject->showattendeerecordingstatus;
-    $localsettings[13] = $variablesobject->trimrecordings;
-    $localsettings[14] = $variablesobject->attendeerecording;
-    $localsettings[15] = $variablesobject->x6;
+    $localsettings[7] = $variablesobject->qamarknotes;
+    $localsettings[8] = $variablesobject->askquestion;
+    $localsettings[9] = $variablesobject->qaanswer;
+    $localsettings[10] = $variablesobject->qacomment;
+    $localsettings[11] = $variablesobject->qaupvote;
+    $localsettings[12] = $variablesobject->enablerecording;
+    $localsettings[13] = $variablesobject->recallowpresentoravcontrol;
+    $localsettings[14] = $variablesobject->showpresentorrecordingstatus;
+    $localsettings[15] = $variablesobject->recattendeeav;
+    $localsettings[16] = $variablesobject->recallowattendeeavcontrol;
+    $localsettings[17] = $variablesobject->showattendeerecordingstatus;
+    $localsettings[18] = $variablesobject->trimrecordings;
+    $localsettings[19] = $variablesobject->attendeerecording;
+    $localsettings[20] = $variablesobject->x6;
     return binarytohex(join('', $localsettings));
 }
 

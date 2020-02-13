@@ -174,10 +174,21 @@ $string['studentpc'] = 'Private chat';
 $string['studentpc_help'] = 'If enabled, allows students to have private chat i.e., one on one discussion with the attendees during the session.';
 $string['studentgc'] = 'Group chat';
 $string['studentgc_help'] = 'If enabled, allows students to participate in group chat/discussion during the session.';
-$string['raisehand'] = 'Raise hand';
-$string['raisehand_help'] = 'If enabled, allows students to notify the teacher for any query or comment during the live session using Raise Hand feature.';
 $string['userlist'] = 'User list visibility';
 $string['userlist_help'] = 'If enabled, allows students to view the list of attendees during a session.';
+$string['qaMarkNotes'] = 'Bookmark & Notes';
+$string['qaMarkNotes_help'] = 'If enabled, allow students to add private Bookmark and Note';
+
+$string['questionsanswersettings'] = 'Question & Answer Settings';
+$string['askQuestion'] = 'Question & Answer';
+$string['askQuestion_help'] = 'If enabled, allow teacher and students to use Raise Question feature';
+$string['qaAnswer'] = 'Answer';
+$string['qaAnswer_help'] = 'If enabled, allow students to answer the question posted on the Raise Question panel';
+$string['qaComment'] = 'Comment';
+$string['qaComment_help'] = 'If enabled, allow students to post comment on answers and other comments';
+$string['qaUpvote'] = 'Voting';
+$string['qaUpvote_help'] = 'If enabled, allow students to Upvote the questions and answers';
+
 $string['recordingsection'] = 'Recording settings';
 $string['generalsection'] = 'General Settings';
 $string['recAllowpresentorAVcontrol'] = 'Teacher’s control over A/V recording';

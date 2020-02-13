@@ -96,14 +96,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('studentgc', 0);
             }
-            // Disable Raise Hand.
-            $mform->addElement('advcheckbox', 'raisehand', get_string('raisehand', 'congrea'), ' ', null);
-            $mform->addHelpButton('raisehand', 'raisehand', 'congrea');
-            if (get_config('mod_congrea', 'raisehand')) {
-                $mform->setDefault('raisehand', 1);
-            } else {
-                $mform->setDefault('raisehand', 0);
-            }
+
             // Disable user list for attendees.
             $mform->addElement('advcheckbox', 'userlist', get_string('userlist', 'congrea'), ' ', null);
             $mform->addHelpButton('userlist', 'userlist', 'congrea');
@@ -111,6 +104,45 @@ class mod_congrea_mod_form extends moodleform_mod {
                 $mform->setDefault('userlist', 1);
             } else {
                 $mform->setDefault('userlist', 0);
+            }
+            $mform->addElement('advcheckbox', 'qamarknotes', get_string('qaMarkNotes', 'congrea'), ' ', null);
+            $mform->addHelpButton('qamarknotes', 'qaMarkNotes', 'congrea');
+            if (get_config('mod_congrea', 'qaMarkNotes')) {
+                $mform->setDefault('qamarknotes', 1);
+            } else {
+                $mform->setDefault('qamarknotes', 0);
+            }
+
+            // Congrea Question & Answer settings.
+            $mform->addElement('header', 'general', get_string('questionsanswersettings', 'congrea'));
+            $mform->addElement('advcheckbox', 'askquestion', get_string('askQuestion', 'congrea'), ' ', null);
+            $mform->addHelpButton('askquestion', 'askQuestion', 'congrea');
+            if (get_config('mod_congrea', 'askQuestion')) {
+                $mform->setDefault('askquestion', 1);
+            } else {
+                $mform->setDefault('askquestion', 0);
+            }
+            $mform->addElement('advcheckbox', 'qaanswer', get_string('qaAnswer', 'congrea'), ' ', null);
+            $mform->addHelpButton('qaanswer', 'qaAnswer', 'congrea');
+            if (get_config('mod_congrea', 'qaAnswer')) {
+                $mform->setDefault('qaanswer', 1);
+            } else {
+                $mform->setDefault('qaanswer', 0);
+            }
+            $mform->addElement('advcheckbox', 'qacomment', get_string('qaComment', 'congrea'), ' ', null);
+            $mform->addHelpButton('qacomment', 'qaComment', 'congrea');
+            if (get_config('mod_congrea', 'qaComment')) {
+                $mform->setDefault('qacomment', 1);
+            } else {
+                $mform->setDefault('qacomment', 0);
+            }
+
+            $mform->addElement('advcheckbox', 'qaupvote', get_string('qaUpvote', 'congrea'), ' ', null);
+            $mform->addHelpButton('qaupvote', 'qaUpvote', 'congrea');
+            if (get_config('mod_congrea', 'qaUpvote')) {
+                $mform->setDefault('qaupvote', 1);
+            } else {
+                $mform->setDefault('qaupvote', 0);
             }
             // Congrea recording settings.
             $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));

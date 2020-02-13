@@ -61,16 +61,32 @@ if ($ADMIN->fulltree) {
     // Congrea disable attendee gc default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/studentgc', get_string('studentgc', 'mod_congrea'),
                                                       get_string('studentgc_help', 'mod_congrea'), 1));
-    // Congrea disable raise hand default on.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/raisehand', get_string('raisehand', 'mod_congrea'),
-                                                      get_string('raisehand_help', 'mod_congrea'), 1));
     // Congrea disable user list default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/userlist', get_string('userlist', 'mod_congrea'),
                                                       get_string('userlist_help', 'mod_congrea'), 1));
+    // Congrea Bookmark & Notes default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/qaMarkNotes', get_string('qaMarkNotes', 'mod_congrea'),
+                                                      get_string('qaMarkNotes_help', 'mod_congrea'), 1));
+    // Recordings Section.
+    $settings->add(new admin_setting_heading('mod_congrea/questionsanswersettings_header',
+    get_string('questionsanswersettings', 'congrea'), '0'));
+    // Congrea Question & Answer default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/askQuestion', get_string('askQuestion', 'mod_congrea'),
+                                                      get_string('askQuestion_help', 'mod_congrea'), 1));
+    // Congrea Answer default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/qaAnswer', get_string('qaAnswer', 'mod_congrea'),
+                                                      get_string('qaAnswer_help', 'mod_congrea'), 1));
+    // Congrea Comment default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/qaComment', get_string('qaComment', 'mod_congrea'),
+                                                      get_string('qaComment_help', 'mod_congrea'), 1));
+    // Congrea Voting default on.
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/qaUpvote', get_string('qaUpvote', 'mod_congrea'),
+                                                      get_string('qaUpvote_help', 'mod_congrea'), 1));
     // Recordings Section.
     $settings->add(new admin_setting_heading('mod_congrea/recording_header', get_string('recordingsection', 'congrea'), ''));
     // Congrea recording default off.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/enablerecording', get_string('enablerecording', 'congrea'),
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/enablerecording',
+                                                        get_string('enablerecording', 'congrea'),
                                                         get_string('enablerecording_help', 'congrea'), 0));
     // Session recording for teacher.
     $settings->add(new admin_setting_heading('mod_congrea/trecording_header',

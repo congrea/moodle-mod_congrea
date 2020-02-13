@@ -278,8 +278,12 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     $studentvideo = $congrea->studentvideo;
     $studentpc = $congrea->studentpc;
     $studentgc = $congrea->studentgc;
-    $raisehand = $congrea->raisehand;
     $userlist = $congrea->userlist;
+    $qamarknotes = $congrea->qamarknotes;
+    $askquestion = $congrea->askquestion;
+    $qaanswer = $congrea->qaanswer;
+    $qacomment = $congrea->qacomment;
+    $qaupvote = $congrea->qaupvote;
     // Recording Settings.
     if ($congrea->enablerecording) { // If enable recording.
         $enablerecording = $congrea->enablerecording;
@@ -307,8 +311,13 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     $studentvideo = get_config('mod_congrea', 'studentvideo');
     $studentpc = get_config('mod_congrea', 'studentpc');
     $studentgc = get_config('mod_congrea', 'studentgc');
-    $raisehand = get_config('mod_congrea', 'raisehand');
     $userlist = get_config('mod_congrea', 'userlist');
+    $qamarknotes = get_config('mod_congrea', 'qaMarkNotes');
+    $askquestion = get_config('mod_congrea', 'askQuestion');
+    $qaanswer = get_config('mod_congrea', 'qaAnswer');
+    $qacomment = get_config('mod_congrea', 'qaComment');
+    $qaupvote = get_config('mod_congrea', 'qaUpvote');
+
     if (get_config('mod_congrea', 'enablerecording')) {
         $enablerecording = get_config('mod_congrea', 'enablerecording');
         $recallowpresentoravcontrol = get_config('mod_congrea', 'recAllowpresentorAVcontrol');
@@ -354,8 +363,12 @@ $variableobject = (object) array(
     'studentvideo' => $studentvideo,
     'studentpc' => $studentpc,
     'studentgc' => $studentgc,
-    'raisehand' => $raisehand,
     'userlist' => $userlist,
+    'qamarknotes' => $qamarknotes,
+    'askquestion' => $askquestion,
+    'qaanswer' => $qaanswer,
+    'qacomment' => $qacomment,
+    'qaupvote' => $qaupvote,
     'enablerecording' => $enablerecording,
     'recallowpresentoravcontrol' => $recallowpresentoravcontrol,
     'showpresentorrecordingstatus' => $showpresentorrecordingstatus,
