@@ -177,8 +177,7 @@ $string['studentgc_help'] = 'If enabled, allows students to participate in group
 $string['userlist'] = 'User list visibility';
 $string['userlist_help'] = 'If enabled, allows students to view the list of attendees during a session.';
 $string['qaMarkNotes'] = 'Bookmark & Notes';
-$string['qaMarkNotes_help'] = 'If enabled, allow students to add private Bookmark and Note';
-
+$string['qaMarkNotes_help'] = 'If enabled, allow teacher and students to add private Bookmark and Note';
 $string['questionsanswersettings'] = 'Question & Answer Settings';
 $string['askQuestion'] = 'Question & Answer';
 $string['askQuestion_help'] = 'If enabled, allow teacher and students to use Raise Question feature';
@@ -188,7 +187,6 @@ $string['qaComment'] = 'Comment';
 $string['qaComment_help'] = 'If enabled, allow students to post comment on answers and other comments';
 $string['qaUpvote'] = 'Voting';
 $string['qaUpvote_help'] = 'If enabled, allow students to Upvote the questions and answers';
-
 $string['recordingsection'] = 'Recording settings';
 $string['generalsection'] = 'General Settings';
 $string['recAllowpresentorAVcontrol'] = 'Teacher’s control over A/V recording';

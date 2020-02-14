@@ -337,7 +337,7 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
         // Add Bookmark & Notes field Default 1.
-        $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'timemodified');
+        $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'userlist');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
