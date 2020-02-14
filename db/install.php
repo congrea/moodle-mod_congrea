@@ -30,6 +30,53 @@ defined('MOODLE_INTERNAL') || die();
  * @see upgrade_plugins_modules()
  */
 function xmldb_congrea_install() {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/mod/congrea/locallib.php');
+    $dbman = $DB->get_manager(); 
+    // Removed the 'moderatorid' column from 'congrea'.
+    $table = new xmldb_table('congrea');
+    $field = new xmldb_field('moderatorid');
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+    $field = new xmldb_field('opentime');
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+    $field = new xmldb_field('closetime');
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+    $field = new xmldb_field('raisehand');
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+    // Add Bookmark & Notes field Default 1.
+    $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'timemodified');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
+    // Add Question & Answer field Default 1.
+    $field = new xmldb_field('askquestion', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qamarknotes');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
+    // Add Answer field Default 1.
+    $field = new xmldb_field('qaanswer', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'askquestion');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
+    // Add Comment field Default 1.
+    $field = new xmldb_field('qacomment', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qaanswer');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
+    // Add Voting field Default 1.
+    $field = new xmldb_field('qaupvote', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qacomment');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
 }
 
 /**
