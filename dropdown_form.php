@@ -15,37 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_virtualcalss instance list viewed event.
+ * This file contains the forms for duration
  *
- * @package    mod_congrea
- * @copyright  2015 Pinky Sharma
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_congrea
+ * @copyright  2011 Artem Andreev <andreev.artem@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_congrea\event;
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir.'/formslib.php');
 
 /**
- * The mod_congrea instance list viewed event class.
+ * class for displaying duration form.
  *
- * @package    mod_congrea
- * @copyright  2020 Manisha
+ * @copyright  2011 Artem Andreev <andreev.artem@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+class mod_congrea_dropdown_form extends moodleform {
+
     /**
-     * Create the event from course record.
+     * Called to define this moodle form
      *
-     * @param \stdClass $course
-     * @return course_module_instance_list_viewed
+     * @return void
      */
-    public static function create_from_course(\stdClass $course) {
-        $params = array(
-            'context' => \context_course::instance($course->id)
-        );
-        $event = self::create($params);
-        $event->add_record_snapshot('course', $course);
-        return $event;
+    public function definition() {
+        global $CFG;
+        $mform = $this->_form;
+        $options = array(1 => 'Next 7 Days', 2 => 'Next 30 Days', 3 => 'Next 3 Month', 4 => 'Next 6 Month');
+        $mform->addElement('select', 'dropdownid', get_string('filter', 'congrea'), $options);
+        $mform->addHelpButton('dropdownid', 'filter', 'congrea');
+        $this->add_action_buttons();
     }
 }

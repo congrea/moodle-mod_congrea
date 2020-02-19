@@ -95,7 +95,6 @@ function congrea_add_instance($congrea) {
     }
     $vclass = $DB->insert_record('congrea', $congrea);
     $congrea->id = $vclass;
-    mod_congrea_update_calendar($congrea);
     return $vclass;
 }
 
@@ -151,7 +150,6 @@ function congrea_update_instance($congrea, $mform = null) {
         $congrea->showattendeerecordingstatus = 1;
     }
     $status = $DB->update_record('congrea', $congrea);
-    mod_congrea_update_calendar($congrea);
     return $status;
 }
 
@@ -170,18 +168,6 @@ function congrea_delete_instance($id) {
     if (!$congrea = $DB->get_record('congrea', array('id' => $id))) {
         return false;
     }
-    // Delete any dependent records here.
-    if ($congreafiles = $DB->get_records('congrea_files', array('vcid' => $congrea->id))) {
-        $fs = get_file_storage();
-        foreach ($congreafiles as $cfile) {
-            $cm = get_coursemodule_from_instance('congrea', $congrea->id, $COURSE->id, false);
-            if (!empty($cm)) {
-                $context = context_module::instance($cm->id);
-                $fs->delete_area_files($context->id, 'mod_congrea', 'congrea_rec', $cfile->vcid);
-            }
-        }
-        $DB->delete_records('congrea_files', array('vcid' => $congrea->id));
-    }
     if ($poll = $DB->get_records('congrea_poll', array('instanceid' => $congrea->id))) {
         foreach ($poll as $polldata) {
             $DB->delete_records('congrea_poll_attempts', array('qid' => $polldata->id));
@@ -199,6 +185,8 @@ function congrea_delete_instance($id) {
         }
         $DB->delete_records('congrea_quiz', array('congreaid' => $congrea->id));
     }
+    // TODO: Currently all events are deleted, past events should not get deleted.
+    $DB->delete_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id));
     $DB->delete_records('congrea', array('id' => $congrea->id));
     return true;
 }
@@ -261,6 +249,7 @@ function congrea_update_grades(stdClass $congrea, $userid = 0) {
 
     grade_update('mod/congrea', $congrea->course, 'mod', 'congrea', $congrea->id, 0, $grades);
 }
+
 /**
  * Returns the lists of all browsable file areas within the given module context
  *

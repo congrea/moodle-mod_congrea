@@ -40,7 +40,7 @@ function xmldb_congrea_upgrade($oldversion) {
     global $DB, $CFG;
 
     require_once($CFG->libdir . '/db/upgradelib.php');
-
+    require_once($CFG->dirroot . '/mod/congrea/locallib.php');
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     /*
@@ -199,20 +199,23 @@ function xmldb_congrea_upgrade($oldversion) {
     if ($oldversion < 2019060700) {
         $table = new xmldb_table('congrea');
         // Add disable attendee audio field Default 0.
-        $field = new xmldb_field('studentaudio',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime');
+        $field = new xmldb_field(
+            'studentaudio', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'closetime'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee video field Default 0.
-        $field = new xmldb_field('studentvideo',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio');
+        $field = new xmldb_field(
+                'studentvideo', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentaudio'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Add disable attendee private chat field Default 0.
-        $field = new xmldb_field('studentpc',
-        XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo');
+        $field = new xmldb_field(
+            'studentpc', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'studentvideo'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -286,6 +289,80 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         upgrade_mod_savepoint(true, 2019061702, 'congrea');
+    }
+    // To get all records from the congrea table and put them to event table.
+    if ($oldversion < 2020020701) {
+        $table = new xmldb_table('congrea');
+        if ($dbman->table_exists($table)) {
+            $congrearecords = $DB->get_records('congrea');
+            if (!empty($congrearecords)) {
+                foreach ($congrearecords as $record) {
+                    $event = new stdClass();
+                    $event->name = $record->name;
+                    $event->courseid = $record->course;
+                    $event->format = 1;
+                    $event->timestart = $record->opentime;
+                    $event->timeduration = $record->closetime - $record->opentime;
+                    $event->userid = $record->moderatorid;
+                    $event->instance = $record->id;
+                    $event->modulename = 'congrea';
+                    $event->eventype = 'start session';
+                    $event->description = 'Open till ' . date('d-m-Y', $record->closetime);
+                    $DB->insert_record('event', $event, $returnid = true, $bulk = false);
+                }
+            }
+            // Removed the 'moderatorid' column from 'congrea'.
+            $table = new xmldb_table('congrea');
+            $field = new xmldb_field('moderatorid');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+            $field = new xmldb_field('opentime');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+            $field = new xmldb_field('closetime');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020020701, 'congrea');
+    }
+    // To get new settings and drop raisehand field.
+    if ($oldversion < 2020021900) {
+        $table = new xmldb_table('congrea');
+        $field = new xmldb_field('raisehand');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        // Add Bookmark & Notes field Default 1.
+        $field = new xmldb_field('qamarknotes', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'userlist');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add Question & Answer field Default 1.
+        $field = new xmldb_field('askquestion', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qamarknotes');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add Answer field Default 1.
+        $field = new xmldb_field('qaanswer', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'askquestion');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add Comment field Default 1.
+        $field = new xmldb_field('qacomment', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qaanswer');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Add Voting field Default 1.
+        $field = new xmldb_field('qaupvote', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'qacomment');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020021900, 'congrea');
     }
     return true;
 }
