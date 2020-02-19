@@ -330,7 +330,7 @@ function xmldb_congrea_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020020701, 'congrea');
     }
     // To get new settings and drop raisehand field.
-    if ($oldversion < 2020020702) {
+    if ($oldversion < 2020021900) {
         $table = new xmldb_table('congrea');
         $field = new xmldb_field('raisehand');
         if ($dbman->field_exists($table, $field)) {
@@ -362,7 +362,7 @@ function xmldb_congrea_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         // Main savepoint reached.
-        upgrade_mod_savepoint(true, 2020020702, 'congrea');
+        upgrade_mod_savepoint(true, 2020021900, 'congrea');
     }
     return true;
 }
