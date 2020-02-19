@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_virtualcalss\event;
+namespace mod_congrea\event;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,8 +30,22 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_congrea instance list viewed event class.
  *
  * @package    mod_congrea
- * @copyright  2015 Pinky Sharma
+ * @copyright  2020 Manisha
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+    /**
+     * Create the event from course record.
+     *
+     * @param \stdClass $course
+     * @return course_module_instance_list_viewed
+     */
+    public static function create_from_course(\stdClass $course) {
+        $params = array(
+            'context' => \context_course::instance($course->id)
+        );
+        $event = self::create($params);
+        $event->add_record_snapshot('course', $course);
+        return $event;
+    }
 }

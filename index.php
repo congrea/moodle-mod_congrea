@@ -37,13 +37,7 @@ require_course_login($course);
 
 $coursecontext = context_course::instance($course->id);
 
-// Trigger instances list viewed event.
-$params = array(
-    'context' => $coursecontext
-);
-$event = \mod_congrea\event\course_module_instance_list_viewed::create($params);
-$event->add_record_snapshot('course', $course);
-$event->trigger();
+\mod_congrea\event\course_module_instance_list_viewed::create_from_course($course)->trigger();
 
 $PAGE->set_url('/mod/congrea/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
@@ -70,12 +64,12 @@ if ($course->format == 'weeks') {
 foreach ($congreas as $congrea) {
     if (!$congrea->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/congrea.php', array('id' => $congrea->coursemodule)),
+            new moodle_url('/mod/congrea/view.php', array('id' => $congrea->coursemodule)),
             format_string($congrea->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/congrea.php', array('id' => $congrea->coursemodule)),
+            new moodle_url('/mod/congrea/view.php', array('id' => $congrea->coursemodule)),
             format_string($congrea->name, true));
     }
 
