@@ -139,7 +139,7 @@ function execute_action($validparameters) {
 set_header();
 
 exit_if_request_is_options();
-require_login();
+// require_login(); // Hack to mitigate SameSite - https://www.chromium.org/updates/same-site/
 $validparams = validate_request();
 
 execute_action($validparams);
