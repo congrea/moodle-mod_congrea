@@ -129,6 +129,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('qaanswer', 0);
             }
+			$mform->disabledIf('qaanswer', 'askquestion', 'notchecked');
             $mform->addElement('advcheckbox', 'qacomment', get_string('qaComment', 'congrea'), ' ', null);
             $mform->addHelpButton('qacomment', 'qaComment', 'congrea');
             if (get_config('mod_congrea', 'qaComment')) {
@@ -136,7 +137,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('qacomment', 0);
             }
-
+            $mform->disabledIf('qacomment', 'askquestion', 'notchecked');
             $mform->addElement('advcheckbox', 'qaupvote', get_string('qaUpvote', 'congrea'), ' ', null);
             $mform->addHelpButton('qaupvote', 'qaUpvote', 'congrea');
             if (get_config('mod_congrea', 'qaUpvote')) {
@@ -144,6 +145,7 @@ class mod_congrea_mod_form extends moodleform_mod {
             } else {
                 $mform->setDefault('qaupvote', 0);
             }
+			$mform->disabledIf('qaupvote', 'askquestion', 'notchecked');
             // Congrea recording settings.
             $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));
             $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null); // Enablerecording.
