@@ -25,6 +25,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->dirroot . '/calendar/lib.php');
+$pageloadstarttime = microtime(true); // Top of page.
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID.
 $report = optional_param('report', 0, PARAM_INT); // Course_module ID.
@@ -226,6 +227,10 @@ $a->timestart = userdate($sessionstarttime);
 $a->endtime = $sessionstarttime + $duration;
 $start = strtotime($sessionstarttime);
 $end = strtotime($sessionendtime);
+$time = new DateTime("now", core_date::get_user_timezone_object($pageloadstarttime));
+$timestamppageload = $time->getTimestamp();
+$sessendtime = $sessionstarttime + $duration;
+$timediff = round($sessendtime - $timestamppageload);
 if (userdate($start, '%I:%M %p') == userdate($end , '%I:%M %p')) {
     $a->endtime = userdate($sessionendtime, '%I:%M %p');
 }
@@ -237,6 +242,7 @@ $classname = 'wrapper-button';
 if (($sessionstarttime > time() && $sessionstarttime <= time())) {
     $classname .= ' online';
 }
+
 if (!$psession) {
     if (!empty($sessionstarttime) and !empty($sessionendtime) and !empty($teacherid)) {
         echo html_writer::start_tag('div', array('class' => $classname));
@@ -268,6 +274,7 @@ $webapi = $CFG->wwwroot . "/mod/congrea/webapi.php?cmid=" . $cm->id;
 $down = $CFG->wwwroot . "/mod/congrea/play_recording.php?cmid=$cm->id";
 $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaOnlinePopup');
 $PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaPlayRecording');
+$PAGE->requires->js_call_amd('mod_congrea/congrea', 'congreaHideJoin', array($timediff));
 if ($CFG->debug == 32767 && $CFG->debugdisplay == 1) {
     $info = true;
 }
@@ -412,7 +419,9 @@ if ($sessionendtime > time() && $sessionstarttime <= time()) {
         $videostatus,
         $recordingstatus,
         $hexcode,
-        $joinbutton
+        $joinbutton,
+        $sessionstarttime,
+        $sessionendtime
     );
     echo $form;
 } else {

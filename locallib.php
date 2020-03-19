@@ -76,6 +76,8 @@ function congrea_course_teacher_list() {
  * @param string $recording
  * @param string $hexcode
  * @param boolean $joinbutton
+ * @param integer $sstart
+ * @param integer $send
  * @return string
  */
 function congrea_online_server(
@@ -97,7 +99,9 @@ function congrea_online_server(
     $videostatus,
     $recording = false,
     $hexcode,
-    $joinbutton = false
+    $joinbutton = false,
+    $sstart,
+    $send
 ) {
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
@@ -123,6 +127,8 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
     if (!$joinbutton) {
         $form .= html_writer::empty_tag('input', array(
             'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
