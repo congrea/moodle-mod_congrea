@@ -13,7 +13,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
     return {
         presetColor: function() {
             $(".form-select.defaultsnext #id_s_mod_congrea_preset").change(function() {
-                var val = this.value;
+                let val = this.value;
                 $('.admin_colourpicker .currentcolour').css('background-color', val);
                 $('#id_s_mod_congrea_colorpicker').val(val);
             });
@@ -21,13 +21,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaOnlinePopup: function() {
             $('#overrideform').submit(function() {
-                expected = $('input[name ="expectedendtime"]').val();
+                let expected = $('input[name ="expectedendtime"]').val();
                 if (Date.now() > expected) {
                     $('.vcbutton').hide();
                     window.location.reload();
                     return false;
                 } else {
-                    var newTab = window.open('', 'popupVc');
+                    let newTab = window.open('', 'popupVc');
                     if (window.newTab && window.newTab.closed === false) {
                         newTab.focus();
                         return false;
@@ -43,7 +43,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaPlayRecording: function() {
             $('.playAct').submit(function() {
-                var newTab = window.open('', 'popupVc');
+                let newTab = window.open('', 'popupVc');
                 if (window.newTab && window.newTab.closed === false) {
                     newTab.focus();
                     return false;
@@ -58,8 +58,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function() {
-                var interval = (timeDiff - 30) * 1000;
-                var expected = Date.now() + interval;
+                let interval = (timeDiff - 30) * 1000;
+                let expected = Date.now() + interval;
                 $('input[name="expectedendtime"]').val(expected);
             });
         },
