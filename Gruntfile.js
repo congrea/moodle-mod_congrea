@@ -34,8 +34,8 @@ module.exports = function(grunt) {
                 presets: ["@babel/preset-env"]
             },
             build: {
-                src: 'amd/src/congrea.js',
-                dest: 'amd/build/congrea.min.js'
+                src: 'module.js',
+                dest: 'module.min.js'
             }
         },
         uglify: {
