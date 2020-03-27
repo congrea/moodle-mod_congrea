@@ -40,15 +40,39 @@ class mod_congrea_key_form extends moodleform {
         $mform->addHelpButton('domain', 'domain', 'congrea');
         // Set default value by using a passed parameter.
         $mform->setDefault('domain', $this->_customdata['domain']);
+        $mform->addElement('hidden', 'zerovalue', '0');
+        $mform->setType('zerovalue', PARAM_ALPHANUM);
+
+        $dcOptions = array(
+            '0' =>  get_string('Choose a data center'),
+            'sf' => 'San Francisco, CA, USA',
+            'ny' => 'New York, NY, USA',
+            'ca' => 'Toronto, CA',
+            'de' => 'Frankfurt, DE',
+            'in' => 'Bangalore, IN',
+            'nl' => 'Amsterdam, NL',
+            'sg' => 'Singapore, SG',
+            'uk' => 'London, England, UK'
+        );
+        $mform->addElement('select', 'datacenter', get_string('datacenter', 'congrea'), $dcOptions);
+        $mform->setType('datacenter', PARAM_ALPHANUM);
+       // $mform->addRule(['datacenter', 'zerovalue'], 'Choose a data center', 'compare', 'neq', 'server');
+        $mform->addRule('datacenter', get_string('missingdatacenter', 'mod_congrea'), 'required', null, 'server');
+        $mform->addHelpButton('datacenterh', 'datacenter', 'congrea');
+        // Set default value by using a passed parameter.
+        $mform->setDefault('datacenter', '0');
+
         $mform->addElement('advcheckbox', 'terms', '', get_string('terms', 'congrea'), ' ', null);
         $mform->addHelpButton('terms', 'terms', 'congrea');
+        $mform->addRule('terms', get_string('missingterms'), 'required', null, 'server');
         if (get_config('mod_congrea', 'terms')) {
             $mform->setDefault('terms', 1);
         } else {
             $mform->setDefault('terms', 0);
         }
         $mform->addElement('advcheckbox', 'privacy', '', get_string('privacy', 'congrea'), ' ', null);
-        $mform->addHelpButton('privacy', 'privacy', 'congrea');
+        $mform->addRule('privacy', get_string('missingprivacy'), 'required', null, 'server');
+        $mform->addHelpButton('privacyh', 'privacy', 'congrea');
         if (get_config('mod_congrea', 'privacy')) {
             $mform->setDefault('privacy', 1);
         } else {

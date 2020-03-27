@@ -18,7 +18,7 @@
  * Settings used by the congrea module
  *
  * @package mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 Manisha Dayal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  * */
 defined('MOODLE_INTERNAL') || die;
@@ -37,8 +37,15 @@ if ($ADMIN->fulltree) {
         get_string('getcongreakey', 'congrea'), ''));
     }
     // Api key and Secret key settings.
-    $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'),
-                                           get_string('cgapid', 'congrea'), ''));
+    if (!empty($keyvalue)) {
+        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', 
+        get_string('cgapi', 'congrea'),
+        get_string('cgapid', 'congrea'). $keyvalue, ''));
+    } else {
+        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', 
+        get_string('cgapi', 'congrea'),
+        get_string('freeplan', 'congrea'), ''));        
+    }
     $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'),
                                                         get_string('cgsecretd', 'congrea'), ''));
     // Colourpicker Settings.
