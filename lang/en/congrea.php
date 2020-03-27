@@ -19,7 +19,7 @@
  * English strings for congrea
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 Manisha Dayal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -49,11 +49,12 @@ $string['congrea:pollreport'] = 'Congrea poll report';
 $string['congrea:quizreport'] = 'Congrea quiz report';
 $string['congrea:sessionedit'] = 'Session Edit';
 $string['congrea:sessionesetting'] = 'Session Settings';
-$string['congreaconfiguration'] = 'Congrea configuration';
+$string['congreaconfiguration'] = '<h5>Congrea configuration</h5>';
 $string['congreaconfigurationd'] = 'Congrea free trial available from <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a>';
 $string['congreagenerald'] = 'Congrea api key';
-$string['cgapi'] = 'Congrea api key';
-$string['cgapid'] = 'Enter congrea api key';
+$string['cgapi'] = 'Congrea API key';
+$string['cgapid'] = 'Your FREE API key: ';
+$string['freeplan'] = 'Get a FREE plan: The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero"s De Finibus Bonorum et Malorum for use in a type specimen book.';
 $string['cgsecret'] = 'Congrea secret key';
 $string['cgsecretd'] = 'Enter congrea secret key';
 $string['customsetting'] = 'Custom settings';
@@ -280,9 +281,16 @@ $string['apikey'] = 'Congrea.com FREE API key';
 $string['missingkey'] = 'API key missing';
 $string['confirmkeydeletion'] = 'Confirm API key deletion';
 $string['confirmdelete'] = 'Confirm delete';
-$string['havekey'] = "Already have Congrea FREE API key? <a href='../../admin/settings.php?section=modsettingcongrea'>click here</a>";
+$string['havekey'] = "Already have Congrea FREE API key? <a href='../../admin/settings.php?section=modsettingcongrea'>Click here</a>";
 $string['getcongreakey'] = "<div id='keydisplay' class='alert alert-info alert-block fade in'>Need a FREE API key? <a href='../mod/congrea/getkeyindex.php'>click here</a></div>";
-$string['savecongreakey'] = "<div class='alert alert-info alert-block fade in'>Already have Vidya.io API key? <a href='../mod/congrea/savekey.php'>click here</a></div>";
+$string['savecongreakey'] = "<div class='alert alert-info alert-block fade in'>Already have Congrea API key? <a href='../mod/congrea/savekey.php'>Click here</a></div>";
 $string['terms'] = "I accept the <a href='https://stats.moodle.org/privacy' target='_blank'>Terms & Conditions</a>.";
 $string['privacy'] = "I accept the <a href='https://stats.moodle.org/privacy' target='_blank'>privacy policy</a>.";
 $string['apikey'] = "Your API Key is ";
+$string['missingprivacy'] = "Required to accept the privacy policies.";
+$string['missingterms'] = "Required to read the terms and conditions.";
+$string['termsh'] = "Read the terms and conditions and check the checkbox.";
+$string['privacyh'] = "To accept the privacy policies, check the checkbox.";
+$string['datacenter'] = 'Choose a data center ';
+$string['datacenterh'] = 'Select your data center';
+$string['getformheading'] = 'Get Congrea Free Plan';
