@@ -33,14 +33,18 @@ require_login();
 require_capability('moodle/site:config', context_system::instance());
 admin_externalpage_setup('getkey');
 
-$PAGE->set_url(new moodle_url('/mod/congrea/getkeyindex.php'));
+$PAGE->set_url(new moodle_url('/admin/settings.php?section=getKey'));
 
 $mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstname' => $USER->firstname ,
     'lastname' => $USER->lastname , 'domain' => $CFG->wwwroot));
-
-// There should be form submit.
-// Form is submitted through js and result received in url.
-echo $OUTPUT->header();
+// There should be form submit
+// Form submitted throug js and result received in url.
+if ($mform->is_cancelled()) {
+    // Do nothing.
+} else if ($fromform = $mform->get_data()) {
+    // Redirect($nexturl).
+}
+echo $OUTPUT->header('Get Congrea Free Plan');
 
 if ($result = get_config('mod_congrea', 'keyvalue')) {
     echo html_writer::start_tag('div', array('class' => 'box generalbox alert'));
@@ -88,20 +92,24 @@ if ($result = get_config('mod_congrea', 'keyvalue')) {
     echo html_writer::start_tag('div', array('id' => 'usergraph', 'class' => 'aGraph'));
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
-/*     echo  html_writer::link($url, '<a href = "'. $CFG->wwwroot .
-    '/admin/settings.php?section=modsettingcongrea' .'"> Return to congrea settings page </a>'); */
-    // Stat of vidya.io api end.
+    echo  html_writer::link($url, '<a href = "'. $CFG->wwwroot .
+    '/admin/settings.php?section=modsettingcongrea' .'"> Return to congrea settings page </a>');
+    // Stat of Congrea.com api end.
 
-} else if ($k) { // Key received from vidya.io.
+} else if ($k) { // Key received from Congrea.com.
+    
     if (!set_config('keyvalue', $k, 'mod_congrea')) {
         echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
     }
     echo $OUTPUT->heading(get_string('keyis', 'mod_congrea').$k, 3, 'box generalbox', 'jpoutput');
-    redirect($CFG->wwwroot . '/admin/settings.php?section=modsettingcongrea' , 'Successfully generated FREE API key.', 0);
+    echo  html_writer::link($url, '<a href = "'. $CFG->wwwroot .
+    '/mod/congrea/getkeyindex.php' .'"> See your package details.</a>');
 } else {
     if ($e) {
+
         echo html_writer::tag('div', $e, array('class' => 'alert alert-error'));
     }
+
     echo html_writer::tag('div', get_string('havekey', 'mod_congrea'), array('class' => 'alert alert-notice'));
     // Loading three other YUI modules.
     $jsmodule = array(

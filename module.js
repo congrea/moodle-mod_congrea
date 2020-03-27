@@ -49,11 +49,13 @@ M.mod_congrea = {
         var lname = form[1].lastname.value;
         var email = form[1].email.value;
         var domain = form[1].domain.value;
+		var datacenter = form[1].datacenter.value;
         var fdata = {
             firstname: fname,
             lastname: lname,
             email: email,
-            domain: domain
+            domain: domain,
+            datacenter: datacenter // TODO.
         };
         form = Y.JSON.stringify(fdata);
 
