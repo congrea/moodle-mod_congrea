@@ -43,8 +43,8 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'amd/build/congrea.min.js',
-                dest: 'amd/build/congrea.min.js'
+                src: 'module.js',
+                dest: 'module.min.js'
             }
         }
     });
