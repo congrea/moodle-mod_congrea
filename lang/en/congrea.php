@@ -258,3 +258,31 @@ $string['enrolteacher'] = 'Enrol a teacher in this course';
 $string['nosession'] = 'No sessions are available to display.';
 $string['sessionedited'] = 'Session(s) updated.';
 $string['newsessionadded'] = 'New schedule is created in the table.';
+
+// GetKey.
+$string['getkey'] = 'Congrea API Key';
+$string['domain'] = 'Domain url';
+$string['missingdomain'] = 'Domain name missing';
+$string['message'] = 'To get API Key for whiteboard/chat you need to submit this form with correct detail. You will get key only for specified Domain.';
+$string['keyis'] = 'Your API key is ';
+$string['keynotsaved'] = 'API key not saved ';
+
+// Stat lang
+$string['graphheading'] = 'Usage Graph of vidya.io API ';
+$string['currentmonth'] = 'Current Month ';
+$string['previousmonth'] = 'Previous Month ';
+$string['year'] = '1 Year ';
+$string['today'] = 'Today ';
+$string['msggraph'] = 'Message Graph';
+$string['usrgraph'] = 'Users Graph';
+$string['nodata'] = 'No data available for {$a} graph';
+$string['apikey'] = 'Congrea.com FREE API key';
+$string['missingkey'] = 'API key missing';
+$string['confirmkeydeletion'] = 'Confirm API key deletion';
+$string['confirmdelete'] = 'Confirm delete';
+$string['havekey'] = "Already have Congrea FREE API key? <a href='../../admin/settings.php?section=modsettingcongrea'>click here</a>";
+$string['getcongreakey'] = "<div id='keydisplay' class='alert alert-info alert-block fade in'>Need a FREE API key? <a href='../mod/congrea/getkeyindex.php'>click here</a></div>";
+$string['savecongreakey'] = "<div class='alert alert-info alert-block fade in'>Already have Vidya.io API key? <a href='../mod/congrea/savekey.php'>click here</a></div>";
+$string['terms'] = "I accept the <a href='https://stats.moodle.org/privacy' target='_blank'>Terms & Conditions</a>.";
+$string['privacy'] = "I accept the <a href='https://stats.moodle.org/privacy' target='_blank'>privacy policy</a>.";
+$string['apikey'] = "Your API Key is ";
