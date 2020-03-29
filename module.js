@@ -30,8 +30,8 @@ M.mod_congrea = {
             window.location.href = "getkeyindex.php?e=" + data.error;
         } else {
             var k = data.key;
-            window.location.href = "getkeyindex.php?k=" + data.key;
-            //window.location.href = "../../admin/settings.php?section=modsettingcongrea";
+            var s = data.secret;
+            window.location.href = "getkeyindex.php?k=" + data.key + "s=" + data.secret;
         }
     },
 
@@ -49,7 +49,7 @@ M.mod_congrea = {
         var lname = form[1].lastname.value;
         var email = form[1].email.value;
         var domain = form[1].domain.value;
-		var datacenter = form[1].datacenter.value;
+        var datacenter = form[1].datacenter.value;
         var fdata = {
             firstname: fname,
             lastname: lname,
