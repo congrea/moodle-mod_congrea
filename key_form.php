@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once($CFG->dirroot.'/lib/formslib.php');
+
 class mod_congrea_key_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
+        //$mform->addElement('static', 'description', get_string('description', 'exercise'));
         $mform->addElement('text', 'firstname', get_string('firstname', 'moodle'), 'size="35"');
         $mform->addRule('firstname', null, 'required', null, 'client');
         $mform->addHelpButton('firstname', 'firstname', 'congrea');
@@ -28,13 +30,13 @@ class mod_congrea_key_form extends moodleform {
         $mform->addHelpButton('lastname', 'lastname', 'congrea');
         $mform->setType('lastname', PARAM_TEXT);
         $mform->setDefault('lastname', $this->_customdata['lastname']);
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25" ');
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="35" ');
         $mform->addHelpButton('email', 'email', 'congrea');
         $mform->setType('email', PARAM_NOTAGS);
         $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
         // Set default value by using a passed parameter.
         $mform->setDefault('email', $this->_customdata['email']);
-        $mform->addElement('text', 'domain', get_string('domain', 'mod_congrea'), 'maxlength="100" size="25" ');
+        $mform->addElement('text', 'domain', get_string('domain', 'mod_congrea'), 'maxlength="100" size="35" ');
         $mform->setType('domain', PARAM_NOTAGS);
         $mform->addRule('domain', get_string('missingdomain', 'mod_congrea'), 'required', null, 'server');
         $mform->addHelpButton('domain', 'domain', 'congrea');
@@ -44,7 +46,7 @@ class mod_congrea_key_form extends moodleform {
         $mform->setType('zerovalue', PARAM_ALPHANUM);
 
         $dcOptions = array(
-            '0' =>  get_string('Choose a data center'),
+            '0' =>  'Choose a data center',
             'sf' => 'San Francisco, CA, USA',
             'ny' => 'New York, NY, USA',
             'ca' => 'Toronto, CA',
@@ -58,7 +60,7 @@ class mod_congrea_key_form extends moodleform {
         $mform->setType('datacenter', PARAM_ALPHANUM);
        // $mform->addRule(['datacenter', 'zerovalue'], 'Choose a data center', 'compare', 'neq', 'server');
         $mform->addRule('datacenter', get_string('missingdatacenter', 'mod_congrea'), 'required', null, 'server');
-        $mform->addHelpButton('datacenterh', 'datacenter', 'congrea');
+        $mform->addHelpButton('datacenter', 'datacenter', 'congrea');
         // Set default value by using a passed parameter.
         $mform->setDefault('datacenter', '0');
 
@@ -72,7 +74,7 @@ class mod_congrea_key_form extends moodleform {
         }
         $mform->addElement('advcheckbox', 'privacy', '', get_string('privacy', 'congrea'), ' ', null);
         $mform->addRule('privacy', get_string('missingprivacy'), 'required', null, 'server');
-        $mform->addHelpButton('privacyh', 'privacy', 'congrea');
+        $mform->addHelpButton('privacy', 'privacy', 'congrea');
         if (get_config('mod_congrea', 'privacy')) {
             $mform->setDefault('privacy', 1);
         } else {
@@ -81,7 +83,7 @@ class mod_congrea_key_form extends moodleform {
         $this->add_action_buttons($cancel = false);
     }
 }
-class mod_congrea_savekey_form extends moodleform {
+class mod_congrea_savekey_form extends moodleform { // Not required.
     function definition() {
         $kform =& $this->_form;
         $kform->addElement('text', 'key', get_string('apikey', 'mod_congrea'), 'maxlength="100" size="25" ');
