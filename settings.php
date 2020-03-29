@@ -29,25 +29,28 @@ if ($hassiteconfig) { // Needs this condition or there is error on login page.
     new moodle_url('/mod/congrea/getkeyindex.php')));
 }
 if ($ADMIN->fulltree) {
+    $apikey = get_config('mod_congrea', 'cgapi');
+    $secretkey = get_config('mod_congrea', 'cgsecretpassword');
     $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfiguration', 'congrea'),
                                             get_string('congreaconfigurationd', 'congrea'), ''));
-                                            $keyvalue = get_config('mod_congrea', 'keyvalue');
-    if (empty($keyvalue)) {
+    $PAGE->requires->js_call_amd('mod_congrea/congrea', 'presetApikey');
+    $previewconfig = null;
+    if (empty($apikey && $secretkey)) {
         $settings->add(new admin_setting_heading('mod_congrea/headinggetkey', '',
         get_string('getcongreakey', 'congrea'), ''));
     }
+        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', 
+        get_string('cgapi', 'congrea'),
+        '', 'Api key here...',  $previewconfig));
+        $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'), '</br>', 'Password here...')); 
+    
     // Api key and Secret key settings.
-    if (!empty($keyvalue)) {
-        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', 
-        get_string('cgapi', 'congrea'),
-        get_string('cgapid', 'congrea'). $keyvalue, ''));
-    } else {
-        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', 
-        get_string('cgapi', 'congrea'),
-        get_string('freeplan', 'congrea'), ''));        
-    }
-    $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'),
-                                                        get_string('cgsecretd', 'congrea'), ''));
+/*     if (!empty($apikey && $secretkey)) {
+        $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'),
+        get_string('cgapid', 'congrea').$apikey,''));
+        $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'), get_string('cgsecretdv', 'congrea').$secretkey, ''));     
+    } */
+
     // Colourpicker Settings.
     $choices = array('#021317' => 'Black Pearl', '#003056' => 'Prussian Blue', '#424f9b' => 'Chambray',
             '#001e67' => 'Midnight Blue', '#692173' => 'Honey Flower', '#511030' => 'Heath', '#0066b0' => 'Endeavour');
@@ -130,6 +133,5 @@ if ($ADMIN->fulltree) {
     get_string('showAttendeeRecordingStatus', 'congrea'), get_string('showAttendeeRecordingStatus_help', 'congrea'), 0));
     $settings->add(new admin_setting_heading('mod_congrea/recordingcontrol_header', get_string('recordingcontrol', 'congrea'), ''));
     // Congrea trimRecordings default on.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings', get_string('trimRecordings', 'congrea'),
-                                                        get_string('trimRecordings_help', 'congrea'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings', get_string('trimRecordings', 'congrea'), get_string('trimRecordings_help', 'congrea'), 1));
 }

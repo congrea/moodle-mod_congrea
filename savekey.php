@@ -26,7 +26,7 @@
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('key_form.php');
-$action = optional_param('action', null, PARAM_ALPHA);   // Action.
+$action = optional_param('action', null, PARAM_ALPHA);   // Action to delete.
 
 
 require_login();
@@ -35,15 +35,26 @@ admin_externalpage_setup('getkey');
 
 $PAGE->set_url(new moodle_url('/mod/congrea/savekey.php'));
 
-$kform = new mod_congrea_savekey_form(null, '');
+$kform = new mod_congrea_savekey_form(null, ''); // Not required.
 
 if ($kform->is_cancelled()) {
      redirect($CFG->wwwroot."/mod/congrea/getkeyindex.php");
 } else if ($keyform = $kform->get_data()) {
-    if (!set_config('keyvalue', $keyform->key, 'mod_congrea')) {
-        echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+    if ($keyform) {
+        $data = explode('=', $keyform);
+        $apikey = $data[0];
+        $secretkey = $data[1];
+        if (!set_config('cgapi', $apikey, 'mod_congrea')) {
+            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+        }
+        if (!set_config('cgsecretpassword', $secretkey, 'mod_congrea')) {
+            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+        }
     }
-    redirect($CFG->wwwroot."/mod/congrea/getkeyindex.php");
+/*     if (!set_config('keyvalue', $keyform->key, 'local_getkey')) {
+        echo $OUTPUT->error_text(get_string('keynotsaved', 'local_getkey'));
+    } */
+   // redirect($CFG->wwwroot."/admin/settings.php?section=modsettingcongrea");
 }
 
 echo $OUTPUT->header();
