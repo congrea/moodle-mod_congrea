@@ -27,99 +27,44 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once('key_form.php');
 
 $k = optional_param('k', 0, PARAM_NOTAGS);
+$s = optional_param('s', 0, PARAM_NOTAGS);
 $e = optional_param('e', null, PARAM_NOTAGS);
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 admin_externalpage_setup('getkey');
 
-$PAGE->set_url(new moodle_url('/admin/settings.php?section=getKey'));
-
+$PAGE->set_url(new moodle_url('/mod/congrea/getkeyindex.php'));
 $mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstname' => $USER->firstname ,
-    'lastname' => $USER->lastname , 'domain' => $CFG->wwwroot, 'datacenter' => $datacenter));
+    'lastname' => $USER->lastname , 'domain' => $CFG->wwwroot));
 // There should be form submit
-// Form submitted throug js and result received in url.
+// Form submitted through js and result received in url.
 if ($mform->is_cancelled()) {
     // Do nothing.
 } else if ($fromform = $mform->get_data()) {
-    // Redirect($nexturl).
 }
 echo $OUTPUT->header();
-if ($result) {
-    $data = explode('s=', $result);
-    $apikey = $data[0];
-    $secretkey = $data[1];
-    if ($apikey = get_config('mod_congrea', 'cgapi')) {
-        if ($secretkey = get_config('mod_congrea','cgsecretpassword')) {
-            echo html_writer::start_tag('div', array('class' => 'box generalbox alert'));
-            echo get_string('keyis', 'mod_congrea').$apikey."\t";
-            echo get_string('keyis', 'mod_congrea').$secretkey."\t";
-            $url = new moodle_url('/mod/congrea/savekey.php', array('action' => 'confirmdelete', 'sesskey' => sesskey()));
-            echo  html_writer::link($url,
-            '<img src = "'.$OUTPUT->image_url('t/delete').'" class = "iconsmall" alt="'.
-            get_string('delete').'" title = "'.get_string('delete').'" />');
-            echo html_writer::end_tag('div');
-
-            // Stat of vidya.io api start.
-            $PAGE->requires->js('/mod/congrea/stat/d3.v3.min.js');
-            $PAGE->requires->js('/mod/congrea/stat/underscore-min.js');
-            $PAGE->requires->js('/mod/congrea/stat/function.js');
-            $PAGE->requires->js('/mod/congrea/stat/jsonp.js');
-
-            $module = array(
-                'name' => 'congrea_stat',
-                'fullpath' => '/mod/congrea/stat/stat.js',
-                'requires' => array('node', 'event'),
-                'strings' => array(),
-            );
-            $PAGE->requires->strings_for_js(array('msggraph', 'usrgraph', 'nodata'), 'mod_congrea');
-            $PAGE->requires->js_init_call('congrea_stat_init', array($apikey, $secretkey), false, $module);
-
-            echo html_writer::tag('h3', get_string('graphheading', 'mod_congrea'));
-            echo html_writer::start_tag('div', array('id' => 'graph', 'class' => 'aGraph'));
-            echo html_writer::start_tag('div', array('id' => 'option'));
-            echo html_writer::empty_tag('input',
-            array('type' => 'button', 'name' => 'dstat', 'value' => get_string('today', 'mod_congrea'),
-            'id' => 'id_day_stat'));
-            echo html_writer::empty_tag('input',
-            array('type' => 'button', 'name' => 'currmstat', 'value' => get_string('currentmonth', 'mod_congrea'),
-            'id' => 'id_currmonth_stat'));
-            echo html_writer::empty_tag('input',
-            array('type' => 'button', 'name' => 'premstat',
-            'value' => get_string('previousmonth', 'mod_congrea'),
-            'id' => 'id_premonth_stat'));
-            echo html_writer::empty_tag('input',
-            array('type' => 'button', 'name' => 'ystat', 'value' => get_string('year', 'mod_congrea'),
-            'id' => 'id_year_stat'));
-            echo html_writer::end_tag('div');
-            echo html_writer::start_tag('div', array('id' => 'msggraph', 'class' => 'aGraph'));
-            echo html_writer::end_tag('div');
-            echo html_writer::start_tag('div', array('id' => 'usergraph', 'class' => 'aGraph'));
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('div');
-            echo  html_writer::link($url, '<a href = "'. $CFG->wwwroot .
-            '/admin/settings.php?section=modsettingcongrea' .'"> Return to congrea settings page </a>');
-            // Stat of Congrea.com api end.
-        }}
+if ($result = get_config('mod_congrea', 'cgapi')) {
+    $k = get_config('mod_congrea', 'cgapi');
+    $s = get_config('mod_congrea', 'cgsecretpassword');
+    echo html_writer::start_tag('div', array('class' => 'box generalbox alert'));
+    echo get_string('keyis', 'congrea') . $k . "<br>";
+    echo 'Secret key: ' . $s;
+    echo html_writer::end_tag('div');
 } else if ($k) { // Key received from Congrea.com.
-    $data = explode('s=', $k);
-    $apikey = $data[0];
-    $secretkey = $data[1];
-    if (!set_config('cgapi', $apikey, 'mod_congrea')) {
-        echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+    if (!set_config('cgapi', $k, 'mod_congrea')) {
+        echo $OUTPUT->error_text(get_string('keynotsaved', 'congrea'));
     }
-    if (!set_config('cgsecretpassword', $secretkey, 'mod_congrea')) {
-        echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+    if (!set_config('cgsecretpassword', $s, 'mod_congrea')) {
+        echo $OUTPUT->error_text(get_string('keynotsaved', 'congrea'));
     }
-    echo $OUTPUT->heading(get_string('keyis', 'mod_congrea').$apikey, 3, 'box generalbox', 'jpoutput');
-    echo $OUTPUT->heading(get_string('keyis', 'mod_congrea').$secretkey, 3, 'box generalbox', 'jpoutput');
-    echo  html_writer::link($url, '<a href = "'. $CFG->wwwroot .
-    '/admin/settings.php?section=modsettingcongrea' .'"> See your package details.</a>');
+    echo $OUTPUT->heading(get_string('keyis', 'congrea').$k, 6, 'box generalbox', 'jpoutput');
+    echo $OUTPUT->heading('Secret key: ' . $s, 6, 'box generalbox', 'jpoutput');
+    echo html_writer::tag('p', get_string('configuredheading', 'mod_congrea'));
 } else {
     if ($e) {
         echo html_writer::tag('div', $e, array('class' => 'alert alert-error'));
     }
-    echo html_writer::tag('div', get_string('havekey', 'mod_congrea'), array('class' => 'alert alert-notice'));
     // Loading three other YUI modules.
     $jsmodule = array(
                 'name' => 'mod_congrea',
@@ -127,9 +72,9 @@ if ($result) {
                 'requires' => array('json', 'jsonp', 'jsonp-url', 'io-base', 'node', 'io-form'));
     $PAGE->requires->js_init_call('M.mod_congrea.init', null, false, $jsmodule);
 
-    $PAGE->requires->string_for_js('keyis', 'mod_congrea');
-
-    echo $OUTPUT->box(get_string('message', 'mod_congrea'), "generalbox center clearfix");
+    $PAGE->requires->string_for_js('keyis', 'congrea');
+    $PAGE->requires->string_for_js('secretkeyis', 'congrea');
+    echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
     $mform->display();
 }
 

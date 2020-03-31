@@ -51,10 +51,6 @@ if ($kform->is_cancelled()) {
             echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
         }
     }
-/*     if (!set_config('keyvalue', $keyform->key, 'local_getkey')) {
-        echo $OUTPUT->error_text(get_string('keynotsaved', 'local_getkey'));
-    } */
-   // redirect($CFG->wwwroot."/admin/settings.php?section=modsettingcongrea");
 }
 
 echo $OUTPUT->header();

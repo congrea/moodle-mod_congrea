@@ -33,27 +33,27 @@ module.exports = function(grunt) {
                 sourceMap: true,
                 presets: ["@babel/preset-env"]
             },
-            build: {
-                src: 'amd/src/congrea.js',
-                dest: 'amd/build/congrea.min.js'
-            }
-            /*             build: { // In case of module.js minification.
-                            src: 'module.js',
-                            dest: 'module.min.js'
+            /*             build: {
+                            src: 'amd/src/congrea.js',
+                            dest: 'amd/build/congrea.min.js'
                         } */
+            build: { // In case of module.js minification.
+                src: 'module.js',
+                dest: 'module.min.js'
+            }
         },
         uglify: {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            build: {
-                src: 'amd/src/congrea.min.js',
-                dest: 'amd/build/congrea.min.js'
-            }
-            /*             build: { // In case of module.js minification.
-                            src: 'module.js',
-                            dest: 'module.min.js'
+            /*             build: {
+                            src: 'amd/build/congrea.min.js',
+                            dest: 'amd/build/congrea.min.js'
                         } */
+            build: { // In case of module.js minification.
+                src: 'module.js',
+                dest: 'module.min.js'
+            }
         }
     });
     // Load the plugin that provides the "babel" task.

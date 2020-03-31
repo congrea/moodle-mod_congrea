@@ -49,8 +49,9 @@ $string['congrea:pollreport'] = 'Congrea poll report';
 $string['congrea:quizreport'] = 'Congrea quiz report';
 $string['congrea:sessionedit'] = 'Session Edit';
 $string['congrea:sessionesetting'] = 'Session Settings';
-$string['congreaconfiguration'] = '<h5>Congrea configuration</h5>';
-$string['congreaconfigurationd'] = 'Congrea free trial available from <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a>';
+$string['congreaconfiguration'] = '<div class="alert alert-info alert-block fade in">Get Congrea free <a href="/mod/congrea/getkeyindex.php">here</a></div>';
+$string['congreaconfigurationd'] = '<div class="alert alert-info alert-block fade in">Get Congrea free <a href="../mod/congrea/getkeyindex.php">here</a></div>';
+$string['congreaconfigurationd2'] = '<div class="alert alert-info alert-block fade in">Upgrade your Congrea Plan at <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a></div>';
 $string['congreagenerald'] = 'Congrea api key';
 $string['cgapi'] = 'Congrea API key';
 $string['cgapid'] = 'API key: ';
@@ -263,15 +264,18 @@ $string['newsessionadded'] = 'New schedule is created in the table.';
 
 // GetKey.
 $string['getkey'] = 'Congrea API Key';
+$string['firstname'] = 'First Name';
+$string['lastname'] = 'Surname';
+$string['email'] = 'Email address';
 $string['domain'] = 'Domain url';
 $string['missingdomain'] = 'Domain name missing';
 $string['message'] = '<h2>Get a free plan</h2><p>To get API Key for whiteboard/chat you need to submit this form with correct detail. You will get key only for specified Domain.</p>';
-$string['keyis'] = 'Your API key is ';
-$strint['secretkeyis'] = 'Secret key is ';
+$string['keyis'] = 'API key: ';
+$strint['secretkeyis'] = 'Secret key: ';
 $string['keynotsaved'] = 'API key not saved ';
-
-// Stat lang
-$string['graphheading'] = 'Usage Graph of vidya.io API ';
+// Stat lang.
+$string['configuredheading'] = '<h4>Congrea is configured, you can start using it now.</h4>';
+$string['graphheading'] = '<h3>Current plan details:</h3>';
 $string['currentmonth'] = 'Current Month ';
 $string['previousmonth'] = 'Previous Month ';
 $string['year'] = '1 Year ';
@@ -279,13 +283,10 @@ $string['today'] = 'Today ';
 $string['msggraph'] = 'Message Graph';
 $string['usrgraph'] = 'Users Graph';
 $string['nodata'] = 'No data available for {$a} graph';
-$string['apikey'] = 'Congrea.com FREE API key';
 $string['missingkey'] = 'API key missing';
 $string['confirmkeydeletion'] = 'Confirm API key deletion';
 $string['confirmdelete'] = 'Confirm delete';
-$string['havekey'] = "Already have Congrea FREE API key? <a href='../../admin/settings.php?section=modsettingcongrea'>Click here</a>";
-$string['getcongreakey'] = "<div id='keydisplay' class='alert alert-info alert-block fade in'>Need a FREE API key? <a href='../mod/congrea/getkeyindex.php'>click here</a></div>";
-$string['savecongreakey'] = "<div class='alert alert-info alert-block fade in'>Already have Congrea API key? <a href='../mod/congrea/savekey.php'>Click here</a></div>";
+$string['getcongreakey'] = "<div class='alert alert-info alert-block fade in'>Get Congrea free <a href='../mod/congrea/getkeyindex.php'>here</a></div>";
 $string['terms'] = "I accept the <a href='https://policies.google.com/terms' target='_blank'>Terms & services</a>.";
 $string['privacy'] = "I accept the <a href='https://policies.google.com/privacy?hl=en' target='_blank'>privacy policies</a>.";
 $string['apikey'] = "Your API Key is ";
@@ -294,6 +295,7 @@ $string['missingterms'] = "Required to read the terms and conditions.";
 $string['terms_help'] = "Read the terms and conditions and check the checkbox.";
 $string['privacy_help'] = "To accept the privacy policies, check the checkbox.";
 $string['datacenter'] = 'Choose a data center ';
+$string['missingdatacenter'] = 'Missing data center name';
 $string['datacenter_help'] = 'Select your data center';
 $string['getformheading'] = 'Get Congrea Free Plan';
 $string['firstname_help'] = "Enter your first name.";

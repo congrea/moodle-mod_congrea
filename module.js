@@ -24,14 +24,11 @@
 M.mod_congrea = {
 
     handleJSONP: function(data) {
-        //Y.one("#jpoutput").setHTML(M.util.get_string('keyis', 'local_getkey') +data.key);
-        //debugger;
+
         if (data.error) {
             window.location.href = "getkeyindex.php?e=" + data.error;
         } else {
-            var k = data.key;
-            var s = data.secret;
-            window.location.href = "getkeyindex.php?k=" + data.key + "s=" + data.secret;
+            window.location.href = "getkeyindex.php?k=" + data.key + "&s=" + data.secret;
         }
     },
 
