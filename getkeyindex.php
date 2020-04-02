@@ -26,9 +26,9 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('key_form.php');
 
-$k = optional_param('k', 0, PARAM_NOTAGS);
-$s = optional_param('s', 0, PARAM_NOTAGS);
-$e = optional_param('e', null, PARAM_NOTAGS);
+$key = optional_param('k', 0, PARAM_NOTAGS);
+$secret = optional_param('s', 0, PARAM_NOTAGS);
+$error = optional_param('e', null, PARAM_NOTAGS);
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
@@ -42,38 +42,51 @@ $mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstnam
 if ($mform->is_cancelled()) {
     // Do nothing.
 } else if ($fromform = $mform->get_data()) {
+    $postdata = array(
+        'firstname' => $fromform->firstname,
+        'lastname' => $fromform->lastname,
+        'email' => $fromform->email,
+        'domain' => $fromform->domain,
+        'datacenter' => $fromform->datacenter
+    );
+    $request = json_encode($postdata);
+    $serverurl = 'https://www.vidyamantra.com/portal/getvmkey.php?data=' . $request;
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $serverurl);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
+    $response = curl_exec($curl);
+    if ( !$response ) {
+        print "curl error " . curl_errno($curl ) . PHP_EOL;
+    } else {
+        function jsonp_decode($jsonp, $assoc = false) {
+            if($jsonp[0] !== '[' && $jsonp[0] !== '{') {
+               $jsonp = substr($jsonp, strpos($jsonp, '('));
+            }
+            return json_decode(trim($jsonp,'();'), $assoc);
+        }
+        $output = jsonp_decode($response, false);
+        $key = $output->key;
+        $secret = $output->secret;
+        $error = $output->error;
+        curl_close($curl);
+    }
 }
 echo $OUTPUT->header();
-if ($result = get_config('mod_congrea', 'cgapi')) {
-    $k = get_config('mod_congrea', 'cgapi');
-    $s = get_config('mod_congrea', 'cgsecretpassword');
-    echo html_writer::start_tag('div', array('class' => 'box generalbox alert'));
-    echo get_string('keyis', 'congrea') . $k . "<br>";
-    echo 'Secret key: ' . $s;
-    echo html_writer::end_tag('div');
-} else if ($k) { // Key received from Congrea.com.
-    if (!set_config('cgapi', $k, 'mod_congrea')) {
+if ($key && $secret) {
+    if (!set_config('cgapi', $key, 'mod_congrea')) {
         echo $OUTPUT->error_text(get_string('keynotsaved', 'congrea'));
     }
-    if (!set_config('cgsecretpassword', $s, 'mod_congrea')) {
+    if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
         echo $OUTPUT->error_text(get_string('keynotsaved', 'congrea'));
     }
-    echo $OUTPUT->heading(get_string('keyis', 'congrea').$k, 6, 'box generalbox', 'jpoutput');
-    echo $OUTPUT->heading('Secret key: ' . $s, 6, 'box generalbox', 'jpoutput');
-    echo html_writer::tag('p', get_string('configuredheading', 'mod_congrea'));
+    echo $OUTPUT->heading(get_string('keyis', 'congrea') . $key, 5, 'box generalbox', 'jpoutput');
+    echo $OUTPUT->heading('Secret key: ' . $secret, 5, 'box generalbox', 'jpoutput');
+    echo html_writer::tag('p', get_string('configuredheading', 'congrea'));
 } else {
-    if ($e) {
-        echo html_writer::tag('div', $e, array('class' => 'alert alert-error'));
+    if ($error) {
+        echo html_writer::tag('div', $error, array('class' => 'alert alert-danger alert-block fade in '));
     }
-    // Loading three other YUI modules.
-    $jsmodule = array(
-                'name' => 'mod_congrea',
-                'fullpath' => '/mod/congrea/module.js',
-                'requires' => array('json', 'jsonp', 'jsonp-url', 'io-base', 'node', 'io-form'));
-    $PAGE->requires->js_init_call('M.mod_congrea.init', null, false, $jsmodule);
-
-    $PAGE->requires->string_for_js('keyis', 'congrea');
-    $PAGE->requires->string_for_js('secretkeyis', 'congrea');
     echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
     $mform->display();
 }

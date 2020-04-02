@@ -60,12 +60,12 @@ class mod_congrea_key_form extends moodleform {
         // Set default value by using a passed parameter.
         $mform->setDefault('datacenter', '0');
 
-        $mform->addElement('advcheckbox', 'terms', '', get_string('terms', 'congrea'), ' ', null);
+        $mform->addElement('checkbox', 'terms', '', get_string('terms', 'congrea'), 1, null);
         $mform->addHelpButton('terms', 'terms', 'congrea');
-        $mform->addRule('terms', get_string('missingterms', 'congrea'), 'required', null, 'server');
+        $mform->addRule('terms', get_string('missingterms', 'congrea'), 'required', null, 'client');
 
-        $mform->addElement('advcheckbox', 'privacy', '', get_string('privacy', 'congrea'), ' ', null);
-        $mform->addRule('privacy', get_string('missingprivacy', 'congrea'), 'required', null, 'server');
+        $mform->addElement('checkbox', 'privacy', '', get_string('privacy', 'congrea'), ' ', null);
+        $mform->addRule('privacy', get_string('missingprivacy', 'congrea'), 'required', null, 'client');
         $mform->addHelpButton('privacy', 'privacy', 'congrea');
 
         $this->add_action_buttons($cancel = false);
