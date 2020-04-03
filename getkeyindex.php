@@ -28,10 +28,10 @@ require_once('key_form.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url('/mod/congrea/getkeyindex.php'));
 
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title('Congrea Plan');
 $PAGE->set_heading('Get Congrea free plan');
 
 echo $OUTPUT->header();
@@ -63,13 +63,7 @@ if ($fromform = $mform->get_data()) {
         if (!$response) {
             print "curl error " . curl_errno($curl ) . PHP_EOL;
         } else {
-            function jsonp_decode($jsonp, $assoc = false) {
-                if ($jsonp[0] !== '[' && $jsonp[0] !== '{') {
-                    $jsonp = substr($jsonp, strpos($jsonp, '('));
-                }
-                return json_decode(trim($jsonp, '();'), $assoc);
-            }
-            $output = jsonp_decode($response, false);
+            $output = jsonp_decode($response);
             $key = $output->key;
             $secret = $output->secret;
             $error = $output->error;
@@ -95,8 +89,30 @@ if ($fromform = $mform->get_data()) {
 }
 echo $OUTPUT->footer();
 
+/**
+ * Check if keys are already configured
+ *
+ * @param string $k
+ * @param string $s
+ * @param string $c
+ * @return string
+ */
 function displaykeys($k, $s, $c) {
     echo html_writer::tag('h4', get_string($c, 'congrea'));
     echo html_writer::tag('p', get_string('keyis', 'congrea') . $k);
     echo html_writer::tag('p', get_string('secretis', 'congrea') . $s);
+}
+
+/**
+ * Json decode
+ *
+ * @param string $jsonp
+ * @param array $assoc
+ * @return string
+ */
+function jsonp_decode($jsonp, $assoc = false) {
+    if ($jsonp[0] !== '[' && $jsonp[0] !== '{') {
+        $jsonp = substr($jsonp, strpos($jsonp, '('));
+    }
+    return json_decode(trim($jsonp, '();'), $assoc);
 }
