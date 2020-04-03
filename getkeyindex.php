@@ -92,15 +92,15 @@ echo $OUTPUT->footer();
 /**
  * Check if keys are already configured
  *
- * @param string $k
- * @param string $s
- * @param string $c
+ * @param string $firstkey
+ * @param string $secondkey
+ * @param string $languagestr
  * @return string
  */
-function displaykeys($k, $s, $c) {
-    echo html_writer::tag('h4', get_string($c, 'congrea'));
-    echo html_writer::tag('p', get_string('keyis', 'congrea') . $k);
-    echo html_writer::tag('p', get_string('secretis', 'congrea') . $s);
+function displaykeys($firstkey, $secondkey, $languagestr) {
+    echo html_writer::tag('h4', get_string($languagestr, 'congrea'));
+    echo html_writer::tag('p', get_string('keyis', 'congrea') . $firstkey);
+    echo html_writer::tag('p', get_string('secretis', 'congrea') . $secondkey);
 }
 
 /**
