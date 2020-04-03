@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 class mod_congrea_key_form extends moodleform {
-    function definition() {
+    public function definition() {
         $mform =& $this->_form;
         $mform->addElement('text', 'firstname', get_string('firstname', 'congrea'), 'size="35"');
         $mform->addRule('firstname', null, 'required', null, 'client');
@@ -62,10 +63,10 @@ class mod_congrea_key_form extends moodleform {
 
         $mform->addElement('checkbox', 'terms', '', get_string('terms', 'congrea'), 1, null);
         $mform->addHelpButton('terms', 'terms', 'congrea');
-        $mform->addRule('terms', get_string('missingterms', 'congrea'), 'required', null, 'client');
+        $mform->addRule('terms', get_string('missingterms', 'congrea'), 'required', null, 'server');
 
         $mform->addElement('checkbox', 'privacy', '', get_string('privacy', 'congrea'), ' ', null);
-        $mform->addRule('privacy', get_string('missingprivacy', 'congrea'), 'required', null, 'client');
+        $mform->addRule('privacy', get_string('missingprivacy', 'congrea'), 'required', null, 'server');
         $mform->addHelpButton('privacy', 'privacy', 'congrea');
 
         $this->add_action_buttons($cancel = false);

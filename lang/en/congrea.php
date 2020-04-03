@@ -55,7 +55,6 @@ $string['congreaconfigurationd2'] = '<div class="alert alert-info alert-block fa
 $string['congreagenerald'] = 'Congrea api key';
 $string['cgapi'] = 'Congrea API key';
 $string['cgapid'] = 'API key: ';
-$string['freeplan'] = 'Get a FREE plan: The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero"s De Finibus Bonorum et Malorum for use in a type specimen book.';
 $string['cgsecret'] = 'Congrea secret key';
 $string['cgsecretd'] = 'Enter congrea secret key';
 $string['cgsecretdv'] = 'Secret key: ';
@@ -269,10 +268,11 @@ $string['lastname'] = 'Surname';
 $string['email'] = 'Email address';
 $string['domain'] = 'Domain url';
 $string['missingdomain'] = 'Domain name missing';
-$string['message'] = '<h2>Get Congrea free plan</h2><p>To get API Key for whiteboard/chat you need to submit this form with correct detail. You will get key only for specified Domain.</p>';
+$string['message'] = "Get Congrea free plan API key and secret for your domain.  If you already have Congrea API keys update and configure Congrea <a href='$CFG->wwwroot/admin/settings.php?section=modsettingcongrea'>here</a>";
 $string['keyis'] = 'API key: ';
-$strint['secretkeyis'] = 'Secret key: ';
+$string['secretis'] = 'Secret key: ';
 $string['keynotsaved'] = 'API key not saved ';
+$string['alreadyhave'] = 'You have already configured API key and Secret.';
 // Stat lang.
 $string['configuredheading'] = '<h4>Congrea is configured, you can start using it now.</h4>';
 $string['missingkey'] = 'API key missing';
