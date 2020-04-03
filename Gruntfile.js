@@ -16,7 +16,7 @@
 /* eslint-env node */
 
 /**
- * @copyright  2018 Ravi Kumar
+ * @copyright  2020 Manisha Dayal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -25,20 +25,32 @@
  */
 
 module.exports = function(grunt) {
+    require('load-grunt-tasks')(grunt, { pattern: ['grunt-contrib-*', 'grunt-shell'] });
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        uglify: {
+        babel: {
             options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                sourceMap: true,
+                presets: ["@babel/preset-env"]
             },
             build: {
                 src: 'amd/src/congrea.js',
                 dest: 'amd/build/congrea.min.js'
             }
+        },
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+            },
+            build: {
+                src: 'amd/build/congrea.min.js',
+                dest: 'amd/build/congrea.min.js'
+            }
         }
     });
-    // Load the plugin that provides the "uglify" task.
+    // Load the plugin that provides the "babel" task.
+    grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['babel'], ['uglify']);
 };

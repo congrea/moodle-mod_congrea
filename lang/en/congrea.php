@@ -19,7 +19,7 @@
  * English strings for congrea
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 Manisha Dayal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -49,13 +49,15 @@ $string['congrea:pollreport'] = 'Congrea poll report';
 $string['congrea:quizreport'] = 'Congrea quiz report';
 $string['congrea:sessionedit'] = 'Session Edit';
 $string['congrea:sessionesetting'] = 'Session Settings';
-$string['congreaconfiguration'] = 'Congrea configuration';
-$string['congreaconfigurationd'] = 'Congrea free trial available from <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a>';
+$string['congreaconfiguration'] = '<div class="alert alert-info alert-block fade in">Get Congrea free plan API key and secret from <a href="/mod/congrea/getkeyindex.php">here</a></div>';
+$string['congreaconfigurationd'] = '<div class="alert alert-info alert-block fade in">Get Congrea free plan API key and secret from <a href="../mod/congrea/getkeyindex.php">here</a></div>';
+$string['congreaconfigurationd2'] = '<div class="alert alert-info alert-block fade in">For support and upgrading your Congrea Plan visit <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a></div>';
 $string['congreagenerald'] = 'Congrea api key';
-$string['cgapi'] = 'Congrea api key';
-$string['cgapid'] = 'Enter congrea api key';
+$string['cgapi'] = 'Congrea API key';
+$string['cgapid'] = 'API key: ';
 $string['cgsecret'] = 'Congrea secret key';
 $string['cgsecretd'] = 'Enter congrea secret key';
+$string['cgsecretdv'] = 'Secret key: ';
 $string['customsetting'] = 'Custom settings';
 $string['coursesactivity'] = 'Courses activity (Events by course)';
 $string['congreapoll'] = 'Congrea Poll Question';
@@ -258,3 +260,36 @@ $string['enrolteacher'] = 'Enrol a teacher in this course';
 $string['nosession'] = 'No sessions are available to display.';
 $string['sessionedited'] = 'Session(s) updated.';
 $string['newsessionadded'] = 'New schedule is created in the table.';
+
+// GetKey.
+$string['getkey'] = 'Congrea API Key';
+$string['firstname'] = 'First Name';
+$string['lastname'] = 'Surname';
+$string['email'] = 'Email address';
+$string['domain'] = 'Domain url';
+$string['missingdomain'] = 'Domain name missing';
+$string['message'] = "Get Congrea free plan API key and secret for your domain.  If you already have Congrea API keys update and configure Congrea <a href='$CFG->wwwroot/admin/settings.php?section=modsettingcongrea'>here</a>";
+$string['keyis'] = 'API key: ';
+$string['secretis'] = 'Secret key: ';
+$string['keynotsaved'] = 'API key not saved ';
+$string['alreadyhave'] = 'You have already configured API key and Secret.';
+// Stat lang.
+$string['configuredheading'] = '<h4>Congrea is configured, you can start using it now.</h4>';
+$string['missingkey'] = 'API key missing';
+$string['getcongreakey'] = "Get Congrea free plan API key and secret from <a href='../mod/congrea/getkeyindex.php'>here</a>";
+$string['terms'] = "I accept the <a href='https://policies.google.com/terms' target='_blank'>Terms & services</a>.";
+$string['privacy'] = "I accept the <a href='https://policies.google.com/privacy?hl=en' target='_blank'>Privacy policies</a>.";
+$string['apikey'] = "Your API Key is ";
+$string['missingprivacy'] = "Required to accept the Privacy policies.";
+$string['missingterms'] = "Read Terms and conditions and check the checkbox.";
+$string['terms_help'] = "Read the terms and conditions and check the checkbox.";
+$string['privacy_help'] = "To accept the privacy policies, check the checkbox.";
+$string['datacenter'] = 'Choose a data center ';
+$string['missingdatacenter'] = 'Missing data center name';
+$string['datacenter_help'] = 'Select your data center';
+$string['getformheading'] = 'Get Congrea Free Plan';
+$string['firstname_help'] = "Enter your first name.";
+$string['lastname_help'] = "Enter your last name.";
+$string['email_help'] = "Enter your email address.";
+$string['domain_help'] = "Enter your domain name.";
+$string['datacenter_help'] = "Choose data center name.";

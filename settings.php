@@ -18,22 +18,27 @@
  * Settings used by the congrea module
  *
  * @package mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 Manisha Dayal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  * */
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfiguration', 'congrea'),
-                                            get_string('congreaconfigurationd', 'congrea'), ''));
-    // Api key and Secret key settings.
-    $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'),
-                                           get_string('cgapid', 'congrea'), ''));
-    $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword', get_string('cgsecret', 'congrea'),
-                                                        get_string('cgsecretd', 'congrea'), ''));
+    $apikey = get_config('mod_congrea', 'cgapi');
+    $secretkey = get_config('mod_congrea', 'cgsecretpassword');
+    if (empty($apikey && $secretkey)) {
+        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfigurationd', 'congrea'),
+        ''));
+    } else {
+        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfigurationd2', 'congrea'),
+        ''));
+    }
+    $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), '', ''));
+    $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword',
+    get_string('cgsecret', 'congrea'), '', ''));
     // Colourpicker Settings.
     $choices = array('#021317' => 'Black Pearl', '#003056' => 'Prussian Blue', '#424f9b' => 'Chambray',
-            '#001e67' => 'Midnight Blue', '#692173' => 'Honey Flower', '#511030' => 'Heath', '#0066b0' => 'Endeavour');
+    '#001e67' => 'Midnight Blue', '#692173' => 'Honey Flower', '#511030' => 'Heath', '#0066b0' => 'Endeavour');
     $settings->add(new admin_setting_configselect('mod_congrea/preset', get_string('preset', 'congrea'),
                                                 get_string('presetd', 'congrea'), '#34404c', $choices));
     $PAGE->requires->js_call_amd('mod_congrea/congrea', 'presetColor');
@@ -43,8 +48,6 @@ if ($ADMIN->fulltree) {
     // Override Section.
     $settings->add(new admin_setting_heading('mod_congrea/override_section', get_string('overrideheading', 'congrea'), ''));
     // Congrea allowoverride default on.
-    $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfiguration', 'congrea'),
-                                            get_string('congreaconfigurationd', 'congrea'), ''));
     $settings->add(new admin_setting_configcheckbox('mod_congrea/allowoverride', get_string('cgallowoverride', 'mod_congrea'),
                                                       get_string('cgallowoverride_help', 'mod_congrea'), 1));
     // Student management.
@@ -110,9 +113,11 @@ if ($ADMIN->fulltree) {
     get_string('recAllowattendeeAVcontrol', 'congrea'), get_string('recAllowattendeeAVcontrol_help', 'congrea'), 0));
     // Congrea recAllowattendeeAVcontrol default off.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/showAttendeeRecordingStatus',
-    get_string('showAttendeeRecordingStatus', 'congrea'), get_string('showAttendeeRecordingStatus_help', 'congrea'), 0));
-    $settings->add(new admin_setting_heading('mod_congrea/recordingcontrol_header', get_string('recordingcontrol', 'congrea'), ''));
+    get_string('showAttendeeRecordingStatus', 'congrea'),
+    get_string('showAttendeeRecordingStatus_help', 'congrea'), 0));
+    $settings->add(new admin_setting_heading('mod_congrea/recordingcontrol_header',
+    get_string('recordingcontrol', 'congrea'), ''));
     // Congrea trimRecordings default on.
-    $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings', get_string('trimRecordings', 'congrea'),
-                                                        get_string('trimRecordings_help', 'congrea'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_congrea/trimRecordings',
+    get_string('trimRecordings', 'congrea'), get_string('trimRecordings_help', 'congrea'), 1));
 }
