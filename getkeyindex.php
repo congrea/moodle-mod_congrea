@@ -64,12 +64,9 @@ if ($fromform = $mform->get_data()) {
             print "curl error " . curl_errno($curl ) . PHP_EOL;
         } else {
             $output = jsonp_decode($response);
-            $key = $output->key;
-            $secret = $output->secret;
-            $error = $output->error;
             curl_close($curl);
         }
-        if ($key && $secret) {
+        if (($key = $output->key) && ($secret = $output->secret)) {
             if (!set_config('cgapi', $key, 'mod_congrea')) {
                 echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
             }
@@ -77,6 +74,10 @@ if ($fromform = $mform->get_data()) {
                 echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
             }
             displaykeys($key, $secret, 'configuredheading');
+        } else if ($error = $output->error) {
+            echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);
+            echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
+            $mform->display();
         }
     }
 } else {
