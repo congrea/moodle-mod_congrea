@@ -17,6 +17,36 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+function get_closest($search, $arr) {
+    $closest = null;
+    foreach ($arr as $item) {
+       if ($closest === null || abs($search - $closest) > abs($item - $search)) {
+          $closest = $item;
+       }
+    }
+    return $closest;
+ }
+
+function get_suitable_dc() {
+    $timeOffset = (-(usertime(0)/60));
+    $timezones = [-420, -240, -240, 60, 330, 60, 480, 0];
+    $closest = get_closest($timeOffset, $timezones);
+    switch($closest) {
+        case -420:
+            return 'sf';
+    case -240:
+        return array_rand(array('ny', 'ca',));
+    case 60:
+        return array_rand(array('de', 'nl',));
+    case 330:
+        return 'in';
+    case 480:
+        return 'sg';
+    default:
+        return 'uk';
+    }
+}  
+
 class mod_congrea_key_form extends moodleform {
     public function definition() {
         $mform =& $this->_form;
@@ -44,7 +74,6 @@ class mod_congrea_key_form extends moodleform {
         $mform->setDefault('domain', $this->_customdata['domain']);
 
         $dcoptions = array(
-            '0' => 'Choose a data center',
             'sf' => 'San Francisco, CA, USA',
             'ny' => 'New York, NY, USA',
             'ca' => 'Toronto, CA',
@@ -59,7 +88,7 @@ class mod_congrea_key_form extends moodleform {
         $mform->addRule('datacenter', get_string('missingdatacenter', 'congrea'), 'required', null, 'server');
         $mform->addHelpButton('datacenter', 'datacenter', 'congrea');
         // Set default value by using a passed parameter.
-        $mform->setDefault('datacenter', '0');
+        $mform->setDefault('datacenter', get_suitable_dc());
 
         $mform->addElement('checkbox', 'terms', '', get_string('terms', 'congrea'), 1, null);
         $mform->addHelpButton('terms', 'terms', 'congrea');
