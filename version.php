@@ -22,14 +22,14 @@
  * /admin/index.php
  *
  * @package    mod_congrea
- * @copyright  2020 Manisha
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2020040400; // The current module version (Date: YYYYMMDDXX).
-$plugin->release = 'v3.5.1-r2 (Build: 2020032100)';
+$plugin->version  = 2020040500; // The current module version (Date: YYYYMMDDXX).
+$plugin->release = 'v3.5.1-r3 (Build: 2020040500)';
 $plugin->requires = 2018051700;      // Requires this Moodle version.(3.5+).
 $plugin->cron = 0;               // Period for cron to check this module (secs).
 $plugin->component = 'mod_congrea'; // To check on upgrade, that module sits in correct place.
