@@ -18,7 +18,7 @@
  * Settings used by the congrea module
  *
  * @package mod_congrea
- * @copyright  2020 Manisha Dayal
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  * */
 defined('MOODLE_INTERNAL') || die;
@@ -26,11 +26,37 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     $apikey = get_config('mod_congrea', 'cgapi');
     $secretkey = get_config('mod_congrea', 'cgsecretpassword');
+    if (!empty($apikey && $secretkey)) {
+	    $url = 'https://api.congrea.net/backend/getplan';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'x-api-key:' . $apikey,
+            'x-congrea-secret:' . $secretkey,
+        ));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_PROXY, false);
+        $plandetails = @curl_exec($ch);
+        if (!$plandetails) {
+            print "Curl error: Please refresh the page to know your plan details." . curl_errno($curl ) . PHP_EOL;
+        } else {
+            $data = json_decode($plandetails);
+            curl_close($ch);
+        }
+        if ($data->recording) {
+            $data->recording = "with recording.";
+        } else {
+            $data->recording = "without recording.";
+            set_config('enablerecording', 0, 'mod_congrea');
+        }
+    }
     if (empty($apikey && $secretkey)) {
-        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfigurationd', 'congrea'),
+        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('freeplan', 'congrea'),
         ''));
     } else {
-        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('congreaconfigurationd2', 'congrea'),
+        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('supportupgrade', 'congrea', $data),
         ''));
     }
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), '', ''));

@@ -15,13 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of congrea
+ * Schedule congrea sessions
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package    mod_congrea
- * @copyright  2019 Manisha Dayal
+ * * @package    mod_congrea
+ * @copyright  2020 vidyamantra.com
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

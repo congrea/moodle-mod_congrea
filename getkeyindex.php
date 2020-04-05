@@ -18,7 +18,7 @@
  * Authentication key
  *
  * @package    mod_congrea
- * @copyright  2020 Manisha
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,62 +36,59 @@ $PAGE->set_heading('Get Congrea free plan');
 
 echo $OUTPUT->header();
 
-$mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstname' => $USER->firstname ,
-'lastname' => $USER->lastname , 'domain' => $CFG->wwwroot));
-
 $configkey = get_config('mod_congrea', 'cgapi');
 $configsecret = get_config('mod_congrea', 'cgsecretpassword');
 
+if ($configkey && $configsecret) {
+    redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
+}
+
+$mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstname' => $USER->firstname ,
+'lastname' => $USER->lastname , 'domain' => $CFG->wwwroot));
+
 if ($fromform = $mform->get_data()) {
-    if ($configkey && $configsecret) {
-        displaykeys($configkey, $configsecret, 'alreadyhave');
+    $postdata = array(
+        'firstname' => $fromform->firstname,
+        'lastname' => $fromform->lastname,
+        'email' => $fromform->email,
+        'domain' => $fromform->domain,
+        'datacenter' => $fromform->datacenter
+    );
+    $request = json_encode($postdata);
+    $serverurl = 'https://www.vidyamantra.com/portal/getvmkey.php?data=' . $request;
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $serverurl);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
+    $response = curl_exec($curl);
+    if (!$response) {
+        print "curl error " . curl_errno($curl ) . PHP_EOL;
     } else {
-        $postdata = array(
-            'firstname' => $fromform->firstname,
-            'lastname' => $fromform->lastname,
-            'email' => $fromform->email,
-            'domain' => $fromform->domain,
-            'datacenter' => $fromform->datacenter
-        );
-        $request = json_encode($postdata);
-        $serverurl = 'https://www.vidyamantra.com/portal/getvmkey.php?data=' . $request;
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $serverurl);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
-        $response = curl_exec($curl);
-        if (!$response) {
-            print "curl error " . curl_errno($curl ) . PHP_EOL;
-        } else {
-            $output = jsonp_decode($response);
-            curl_close($curl);
-        }
-        if (($key = $output->key) && ($secret = $output->secret)) {
-            if (!set_config('cgapi', $key, 'mod_congrea')) {
-                echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
-            }
-            if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
-                echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
-            }
-            displaykeys($key, $secret, 'configuredheading');
-        } else if ($error = $output->error) {
-            echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);
-            echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
-            $mform->display();
-        }
+        $output = jsonp_decode($response);
+        curl_close($curl);
     }
-} else {
-    if ($configkey && $configsecret) {
-        displaykeys($configkey, $configsecret, 'alreadyhave');
-    } else {
+    if (($key = $output->key) && ($secret = $output->secret)) {
+        if (!set_config('cgapi', $key, 'mod_congrea')) {
+            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+        }
+        if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
+            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+        }
+        redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
+        displaykeys($key, $secret, 'configuredheading');
+    } else if ($error = $output->error) {
+        echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);
         echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
         $mform->display();
     }
+} else {
+    echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
+    $mform->display();
 }
 echo $OUTPUT->footer();
 
 /**
- * Check if keys are already configured
+ * Display keys
  *
  * @param string $firstkey
  * @param string $secondkey

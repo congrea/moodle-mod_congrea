@@ -19,7 +19,7 @@
  * English strings for congrea
  *
  * @package    mod_congrea
- * @copyright  2020 Manisha Dayal
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -49,9 +49,10 @@ $string['congrea:pollreport'] = 'Congrea poll report';
 $string['congrea:quizreport'] = 'Congrea quiz report';
 $string['congrea:sessionedit'] = 'Session Edit';
 $string['congrea:sessionesetting'] = 'Session Settings';
-$string['congreaconfiguration'] = '<h4 class="alert alert-info alert-block fade in">Get Congrea free plan from <a href="/mod/congrea/getkeyindex.php">here</a></h4>';
-$string['congreaconfigurationd'] = '<h4 class="alert alert-info alert-block fade in">Get Congrea free plan from <a href="../mod/congrea/getkeyindex.php"><strong>here</strong></a></h4>';
-$string['congreaconfigurationd2'] = '<h4 class="alert alert-info alert-block fade in">For support and upgrading your Congrea Plan visit <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a></h4>';
+$string['congreaconfiguration'] = '<h4 class="alert alert-info alert-block fade in">To get Congrea free plan, click <a href="/mod/congrea/getkeyindex.php">here</a></h4>';
+$string['freeplan'] = '<h4 class="alert alert-info alert-block fade in">To get Congrea free plan, click <a href="../mod/congrea/getkeyindex.php"><strong>here</strong></a></h4>';
+$string['supportupgrade'] = '<div class="alert alert-success alert-block fade in">For support and upgrading your Congrea Plan visit <a href="https://www.congrea.com/" target= "_blank">www.congrea.com</a><br>Your plan details: <span>{$a->rooms} rooms, {$a->users} users, {$a->storage} GB cloud storage, {$a->recording}</span></div>';
+$string['errorcurl'] = 'Some error occurred in getting plan details. Please refresh the page.';
 $string['congreagenerald'] = 'Congrea api key';
 $string['cgapi'] = 'Congrea API key';
 $string['cgapid'] = 'API key: ';
@@ -94,7 +95,7 @@ This module provide students with asynchronous communication tools, such as whit
 $string['menu'] = 'Events Graphic Report';
 $string['noquizreport'] = 'No data available.';
 $string['noquizattempt'] = 'Not attempted by any user';
-$string['notsavekey'] = 'Congrea api key is missing. Go to <a href="{$a}">congrea settings</a> for configure.';
+$string['notsavekey'] = 'Congrea API key is missing. Go to <a href="{$a}">congrea settings</a> to configure.';
 $string['noreport'] = 'No data available.';
 $string['noattempt'] = 'Not attempted by any user';
 $string['nopolldata'] = 'No Data for Save';
