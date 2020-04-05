@@ -5,7 +5,7 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_Congrea
- * @copyright  2020 Manisha Dayal
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -19,14 +19,6 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
             });
 
         },
-        /*         presetApikey: function() {
-                    $(".form-select.defaultsnext #id_s_mod_congrea_cgapi").change(function() {
-                        let val = this.value;
-                        //$('.admin_colourpicker .currentcolour').css('background-color', val);
-                        $('#id_s_mod_congrea_cgapi').val(val);
-                    });
-        
-                }, */
         congreaOnlinePopup: function() {
             $('#overrideform').submit(function() {
                 let expected = $('input[name ="expectedendtime"]').val();

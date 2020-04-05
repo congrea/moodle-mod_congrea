@@ -74,7 +74,7 @@ if ($fromform = $mform->get_data()) {
         if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
             echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
         }
-        redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
+        //redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
         displaykeys($key, $secret, 'configuredheading');
     } else if ($error = $output->error) {
         echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);

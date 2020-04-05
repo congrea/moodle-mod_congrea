@@ -27,7 +27,7 @@ if ($ADMIN->fulltree) {
     $apikey = get_config('mod_congrea', 'cgapi');
     $secretkey = get_config('mod_congrea', 'cgsecretpassword');
     if (!empty($apikey && $secretkey)) {
-	    $url = 'https://api.congrea.net/backend/getplan';
+        $url = 'https://api.congrea.net/backend/getplan';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, false);

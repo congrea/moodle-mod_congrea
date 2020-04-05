@@ -16,7 +16,7 @@
 /* eslint-env node */
 
 /**
- * @copyright  2020 Manisha Dayal
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

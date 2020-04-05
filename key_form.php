@@ -19,43 +19,59 @@
  *
  * @package    mod_congrea
  * @copyright  2020 vidyamantra.com
-
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+/**
+ * Get the closest datacenters
+ * @param array $arr
+ * @param $search
+ * @param $item
+ * @param $closest
+ * @return 
+ */
 function get_closest($search, $arr) {
     $closest = null;
     foreach ($arr as $item) {
-       if ($closest === null || abs($search - $closest) > abs($item - $search)) {
-          $closest = $item;
-       }
+        if ($closest === null || abs($search - $closest) > abs($item - $search)) {
+            $closest = $item;
+        }
     }
     return $closest;
- }
-
+}
+/**
+ * Get the suitable datacenter
+ */
 function get_suitable_dc() {
-    $timeOffset = (-(usertime(0)/60));
+    $timeoffset = (-(usertime(0) / 60));
     $timezones = [-420, -240, -240, 60, 330, 60, 480, 0];
-    $closest = get_closest($timeOffset, $timezones);
+    $closest = get_closest($timeoffset, $timezones);
     switch($closest) {
         case -420:
             return 'sf';
-    case -240:
-        return array_rand(array('ny', 'ca',));
-    case 60:
-        return array_rand(array('de', 'nl',));
-    case 330:
-        return 'in';
-    case 480:
-        return 'sg';
-    default:
-        return 'uk';
+        case -240:
+            return array_rand(array('ny', 'ca', ));
+        case 60:
+            return array_rand(array('de', 'nl', ));
+        case 330:
+            return 'in';
+        case 480:
+            return 'sg';
+        default:
+            return 'uk';
     }
-}  
-
+}
+/**
+ * Get Congrea keys form.
+ * @copyright  2020 vidyamantra.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ */
 class mod_congrea_key_form extends moodleform {
+    /**
+     * Defines forms elements
+     */
     public function definition() {
         $mform =& $this->_form;
         $mform->addElement('text', 'firstname', get_string('firstname', 'congrea'), 'size="35"');

@@ -21,7 +21,7 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_congrea
- * @copyright  2015 Pinky Sharma
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/mod/congrea/locallib.php');
 /**
  * File update name form
  *
- * @copyright  2019 Manisha Dayal
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2020 vidyamantra.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 class mod_congrea_session_form extends moodleform {
 
