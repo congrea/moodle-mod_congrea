@@ -34,13 +34,12 @@ $PAGE->set_url(new moodle_url('/mod/congrea/getkeyindex.php'));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading('Get Congrea free plan');
 
-echo $OUTPUT->header();
-
 $configkey = get_config('mod_congrea', 'cgapi');
 $configsecret = get_config('mod_congrea', 'cgsecretpassword');
 
 if ($configkey && $configsecret) {
-    redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
+    redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'), 
+        get_string('afterkeyredirectmsg', 'congrea'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 $mform = new mod_congrea_key_form(null, array('email' => $USER->email, 'firstname' => $USER->firstname ,
@@ -61,30 +60,44 @@ if ($fromform = $mform->get_data()) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
     $response = curl_exec($curl);
+    curl_close($curl);
+    
+    $error_text = '';
     if (!$response) {
-        print "curl error " . curl_errno($curl ) . PHP_EOL;
+        $error_text = "Curl error " . curl_errno($curl ) . PHP_EOL;
     } else {
-        $output = jsonp_decode($response);
-        curl_close($curl);
+        $response = jsonp_decode($response);
+        if ($response->error != '') {
+            $error_text = $response->error;
+        }
     }
-    if (($key = $output->key) && ($secret = $output->secret)) {
-        if (!set_config('cgapi', $key, 'mod_congrea')) {
-            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+    if ($response->key && $response->secret) {
+        if (!set_config('cgapi', $response->key, 'mod_congrea') || 
+        !set_config('cgsecretpassword', $response->secret, 'mod_congrea')) {
+            $error_text = get_string('cannotsavekey', 'mod_congrea');
         }
-        if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
-            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
-        }
-        redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
-        displaykeys($key, $secret, 'configuredheading');
-    } else if ($error = $output->error) {
-        echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);
-        echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
+    }
+    
+    if ($error_text == '') {
+            redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'), 
+                get_string('afterkeysavemsg', 'congrea'), null, \core\output\notification::NOTIFY_SUCCESS);
+    } else {
+        echo $OUTPUT->header();
+        \core\notification::add($error_text, \core\output\notification::NOTIFY_ERROR);
         $mform->display();
     }
+
 } else {
+    echo $OUTPUT->header();
     echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
     $mform->display();
 }
+
+echo $OUTPUT->header();
+
+echo $OUTPUT->box($error_text, "generalbox center clearfix");
+displaykeys($key, $secret, 'configuredheading');
+
 echo $OUTPUT->footer();
 
 /**

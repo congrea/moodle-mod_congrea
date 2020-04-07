@@ -38,26 +38,34 @@ if ($ADMIN->fulltree) {
         ));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_PROXY, false);
-        $plandetails = @curl_exec($ch);
+        $plandetails = curl_exec($ch);
+        curl_close($ch);
         if (!$plandetails) {
-            print "Curl error: Please refresh the page to know your plan details." . curl_errno($curl ) . PHP_EOL;
+            // \core\notification::add(get_string('nofetchplandetails', 'congrea'), \core\output\notification::NOTIFY_ERROR);
+            $plantext = get_string('nofetchplandetails', 'congrea');
         } else {
-            $data = json_decode($plandetails);
-            curl_close($ch);
-        }
-        if ($data->recording) {
-            $data->recording = "with recording.";
-        } else {
-            $data->recording = "without recording.";
-            set_config('enablerecording', 0, 'mod_congrea');
+            $plandetails = json_decode($plandetails);
+            if (isset($plandetails->Message)) {
+                // \core\notification::add(get_string('invalidkey', 'congrea'), \core\output\notification::NOTIFY_ERROR);
+                $plantext = get_string('invalidkey', 'congrea');
+            } else {
+                $plantext = "Your plan details: {$plandetails->rooms} rooms"
+                . ", {$plandetails->users} users"  
+                . ", {$plandetails->storage} GB cloud storage"                
+                . ", " . ($plandetails->recording ? "with" : "without") . " recording.";
+            
+                if (!$plandetails->recording) {
+                    set_config('enablerecording', 0, 'mod_congrea');
+                }
+            }
         }
     }
     if (empty($apikey && $secretkey)) {
         $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('freeplan', 'congrea'),
         ''));
     } else {
-        $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('supportupgrade', 'congrea', $data),
-        ''));
+        $settings->add(new admin_setting_heading('mod_congrea/heading', 
+        $plantext, get_string('supportupgrade', 'congrea') ) );
     }
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), '', ''));
     $settings->add(new admin_setting_configpasswordunmask('mod_congrea/cgsecretpassword',
