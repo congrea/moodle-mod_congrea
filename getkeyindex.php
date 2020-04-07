@@ -93,26 +93,7 @@ if ($fromform = $mform->get_data()) {
     $mform->display();
 }
 
-echo $OUTPUT->header();
-
-echo $OUTPUT->box($error_text, "generalbox center clearfix");
-displaykeys($key, $secret, 'configuredheading');
-
 echo $OUTPUT->footer();
-
-/**
- * Display keys
- *
- * @param string $firstkey
- * @param string $secondkey
- * @param string $languagestr
- * @return string
- */
-function displaykeys($firstkey, $secondkey, $languagestr) {
-    echo html_writer::tag('h4', get_string($languagestr, 'congrea'));
-    echo html_writer::tag('p', get_string('keyis', 'congrea') . $firstkey);
-    echo html_writer::tag('p', get_string('secretis', 'congrea') . $secondkey);
-}
 
 /**
  * Json decode

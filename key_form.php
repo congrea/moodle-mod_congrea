@@ -25,6 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+/**
+ * Get closest timezone
+ *
+ * @param int $search
+ * @param array $arr
+ * @return int
+ */
 function get_closest($search, $arr) {
     $closest = null;
     foreach ($arr as $item) {
@@ -35,6 +42,12 @@ function get_closest($search, $arr) {
     return $closest;
  }
 
+
+ /**
+ * Get Suitable Data Center
+ *
+ *  @return string
+ */
 function get_suitable_dc() {
     $timeOffset = (-(usertime(0)/60));
     $timezones = [-420, -240, -240, 60, 330, 60, 480, 0];
