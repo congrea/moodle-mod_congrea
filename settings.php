@@ -41,19 +41,16 @@ if ($ADMIN->fulltree) {
         $plandetails = curl_exec($ch);
         curl_close($ch);
         if (!$plandetails) {
-            // \core\notification::add(get_string('nofetchplandetails', 'congrea'), \core\output\notification::NOTIFY_ERROR);
             $plantext = get_string('nofetchplandetails', 'congrea');
         } else {
             $plandetails = json_decode($plandetails);
             if (isset($plandetails->Message)) {
-                // \core\notification::add(get_string('invalidkey', 'congrea'), \core\output\notification::NOTIFY_ERROR);
                 $plantext = get_string('invalidkey', 'congrea');
             } else {
                 $plantext = "Your plan details: {$plandetails->rooms} rooms"
-                . ", {$plandetails->users} users"  
-                . ", {$plandetails->storage} GB cloud storage"                
+                . ", {$plandetails->users} users"
+                . ", {$plandetails->storage} GB cloud storage"
                 . ", " . ($plandetails->recording ? "with" : "without") . " recording.";
-            
                 if (!$plandetails->recording) {
                     set_config('enablerecording', 0, 'mod_congrea');
                 }
@@ -64,7 +61,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('freeplan', 'congrea'),
         ''));
     } else {
-        $settings->add(new admin_setting_heading('mod_congrea/heading', 
+        $settings->add(new admin_setting_heading('mod_congrea/heading',
         $plantext, get_string('supportupgrade', 'congrea') ) );
     }
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), '', ''));

@@ -25,20 +25,42 @@
  */
 
 module.exports = function(grunt) {
+    require('load-grunt-tasks')(grunt, { pattern: ['grunt-contrib-*', 'grunt-shell'] });
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        uglify: {
+        /*         eslint: {
+                    options: {
+                        //configFile: "conf/eslint.json",
+                        //rulePaths: ["conf/rules"],
+                        silent: true
+                    },
+                    build: ['amd/src/congrea.js']
+                }, */
+        babel: {
             options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                sourceMap: true,
+                presets: ["@babel/preset-env"]
             },
             build: {
                 src: 'amd/src/congrea.js',
                 dest: 'amd/build/congrea.min.js'
             }
+        },
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            build: {
+                src: 'amd/build/congrea.min.js',
+                dest: 'amd/build/congrea.min.js'
+            }
         }
     });
-    // Load the plugin that provides the "uglify" task.
+    // Load the plugins.
+    //grunt.loadNpmTasks('gruntify-eslint');
+    grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
+    //grunt.registerTask('default', ['eslint', 'babel', 'uglify']);
+    grunt.registerTask('default', ['babel', 'uglify']);
 };

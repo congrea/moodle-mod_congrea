@@ -39,13 +39,12 @@ function get_closest($search, $arr) {
         }
     }
     return $closest;
- }
+}
 
 
- /**
+/**
  * Get Suitable Data Center
- *
- *  @return string
+ * @return string
  */
 function get_suitable_dc() {
     $timeoffset = (-(usertime(0) / 60));
