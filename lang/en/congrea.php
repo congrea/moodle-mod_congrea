@@ -270,6 +270,7 @@ $string['email'] = 'Email address';
 $string['domain'] = 'Domain url';
 $string['missingdomain'] = 'Domain name missing';
 $string['submiterror'] = 'Error: ';
+$string['curlerrorplandata'] = 'Curl request error. Please refresh the page to know your plan details.';
 $string['message'] = '<div class="alert alert-warning alert-block fade in"> Get Congrea free plan API key and secret for your domain.  If you already have Congrea API keys update and configure Congrea <a href="../../admin/settings.php?section=modsettingcongrea"><strong>here</strong></a></div>';
 $string['keyis'] = 'API key: ';
 $string['secretis'] = 'Secret key: ';

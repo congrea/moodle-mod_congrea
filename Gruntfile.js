@@ -25,32 +25,20 @@
  */
 
 module.exports = function(grunt) {
-    require('load-grunt-tasks')(grunt, { pattern: ['grunt-contrib-*', 'grunt-shell'] });
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        babel: {
-            options: {
-                sourceMap: true,
-                presets: ["@babel/preset-env"]
-            },
-            build: {
-                src: 'amd/src/congrea.js',
-                dest: 'amd/build/congrea.min.js'
-            }
-        },
         uglify: {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'amd/build/congrea.min.js',
+                src: 'amd/src/congrea.js',
                 dest: 'amd/build/congrea.min.js'
             }
         }
     });
-    // Load the plugin that provides the "babel" task.
-    grunt.loadNpmTasks('grunt-babel');
+    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     // Default task(s).
-    grunt.registerTask('default', ['babel'], ['uglify']);
+    grunt.registerTask('default', ['uglify']);
 };

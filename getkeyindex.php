@@ -61,22 +61,22 @@ if ($fromform = $mform->get_data()) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
     $response = curl_exec($curl);
-    if (!$response) {
+    if (!$response) { // TODO: check for error here - curl may return error
         print "curl error " . curl_errno($curl ) . PHP_EOL;
     } else {
-        $output = jsonp_decode($response);
+        $response = jsonp_decode($response);
         curl_close($curl);
     }
-    if (($key = $output->key) && ($secret = $output->secret)) {
+    if (($key = $response->key) && ($secret = $response->secret)) {
         if (!set_config('cgapi', $key, 'mod_congrea')) {
-            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+            $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
         }
         if (!set_config('cgsecretpassword', $secret, 'mod_congrea')) {
-            echo $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
+            $OUTPUT->error_text(get_string('keynotsaved', 'mod_congrea'));
         }
-        //redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
+        // redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'));
         displaykeys($key, $secret, 'configuredheading');
-    } else if ($error = $output->error) {
+    } else if ($error = $response->error) {
         echo html_writer::tag('h4', get_string('submiterror', 'congrea') . $error);
         echo $OUTPUT->box(get_string('message', 'congrea'), "generalbox center clearfix");
         $mform->display();
