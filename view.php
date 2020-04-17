@@ -18,7 +18,7 @@
  * Prints a particular instance of congrea
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
@@ -436,14 +436,12 @@ if ($psession) {
     echo html_writer::end_tag('div');
     echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
     $result = curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
-    $data = json_decode($result);
-    $recording = json_decode($data->data);
-    $data = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
+    $attdata = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
     $session, $key, $authpassword, $authusername, $room, $USER->id);
-    $attendencestatus = json_decode($data);
+    $attendencestatus = json_decode($attdata);
     if (!empty($result)) {
-        $data = json_decode($result);
-        $recording = json_decode($data->data);
+        $recdata = json_decode($result);
+        $recording = json_decode($recdata->data);
     }
     if (!empty($recording->Items) and !$session) {
         rsort($recording->Items);
@@ -517,9 +515,6 @@ if ($psession) {
         if (!has_capability('mod/congrea:attendance', $context)) { // Report view for student.
             $table->head = array('Filename', 'Time created', 'Action', "Attendance");
             $table->attributes['class'] = 'admintable generaltable studentEnd';
-            $apiurl = 'https://api.congrea.net/data/analytics/attendance';
-            $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
-            $attendencestatus = json_decode($data);
             if (!empty($attendencestatus->attendance)) { // Check for those who are enrolled later.
                 $row[] = '<p style="color:green;"><b>P</b></p>';
             } else {
@@ -536,8 +531,11 @@ if ($session) {
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable attendance';
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
-    $data = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room); // TODO.
-    $attendencestatus = json_decode($data);
+    $attendancedata = attendence_curl_request($apiurl, $session, $key, $authpassword, $authusername, $room); // TODO.
+    $attendencestatus = json_decode($attendancedata);
+    $apiurl2 = 'https://api.congrea.net/t/analytics/attendancerecording';
+    $recordingdata = attendence_curl_request($apiurl2, $session, $key, $authpassword, $authusername, $room); // TODO.
+    $recordingattendance = json_decode($recordingdata, true);
 
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
@@ -566,9 +564,6 @@ if ($session) {
                     $presence = '-';
                 }
             }
-            $apiurl2 = 'https://api.congrea.net/t/analytics/attendancerecording';
-            $recdata = attendence_curl_request($apiurl2, $session, $key, $authpassword, $authusername, $room); // TODO.
-            $recordingattendance = json_decode($recdata, true);
             if (!empty(recording_view($sattendence->uid, $recordingattendance))) {
                 $recview = recording_view($sattendence->uid, $recordingattendance);
                 if ($recview->totalviewd < 60) {
@@ -672,7 +667,7 @@ if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     $countenroluser = count($enrolusers) - $laterenrolled;
     $presentnroluser = count($attendence);
-    $absentuser = $countenroluser - $presentnroluser;
+    $absentuser = abs($countenroluser - $presentnroluser);
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
     if (!empty($teachername)) {
         $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A',
