@@ -27,7 +27,7 @@ if ($ADMIN->fulltree) {
     $apikey = get_config('mod_congrea', 'cgapi');
     $secretkey = get_config('mod_congrea', 'cgsecretpassword');
     if (!empty($apikey && $secretkey)) {
-	    $url = 'https://api.congrea.net/backend/getplan';
+        $url = 'https://api.congrea.net/backend/getplan';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, false);
@@ -41,19 +41,16 @@ if ($ADMIN->fulltree) {
         $plandetails = curl_exec($ch);
         curl_close($ch);
         if (!$plandetails) {
-            // \core\notification::add(get_string('nofetchplandetails', 'congrea'), \core\output\notification::NOTIFY_ERROR);
             $plantext = get_string('nofetchplandetails', 'congrea');
         } else {
             $plandetails = json_decode($plandetails);
             if (isset($plandetails->Message)) {
-                // \core\notification::add(get_string('invalidkey', 'congrea'), \core\output\notification::NOTIFY_ERROR);
                 $plantext = get_string('invalidkey', 'congrea');
             } else {
                 $plantext = "Your plan details: {$plandetails->rooms} rooms"
-                . ", {$plandetails->users} users"  
-                . ", {$plandetails->storage} GB cloud storage"                
+                . ", {$plandetails->users} users"
+                . ", {$plandetails->storage} GB cloud storage"
                 . ", " . ($plandetails->recording ? "with" : "without") . " recording.";
-            
                 if (!$plandetails->recording) {
                     set_config('enablerecording', 0, 'mod_congrea');
                 }
@@ -64,7 +61,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading('mod_congrea/heading', get_string('freeplan', 'congrea'),
         ''));
     } else {
-        $settings->add(new admin_setting_heading('mod_congrea/heading', 
+        $settings->add(new admin_setting_heading('mod_congrea/heading',
         $plantext, get_string('supportupgrade', 'congrea') ) );
     }
     $settings->add(new admin_setting_configtext('mod_congrea/cgapi', get_string('cgapi', 'congrea'), '', ''));
@@ -83,7 +80,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('mod_congrea/override_section', get_string('overrideheading', 'congrea'), ''));
     // Congrea allowoverride default on.
     $settings->add(new admin_setting_configcheckbox('mod_congrea/allowoverride', get_string('cgallowoverride', 'mod_congrea'),
-                                                      get_string('cgallowoverride_help', 'mod_congrea'), 1));
+                                                      get_string('cgallowoverride_help', 'mod_congrea'), 0));
     // Student management.
     $settings->add(new admin_setting_heading('mod_congrea/student_management', get_string('studentm', 'congrea'), ''));
     // Congrea disable attendee audio default off.

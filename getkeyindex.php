@@ -38,7 +38,7 @@ $configkey = get_config('mod_congrea', 'cgapi');
 $configsecret = get_config('mod_congrea', 'cgsecretpassword');
 
 if ($configkey && $configsecret) {
-    redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'), 
+    redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'),
         get_string('afterkeyredirectmsg', 'congrea'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
@@ -61,29 +61,27 @@ if ($fromform = $mform->get_data()) {
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0 );
     $response = curl_exec($curl);
     curl_close($curl);
-    
-    $error_text = '';
+    $errortext = '';
     if (!$response) {
-        $error_text = "Curl error " . curl_errno($curl ) . PHP_EOL;
+        $errortext = "Curl error " . curl_errno($curl ) . PHP_EOL;
     } else {
         $response = jsonp_decode($response);
         if ($response->error != '') {
-            $error_text = $response->error;
+            $errortext = $response->error;
         }
     }
     if ($response->key && $response->secret) {
-        if (!set_config('cgapi', $response->key, 'mod_congrea') || 
+        if (!set_config('cgapi', $response->key, 'mod_congrea') ||
         !set_config('cgsecretpassword', $response->secret, 'mod_congrea')) {
-            $error_text = get_string('cannotsavekey', 'mod_congrea');
+            $errortext = get_string('cannotsavekey', 'mod_congrea');
         }
     }
-    
-    if ($error_text == '') {
-            redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'), 
+    if ($errortext == '') {
+            redirect(new moodle_url('/admin/settings.php?section=modsettingcongrea'),
                 get_string('afterkeysavemsg', 'congrea'), null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
         echo $OUTPUT->header();
-        \core\notification::add($error_text, \core\output\notification::NOTIFY_ERROR);
+        \core\notification::add($errortext, \core\output\notification::NOTIFY_ERROR);
         $mform->display();
     }
 
