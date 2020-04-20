@@ -135,29 +135,38 @@ if ($mform->is_cancelled()) {
             }
         }
     } // End create multiple sessions.
-
     // Update sessions.
     if ($edit && $fromform->submitbutton == "Save changes") {
-        $eventobject = calendar_event::create($data);
-        $dataid = $eventobject->id; // TODO: -using api return id.
-        if (!empty($fromform->addmultiple)) {
-            if ($fromform->week > 1) {
-                $dataobject = new stdClass();
-                $dataobject->repeatid = $dataid;
-                $dataobject->id = $dataid;
-                $DB->update_record('event', $dataobject);
-                $day = date('D', $fromform->fromsessiondate);
-                $weeks = $fromform->week;
-                $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
-                foreach ($upcomingdates as $startdate) {
-                    repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
+        if (has_capability('mod/congrea:sessioncreate', $context)) {
+            if (has_capability('moodle/calendar:manageentries', $context)) {
+                $eventobject = calendar_event::create($data);
+                $dataid = $eventobject->id; // TODO: -using api return id.
+                if (!empty($fromform->addmultiple)) {
+                    if ($fromform->week > 1) {
+                        $dataobject = new stdClass();
+                        $dataobject->repeatid = $dataid;
+                        $dataobject->id = $dataid;
+                        $DB->update_record('event', $dataobject);
+                        $day = date('D', $fromform->fromsessiondate);
+                        $weeks = $fromform->week;
+                        $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
+                        foreach ($upcomingdates as $startdate) {
+                            repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
+                        }
+                        $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
+                    }
                 }
+                // Single sessions.
+                $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
                 $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
+            } else {
+                \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
+                \core\output\notification::NOTIFY_ERROR);
             }
+        } else {
+            \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
+            \core\output\notification::NOTIFY_ERROR);
         }
-        // Single sessions.
-        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
-        $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
     }
     redirect($returnurl);
 } // Else if end, end reading data from form.
@@ -170,142 +179,158 @@ if (!empty($sessionsettings)) {
 }
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
-if (has_capability('mod/congrea:sessionesetting', $context)) {
-    $options = array();
-    if ($sessionsettings && !$edit && !($action == 'addsession')) {
-        echo $OUTPUT->single_button(
-            $returnurl->out(
+if (has_capability('mod/congrea:sessioncreate', $context)) {
+    if (has_capability('moodle/calendar:manageentries', $context)) {
+        $options = array();
+        if ($sessionsettings && !$edit && !($action == 'addsession')) {
+            echo $OUTPUT->single_button(
+                $returnurl->out(
                 true,
                 array('action' => 'addsession', 'cmid' => $cm->id)
-            ),
-            get_string('addsessions', 'congrea'),
-            'get',
-            $options
-        );
-        echo html_writer::start_tag('br');
+                ),
+                get_string('addsessions', 'congrea'),
+                'get',
+                $options
+            );
+            echo html_writer::start_tag('br');
+        }
+    } else {
+        \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
     }
+} else {
+    \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
 }
 echo html_writer::start_tag('br');
 
 // Editing an existing session.
 if ($edit) {
-    echo html_writer::start_tag('div', array('class' => 'overflow'));
-    $table = new html_table();
-    $record = $DB->get_record('event', array('id' => $edit));
-    $row = array();
-    $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .
-    userdate(($record->timestart + $record->timeduration / 60), '%I:%M %p') . '</strong>';
-    $table->data[] = $row;
-    echo html_writer::table($table);
-    echo html_writer::end_tag('div');
-    $recordlist = $DB->get_records('event', array('repeatid' => $edit));
-    if (!empty($recordlist)) {
-        sort($recordlist);
-        $weeks = count($recordlist);
-        // Editing multiple sessions.
-        foreach ($recordlist as $record) {
-            if (($record->timestart + $record->timeduration) < time()) {
-                $record->repeatid = 0;
-                $record->description = '-';
-                $DB->update_record('event', $record);
-                $weeks--;
-                continue;
-            } else {
-                $formdata = new stdClass;
-                $formdata->fromsessiondate = $record->timestart;
-                $formdata->timeduration = $record->timeduration / 60;
-                $formdata->week = $weeks;
-                $formdata->addmultiple = 1;
-                $formdata->moderatorid = $record->userid;
-                $mform->set_data($formdata);
-                $mdata = $mform->get_data();
-                break;
-            }
-        }
-    } else {
-        // Editing single session.
+    if (has_capability('mod/congrea:sessionedit', $context)) {
+        echo html_writer::start_tag('div', array('class' => 'overflow'));
+        $table = new html_table();
         $record = $DB->get_record('event', array('id' => $edit));
-        $formdata = new stdClass;
-        $formdata->fromsessiondate = $record->timestart;
-        $formdata->timeduration = $record->timeduration / 60;
-        $formdata->week = intval($record->description);
-        $formdata->addmultiple = 0;
-        $formdata->week = 1;
-        $formdata->moderatorid = $record->userid;
-        $mform->set_data($formdata);
-        $mdata = $mform->get_data();
+        $row = array();
+        $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .
+        userdate(($record->timestart + $record->timeduration / 60), '%I:%M %p') . '</strong>';
+        $table->data[] = $row;
+        echo html_writer::table($table);
+        echo html_writer::end_tag('div');
+        $recordlist = $DB->get_records('event', array('repeatid' => $edit));
+        if (!empty($recordlist)) {
+            sort($recordlist);
+            $weeks = count($recordlist);
+            // Editing multiple sessions.
+            foreach ($recordlist as $record) {
+                if (($record->timestart + $record->timeduration) < time()) {
+                    $record->repeatid = 0;
+                    $record->description = '-';
+                    $DB->update_record('event', $record);
+                    $weeks--;
+                    continue;
+                } else {
+                    $formdata = new stdClass;
+                    $formdata->fromsessiondate = $record->timestart;
+                    $formdata->timeduration = $record->timeduration / 60;
+                    $formdata->week = $weeks;
+                    $formdata->addmultiple = 1;
+                    $formdata->moderatorid = $record->userid;
+                    $mform->set_data($formdata);
+                    $mdata = $mform->get_data();
+                    break;
+                }
+            }
+        } else {
+            // Editing single session.
+            $record = $DB->get_record('event', array('id' => $edit));
+            $formdata = new stdClass;
+            $formdata->fromsessiondate = $record->timestart;
+            $formdata->timeduration = $record->timeduration / 60;
+            $formdata->week = intval($record->description);
+            $formdata->addmultiple = 0;
+            $formdata->week = 1;
+            $formdata->moderatorid = $record->userid;
+            $mform->set_data($formdata);
+            $mdata = $mform->get_data();
+        }
     }
 } // end if $edit
 
 if ($action == 'addsession' || $edit ) {
-    if (has_capability('mod/congrea:sessionesetting', $context)) {
-        $mform->display();
+    if (has_capability('mod/congrea:sessioncreate', $context)) {
+        if (has_capability('moodle/calendar:manageentries', $context)) {
+            $mform->display();
+        } else {
+            \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
+        }
     }
 }
 
 // Display schedule table.
-echo $OUTPUT->heading('Schedules');
-$table = new html_table();
-$table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
-$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
-usort($sessionlist, "compare_dates_scheduled_list");
-$currenttime = time();
-if (!empty($sessionlist)) {
-    foreach ($sessionlist as $list) {
-        if (($list->id == $list->repeatid) || ($list->repeatid == 0)) {
-            $buttons = array();
-            $row = array();
-            $row[] = userdate($list->timestart);
-            $timestart = ($list->timestart + $list->timeduration);
-            if (($timestart < $currenttime) && ($list->repeatid == 0)) { // Past sessions.
-                $pastsessions[] = $list;
-                continue;
-            }
-            if ($list->timeduration > 86400) {
-                $row[] = 'Legacy session';
-            } else {
-                $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-            }
-            $moderatorid = $DB->get_record('user', array('id' => $list->userid));
-            if (!empty($moderatorid)) {
-                $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
-            } else {
-                $username = get_string('nouser', 'mod_congrea');
-            }
-            $row[] = $username;
-            $row[] = $list->description;
-            if ($list->timeduration < 86400) {
-                $buttons[] = html_writer::link(
+if (has_capability('mod/congrea:managesession', $context)) {
+    echo $OUTPUT->heading('Schedules');
+    $table = new html_table();
+    $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
+    $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' =>  $congrea->id));
+    usort($sessionlist, "compare_dates_scheduled_list");
+    $currenttime = time();
+    if (!empty($sessionlist)) {
+        foreach ($sessionlist as $list) {
+            if (($list->id == $list->repeatid) || ($list->repeatid == 0)) {
+                $buttons = array();
+                $row = array();
+                $row[] = userdate($list->timestart);
+                $timestart = ($list->timestart + $list->timeduration);
+                if (($timestart < $currenttime) && ($list->repeatid == 0)) { // Past sessions.
+                    $pastsessions[] = $list;
+                    continue;
+                }
+                if ($list->timeduration > 86400) {
+                    $row[] = 'Legacy session';
+                } else {
+                    $row[] = ($list->timeduration / 60) . ' ' . 'mins';
+                }
+                $moderatorid = $DB->get_record('user', array('id' => $list->userid));
+                if (!empty($moderatorid)) {
+                    $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+                } else {
+                    $username = get_string('nouser', 'mod_congrea');
+                }
+                $row[] = $username;
+                $row[] = $list->description;
+                if (has_capability('mod/congrea:sessionedit', $context)) {
+                    if ($list->timeduration < 86400) {
+                        $buttons[] = html_writer::link(
+                                new moodle_url(
+                                    '/mod/congrea/sessionsettings.php',
+                                    array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
+                                ),
+                                'Edit',
+                                array('class' => 'actionlink exportpage')
+                        );
+                    }
+                    $buttons[] = html_writer::link(
                         new moodle_url(
                             '/mod/congrea/sessionsettings.php',
-                            array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
+                            array('id' => $cm->id, 'delete' => $list->id, 'sessionsettings' => $sessionsettings)
                         ),
-                        'Edit',
+                        'Delete',
                         array('class' => 'actionlink exportpage')
-                );
+                    );
+                    $row[] = implode(' ', $buttons);
+                }
+                $table->data[] = $row;
             }
-            $buttons[] = html_writer::link(
-                new moodle_url(
-                    '/mod/congrea/sessionsettings.php',
-                    array('id' => $cm->id, 'delete' => $list->id, 'sessionsettings' => $sessionsettings)
-                ),
-                'Delete',
-                array('class' => 'actionlink exportpage')
-            );
-            $row[] = implode(' ', $buttons);
-            $table->data[] = $row;
         }
-    }
-    if (!empty($table->data)) {
-        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-        echo html_writer::table($table);
-        echo html_writer::start_tag('br');
-        echo html_writer::end_tag('div');
+        if (!empty($table->data)) {
+            echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+            echo html_writer::table($table);
+            echo html_writer::start_tag('br');
+            echo html_writer::end_tag('div');
+        } else {
+            echo $OUTPUT->notification(get_string('nosession', 'mod_congrea'));
+        }
     } else {
         echo $OUTPUT->notification(get_string('nosession', 'mod_congrea'));
     }
-} else {
-    echo $OUTPUT->notification(get_string('nosession', 'mod_congrea'));
 }
 // Finish the page.
 echo $OUTPUT->footer();

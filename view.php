@@ -204,6 +204,8 @@ if (has_capability('mod/congrea:addinstance', $context) && ($USER->id == $teache
     $role = 't';
 } else if (has_capability('mod/congrea:attendance', $context) and $session) {
     $role = 't';
+} else if (has_capability('mod/congrea:sessionpresent', $context)) {
+    $role = 't';
 }
 
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {

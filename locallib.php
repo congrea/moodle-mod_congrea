@@ -21,7 +21,7 @@
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -38,13 +38,10 @@ define('THREE_MONTH', 3);
  *
  * @return object
  */
-function congrea_course_teacher_list() {
-    global $COURSE;
+function congrea_course_teacher_list($cmid) {
 
-    $courseid = $COURSE->id;
-
-    $context = context_course::instance($courseid);
-    $heads = get_users_by_capability($context, 'moodle/course:update');
+    $modcontext = context_module::instance($cmid);
+    $heads = get_users_by_capability($modcontext, 'mod/congrea:sessionpresent');
 
     $teachers = array();
     foreach ($heads as $head) {
@@ -131,10 +128,17 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
-        $form .= html_writer::empty_tag('input', array(
-            'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-            'value' => get_string('joinroom', 'congrea')
-        ));
+        if ($role == 't'){
+            $form .= html_writer::empty_tag('input', array(
+                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                'value' => get_string('joinroomasteacher', 'congrea')
+            ));
+        } else {
+            $form .= html_writer::empty_tag('input', array(
+                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                'value' => get_string('joinroomasstudent', 'congrea')
+            ));
+        }
     }
     $form .= html_writer::end_tag('form');
     return $form;
@@ -942,7 +946,7 @@ function congrea_print_tabs($currenttab, $context, $cm, $congrea) {
         ),
         get_string('psession', 'mod_congrea')
     );
-    if (has_capability('mod/congrea:sessionesetting', $context)) {
+    if (has_capability('mod/congrea:sessioncreate', $context)) {
         $row[] = new tabobject(
             'sessionsettings',
             new moodle_url(
