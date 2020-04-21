@@ -205,51 +205,53 @@ echo html_writer::start_tag('br');
 // Editing an existing session.
 if ($edit) {
     if (has_capability('mod/congrea:sessionedit', $context)) {
-        echo html_writer::start_tag('div', array('class' => 'overflow'));
-        $table = new html_table();
-        $record = $DB->get_record('event', array('id' => $edit));
-        $row = array();
-        $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .
-        userdate(($record->timestart + $record->timeduration / 60), '%I:%M %p') . '</strong>';
-        $table->data[] = $row;
-        echo html_writer::table($table);
-        echo html_writer::end_tag('div');
-        $recordlist = $DB->get_records('event', array('repeatid' => $edit));
-        if (!empty($recordlist)) {
-            sort($recordlist);
-            $weeks = count($recordlist);
-            // Editing multiple sessions.
-            foreach ($recordlist as $record) {
-                if (($record->timestart + $record->timeduration) < time()) {
-                    $record->repeatid = 0;
-                    $record->description = '-';
-                    $DB->update_record('event', $record);
-                    $weeks--;
-                    continue;
-                } else {
-                    $formdata = new stdClass;
-                    $formdata->fromsessiondate = $record->timestart;
-                    $formdata->timeduration = $record->timeduration / 60;
-                    $formdata->week = $weeks;
-                    $formdata->addmultiple = 1;
-                    $formdata->moderatorid = $record->userid;
-                    $mform->set_data($formdata);
-                    $mdata = $mform->get_data();
-                    break;
-                }
-            }
-        } else {
-            // Editing single session.
+        if (has_capability('moodle/calendar:manageentries', $context)) {
+            echo html_writer::start_tag('div', array('class' => 'overflow'));
+            $table = new html_table();
             $record = $DB->get_record('event', array('id' => $edit));
-            $formdata = new stdClass;
-            $formdata->fromsessiondate = $record->timestart;
-            $formdata->timeduration = $record->timeduration / 60;
-            $formdata->week = intval($record->description);
-            $formdata->addmultiple = 0;
-            $formdata->week = 1;
-            $formdata->moderatorid = $record->userid;
-            $mform->set_data($formdata);
-            $mdata = $mform->get_data();
+            $row = array();
+            $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .
+            userdate(($record->timestart + $record->timeduration / 60), '%I:%M %p') . '</strong>';
+            $table->data[] = $row;
+            echo html_writer::table($table);
+            echo html_writer::end_tag('div');
+            $recordlist = $DB->get_records('event', array('repeatid' => $edit));
+            if (!empty($recordlist)) {
+                sort($recordlist);
+                $weeks = count($recordlist);
+                // Editing multiple sessions.
+                foreach ($recordlist as $record) {
+                    if (($record->timestart + $record->timeduration) < time()) {
+                        $record->repeatid = 0;
+                        $record->description = '-';
+                        $DB->update_record('event', $record);
+                        $weeks--;
+                        continue;
+                    } else {
+                        $formdata = new stdClass;
+                        $formdata->fromsessiondate = $record->timestart;
+                        $formdata->timeduration = $record->timeduration / 60;
+                        $formdata->week = $weeks;
+                        $formdata->addmultiple = 1;
+                        $formdata->moderatorid = $record->userid;
+                        $mform->set_data($formdata);
+                        $mdata = $mform->get_data();
+                        break;
+                    }
+                }
+            } else {
+                // Editing single session.
+                $record = $DB->get_record('event', array('id' => $edit));
+                $formdata = new stdClass;
+                $formdata->fromsessiondate = $record->timestart;
+                $formdata->timeduration = $record->timeduration / 60;
+                $formdata->week = intval($record->description);
+                $formdata->addmultiple = 0;
+                $formdata->week = 1;
+                $formdata->moderatorid = $record->userid;
+                $mform->set_data($formdata);
+                $mdata = $mform->get_data();
+            }
         }
     }
 } // end if $edit
@@ -265,11 +267,12 @@ if ($action == 'addsession' || $edit ) {
 }
 
 // Display schedule table.
-if (has_capability('mod/congrea:managesession', $context)) {
+if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $context)) {
     echo $OUTPUT->heading('Schedules');
     $table = new html_table();
     $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
-    $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' =>  $congrea->id));
+    $sessionlist = $DB->get_records('event',
+    array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
     usort($sessionlist, "compare_dates_scheduled_list");
     $currenttime = time();
     if (!empty($sessionlist)) {

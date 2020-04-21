@@ -35,7 +35,7 @@ define('THREE_MONTH', 3);
 /**
  * Get list of teacher of current course
  * serving for virtual class
- *
+ * @param int $cmid
  * @return object
  */
 function congrea_course_teacher_list($cmid) {
@@ -128,7 +128,7 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
-        if ($role == 't'){
+        if ($role == 't') {
             $form .= html_writer::empty_tag('input', array(
                 'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
                 'value' => get_string('joinroomasteacher', 'congrea')
