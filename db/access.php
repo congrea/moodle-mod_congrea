@@ -97,24 +97,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    'mod/congrea:sessioncreate' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-    'mod/congrea:sessionedit' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
     'mod/congrea:managesession' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

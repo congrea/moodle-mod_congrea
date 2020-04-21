@@ -946,7 +946,7 @@ function congrea_print_tabs($currenttab, $context, $cm, $congrea) {
         ),
         get_string('psession', 'mod_congrea')
     );
-    if (has_capability('mod/congrea:sessioncreate', $context)) {
+    if (has_capability('mod/congrea:managesession', $context)) {
         $row[] = new tabobject(
             'sessionsettings',
             new moodle_url(

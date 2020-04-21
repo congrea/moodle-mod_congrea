@@ -137,7 +137,7 @@ if ($mform->is_cancelled()) {
     } // End create multiple sessions.
     // Update sessions.
     if ($edit && $fromform->submitbutton == "Save changes") {
-        if (has_capability('mod/congrea:sessioncreate', $context)) {
+        if (has_capability('mod/congrea:managesession', $context)) {
             if (has_capability('moodle/calendar:manageentries', $context)) {
                 $eventobject = calendar_event::create($data);
                 $dataid = $eventobject->id; // TODO: -using api return id.
@@ -179,7 +179,7 @@ if (!empty($sessionsettings)) {
 }
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
-if (has_capability('mod/congrea:sessioncreate', $context)) {
+if (has_capability('mod/congrea:managesession', $context)) {
     if (has_capability('moodle/calendar:manageentries', $context)) {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
@@ -204,7 +204,7 @@ echo html_writer::start_tag('br');
 
 // Editing an existing session.
 if ($edit) {
-    if (has_capability('mod/congrea:sessionedit', $context)) {
+    if (has_capability('mod/congrea:managesession', $context)) {
         if (has_capability('moodle/calendar:manageentries', $context)) {
             echo html_writer::start_tag('div', array('class' => 'overflow'));
             $table = new html_table();
@@ -257,7 +257,7 @@ if ($edit) {
 } // end if $edit
 
 if ($action == 'addsession' || $edit ) {
-    if (has_capability('mod/congrea:sessioncreate', $context)) {
+    if (has_capability('mod/congrea:managesession', $context)) {
         if (has_capability('moodle/calendar:manageentries', $context)) {
             $mform->display();
         } else {
@@ -299,27 +299,25 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 }
                 $row[] = $username;
                 $row[] = $list->description;
-                if (has_capability('mod/congrea:sessionedit', $context)) {
-                    if ($list->timeduration < 86400) {
-                        $buttons[] = html_writer::link(
-                                new moodle_url(
-                                    '/mod/congrea/sessionsettings.php',
-                                    array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
-                                ),
-                                'Edit',
-                                array('class' => 'actionlink exportpage')
-                        );
-                    }
+                if ($list->timeduration < 86400) {
                     $buttons[] = html_writer::link(
-                        new moodle_url(
-                            '/mod/congrea/sessionsettings.php',
-                            array('id' => $cm->id, 'delete' => $list->id, 'sessionsettings' => $sessionsettings)
-                        ),
-                        'Delete',
-                        array('class' => 'actionlink exportpage')
+                            new moodle_url(
+                                '/mod/congrea/sessionsettings.php',
+                                array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
+                            ),
+                            'Edit',
+                            array('class' => 'actionlink exportpage')
                     );
-                    $row[] = implode(' ', $buttons);
                 }
+                $buttons[] = html_writer::link(
+                    new moodle_url(
+                        '/mod/congrea/sessionsettings.php',
+                        array('id' => $cm->id, 'delete' => $list->id, 'sessionsettings' => $sessionsettings)
+                    ),
+                    'Delete',
+                    array('class' => 'actionlink exportpage')
+                );
+                $row[] = implode(' ', $buttons);
                 $table->data[] = $row;
             }
         }
