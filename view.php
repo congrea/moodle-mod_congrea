@@ -199,12 +199,8 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         }
     }
 }
-// Dorecording have manager and teacher and nonediting teacher Permission.
-if (has_capability('mod/congrea:addinstance', $context) && ($USER->id == $teacherid)) {
-    $role = 't';
-} else if (has_capability('mod/congrea:attendance', $context) and $session) {
-    $role = 't';
-} else if (has_capability('mod/congrea:sessionpresent', $context)) {
+// Permission to presenter a session as teacher in his own session only..
+if (has_capability('mod/congrea:sessionpresent', $context) && ($USER->id == $teacherid)) {
     $role = 't';
 }
 
