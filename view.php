@@ -199,8 +199,12 @@ if (get_config('mod_congrea', 'allowoverride')) { // If override on.
         }
     }
 }
-// Permission to presenter a session as teacher in his own session only..
-if (has_capability('mod/congrea:sessionpresent', $context) && ($USER->id == $teacherid)) {
+ // Dorecording have manager and teacher and nonediting teacher Permission.
+if (has_capability('mod/congrea:addinstance', $context) && ($USER->id == $teacherid)) {
+    $role = 't';
+} else if (has_capability('mod/congrea:attendance', $context) and $session) {
+    $role = 't';
+} else if (has_capability('mod/congrea:sessionpresent', $context) && ($USER->id == $teacherid)) {
     $role = 't';
 }
 
@@ -555,6 +559,7 @@ if ($session) {
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
     $laterenrolled = 0;
+    $absentstudents = 0;
     if (!empty($attendencestatus) and !empty($sessionstatus)) {
         foreach ($attendencestatus->attendance as $sattendence) {
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
@@ -593,27 +598,23 @@ if ($session) {
                 $rectotalviewedpercent = 0;
                 $recviewed = '-';
             }
-            if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) {
-                $teachername = $username;
+            if (has_capability('mod/congrea:sessionpresent', $context)) {
                 if (!empty($studentsstatus->totalspenttime)) {
                     $table->data[] = array(
-                        '<strong>' . $username . '</strong',
-                        $studentsstatus->totalspenttime . ' ' . 'Mins',
-                        date('g:i A ', $studentsstatus->starttime),
+                        $username, $studentsstatus->totalspenttime . ' ' . 'Mins', date('g:i A',$studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
                 } else {
                     $table->data[] = array(
-                        '<strong>' . $username . '</strong',
-                        '<p style="color:red;"><b>A\A</b></p>',
-                        date('g:i A', $studentsstatus->starttime),
+                        $username,  '<p style="color:red;"><b>A</b></p>', date('g:i A',$studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
-                }
+                    $absentstudents++;
+                }                
             } else {
                 if (!empty($studentsstatus->totalspenttime)) {
                     $table->data[] = array(
-                        $username, $studentsstatus->totalspenttime . ' ' . 'Mins', date('g:i A', $studentsstatus->starttime),
+                        $username, $studentsstatus->totalspenttime . ' ' . 'Mins',   date('g:i A',$studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
                 } else {
@@ -621,6 +622,7 @@ if ($session) {
                         $username,  '<p style="color:red;"><b>A</b></p>', date('g:i A', $studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
+                    $absentstudents++;
                 }
             }
         }
@@ -651,18 +653,17 @@ if ($session) {
                     $rectotalviewedpercent = 0;
                     $recviewed = '-';
                 }
-                if (has_capability('mod/congrea:addinstance', $context) && ($studentname->id == $teacherid)) {
-                    $teachername = $username;
-                    $table->data[] = array('<strong>' . $teachername . '</strong>',
-                    '<p style="color:red;"><b>A</b></p>', '-', '-', $recviewed);
-                } else {
-                    $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
-                    $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart);
-                    if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)) {
-                        $table->data[] = array($username, '<p style="color:green;">Enrolled later</p>', '-', '-', $recviewed);
-                        $laterenrolled++;
-                    } else {
-                        $table->data[] = array($username, '<p style="color:red;">A</p>', '-', '-', $recviewed);
+                if (in_array($studentname->id, $enrolusers)) {
+                    if ($DB->record_exists('user_enrolments', array('userid' => $studentname->id))) {
+                        $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
+                        $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart);
+                        if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)) {
+                            $table->data[] = array($username, '<p style="color:green;">Enrolled later</p>', '-', '-', $recviewed);
+                            $laterenrolled++;
+                        } else {
+                            $table->data[] = array($username, '<p style="color:red;">A</p>', '-', '-', $recviewed);
+                            $absentstudents++;
+                        }
                     }
                 }
             }
@@ -680,24 +681,21 @@ if (!empty($table->data) and !$session) {
 }
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    $countenroluser = count($enrolusers) - $laterenrolled;
     $presentnroluser = count($attendence);
-    $absentuser = abs($countenroluser - $presentnroluser);
-    $enrolusers = congrea_get_enrolled_users($id, $COURSE->id);
-    if (!empty($teachername)) {
+/*     if (!empty($teachername)) {
         $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A',
         $sessionstatus->sessionendtime) .'</strong></h5><strong>Teacher: ' . $teachername .
         '</strong></br><strong>Session duration: </strong>' .
         $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' .
-        '<strong> Students absent: </strong>' . $absentuser . '</br><strong> Students present: </strong>'
+        '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present: </strong>'
         . $presentnroluser . '</br></br>';
-    } else {
+    } else { */
         $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
         ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
         '</strong></h5><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' .
-        'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentuser . '</br><strong> Students present: </strong>'
+        'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present: </strong>'
         . $presentnroluser . '</br></br>';
-    }
+    //}
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
