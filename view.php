@@ -251,7 +251,18 @@ if (!$psession) {
     if (!empty($sessionstarttime) and !empty($sessionendtime) and !empty($teacherid)) {
         echo html_writer::start_tag('div', array('class' => $classname));
         echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $a));
-        echo html_writer::tag('div', get_string('teachername', 'mod_congrea', $user));
+        $presentersobj = congrea_course_teacher_list($id);
+        $presentersarray = json_decode(json_encode($presentersobj), true);
+        if (array_key_exists($teacherid, $presentersarray) && ($user->deleted != 1) && ($user->suspended != 1)) {
+            echo html_writer::tag('div', get_string('teachername', 'congrea', $user));
+        } else {
+            if (has_capability('mod/congrea:managesession', $context)) {
+                echo html_writer::tag('h5', ucwords($user->firstname) . " " . ucwords($user->lastname)
+                . get_string('notavaliduserwithname', 'congrea'));
+            } else {
+                echo html_writer::tag('h5', get_string('notavaliduser', 'congrea'));
+            }
+        }
     } else { // Sessions are past.
         echo html_writer::start_tag('div', array('class' => $classname));
         echo html_writer::tag('div', get_string('notsession', 'mod_congrea'));
