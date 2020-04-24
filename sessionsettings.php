@@ -49,6 +49,7 @@ if ($id) {
 }
 
 require_login($course, true, $cm);
+$coursecontext = context_course::instance($course->id);
 $context = context_module::instance($cm->id);
 $returnurl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => true));
 $settingsreturnurl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'action' => 'addsession'));
@@ -76,11 +77,18 @@ if ($delete) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $event = $DB->get_records('event', array('repeatid' => $delete));
-        if (!empty($event)) {
-            $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
-        } else {
-            $DB->delete_records('event', array('id' => $delete));
+        if (has_capability('mod/congrea:managesession', $context)) {
+            if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
+                $event = $DB->get_records('event', array('repeatid' => $delete));
+                if (!empty($event)) {
+                    $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
+                } else {
+                    $DB->delete_records('event', array('id' => $delete));
+                }
+            } else {
+                \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
+                \core\output\notification::NOTIFY_ERROR);
+            }
         }
     }
 } // End Delete Sessions.
@@ -116,9 +124,17 @@ if ($mform->is_cancelled()) {
     }
     $presenter = $fromform->moderatorid;
     $congreaid = $congrea->id;
+
     if ($action == 'addsession') {
-        $eventobject = calendar_event::create($data);
-        $dataid = $eventobject->id; // TODO: -using api return id.
+        if (has_capability('mod/congrea:managesession', $context)) {
+            if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
+                $eventobject = calendar_event::create($data);
+                $dataid = $eventobject->id; // TODO: -using api return id.
+            } else {
+                \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
+                \core\output\notification::NOTIFY_ERROR);
+            }
+        }
     }
     // Create multiple sessions.
     if (!empty($fromform->addmultiple) && !$edit) {
@@ -138,7 +154,7 @@ if ($mform->is_cancelled()) {
     // Update sessions.
     if ($edit && $fromform->submitbutton == "Save changes") {
         if (has_capability('mod/congrea:managesession', $context)) {
-            if (has_capability('moodle/calendar:manageentries', $context)) {
+            if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
                 $eventobject = calendar_event::create($data);
                 $dataid = $eventobject->id; // TODO: -using api return id.
                 if (!empty($fromform->addmultiple)) {
@@ -180,7 +196,7 @@ if (!empty($sessionsettings)) {
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context)) {
-    if (has_capability('moodle/calendar:manageentries', $context)) {
+    if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
             echo $OUTPUT->single_button(
@@ -205,7 +221,7 @@ echo html_writer::start_tag('br');
 // Editing an existing session.
 if ($edit) {
     if (has_capability('mod/congrea:managesession', $context)) {
-        if (has_capability('moodle/calendar:manageentries', $context)) {
+        if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
             echo html_writer::start_tag('div', array('class' => 'overflow'));
             $table = new html_table();
             $record = $DB->get_record('event', array('id' => $edit));
@@ -258,7 +274,7 @@ if ($edit) {
 
 if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context)) {
-        if (has_capability('moodle/calendar:manageentries', $context)) {
+        if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $mform->display();
         } else {
             \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
@@ -267,7 +283,7 @@ if ($action == 'addsession' || $edit ) {
 }
 
 // Display schedule table.
-if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $context)) {
+if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     echo $OUTPUT->heading('Schedules');
     $table = new html_table();
     $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');

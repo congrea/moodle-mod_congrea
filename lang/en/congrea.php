@@ -49,7 +49,7 @@ $string['congrea:pollreport'] = 'View poll report';
 $string['congrea:quizreport'] = 'View quiz report';
 $string['congrea:managesession'] = 'Manage session(s)';
 $string['congrea:sessionpresent'] = 'Present session';
-$string['notcapabletocreateevent'] = 'You cannot create session because you don"t have the capability to create calendar event.';
+$string['notcapabletocreateevent'] = 'You cannot create, edit or delete a session because you don"t have the capability to create calendar event.';
 $string['nofetchplandetails'] = 'Unable to fetch details of your plan. Please try again!';
 $string['afterkeysavemsg'] = 'Successfully provisioned and saved Congrea API and Secret keys';
 $string['freeplan'] = 'To get Congrea free plan, click <a href="../mod/congrea/getkeyindex.php"><strong>here</strong></a>';
