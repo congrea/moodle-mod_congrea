@@ -555,7 +555,6 @@ if ($session) {
     $apiurl2 = 'https://api.congrea.net/t/analytics/attendancerecording';
     $recordingdata = attendence_curl_request($apiurl2, $session, $key, $authpassword, $authusername, $room); // TODO.
     $recordingattendance = json_decode($recordingdata, true);
-
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
     $laterenrolled = 0;
@@ -655,7 +654,9 @@ if ($session) {
                 }
                 if (in_array($studentname->id, $enrolusers)) {
                     if ($DB->record_exists('user_enrolments', array('userid' => $studentname->id))) {
-                        $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id));
+                        $enrol= $DB->get_record('enrol', array('courseid' => $course->id), 'id', $strictness=IGNORE_MULTIPLE);
+                        $enrolledontimestamp = $DB->get_record_sql("SELECT timestart from {user_enrolments}" . " where enrolid = $enrol->id and userid = $studentname->id");
+                        $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $studentname->id, 'enrolid' => $enrol->id), 'timestart', $strictness=IGNORE_MULTIPLE);
                         $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart);
                         if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)) {
                             $table->data[] = array($username, '<p style="color:green;">Enrolled later</p>', '-', '-', $recviewed);
