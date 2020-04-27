@@ -1104,3 +1104,68 @@ function compare_dates_scheduled_list($sessionlist, $session) {
     }
     return ($sessionlist->timestart < $session->timestart) ? -1 : 1;
 }
+/**
+ * This function authenticate the user with required
+ * detail and request for sever connection
+ *
+ * @param string $url congrea auth server url
+ * @param array $postdata
+ * @param string $key
+ * @param string $secret
+ *
+ * @return string $result json_encoded object
+ */
+function congrea_curl_request($url, $postdata, $key, $secret) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+        'x-api-key: ' . $key,
+        'x-congrea-secret: ' . $secret,
+    ));
+    curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_PROXY, false);
+    $result = @curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+/** Function to send auth detail to server.
+ * @param int $cgapi
+ * @param int $cgsecret
+ * @param boolean $recordingstatus
+ * @param int $course
+ * @param int $cm
+ * @param string $role
+ *
+ * @return object $authdata
+ */
+function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role='s') {
+    $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
+    $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
+    $licensekey = $cgapi;
+    $secret = $cgsecret;
+    $recording = $recordingstatus;
+    $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+    $authdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $role,
+                'room' => $room, 'recording' => $recording);
+    $postdata = json_encode($authdata);
+    $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
+    if (!$rid = json_decode($rid)) {
+        echo "{\"error\": \"403\"}";
+        exit;
+    } else if (isset($rid->message)) {
+        echo "{\"error\": \"$rid->message\"}";
+        exit;
+    } else if (!isset($rid->result)) {
+        echo "{\"error\": \"invalid\"}";
+        exit;
+    }
+    $rid = "wss://$rid->result";
+    $authdata = (object) array_merge( (array)$authdata, array( 'path' => $rid));
+    return $authdata;
+}

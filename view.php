@@ -211,7 +211,13 @@ if (has_capability('mod/congrea:addinstance', $context) && ($USER->id == $teache
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
     $cgcolor = get_config('mod_congrea', 'colorpicker');
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
-        require_once('auth.php');
+        $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role);
+        $authusername = $authdata->authuser;
+        $authpassword = $authdata->authpass;
+        $role = $authdata->role;
+        $room = $authdata->room;
+        $rid = $authdata->path;
+        $licensekey = $cgapi;
     } else {
         echo $OUTPUT->notification(get_string('wrongkey', 'congrea', $a));
         echo $OUTPUT->footer();
