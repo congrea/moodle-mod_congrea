@@ -162,7 +162,7 @@ if ($mform->is_cancelled()) {
                     $weeks = $fromform->week;
                     $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
                     foreach ($upcomingdates as $startdate) {
-                        repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks;
+                        repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
                     }
                     $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
                 }
