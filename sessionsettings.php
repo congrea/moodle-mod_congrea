@@ -85,8 +85,7 @@ if ($delete) {
                 $DB->delete_records('event', array('id' => $delete));
             }
         } else {
-            \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
-            \core\output\notification::NOTIFY_ERROR);
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
         }
     }
 } // End Delete Sessions.
@@ -128,8 +127,7 @@ if ($mform->is_cancelled()) {
             $eventobject = calendar_event::create($data);
             $dataid = $eventobject->id; // TODO: -using api return id.
         } else {
-            \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
-            \core\output\notification::NOTIFY_ERROR);
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
         }
     }
     // Create multiple sessions.
@@ -171,8 +169,7 @@ if ($mform->is_cancelled()) {
             $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
             $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
         } else {
-            \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'),
-            \core\output\notification::NOTIFY_ERROR);
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
         }
     }
     redirect($returnurl);
@@ -201,7 +198,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         echo html_writer::start_tag('br');
     }
 } else {
-    \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
+    echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
 }
 echo html_writer::start_tag('br');
 
@@ -254,6 +251,8 @@ if ($edit) {
             $mform->set_data($formdata);
             $mdata = $mform->get_data();
         }
+    } else {
+        echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
     }
 } // end if $edit
 
@@ -261,13 +260,13 @@ if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $mform->display();
     } else {
-        \core\notification::add(get_string('notcapabletocreateevent', 'mod_congrea'), \core\output\notification::NOTIFY_ERROR);
+        echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
     }
 }
 
 // Display schedule table.
+echo $OUTPUT->heading('Schedules');
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-    echo $OUTPUT->heading('Schedules');
     $table = new html_table();
     $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
     $sessionlist = $DB->get_records('event',
@@ -331,6 +330,8 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
     } else {
         echo $OUTPUT->notification(get_string('nosession', 'mod_congrea'));
     }
+} else {
+    echo $OUTPUT->notification(get_string('notcapabletoviewschedules', 'congrea'));
 }
 // Finish the page.
 echo $OUTPUT->footer();

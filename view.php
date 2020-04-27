@@ -83,6 +83,7 @@ if (!empty($currentdata)) {
     }
 }
 require_login($course, true, $cm);
+$coursecontext = context_course::instance($course->id);
 $context = context_module::instance($cm->id);
 // Print the page header.
 $PAGE->set_url('/mod/congrea/view.php', array('id' => $cm->id));
@@ -471,7 +472,11 @@ if ($psession) {
         echo $OUTPUT->heading('There are no recordings to show');
     }
     $table = new html_table();
-    $table->head = array('File name', 'Time created', 'Report', 'Action', '');
+    if (has_capability('mod/congrea:sessionpresent', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
+        $table->head = array('File name', 'Time created', 'Report', 'Action', '');
+    } else {
+        $table->head = array('File name', 'Time created', 'Action', '');
+    }
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $table->id = "recorded_data";
@@ -484,7 +489,7 @@ if ($psession) {
         $row[] = userdate($record->time / 1000); // Todo.
         $vcsid = $record->key_room; // Todo.
         // Attendance button.
-        if (has_capability('mod/congrea:attendance', $context)) {
+        if (has_capability('mod/congrea:attendance', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
             $attendancereport = html_writer::link(
                 new moodle_url($returnurl, array('session' => $record->session, 'psession' => true)),
@@ -519,7 +524,7 @@ if ($psession) {
             );
         }
         // Delete button.
-        if (has_capability('mod/congrea:recordingdelete', $context)) {
+        if (has_capability('mod/congrea:recordingdelete', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $imageurl = "$CFG->wwwroot/mod/congrea/pix/delete.png";
             $buttons[] = html_writer::link(new moodle_url($returnurl, array(
                 'delete' => $record->session,
@@ -532,7 +537,7 @@ if ($psession) {
         $row[] = implode(' ', $buttons);
         $row[] = $lastcolumn;
         if (!has_capability('mod/congrea:attendance', $context)) { // Report view for student.
-            $table->head = array('Filename', 'Time created', 'Action', "Attendance");
+            $table->head = array('Filename', 'Time created', 'Action', 'Attendance');
             $table->attributes['class'] = 'admintable generaltable studentEnd';
             if (!empty($attendencestatus->attendance)) { // Check for those who are enrolled later.
                 $row[] = '<p style="color:green;"><b>P</b></p>';
@@ -597,7 +602,7 @@ if ($session) {
                 $rectotalviewedpercent = 0;
                 $recviewed = '-';
             }
-            if (has_capability('mod/congrea:sessionpresent', $context)) {
+            if (has_capability('mod/congrea:attendance', $context)) {
                 if (!empty($studentsstatus->totalspenttime)) {
                     $table->data[] = array(
                         $username, $studentsstatus->totalspenttime . ' ' . 'Mins', date('g:i A',$studentsstatus->starttime),
@@ -683,20 +688,11 @@ if (!empty($table->data) and !$session) {
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
     $presentnroluser = count($attendence);
-/*     if (!empty($teachername)) {
-        $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) . ' to ' . date('g:i A',
-        $sessionstatus->sessionendtime) .'</strong></h5><strong>Teacher: ' . $teachername .
-        '</strong></br><strong>Session duration: </strong>' .
-        $sessionstatus->totalsessiontime . ' ' . 'Mins' . '</br>' .
-        '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present: </strong>'
-        . $presentnroluser . '</br></br>';
-    } else { */
-        $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
-        ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
-        '</strong></h5><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' .
-        'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present: </strong>'
-        . $presentnroluser . '</br></br>';
-    //}
+    $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
+    ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
+    '</strong></h5><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' .
+    'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present:</strong>'
+    . $presentnroluser . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
