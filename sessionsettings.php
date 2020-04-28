@@ -359,13 +359,11 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                     $pastsessions[] = $list;
                     continue;
                 }
-                if ($list->timeduration > 86400) {
+/*                 if ($list->timeduration > 86400) {
                     $row[] = 'Legacy session';
                     $row[] = userdate($list->timeduration);
-                } else if ($list->timeduration != 0) {
+                } else  */if ($list->timeduration != 0) {
                     $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-                } else {
-                    $row[] = 'Infinite session';
                 }
                 $moderatorid = $DB->get_record('user', array('id' => $list->userid));
                 if (!empty($moderatorid)) {
@@ -376,14 +374,14 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 $row[] = $username;
                 $row[] = $list->description;
                 //if ($list->timeduration < 86400) {
-                    $buttons[] = html_writer::link(
-                            new moodle_url(
-                                '/mod/congrea/sessionsettings.php',
-                                array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
-                            ),
-                            'Edit',
-                            array('class' => 'actionlink exportpage')
-                    );
+                $buttons[] = html_writer::link(
+                        new moodle_url(
+                            '/mod/congrea/sessionsettings.php',
+                            array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
+                        ),
+                        'Edit',
+                        array('class' => 'actionlink exportpage')
+                );
                 //}
                 $buttons[] = html_writer::link(
                     new moodle_url(
