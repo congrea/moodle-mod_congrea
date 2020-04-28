@@ -301,3 +301,5 @@ $string['lastname_help'] = "Enter your last name.";
 $string['email_help'] = "Enter your email address.";
 $string['domain_help'] = "Enter your domain name.";
 $string['datacenter_help'] = "Choose data center name.";
+
+$string['infinitesession'] = 'Open session';

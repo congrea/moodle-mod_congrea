@@ -66,21 +66,21 @@ class mod_congrea_session_form extends moodleform {
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
         $durationfield[] =& $mform->createElement('static', '', '', '<span>minutes</span>');
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
+        $mform->setDefault('timeduration', 0);
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
         $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-
+        $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('week', 'congrea'));
         $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(''), false);
-        $mform->hideIf('weeks', 'addmultiple', 'notchecked');
-
+        $mform->disabledIf('weeks', 'addmultiple', 'notchecked');
         $this->add_action_buttons();
     }
 
@@ -92,7 +92,7 @@ class mod_congrea_session_form extends moodleform {
      * @return array errors
      */
     public function validation($data, $files) {
-        global $DB;
+        //global $DB;
         $errors = parent::validation($data, $files);
         $durationinminutes = 0;
         $durationinminutes = $data['timeduration'];
@@ -101,8 +101,10 @@ class mod_congrea_session_form extends moodleform {
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if (($durationinminutes == 0) || ($durationinminutes < 10) || ($durationinminutes > 1439 )) {
-            $errors['timeduration'] = get_string('errortimeduration', 'congrea');
+        if ($durationinminutes != 0) { 
+            if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
+                $errors['timeduration'] = get_string('errortimeduration', 'congrea');
+            }
         }
         if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
