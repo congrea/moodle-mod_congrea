@@ -718,11 +718,11 @@ if (!empty($table->data) and !$session) {
 }
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    $presentnroluser = count($attendence);
+    $presentusers = count($enrolusers) - $absentstudents - $laterenrolled;
     $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
     ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
     '</strong></h5><strong>' . get_string('sessiondetails', 'congrea') . '</strong>' . $sessionstatus->totalsessiontime . ' ' . get_string('mins', 'congrea') . '</br>' . '<strong>' . get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' . get_string('present', 'congrea') . '</strong>'
-    . $presentnroluser . '</br></br>';
+    . $presentusers . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
     echo html_writer::end_tag('div');
