@@ -77,7 +77,8 @@ if ($delete) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
+        if (has_capability('mod/congrea:managesession', $context) &&
+        has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $event = $DB->get_records('event', array('repeatid' => $delete));
             if (!empty($event)) {
                 $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
@@ -123,7 +124,8 @@ if ($mform->is_cancelled()) {
     $congreaid = $congrea->id;
 
     if ($action == 'addsession') {
-        if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
+        if (has_capability('mod/congrea:managesession', $context) &&
+        has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $eventobject = calendar_event::create($data);
             $dataid = $eventobject->id; // TODO: -using api return id.
         } else {
@@ -147,7 +149,8 @@ if ($mform->is_cancelled()) {
     } // End create multiple sessions.
     // Update sessions.
     if ($edit && $fromform->submitbutton == "Save changes") {
-        if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
+        if (has_capability('mod/congrea:managesession', $context) &&
+        has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $eventobject = calendar_event::create($data);
             $dataid = $eventobject->id; // TODO: -using api return id.
             if (!empty($fromform->addmultiple)) {
