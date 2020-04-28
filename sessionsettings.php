@@ -362,9 +362,9 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
 /*                 if ($list->timeduration > 86400) {
                     $row[] = 'Legacy session';
                     $row[] = userdate($list->timeduration);
-                } else  */if ($list->timeduration != 0) {
-                    $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-                }
+                } else  if ($list->timeduration != 0) {*/
+                $row[] = ($list->timeduration / 60) . ' ' . 'mins';
+                //}
                 $moderatorid = $DB->get_record('user', array('id' => $list->userid));
                 if (!empty($moderatorid)) {
                     $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
