@@ -496,10 +496,10 @@ if ($psession) {
     } else if ($session) {
         echo $OUTPUT->heading(get_string('sessionareport', 'mod_congrea'));
     } else {
-        echo $OUTPUT->heading('There are no recordings to show');
+        echo $OUTPUT->heading(get_string('norecordingtoshow', 'congrea'));
     }
     $table = new html_table();
-    $table->head = array('File name', 'Time created', 'Action', '');
+    $table->head = array(get_string('filename', 'congrea'), get_string('timecreated', 'congrea'), get_string('action', 'congrea'), '');
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $table->id = "recorded_data";
@@ -520,7 +520,7 @@ if ($psession) {
                     'src' => $imageurl,
                     'alt' => 'Attendance Report', 'class' => 'attend'
                 )),
-                array('title' => 'View Attendance Report', 'target' => '_blank')
+                array('title' => get_string('viewreport', 'congrea'), 'target' => '_blank')
             );
             $row[] = $attendancereport;
         }
@@ -560,12 +560,12 @@ if ($psession) {
         $row[] = implode(' ', $buttons);
         $row[] = $lastcolumn;
         if (!has_capability('mod/congrea:attendance', $context)) { // Report view for student.
-            $table->head = array('Filename', 'Time created', 'Action', 'Attendance');
+            $table->head = array(get_string('filename', 'congrea'), get_string('timecreated', 'congrea'), get_string('action', 'congrea'), get_string('attendance', 'congrea'));
             $table->attributes['class'] = 'admintable generaltable studentEnd';
             if (!empty($attendencestatus->attendance)) { // Check for those who are enrolled later.
-                $row[] = '<p style="color:green;"><b>P</b></p>';
+                $row[] = '<p style="color:green;">P</p>';
             } else {
-                $row[] = '<p style="color:red;"><b>A</b></p>';
+                $row[] = '<p style="color:red;">A</p>';
             }
         }
         $table->data[] = $row;
@@ -574,7 +574,7 @@ if ($psession) {
 // Student Report according to session.
 if ($session) {
     $table = new html_table();
-    $table->head = array('Name', 'Presence', 'Join time', 'Exit time', 'Recording viewed');
+    $table->head = array(get_string('name', 'congrea'), get_string('presence', 'congrea'), get_string('jointime', 'congrea'), get_string('exittime', 'congrea'), get_string('recordingviewed', 'congrea'));
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable attendance';
     if (has_capability('mod/congrea:attendance', $context) || has_capability('mod/congrea:recordingdelete', $context)) {
@@ -620,9 +620,9 @@ if ($session) {
                 if ($recview->totalviewd < 60) {
                     $totalseconds = $recview->recodingtime;
                     $rectotalviewedpercent = round(($recview->totalviewd * 100) / $totalseconds);
-                    $recviewed = $recview->totalviewd . ' ' . 'Secs';
+                    $recviewed = $recview->totalviewd . ' ' . get_string('secs', 'congrea');
                 } else {
-                    $recviewed = round($recview->totalviewd / 60) . ' Mins';
+                    $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
                     $rectotalviewedpercent = $recview->totalviewedpercent;
                 }
             } else {
@@ -632,7 +632,7 @@ if ($session) {
             if (has_capability('mod/congrea:attendance', $context)) {
                 if (!empty($studentsstatus->totalspenttime)) {
                     $table->data[] = array(
-                        $username, $studentsstatus->totalspenttime . ' ' . 'Mins', date('g:i A', $studentsstatus->starttime),
+                        $username, $studentsstatus->totalspenttime . ' ' . get_string('mins', 'congrea'), date('g:i A', $studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
                 } else {
@@ -644,7 +644,7 @@ if ($session) {
                 }
             } else {
                 if (!empty($studentsstatus->totalspenttime)) {
-                    $table->data[] = array($username, $studentsstatus->totalspenttime . ' ' . 'Mins',
+                    $table->data[] = array($username, $studentsstatus->totalspenttime . ' ' . get_string('mins', 'congrea'),
                     date('g:i A', $studentsstatus->starttime),
                     date('g:i A', $studentsstatus->endtime), $recviewed
                     );
@@ -675,9 +675,9 @@ if ($session) {
                     if ($recview->totalviewd < 60) {
                         $totalseconds = $recview->recodingtime;
                         $rectotalviewedpercent = round(($recview->totalviewd * 100) / $totalseconds);
-                        $recviewed = $recview->totalviewd . ' ' . 'Secs';
+                        $recviewed = $recview->totalviewd . ' ' . get_string('secs', 'congrea');
                     } else {
-                        $recviewed = round($recview->totalviewd / 60) . ' Mins';
+                        $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
                         $rectotalviewedpercent = $recview->totalviewedpercent;
                     }
                 } else {
@@ -695,7 +695,7 @@ if ($session) {
                         $enrolledon = date('Y-m-d H:i', $dbuserenrolled->timestart);
                         if (strtotime($enrolledon) > ($sessionstatus->sessionendtime)) {
                             $table->data[] = array($username,
-                            '<p style = "color: green;">Enrolled later</p>', '-', '-', $recviewed);
+                            '<p style = "color: green;">' . get_string('enrolledlater', 'congrea') . '</p>', '-', '-', $recviewed);
                             $laterenrolled++;
                         } else {
                             $table->data[] = array($username, '<p style = "color: red;">A</p>', '-', '-', $recviewed);
@@ -721,8 +721,7 @@ if (!empty($table) and $session and $sessionstatus) {
     $presentnroluser = count($attendence);
     $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
     ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
-    '</strong></h5><strong> Session duration: </strong>' . $sessionstatus->totalsessiontime . ' ' .
-    'Mins' . '</br>' . '<strong> Students absent: </strong>' . $absentstudents . '</br><strong> Students present:</strong>'
+    '</strong></h5><strong>' . get_string('sessiondetails', 'congrea') . '</strong>' . $sessionstatus->totalsessiontime . ' ' . get_string('mins', 'congrea') . '</br>' . '<strong>' . get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' . get_string('present', 'congrea') . '</strong>'
     . $presentnroluser . '</br></br>';
     echo html_writer::tag('div', $present, array('class' => 'present'));
     echo html_writer::table($table);
