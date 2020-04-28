@@ -118,11 +118,10 @@ if ($mform->is_cancelled()) {
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
         $days = date('D', strtotime($startdate));
-        $data->description = $fromform->week . ' weeks/ ' . $days;
+        $data->description = $fromform->week . get_string('repeatedweeks', 'congrea') . $days;
     } else { // Single Event.
         $data->repeatid = 0;
         $data->description = '-';
-
     }
     $presenter = $fromform->moderatorid;
     $congreaid = $congrea->id;
@@ -189,20 +188,24 @@ if (!empty($sessionsettings)) {
     $currenttab = 'sessionsettings';
 }
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
-
+$events = $DB->get_records('event', array('instance' => $congrea->id));
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-    $options = array();
-    if ($sessionsettings && !$edit && !($action == 'addsession')) {
-        echo $OUTPUT->single_button(
-            $returnurl->out(
-            true,
-            array('action' => 'addsession', 'cmid' => $cm->id)
-            ),
-            get_string('addsessions', 'congrea'),
-            'get',
-            $options
-        );
-        echo html_writer::start_tag('br');
+    if (count($events) > 0){
+        echo $OUTPUT->notification(get_string('cannotaddsession', 'congrea'));
+    } else {
+        $options = array();
+        if ($sessionsettings && !$edit && !($action == 'addsession')) {
+            echo $OUTPUT->single_button(
+                $returnurl->out(
+                true,
+                array('action' => 'addsession', 'cmid' => $cm->id)
+                ),
+                get_string('addsessions', 'congrea'),
+                'get',
+                $options
+            );
+            echo html_writer::start_tag('br');
+        }
     }
 } else {
     echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
@@ -285,7 +288,7 @@ if ($edit) {
 
 if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-            $mform->display();
+        $mform->display();
     } else {
         echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
     }
@@ -328,14 +331,16 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         }
         $row[] = $username;
         $row[] = $infinitesession->description;
-        $buttons[] = html_writer::link(
-            new moodle_url(
-            '/mod/congrea/sessionsettings.php',
-            array('id' => $cm->id, 'edit' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
-            ),
-            'Edit',
-            array('class' => 'actionlink exportpage')
-        );
+        if (count($events) == 0) {
+            $buttons[] = html_writer::link(
+                new moodle_url(
+                '/mod/congrea/sessionsettings.php',
+                array('id' => $cm->id, 'edit' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
+                ),
+                'Edit',
+                array('class' => 'actionlink exportpage')
+            );
+        }
         $buttons[] = html_writer::link(
             new moodle_url(
                 '/mod/congrea/sessionsettings.php',

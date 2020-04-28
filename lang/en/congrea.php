@@ -242,7 +242,7 @@ $string['repeattype_help'] = 'Repeat type';
 $string['sessionenddate'] = 'Session end date';
 $string['sessionenddate_help'] = 'Session end date';
 $string['repeatevery'] = 'Repeat weekly, creating altogether';
-$string['week'] = 'week(s)';
+$string['week'] = ' week(s)';
 $string['filter'] = 'Select filter';
 $string['filter_help'] = 'Select filter';
 $string['displaymode'] = 'Display mode';
@@ -301,5 +301,6 @@ $string['lastname_help'] = "Enter your last name.";
 $string['email_help'] = "Enter your email address.";
 $string['domain_help'] = "Enter your domain name.";
 $string['datacenter_help'] = "Choose data center name.";
-
+$string['repeatedweeks'] = ' weeks/ ';
 $string['infinitesession'] = 'Open session';
+$string['cannotaddsession'] = 'Not allowed to add session to this congrea activity. To add session you need to delete the open session and then create sessions again.';

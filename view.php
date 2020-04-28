@@ -241,6 +241,9 @@ if (userdate($start, '%I:%M %p') == userdate($end , '%I:%M %p')) {
 if ($duration > 86400) {
     $a->endtime = userdate($sessionendtime);
 }
+if ($duration == 0){
+    $a->endtime = get_string('infinitesession', 'congrea');
+}
 $user = $DB->get_record('user', array('id' => $teacherid));
 $classname = 'wrapper-button';
 if (($sessionstarttime > time() && $sessionstarttime <= time())) {

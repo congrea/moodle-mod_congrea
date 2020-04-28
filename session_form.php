@@ -41,7 +41,7 @@ class mod_congrea_session_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $DB;
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $sessionsettings = $this->_customdata['sessionsettings'];
@@ -55,6 +55,19 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'action', $action);
         $mform->setType('action', PARAM_CLEANHTML);
+/*         if ($action == 'addsession') {
+            //$id is course module id.
+            $cm = $DB->get_record('course_modules', array('id' => $id));
+            $congrea = $DB->get_record('congrea', array('id' => $cm->instance));
+            $events = $DB->get_records('event', array('instance' => $congrea->id));
+            if (count($events) > 0){
+                \core\notification::add(get_string('cannotaddsession', 'congrea'), \core\output\notification::NOTIFY_ERROR);
+                //echo $OUTPUT->notification(get_string('cannotaddsession', 'congrea'));
+                // Disable my control when a dropdown has value 42.
+                $mform->disabledIf('durationfield', 'timeduration', 'eq', 0);
+                //$mform->disable_form_change_checker();
+            }
+        } */
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
         }
