@@ -71,8 +71,6 @@ if (!empty($sessionlist)) {
 if (!empty($infinitesessions)) {
     $currentsql = "SELECT id, timestart, timeduration, userid from {event}"
     . " where instance = $congrea->id and modulename = 'congrea' and timeduration = 0";
-    /* $upcomingsql = "SELECT id, timestart, timeduration, userid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and  timeduration = 0"; */
     $upcomingdata = '';
 } else {
     $currentsql = "SELECT id, timestart, timeduration, userid from {event}"

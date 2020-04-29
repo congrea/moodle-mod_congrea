@@ -60,6 +60,23 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
+usort($sessionlist, "compare_dates_scheduled_list");
+$currenttime = time();
+if (!empty($sessionlist)) {
+    foreach ($sessionlist as $dummysession) {
+        if ($dummysession->timeduration == 0) {
+            $infinitesessions[] = $dummysession; // Collecting Infinite sessions.
+        } else {
+            $timestart = ($dummysession->timestart + $dummysession->timeduration);
+            if (($timestart < $currenttime) && ($dummysession->repeatid == 0)) { // Past sessions.
+                $pastsessions[] = $dummysession;
+                continue;
+            }
+            $timedsessions[] = $dummysession; // Collecting Timed sessions.
+        }
+    }
+}
 // Start Delete Sessions.
 if ($delete) {
     require_login($course, false, $cm);
@@ -79,11 +96,37 @@ if ($delete) {
     } else if (data_submitted()) {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
-            $event = $DB->get_records('event', array('repeatid' => $delete));
-            if (!empty($event)) {
-                $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
-            } else {
-                $DB->delete_records('event', array('id' => $delete));
+            if (!empty($infinitesessions)) {
+                // If open session.
+                if ($DB->record_exists('event', array('id' => $delete))) {
+                    $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $delete));
+                } else {
+                    echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
+                }
+            }
+            if (!empty($timedsessions)) {
+                // If single session.
+                if ($DB->record_exists('event', array('id' => $delete))) {
+                    $event = $DB->get_record('event', array('id' => $delete));
+                    if ($event->repeatid == 0) {
+                        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
+                    } else {
+                        $events = $DB->get_records('event', array('repeatid' => $delete));
+                        foreach ($events as $event) {
+                            if (($event->timestart + $event->timeduration) < time()) {
+                                $dataupdate = new stdClass();
+                                $dataupdate->id = $event->id;
+                                $dataupdate->repeatid = 0;
+                                $DB->update_record('event', $dataupdate);
+                            } else {
+                                $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
+                            }
+                        }
+                    }
+                    rebuild_course_cache($course->id);
+                } else {
+                    echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
+                }
             }
         } else {
             echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
@@ -93,24 +136,6 @@ if ($delete) {
 
 $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
 'edit' => $edit, 'action' => $action));
-
-$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
-usort($sessionlist, "compare_dates_scheduled_list");
-$currenttime = time();
-if (!empty($sessionlist)) {
-    foreach ($sessionlist as $dummysession) {
-        if ($dummysession->timeduration == 0) {
-            $infinitesessions[] = $dummysession; // Collecting Infinite sessions.
-        } else {
-            $timestart = ($dummysession->timestart + $dummysession->timeduration);
-            if (($timestart < $currenttime) && ($dummysession->repeatid == 0)) { // Past sessions.
-                $pastsessions[] = $dummysession;
-                continue;
-            }
-            $timedsessions[] = $dummysession; // Collecting Timed sessions.
-        }
-    }
-}
 
 if ($mform->is_cancelled()) {
     // Do nothing.
@@ -316,6 +341,7 @@ if ($edit) {
 if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
         $mform->display();
+        echo $OUTPUT->box(get_string('informationtocreatesession', 'congrea'), "generalbox center clearfix");
     } else {
         echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
     }
