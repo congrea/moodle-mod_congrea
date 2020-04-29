@@ -22,12 +22,12 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         congreaOnlinePopup: function() {
             $('#overrideform').submit(function() {
                 var expected = $('input[name ="expectedendtime"]').val();
-                if (Date.now() > expected) {
+                var newTab = window.open('', 'popupVc');
+                if (Date.now() > expected && expected != 0) {
                     $('.vcbutton').hide();
                     window.location.reload();
                     return false;
                 } else {
-                    var newTab = window.open('', 'popupVc');
                     if (window.newTab && window.newTab.closed === false) {
                         newTab.focus();
                         return false;
@@ -58,12 +58,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function() {
+                var expected, interval;
                 if (timeDiff == 0) {
-                    var expected = 0;
+                    expected = 0;
                 } else {
-                    var interval = (timeDiff - 30) * 1000;
+                    interval = (timeDiff - 30) * 1000;
                     expected = Date.now() + interval;
-                }                
+                }
                 $('input[name="expectedendtime"]').val(expected);
             });
         },
