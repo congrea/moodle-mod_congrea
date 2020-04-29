@@ -304,3 +304,4 @@ $string['datacenter_help'] = "Choose data center name.";
 $string['repeatedweeks'] = ' weeks/ ';
 $string['infinitesession'] = 'Open session';
 $string['cannotaddsession'] = 'Not allowed to add session to this congrea activity. To add session you need to delete the open session and then create sessions again.';
+$string['inifinitesessionnotallowed'] = 'This Congrea activity has timed sessions, so you are not allowed to create open session. In order to create open session, first delete all schedules and then create.';

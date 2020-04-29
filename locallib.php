@@ -314,7 +314,6 @@ $teacherid, $instanceid, $sessionid, $timeduration) {
  * @return bool
  */
 function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $weeks) {
-    global $DB;
     $event = new stdClass();
     $event->name = $congrea->name;
     $event->description = $data->description;

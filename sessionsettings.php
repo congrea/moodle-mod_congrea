@@ -93,7 +93,23 @@ if ($delete) {
 
 $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
 'edit' => $edit, 'action' => $action));
-
+$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
+usort($sessionlist, "compare_dates_scheduled_list");
+$currenttime = time();
+if (!empty($sessionlist)) {
+    foreach ($sessionlist as $dummysession) {
+        if ($dummysession->timeduration == 0) {
+            $infinitesessions[] = $dummysession; // Collecting Infinte sessions.
+        } else {
+            $timestart = ($dummysession->timestart + $dummysession->timeduration);
+            if (($timestart < $currenttime) && ($dummysession->repeatid == 0)) { // Past sessions.
+                $pastsessions[] = $dummysession;
+                continue;
+            }
+            $timedsessions[] = $dummysession;
+        }
+    }
+}
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect(new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => true)));
@@ -108,12 +124,20 @@ if ($mform->is_cancelled()) {
     $data->instance = $congrea->id;
     $data->eventtype = 'session start'; // TODO.
     if ($fromform->timeduration == 0) {
-        $data->timeduration = 0;
+/*         if (empty($timedsessions) && empty($infinitesessions)) {
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+        } else { */
+            $data->timeduration = 0;            
+        //}
     } else {
-        $durationinminutes = $fromform->timeduration;
-        $timeduration = $durationinminutes * 60;
-        $data->timeduration = $durationinminutes * 60;
-        $endtime = $data->timestart + $data->timeduration;
+        //if (empty($infinitesessions)) {
+            $durationinminutes = $fromform->timeduration;
+            $timeduration = $durationinminutes * 60;
+            $data->timeduration = $durationinminutes * 60;
+            $endtime = $data->timestart + $data->timeduration;
+/*         } else {
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+        } */
     }
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
@@ -129,8 +153,21 @@ if ($mform->is_cancelled()) {
     if ($action == 'addsession') {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
-            $eventobject = calendar_event::create($data);
-            $dataid = $eventobject->id; // TODO: -using api return id.
+            if (!empty($timedsessions)) {
+                if ($fromform->timeduration == 0) {
+                    echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+                }else{
+                    $eventobject = calendar_event::create($data);
+                $dataid = $eventobject->id; // TODO: -using api return id.
+                }
+            } else {
+                if (!empty($infinitesessions)) {
+                    echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+                } else {
+                    $eventobject = calendar_event::create($data);
+                    $dataid = $eventobject->id; // TODO: -using api return id.
+                }
+            }
         } else {
             echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
         }
@@ -154,6 +191,9 @@ if ($mform->is_cancelled()) {
     if ($edit && $fromform->submitbutton == "Save changes") {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
+            /* if ($timedsessions) {
+                echo $OUTPUT->notification(get_string('inifinitesessionnotallowed', 'congrea'));
+            } else { */
             $eventobject = calendar_event::create($data);
             $dataid = $eventobject->id; // TODO: -using api return id.
             if (!empty($fromform->addmultiple)) {
@@ -174,8 +214,9 @@ if ($mform->is_cancelled()) {
             // Single sessions.
             $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
             $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
-        } else {echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
-            
+            //}
+        } else {
+            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));            
         }
     }
     redirect($returnurl);
@@ -188,9 +229,10 @@ if (!empty($sessionsettings)) {
     $currenttab = 'sessionsettings';
 }
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
-$events = $DB->get_records('event', array('instance' => $congrea->id));
+//$events = $DB->get_records('event', array('instance' => $congrea->id));
+
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-    if (count($events) > 0){
+    if (!empty($infinitesessions)) {
         echo $OUTPUT->notification(get_string('cannotaddsession', 'congrea'));
     } else {
         $options = array();
@@ -224,7 +266,7 @@ if ($edit) {
             $timeduration = $record->timeduration;
         } else {        
             $row[] = 'Editing schedule: <strong>' . userdate($record->timestart). ' to ' .
-            userdate(($record->timestart + $record->timeduration / 60), '%I:%M %p') . '</strong>';
+            userdate(($record->timestart + $record->timeduration), '%I:%M %p') . '</strong>';
             $timeduration = $record->timeduration;
         }
         $table->data[] = $row;
@@ -255,12 +297,12 @@ if ($edit) {
                     } else {
                         $formdata = new stdClass;
                         $formdata->fromsessiondate = $record->timestart;
-/*                             if ($record->timeduration > 86400) {
-                            $formdata->timedurationuntil = $record->timeduration;
+                        /* if ($record->timeduration > 86400) {
+                            $formdata->timeduration = $record->timeduration;
                         } else { */
-                            $formdata->timeduration = $record->timeduration / 60;
+                        $formdata->timeduration = $record->timeduration / 60;
                         //}
-                        $formdata->timeduration = $timeduration;
+                        //$formdata->timeduration = $timeduration;
                         $formdata->addmultiple = 1;
                         $formdata->week = $weeks;
                         $formdata->moderatorid = $record->userid;
@@ -274,7 +316,7 @@ if ($edit) {
                 $record = $DB->get_record('event', array('id' => $edit));
                 $formdata = new stdClass;
                 $formdata->fromsessiondate = $record->timestart;
-                $formdata->timeduration = $timeduration;
+                $formdata->timeduration = $record->timeduration / 60;
                 $formdata->week = intval($record->description);
                 $formdata->addmultiple = 0;
                 $formdata->week = 1;
@@ -299,7 +341,7 @@ echo $OUTPUT->heading('Schedules');
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     $table = new html_table();
     $table->head = array('Date and time of first session', 'Session duration', 'Teacher', 'Repeat for', 'Action');
-    $sessionlist = $DB->get_records('event',
+    /* $sessionlist = $DB->get_records('event',
     array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
     usort($sessionlist, "compare_dates_scheduled_list");
     $currenttime = time();
@@ -316,7 +358,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 $timedsessions[] = $dummysession;
             }
         }
-    }
+    } */
     if(!empty($infinitesessions)) {
         foreach ($infinitesessions as $infinitesession) {
         $buttons = array();
@@ -331,7 +373,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         }
         $row[] = $username;
         $row[] = $infinitesession->description;
-        if (count($events) == 0) {
+        //if (count($events) == 0) {
             $buttons[] = html_writer::link(
                 new moodle_url(
                 '/mod/congrea/sessionsettings.php',
@@ -340,7 +382,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 'Edit',
                 array('class' => 'actionlink exportpage')
             );
-        }
+        //}
         $buttons[] = html_writer::link(
             new moodle_url(
                 '/mod/congrea/sessionsettings.php',
