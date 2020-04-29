@@ -58,8 +58,12 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function() {
-                var interval = (timeDiff - 30) * 1000;
-                var expected = Date.now() + interval;
+                if (timeDiff == 0) {
+                    var expected = 0;
+                } else {
+                    var interval = (timeDiff - 30) * 1000;
+                    expected = Date.now() + interval;
+                }                
                 $('input[name="expectedendtime"]').val(expected);
             });
         },

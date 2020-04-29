@@ -51,12 +51,39 @@ if ($id) {
     print_error('You must specify a course_module ID or an instance ID');
 }
 $time = time();
-$currentsql = "SELECT id, timestart, timeduration, userid from {event}"
+$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
+usort($sessionlist, "compare_dates_scheduled_list");
+$currenttime = time();
+if (!empty($sessionlist)) {
+    foreach ($sessionlist as $dummysession) {
+        if ($dummysession->timeduration == 0) {
+            $infinitesessions[] = $dummysession; // Collecting Infinite sessions.
+        } else {
+            $timestart = ($dummysession->timestart + $dummysession->timeduration);
+            if (($timestart < $currenttime) && ($dummysession->repeatid == 0)) { // Past sessions.
+                $pastsessions[] = $dummysession;
+                continue;
+            }
+            $timedsessions[] = $dummysession; // Collecting Timed sessions.
+        }
+    }
+}
+if (!empty($infinitesessions)) {
+    $currentsql = "SELECT id, timestart, timeduration, userid from {event}"
+    . " where instance = $congrea->id and modulename = 'congrea' and timeduration = 0";
+    /* $upcomingsql = "SELECT id, timestart, timeduration, userid from {event}"
+    . " where instance = $congrea->id and modulename = 'congrea' and  timeduration = 0"; */
+    $upcomingdata = '';
+} else {
+    $currentsql = "SELECT id, timestart, timeduration, userid from {event}"
     . " where instance = $congrea->id and modulename = 'congrea' and timestart <= $time and (timestart + (timeduration)) > $time";
-$currentdata = $DB->get_records_sql($currentsql);
-$upcomingsql = "SELECT id, timestart, timeduration, userid from {event}"
+    $upcomingsql = "SELECT id, timestart, timeduration, userid from {event}"
     . " where instance = $congrea->id and modulename = 'congrea' and timestart >= $time ORDER BY timestart ASC LIMIT 1";
-$upcomingdata = $DB->get_records_sql($upcomingsql);
+    $upcomingdata = $DB->get_records_sql($upcomingsql);
+}
+
+$currentdata = $DB->get_records_sql($currentsql);
+
 if (empty($currentdata) and empty($upcomingdata)) { // Todo.
     $duration = 0;
     $teacherid = 0;
@@ -233,15 +260,19 @@ $start = strtotime($sessionstarttime);
 $end = strtotime($sessionendtime);
 $time = new DateTime("now", core_date::get_user_timezone_object($pageloadstarttime));
 $timestamppageload = $time->getTimestamp();
-$sessendtime = $sessionstarttime + $duration;
-$timediff = round($sessendtime - $timestamppageload);
+if ($duration != 0) {
+    $sessendtime = $sessionstarttime + $duration;
+    $timediff = round($sessendtime - $timestamppageload);
+} else {
+    $timediff = 0;
+}
 if (userdate($start, '%I:%M %p') == userdate($end , '%I:%M %p')) {
     $a->endtime = userdate($sessionendtime, '%I:%M %p');
 }
 if ($duration > 86400) {
     $a->endtime = userdate($sessionendtime);
 }
-if ($duration == 0){
+if ($duration == 0) {
     $a->endtime = get_string('infinitesession', 'congrea');
 }
 $user = $DB->get_record('user', array('id' => $teacherid));
@@ -409,7 +440,7 @@ if ($psession) {
 } else {
     $joinbutton = false;
 }
-if ($sessionendtime > time() && $sessionstarttime <= time()) {
+if ($sessionendtime > time() && $sessionstarttime <= time() || ($duration == 0)) {
     $murl = parse_url($CFG->wwwroot);
     if ($murl['scheme'] == 'https') {
         $sendmurl = $CFG->wwwroot;
