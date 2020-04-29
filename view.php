@@ -438,7 +438,7 @@ if ($psession) {
 } else {
     $joinbutton = false;
 }
-if ($sessionendtime > time() && $sessionstarttime <= time() || ($duration == 0)) {
+if (($sessionendtime > time() && $sessionstarttime <= time()) || (!empty($infinitesessions))) {
     $murl = parse_url($CFG->wwwroot);
     if ($murl['scheme'] == 'https') {
         $sendmurl = $CFG->wwwroot;
