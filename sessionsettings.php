@@ -139,7 +139,6 @@ if ($delete) {
         } else {
             $events = $DB->get_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
             foreach ($events as $event) {
-                var_dump($event);
                 if (($event->timestart + $event->timeduration) < time()) {
                     $dataupdate = new stdClass();
                     $dataupdate->id = $event->id;
@@ -247,26 +246,35 @@ if ($mform->is_cancelled()) {
     if ($edit && $fromform->submitbutton == "Save changes") {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
-            $eventobject = calendar_event::create($data);
-            $dataid = $eventobject->id; // TODO: -using api return id.
-            if (!empty($fromform->addmultiple)) {
-                if ($fromform->week > 1) {
-                    $dataobject = new stdClass();
-                    $dataobject->repeatid = $dataid;
-                    $dataobject->id = $dataid;
-                    $DB->update_record('event', $dataobject);
-                    $day = date('D', $fromform->fromsessiondate);
-                    $weeks = $fromform->week;
-                    $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
-                    foreach ($upcomingdates as $startdate) {
-                        repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
+            if (!empty($timedsessions)) {
+                if ($fromform->timeduration != 0) {
+                    $eventobject = calendar_event::create($data);
+                    $dataid = $eventobject->id; // TODO: -using api return id.
+                    if (!empty($fromform->addmultiple)) {
+                        $eventobject = calendar_event::create($data);
+                        $dataid = $eventobject->id; // TODO: -using api return id.
+                        if ($fromform->week > 1) {
+                            $dataobject = new stdClass();
+                            $dataobject->repeatid = $dataid;
+                            $dataobject->id = $dataid;
+                            $DB->update_record('event', $dataobject);
+                            $day = date('D', $fromform->fromsessiondate);
+                            $weeks = $fromform->week;
+                            $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
+                            foreach ($upcomingdates as $startdate) {
+                                repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
+                            }
+                            $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
+                        }
                     }
+                    // Single sessions.
+                    $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
                     $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
+                } else {
+                    \core\notification::add(get_string('inifinitesessionnotallowed', 'congrea'),
+                    \core\output\notification::NOTIFY_ERROR);
                 }
             }
-            // Single sessions.
-            $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
-            $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
         } else {
             echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
         }

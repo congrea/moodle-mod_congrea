@@ -41,7 +41,6 @@ class mod_congrea_session_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
-        global $DB;
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $sessionsettings = $this->_customdata['sessionsettings'];
@@ -64,7 +63,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
-        $durationfield[] =& $mform->createElement('static', '', '', '<span>minutes</span>');
+        $durationfield[] =& $mform->createElement('static', '', '', get_string('noteforinput', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
@@ -72,7 +71,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
         $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-        $mform->setDefault('timeduration', 0);
+        $mform->setDefault('timeduration', 10);
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
@@ -98,6 +97,13 @@ class mod_congrea_session_form extends moodleform {
         $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
+        }
+        if (!filter_var($durationinminutes, FILTER_VALIDATE_INT)) {
+            if ($durationinminutes != 0) {
+                $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
+            } else {
+                $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
+            }
         }
         if ($durationinminutes != 0) {
             if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {

@@ -157,3 +157,7 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 #page-mod-congrea-sessionsettings #page-wrapper table.generaltable tbody tr.pastsessions {
     color: lightgrey;
 }
+
+#page-mod-congrea-sessionsettings #page-content .mform fieldset.error {
+    border: 1px solid #fff;
+}
