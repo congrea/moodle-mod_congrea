@@ -63,7 +63,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
-        $durationfield[] =& $mform->createElement('static', '', '', get_string('noteforinput', 'congrea'));
+        $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('noteforinput', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
@@ -71,8 +71,8 @@ class mod_congrea_session_form extends moodleform {
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
         $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-        $mform->setDefault('timeduration', 10);
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
+        $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
         $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         $weeks = array();
@@ -80,6 +80,7 @@ class mod_congrea_session_form extends moodleform {
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('week', 'congrea'));
         $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(''), false);
         $mform->hideIf('weeks', 'timeduration', 'eq', 0);
+        $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
         $this->add_action_buttons();
     }
 
@@ -98,12 +99,8 @@ class mod_congrea_session_form extends moodleform {
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if (filter_var($durationinminutes, FILTER_VALIDATE_INT, array(
-            'options' => array(
-                'min_range' => 10, 
-                'max_range' => 1439
-            )
-        ))) {
+        $expr = '/^[0-9][0-9]*$/';
+        if (!preg_match($expr, $durationinminutes)) {
             $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
         }
         if ($durationinminutes != 0) {
@@ -116,11 +113,11 @@ class mod_congrea_session_form extends moodleform {
         }
         $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
         $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-        if (!empty($data['week'])) {
+/*         if (!empty($data['week'])) {
             $repeat = $data['week'];
         } else {
             $repeat = 0;
-        }
+        } */
         return $errors;
     }
 }

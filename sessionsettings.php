@@ -149,6 +149,7 @@ if ($delete) {
                 }
             }
         }
+        \core\notification::success(get_string('sessiondeleted', 'congrea'));
     }
 } // End Delete Sessions.
 
@@ -209,22 +210,21 @@ if ($mform->is_cancelled()) {
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
             if (!empty($timedsessions)) {
                 if ($fromform->timeduration == 0) {
-                    \core\notification::add(get_string('inifinitesessionnotallowed', 'congrea'),
-                    \core\output\notification::NOTIFY_ERROR);
+                    \core\notification::error(get_string('inifinitesessionnotallowed', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
                     $dataid = $eventobject->id; // TODO: -using api return id.
                 }
             } else {
                 if (!empty($infinitesessions)) {
-                    echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+                    \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
                     $dataid = $eventobject->id; // TODO: -using api return id.
                 }
             }
         } else {
-            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+            \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
         }
     }
     // Create multiple sessions.
@@ -271,12 +271,13 @@ if ($mform->is_cancelled()) {
                     $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
                     $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
                 } else {
-                    \core\notification::add(get_string('inifinitesessionnotallowed', 'congrea'),
-                    \core\output\notification::NOTIFY_ERROR);
+                    //\core\notification::add(get_string('inifinitesessionnotallowed', 'congrea'),
+                    //\core\output\notification::NOTIFY_ERROR);
+                    \core\notification::error(get_string('inifinitesessionnotallowed', 'congrea'));
                 }
             }
         } else {
-            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+            \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
         }
     }
     redirect($returnurl);
@@ -292,7 +293,7 @@ congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     if (!empty($infinitesessions)) {
-        echo $OUTPUT->notification(get_string('cannotaddsession', 'congrea'));
+        \core\notification::error(get_string('cannotaddsession', 'congrea'));
     } else {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
@@ -309,7 +310,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         }
     }
 } else {
-    echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+    \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
 }
 echo html_writer::start_tag('br');
 
@@ -384,10 +385,14 @@ if ($edit) {
 
 if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
+        echo $OUTPUT->box_start();
         $mform->display();
-        echo $OUTPUT->box(get_string('informationtocreatesession', 'congrea'), "generalbox center clearfix");
+        echo $OUTPUT->box_end();
+        // Add a notification of some kind.
+        \core\notification::info(get_string('informationtocreatesession', 'congrea'));
     } else {
-        echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
+        // Add a notification of some kind.
+        \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
     }
 }
 
@@ -479,7 +484,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         echo $OUTPUT->notification(get_string('nosession',  'mod_congrea'));
     }
 } else {
-    echo $OUTPUT->notification(get_string('notcapabletoviewschedules', 'congrea'));
+    \core\notification::warning(get_string('notcapabletoviewschedules', 'congrea'));
 }
 // Finish the page.
 echo $OUTPUT->footer();

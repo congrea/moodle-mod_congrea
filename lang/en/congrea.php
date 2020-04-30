@@ -307,5 +307,5 @@ $string['cannotaddsession'] = 'Cannot add another session to this Congrea activi
 $string['inifinitesessionnotallowed'] = 'This Congrea activity has timed sessions, so you are not allowed to add open session. In order to add open session, first delete all future schedules and then add.';
 $string['informationtocreatesession'] = '<strong>Note</strong>: In a Congrea activity only one type of sessions can be created i.e. either an Open session or Timed sessions. To create an open session in an Congrea activity input duration  as \'0\' and for timed sessions, input value greater than equal to 10 and less than 24 hours.';
 $string['norecordtodelete'] = 'Record doesnot exist in database table.';
-$string['onlyintegerallowed'] = 'Input only numbers.';
-$string['noteforinput'] = ' mins (\'0\' for Open session and between 10 mins to 1439 mins for timed sessions in a day.)';
+$string['onlyintegerallowed'] = 'Invalid input, enter only numbers.';
+$string['noteforinput'] = ' mins';
