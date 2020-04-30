@@ -98,12 +98,13 @@ class mod_congrea_session_form extends moodleform {
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if (!filter_var($durationinminutes, FILTER_VALIDATE_INT)) {
-            if ($durationinminutes != 0) {
-                $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
-            } else {
-                $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
-            }
+        if (filter_var($durationinminutes, FILTER_VALIDATE_INT, array(
+            'options' => array(
+                'min_range' => 10, 
+                'max_range' => 1439
+            )
+        ))) {
+            $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
         }
         if ($durationinminutes != 0) {
             if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
