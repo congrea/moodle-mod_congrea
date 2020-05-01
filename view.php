@@ -483,13 +483,14 @@ if ($psession) {
     echo html_writer::end_tag('div');
     echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
     $result = curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
-    $attdata = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
+    $data = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
     $session, $key, $authpassword, $authusername, $room, $USER->id);
-    $attendencestatus = json_decode($attdata);
+    $attendencestatus = json_decode($data);
     if (!empty($result)) {
         $recdata = json_decode($result);
         $recording = json_decode($recdata->data);
     }
+
     if (!empty($recording->Items) and !$session) {
         rsort($recording->Items);
         echo $OUTPUT->heading(get_string('recordedsessions', 'mod_congrea'));
@@ -569,8 +570,8 @@ if ($psession) {
             $table->attributes['class'] = 'admintable generaltable studentEnd';
             $apiurl = 'https://api.congrea.net/data/analytics/attendance';
             $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
-            $attendencestatus = json_decode($data);
-            if (!empty($attendencestatus->attendance)) { // Check for those who are enrolled later.
+            $attendencestatus = json_decode($data);            
+            if (!empty($attendencestatus->attendance)) {
                 $row[] = '<p style="color:green;">P</p>';
             } else {
                 $row[] = '<p style="color:red;">A</p>';
@@ -592,10 +593,10 @@ if ($session) {
     }
     $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role);
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
-    $attendancedata = attendence_curl_request($apiurl, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room); // TODO.
+    $attendancedata = attendence_curl_request($apiurl, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room);
     $attendencestatus = json_decode($attendancedata);
     $apiurl2 = 'https://api.congrea.net/t/analytics/attendancerecording';
-    $recordingdata = attendence_curl_request($apiurl2, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room); // TODO.
+    $recordingdata = attendence_curl_request($apiurl2, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room);
     $recordingattendance = json_decode($recordingdata, true);
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
