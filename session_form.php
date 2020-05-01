@@ -65,6 +65,9 @@ class mod_congrea_session_form extends moodleform {
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
         $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('noteforinput', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
+        $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
+        $mform->addRule('timeduration', null, 'required', null, 'client');
+        $mform->addRule('timeduration', null, 'numeric', null, 'client');
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);

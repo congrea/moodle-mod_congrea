@@ -309,3 +309,5 @@ $string['informationtocreatesession'] = '<strong>Note</strong>: In a Congrea act
 $string['norecordtodelete'] = 'Session(s) doesnot exist in database table.';
 $string['onlyintegerallowed'] = 'Invalid input, enter only integers ( \'0\' for open & \'10\' to \'1439\' for timed session.';
 $string['noteforinput'] = ' mins';
+$string['timeduration_help'] = 'Enter a value more than 10 if you want to create a session with a duration. For creating an open session with no closing time, enter 0.';
+$string['onlyoneopensessionallowed'] = 'Only one open session canbe added per Congrea activity';

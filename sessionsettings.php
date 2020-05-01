@@ -86,7 +86,6 @@ if ($delete) {
             }
         } else {
             $events = $DB->get_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
-            var_dump($events);
             foreach ($events as $event) {
                 if (($event->timestart + $event->timeduration) < time()) {
                     $dataupdate = new stdClass();
@@ -140,6 +139,7 @@ if ($mform->is_cancelled()) {
     $data->eventtype = 'session start'; // TODO.
     if ($fromform->timeduration == 0) {
         $data->timeduration = 0;
+        $data->repeadid = 0;
     } else {
         $durationinminutes = $fromform->timeduration;
         $timeduration = $durationinminutes * 60;
@@ -169,7 +169,7 @@ if ($mform->is_cancelled()) {
                 }
             } else {
                 if (!empty($infinitesessions)) {
-                    \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
+                    \core\notification::info(get_string('onlyoneopensessionallowed', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
                     $dataid = $eventobject->id; // TODO: -using api return id.
