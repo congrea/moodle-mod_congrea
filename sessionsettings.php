@@ -77,15 +77,8 @@ if ($delete) {
         echo $OUTPUT->footer();
         die;
     } else if (data_submitted()) {
-        $event = $DB->get_record('event', array('modulename' => 'congrea', 'id' => $delete));
-        if ($event->repeatid == 0) {
-            if ($DB->record_exists('event', array('id' => $delete))) {
-                $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $delete));
-            } else {
-                echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
-            }
-        } else {
-            $events = $DB->get_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
+        $events = $DB->get_records('event', array('repeatid' => $delete));
+        if (!empty($events)) {
             foreach ($events as $event) {
                 if (($event->timestart + $event->timeduration) < time()) {
                     $dataupdate = new stdClass();
@@ -93,13 +86,11 @@ if ($delete) {
                     $dataupdate->repeatid = 0;
                     $DB->update_record('event', $dataupdate);
                 } else {
-                    if ($DB->record_exists('event', array('modulename' => 'congrea', 'id' => $event->id))) {
-                        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
-                    } else {
-                        \core\notification::success(get_string('norecordtodelete', 'congrea'));
-                    }
+                    $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
                 }
             }
+        } else {
+            $DB->delete_records('event', array('id' => $delete));
         }
     }
 } // End Delete Sessions.
