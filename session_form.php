@@ -103,7 +103,7 @@ class mod_congrea_session_form extends moodleform {
         if (!preg_match($expr, $durationinminutes)) {
             $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
         }
-        if ($durationinminutes != 0) {
+        if (($durationinminutes != 0) || ($durationinminutes != '')) {
             if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
                 $errors['timeduration'] = get_string('errortimeduration', 'congrea');
             }
@@ -113,11 +113,11 @@ class mod_congrea_session_form extends moodleform {
         }
         $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
         $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-/*         if (!empty($data['week'])) {
+        if (!empty($data['week'])) {
             $repeat = $data['week'];
         } else {
             $repeat = 0;
-        } */
+        }
         return $errors;
     }
 }

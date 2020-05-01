@@ -61,62 +61,6 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 // Start Delete Sessions.
-/* if ($delete) {
-    require_login($course, false, $cm);
-    $submiturl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => $sessionsettings));
-    $returnurl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => true));
-    if ($confirm != $delete) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($congrea->name));
-        $optionsyes = array('delete' => $delete, 'confirm' => $delete, 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(
-            get_string('deleteschedule', 'mod_congrea'),
-            new moodle_url($submiturl, $optionsyes),
-            $returnurl
-        );
-        echo $OUTPUT->footer();
-        die;
-    } else if (data_submitted()) {
-        if (has_capability('mod/congrea:managesession', $context) &&
-        has_capability('moodle/calendar:manageentries', $coursecontext)) {
-            if (!empty($infinitesessions)) {
-                // If open session.
-                if ($DB->record_exists('event', array('id' => $delete))) {
-                    $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $delete));
-                } else {
-                    echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
-                }
-            }
-            if (!empty($timedsessions)) {
-                // If single session.
-                if ($DB->record_exists('event', array('id' => $delete))) {
-                    $event = $DB->get_record('event', array('id' => $delete));
-                    if ($event->repeatid == 0) {
-                        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
-                    } else {
-                        $events = $DB->get_records('event', array('repeatid' => $delete));
-                        foreach ($events as $event) {
-                            if (($event->timestart + $event->timeduration) < time()) {
-                                $dataupdate = new stdClass();
-                                $dataupdate->id = $event->id;
-                                $dataupdate->repeatid = 0;
-                                $DB->update_record('event', $dataupdate);
-                            } else {
-                                $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
-                            }
-                        }
-                    }
-                    rebuild_course_cache($course->id, true);
-                } else {
-                    echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
-                }
-            }
-        } else {
-            echo $OUTPUT->notification(get_string('notcapabletocreateevent', 'congrea'));
-        }
-    }
-} // End Delete Sessions. */
-// Start Delete Sessions.
 if ($delete) {
     require_login($course, false, $cm);
     $submiturl = new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => $sessionsettings));
@@ -135,9 +79,14 @@ if ($delete) {
     } else if (data_submitted()) {
         $event = $DB->get_record('event', array('modulename' => 'congrea', 'id' => $delete));
         if ($event->repeatid == 0) {
-            $DB->delete_records('event', array('id' => $delete));
+            if ($DB->record_exists('event', array('id' => $delete))) {
+                $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $delete));
+            } else {
+                echo $OUTPUT->notification(get_string('norecordtodelete', 'congrea'));
+            }
         } else {
             $events = $DB->get_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
+            var_dump($events);
             foreach ($events as $event) {
                 if (($event->timestart + $event->timeduration) < time()) {
                     $dataupdate = new stdClass();
@@ -145,11 +94,14 @@ if ($delete) {
                     $dataupdate->repeatid = 0;
                     $DB->update_record('event', $dataupdate);
                 } else {
-                    $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $delete));
+                    if ($DB->record_exists('event', array('modulename' => 'congrea', 'id' => $event->id))) {
+                        $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $event->id));
+                    } else {
+                        \core\notification::success(get_string('norecordtodelete', 'congrea'));
+                    }
                 }
             }
         }
-        \core\notification::success(get_string('sessiondeleted', 'congrea'));
     }
 } // End Delete Sessions.
 
@@ -271,8 +223,6 @@ if ($mform->is_cancelled()) {
                     $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
                     $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
                 } else {
-                    //\core\notification::add(get_string('inifinitesessionnotallowed', 'congrea'),
-                    //\core\output\notification::NOTIFY_ERROR);
                     \core\notification::error(get_string('inifinitesessionnotallowed', 'congrea'));
                 }
             }
