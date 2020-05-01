@@ -570,7 +570,7 @@ if ($psession) {
             $table->attributes['class'] = 'admintable generaltable studentEnd';
             $apiurl = 'https://api.congrea.net/data/analytics/attendance';
             $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
-            $attendencestatus = json_decode($data);            
+            $attendencestatus = json_decode($data);
             if (!empty($attendencestatus->attendance)) {
                 $row[] = '<p style="color:green;">P</p>';
             } else {
