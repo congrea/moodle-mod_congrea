@@ -100,14 +100,14 @@ class mod_congrea_key_form extends moodleform {
         $mform->setDefault('domain', $this->_customdata['domain']);
 
         $dcoptions = array(
-            'sf' => 'San Francisco, CA, USA',
-            'ny' => 'New York, NY, USA',
-            'ca' => 'Toronto, CA',
-            'de' => 'Frankfurt, DE',
-            'in' => 'Bangalore, IN',
-            'nl' => 'Amsterdam, NL',
-            'sg' => 'Singapore, SG',
-            'uk' => 'London, England, UK'
+            'sf' => get_string('sfusa', 'congrea'),
+            'ny' => get_string('nyusa', 'congrea'),
+            'ca' => get_string('tca', 'congrea'),
+            'de' => get_string('fde', 'congrea'),
+            'in' => get_string('bin', 'congrea'),
+            'nl' => get_string('anl', 'congrea'),
+            'sg' => get_string('ssg', 'congrea'),
+            'uk' => get_string('leuk', 'congrea')
         );
         $mform->addElement('select', 'datacenter', get_string('datacenter', 'congrea'), $dcoptions);
         $mform->setType('datacenter', PARAM_ALPHANUM);

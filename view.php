@@ -48,7 +48,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $congrea->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('congrea', $congrea->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('You must specify a course_module ID or an instance ID');
+    print_error(get_string('invalidcmidorinsid', 'congrea'));
 }
 $time = time();
 $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
@@ -502,7 +502,7 @@ if ($psession) {
     $table = new html_table();
     $table->head = array(get_string('filename', 'congrea'),
     get_string('timecreated', 'congrea'),
-    get_string('action', 'congrea'), '');
+    get_string('viewreport', 'congrea'), get_string('action', 'congrea'));
     $table->colclasses = array('centeralign', 'centeralign');
     $table->attributes['class'] = 'admintable generaltable';
     $table->id = "recorded_data";

@@ -18,7 +18,7 @@
  * Display Poll Report
  *
  * @package    mod_congrea
- * @copyright  2017 Ravi Kumar
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
@@ -31,7 +31,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error('You must specify a course_module ID or an instance ID');
+    print_error(get_string('invalidcmidorinsid', 'congrea'));
 }
 require_login($course, true, $cm);
 
@@ -44,7 +44,7 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 if ($questionid) {
     $questionname = $DB->get_field('congrea_poll', 'pollquestion', array('id' => $questionid));
-    echo $OUTPUT->heading('Poll Question is: ' . $questionname);
+    echo $OUTPUT->heading(get_string('pollquestionis', 'congrea') . $questionname);
     $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $questionid";
     $optiondata = $DB->get_records_sql($sql);
     foreach ($optiondata as $data) {
@@ -104,7 +104,7 @@ if (!empty($questionid) && !empty($optiondata)) {
     $userdata = $DB->get_records_sql($sql);
     if (!empty($userdata)) {
         $table = new html_table();
-        $table->head = array('User name', 'Email', 'Options');
+        $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'), get_string('options', 'congrea'));
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;

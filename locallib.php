@@ -527,7 +527,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
     global $DB, $OUTPUT, $CFG;
     if (!empty($cmid)) {
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-            print_error('Course Module ID was incorrect');
+            print_error(get_string('incorrectcmid', 'congrea'));
         }
         $context = context_module::instance($cm->id);
         $withcapability = '';
@@ -885,7 +885,7 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
 function congrea_get_records($congrea, $type) {
     global $DB, $OUTPUT;
     $table = new html_table();
-    $table->head = array('Date and time', 'Time duration', 'Teacher name');
+    $table->head = array(get_string('dateandtime', 'congrea'), get_string('timedur', 'congrea'), get_string('teachername', 'congrea'));
     $timestart = time();
     $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id  and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);
@@ -896,7 +896,7 @@ function congrea_get_records($congrea, $type) {
         foreach ($sessionlist as $list) {
             $row = array();
             $row[] = userdate($list->timestart);
-            $row[] = round($list->timeduration / 60) . ' ' . 'Minutes';
+            $row[] = round($list->timeduration / 60) . get_string('mins', 'congrea');
             $presenter = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($presenter)) {
                 $username = $presenter->firstname . ' ' . $presenter->lastname; // Todo-for function.

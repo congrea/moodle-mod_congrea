@@ -63,7 +63,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
-        $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('noteforinput', 'congrea'));
+        $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('mins', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
         $mform->addRule('timeduration', null, 'required', null, 'client');
@@ -73,10 +73,10 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
-        $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'addmultiple', '', get_string('addmultiplesessions', 'congrea'), array('group' => 1), array(0, 1));
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
-        $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
