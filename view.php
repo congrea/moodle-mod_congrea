@@ -734,7 +734,7 @@ if (!empty($table) and $session and $sessionstatus) {
     $present = '<h5><strong>' . date('D, d-M-Y, g:i A', $sessionstatus->sessionstarttime) .
     ' to ' . date('g:i A', $sessionstatus->sessionendtime) .
     '</strong></h5><strong>' .
-    get_string('sessiondetails', 'congrea') . '</strong>' . $sessionstatus->totalsessiontime . ' ' .
+    get_string('sessionduration', 'congrea') . '</strong>' . $sessionstatus->totalsessiontime . ' ' .
     get_string('mins', 'congrea') . '</br>' . '<strong>' .
     get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' .
     get_string('present', 'congrea') . '</strong>'
