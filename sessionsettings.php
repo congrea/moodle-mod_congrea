@@ -234,7 +234,7 @@ congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     if (!empty($infinitesessions)) {
-        \core\notification::error(get_string('cannotaddsession', 'congrea'));
+        \core\notification::info(get_string('cannotaddsession', 'congrea'));
     } else {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
@@ -356,6 +356,14 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             }
             $row[] = $username;
             $row[] = $infinitesession->description;
+            $buttons[] = html_writer::link(
+                new moodle_url(
+                    '/mod/congrea/sessionsettings.php',
+                    array('id' => $cm->id, 'edit' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
+                ),
+                'Edit',
+                array('class' => 'actionlink exportpage')
+        );
             $buttons[] = html_writer::link(
                 new moodle_url(
                     '/mod/congrea/sessionsettings.php',
