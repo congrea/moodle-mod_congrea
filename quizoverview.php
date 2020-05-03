@@ -19,7 +19,7 @@
  * Display Quiz Overview
  *
  * @package    mod_congrea
- * @copyright  2017 Ravi Kumar
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
@@ -30,7 +30,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error('You must specify a course_module ID or an instance ID');
+    print_error(get_string('invalidcmidorinsid', 'congrea'));
 }
 
 require_login($course, true, $cm);
@@ -41,7 +41,7 @@ $PAGE->set_title(format_string($congrea->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Congrea quiz  overview');
+echo $OUTPUT->heading(get_string('quizheading', 'congrea'));
 $sql = "SELECT q.id As mquizid, q.name, cq.id
                 FROM {congrea_quiz} cq
                 INNER JOIN
@@ -51,7 +51,7 @@ $quizdata = $DB->get_records_sql($sql);
 
 if (!empty($quizdata)) {
     $table = new html_table();
-    $table->head = array('Quiz name', 'Users');
+    $table->head = array(get_string('quizname', 'congrea'), get_string('users', 'congrea'));
     foreach ($quizdata as $data) {
         $quizname = html_writer::link(new moodle_url('/mod/congrea/quizreport.php?cmid=' . $cm->id,
                             array('quizid' => $data->id, 'mquizid' => $data->mquizid)), $data->name);

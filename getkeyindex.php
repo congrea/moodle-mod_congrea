@@ -32,7 +32,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url('/mod/congrea/getkeyindex.php'));
 
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading('Get Congrea free plan');
+$PAGE->set_heading(get_string('getfreeplan', 'congrea'));
 
 $configkey = get_config('mod_congrea', 'cgapi');
 $configsecret = get_config('mod_congrea', 'cgsecretpassword');

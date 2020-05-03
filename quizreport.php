@@ -18,7 +18,7 @@
  * Display Quiz Report
  *
  * @package    mod_congrea
- * @copyright  2017 Ravi Kumar
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
@@ -32,7 +32,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error('You must specify a course_module ID or an instance ID');
+    print_error(get_string('invalidcmidorinsid', 'congrea'));
 }
 require_login($course, true, $cm);
 
@@ -54,7 +54,10 @@ if (!empty($quizid)&& !empty($mquizid)) {
     $userdata = $DB->get_records_sql($sql);
     if (!empty($userdata)) {
         $table = new html_table();
-        $table->head = array('User name', 'Email', 'Time taken<br/>[HH:MM:SS]', 'Grade', 'Q.Attempted', 'Correct', 'Time');
+        $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'),
+        get_string('timetaken', 'congrea'), get_string('grade', 'congrea'),
+        get_string('qattempted', 'congrea'), get_string('correct', 'congrea'),
+        get_string('timetaken', 'congrea'));
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;

@@ -60,7 +60,7 @@ table.studentEnd tbody tr td.c4 p {
     border: none;
     padding-top: 1px;
     float: left;
-    margin-right: 15px;
+    margin-right: 0px;
     box-shadow: unset;
     height: 20px;
     margin-top: 3px;
@@ -156,4 +156,8 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 
 #page-mod-congrea-sessionsettings #page-wrapper table.generaltable tbody tr.pastsessions {
     color: lightgrey;
+}
+
+#page-mod-congrea-sessionsettings #page-content .mform fieldset.error {
+    border: 1px solid #fff;
 }

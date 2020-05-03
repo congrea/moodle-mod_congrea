@@ -21,7 +21,7 @@
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod_congrea
- * @copyright  2014 Pinky Sharma
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -35,16 +35,13 @@ define('THREE_MONTH', 3);
 /**
  * Get list of teacher of current course
  * serving for virtual class
- *
+ * @param int $cmid
  * @return object
  */
-function congrea_course_teacher_list() {
-    global $COURSE;
+function congrea_course_teacher_list($cmid) {
 
-    $courseid = $COURSE->id;
-
-    $context = context_course::instance($courseid);
-    $heads = get_users_by_capability($context, 'moodle/course:update');
+    $modcontext = context_module::instance($cmid);
+    $heads = get_users_by_capability($modcontext, 'mod/congrea:sessionpresent');
 
     $teachers = array();
     foreach ($heads as $head) {
@@ -131,10 +128,17 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
-        $form .= html_writer::empty_tag('input', array(
-            'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-            'value' => get_string('joinroom', 'congrea')
-        ));
+        if ($role == 't') {
+            $form .= html_writer::empty_tag('input', array(
+                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                'value' => get_string('joinasteacher', 'congrea')
+            ));
+        } else {
+            $form .= html_writer::empty_tag('input', array(
+                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                'value' => get_string('joinasstudent', 'congrea')
+            ));
+        }
     }
     $form .= html_writer::end_tag('form');
     return $form;
@@ -310,7 +314,6 @@ $teacherid, $instanceid, $sessionid, $timeduration) {
  * @return bool
  */
 function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $weeks) {
-    global $DB;
     $event = new stdClass();
     $event->name = $congrea->name;
     $event->description = $data->description;
@@ -524,7 +527,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
     global $DB, $OUTPUT, $CFG;
     if (!empty($cmid)) {
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-            print_error('Course Module ID was incorrect');
+            print_error(get_string('incorrectcmid', 'congrea'));
         }
         $context = context_module::instance($cm->id);
         $withcapability = '';
@@ -845,9 +848,9 @@ function week_between_two_dates($date1, $date2) {
  */
 function congrea_get_dropdown() {
     return array(
-        SEVEN_DAYS => get_string('sevendays', 'congrea'),
-        THIRTY_DAYS => get_string('thirtydays', 'congrea'),
-        THREE_MONTH => get_string('threemonth', 'congrea')
+        SEVEN_DAYS => get_string('next7sessions', 'congrea'),
+        THIRTY_DAYS => get_string('next30sessions', 'congrea'),
+        THREE_MONTH => get_string('next90sessions', 'congrea')
     );
 }
 
@@ -882,7 +885,9 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
 function congrea_get_records($congrea, $type) {
     global $DB, $OUTPUT;
     $table = new html_table();
-    $table->head = array('Date and time', 'Time duration', 'Teacher name');
+    $table->head = array(get_string('dateandtime', 'congrea'),
+    get_string('timedur', 'congrea'),
+    get_string('teacher', 'congrea'));
     $timestart = time();
     $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id  and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);
@@ -893,7 +898,11 @@ function congrea_get_records($congrea, $type) {
         foreach ($sessionlist as $list) {
             $row = array();
             $row[] = userdate($list->timestart);
-            $row[] = round($list->timeduration / 60) . ' ' . 'Minutes';
+            if ($list->timeduration != 0) {
+                $row[] = round($list->timeduration / 60) . get_string('mins', 'congrea');
+            } else {
+                $row[] = get_string('openended', 'congrea');
+            }
             $presenter = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($presenter)) {
                 $username = $presenter->firstname . ' ' . $presenter->lastname; // Todo-for function.
@@ -942,7 +951,7 @@ function congrea_print_tabs($currenttab, $context, $cm, $congrea) {
         ),
         get_string('psession', 'mod_congrea')
     );
-    if (has_capability('mod/congrea:sessionesetting', $context)) {
+    if (has_capability('mod/congrea:managesession', $context)) {
         $row[] = new tabobject(
             'sessionsettings',
             new moodle_url(
@@ -1099,4 +1108,69 @@ function compare_dates_scheduled_list($sessionlist, $session) {
         return 0;
     }
     return ($sessionlist->timestart < $session->timestart) ? -1 : 1;
+}
+/**
+ * This function authenticate the user with required
+ * detail and request for sever connection
+ *
+ * @param string $url congrea auth server url
+ * @param array $postdata
+ * @param string $key
+ * @param string $secret
+ *
+ * @return string $result json_encoded object
+ */
+function congrea_curl_request($url, $postdata, $key, $secret) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+        'x-api-key: ' . $key,
+        'x-congrea-secret: ' . $secret,
+    ));
+    curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_PROXY, false);
+    $result = @curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+/** Function to send auth detail to server.
+ * @param int $cgapi
+ * @param int $cgsecret
+ * @param boolean $recordingstatus
+ * @param int $course
+ * @param int $cm
+ * @param string $role
+ *
+ * @return object $authdata
+ */
+function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role='s') {
+    $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
+    $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
+    $licensekey = $cgapi;
+    $secret = $cgsecret;
+    $recording = $recordingstatus;
+    $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
+    $authdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $role,
+                'room' => $room, 'recording' => $recording);
+    $postdata = json_encode($authdata);
+    $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
+    if (!$rid = json_decode($rid)) {
+        echo "{\"error\": \"403\"}";
+        exit;
+    } else if (isset($rid->message)) {
+        echo "{\"error\": \"$rid->message\"}";
+        exit;
+    } else if (!isset($rid->result)) {
+        echo "{\"error\": \"invalid\"}";
+        exit;
+    }
+    $rid = "wss://$rid->result";
+    $authdata = (object) array_merge( (array)$authdata, array( 'path' => $rid));
+    return $authdata;
 }

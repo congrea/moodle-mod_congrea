@@ -46,14 +46,19 @@ if ($ADMIN->fulltree) {
             $plandetails = json_decode($plandetails);
             if (isset($plandetails->Message)) {
                 $plantext = get_string('invalidkey', 'congrea');
-            } else {
-                $plantext = "Your plan details: {$plandetails->rooms} rooms"
-                . ", {$plandetails->users} users"
-                . ", {$plandetails->storage} GB cloud storage"
-                . ", " . ($plandetails->recording ? "with" : "without") . " recording.";
+            } else if (isset($plandetails->recording)) {
                 if (!$plandetails->recording) {
                     set_config('enablerecording', 0, 'mod_congrea');
+                    set_config('allowoverride', 0, 'mod_congrea');
+                    $plandetails->recordingstr = get_string('withoutrecording', 'congrea');
+                } else {
+                    $plandetails->recordingstr = get_string('withrecording', 'congrea');
                 }
+                $plantext = get_string('plandetails', 'congrea', $plandetails);
+            } else {
+                $plantext = get_string('legacyplan', 'congrea');
+                set_config('enablerecording', 0, 'mod_congrea');
+                set_config('allowoverride', 0, 'mod_congrea');
             }
         }
     }

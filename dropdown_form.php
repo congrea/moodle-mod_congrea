@@ -18,7 +18,7 @@
  * This file contains the forms for duration
  *
  * @package   mod_congrea
- * @copyright  2011 Artem Andreev <andreev.artem@gmail.com>
+ * @copyright 2020 vidyamantra.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * class for displaying duration form.
  *
- * @copyright  2011 Artem Andreev <andreev.artem@gmail.com>
+ * @copyright  2020 vidyamantra.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_congrea_dropdown_form extends moodleform {
@@ -41,7 +41,8 @@ class mod_congrea_dropdown_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form;
-        $options = array(1 => 'Next 7 Days', 2 => 'Next 30 Days', 3 => 'Next 3 Month', 4 => 'Next 6 Month');
+        $options = array(1 => get_string('7sessions', 'congrea'), 2 => get_string('30sessions', 'congrea'),
+        3 => get_string('90sessionss', 'congrea'), 4 => get_string('180sessions', 'congrea'));
         $mform->addElement('select', 'dropdownid', get_string('filter', 'congrea'), $options);
         $mform->addHelpButton('dropdownid', 'filter', 'congrea');
         $this->add_action_buttons();

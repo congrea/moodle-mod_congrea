@@ -19,7 +19,7 @@
  *
  *
  * @package   mod_congrea
- * @copyright 2017 Suman Bogati, Ravi Kumar
+ * @copyright 2020 vidyamantra.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -315,7 +315,7 @@ function congrea_get_enrolled_users($data) {
     if (!empty($data)) {
         list($cmid) = $data;
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-            print_error('Course Module ID was incorrect');
+            print_error(get_string('incorrectcmid', 'congrea'));
         }
         $context = context_module::instance($cm->id);
         $withcapability = '';
@@ -499,7 +499,7 @@ function congrea_quiz_result($valparams) {
         if ($DB->insert_record('congrea_quiz_grade', $data)) {
             return true;
         } else {
-            echo 'Grade not saved';
+            echo get_string('gradenotsaved', 'congrea');
         }
     }
 }
@@ -635,14 +635,14 @@ function congrea_get_quizdata($valparams) {
     global $CFG, $DB;
     list($postdata) = $valparams;
     if (empty($postdata) || !is_array($postdata)) {
-        echo 'invalid data';
+        echo get_string('invaliddata', 'congrea');
         exit;
     }
     $quizid = $postdata['qid'];
     $cm = get_coursemodule_from_id('congrea', $postdata['cmid'], 0, false, MUST_EXIST);
 
     if (!$qzcm = get_coursemodule_from_instance('quiz', $quizid, $cm->course)) {
-        echo 'invalidcoursemodule';
+        echo get_string('invalidcoursemodule', 'congrea');
         exit;
     }
 
@@ -650,7 +650,7 @@ function congrea_get_quizdata($valparams) {
     $quizobj = quiz::create($qzcm->instance, $postdata['user']);
 
     if (!$quizobj->has_questions()) {
-        echo 'No question in this quiz';
+        echo get_string('noquestionsinquiz', 'congrea');
         exit;
     }
     $quizgrade = $DB->get_field('quiz', 'grade', array('id' => $quizid, 'course' => $cm->course));

@@ -41,7 +41,6 @@ class mod_congrea_session_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $sessionsettings = $this->_customdata['sessionsettings'];
@@ -64,23 +63,29 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
-        $durationfield[] =& $mform->createElement('static', '', '', '<span>minutes</span>');
+        $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('mins', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
+        $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
+        $mform->addRule('timeduration', null, 'required', null, 'client');
+        $mform->addRule('timeduration', null, 'numeric', null, 'client');
         // Select teacher.
-        $teacheroptions = congrea_course_teacher_list();
+        $teacheroptions = congrea_course_teacher_list($id);
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
-        $mform->addElement('advcheckbox', 'addmultiple', '', 'Repeat this session', array('group' => 1), array(0, 1));
-
-        $week = array(1 => 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        $mform->addElement('advcheckbox', 'addmultiple', '',
+        get_string('addmultiplesessions', 'congrea'),
+        array('group' => 1), array(0, 1));
+        $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
+        $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
+        $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
-        $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('week', 'congrea'));
-        $mform->addGroup($weeks, 'weeks', get_string('repeatevery', 'congrea'), array(''), false);
-        $mform->hideIf('weeks', 'addmultiple', 'notchecked');
-
+        $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('sessions', 'congrea'));
+        $mform->addGroup($weeks, 'weeks', get_string('repeatweekly', 'congrea'), '', false);
+        $mform->hideIf('weeks', 'timeduration', 'eq', 0);
+        $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
         $this->add_action_buttons();
     }
 
@@ -92,17 +97,21 @@ class mod_congrea_session_form extends moodleform {
      * @return array errors
      */
     public function validation($data, $files) {
-        global $DB;
         $errors = parent::validation($data, $files);
-        $durationinminutes = 0;
         $durationinminutes = $data['timeduration'];
         $currentdate = time();
         $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
-        if (($durationinminutes == 0) || ($durationinminutes < 10) || ($durationinminutes > 1439 )) {
-            $errors['timeduration'] = get_string('errortimeduration', 'congrea');
+        $expr = '/^[0-9][0-9]*$/';
+        if (!preg_match($expr, $durationinminutes)) {
+            $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
+        }
+        if (($durationinminutes != 0) || ($durationinminutes != '')) {
+            if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
+                $errors['timeduration'] = get_string('errortimeduration', 'congrea');
+            }
         }
         if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
