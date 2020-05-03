@@ -82,8 +82,8 @@ class mod_congrea_session_form extends moodleform {
 
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
-        $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('session(s)', 'congrea'));
-        $mform->addGroup($weeks, 'weeks', get_string('repeatweekly', 'congrea'), array(''), false);
+        $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('sessions', 'congrea'));
+        $mform->addGroup($weeks, 'weeks', get_string('repeatweekly', 'congrea'), '', false);
         $mform->hideIf('weeks', 'timeduration', 'eq', 0);
         $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
         $this->add_action_buttons();

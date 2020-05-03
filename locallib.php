@@ -848,9 +848,9 @@ function week_between_two_dates($date1, $date2) {
  */
 function congrea_get_dropdown() {
     return array(
-        SEVEN_DAYS => get_string('7sessions', 'congrea'),
-        THIRTY_DAYS => get_string('30sessions', 'congrea'),
-        THREE_MONTH => get_string('90sessions', 'congrea')
+        SEVEN_DAYS => get_string('next7sessions', 'congrea'),
+        THIRTY_DAYS => get_string('next30sessions', 'congrea'),
+        THREE_MONTH => get_string('next90sessions', 'congrea')
     );
 }
 
@@ -887,7 +887,7 @@ function congrea_get_records($congrea, $type) {
     $table = new html_table();
     $table->head = array(get_string('dateandtime', 'congrea'),
     get_string('timedur', 'congrea'),
-    get_string('teachernameupcomingsessions', 'congrea'));
+    get_string('teacher', 'congrea'));
     $timestart = time();
     $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id  and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);
@@ -898,7 +898,11 @@ function congrea_get_records($congrea, $type) {
         foreach ($sessionlist as $list) {
             $row = array();
             $row[] = userdate($list->timestart);
-            $row[] = round($list->timeduration / 60) . get_string('mins', 'congrea');
+            if ($list->timeduration != 0) {
+                $row[] = round($list->timeduration / 60) . get_string('mins', 'congrea');
+            } else {
+                $row[] = get_string('openended', 'congrea');
+            }
             $presenter = $DB->get_record('user', array('id' => $list->userid));
             if (!empty($presenter)) {
                 $username = $presenter->firstname . ' ' . $presenter->lastname; // Todo-for function.

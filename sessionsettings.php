@@ -254,9 +254,7 @@ if (!empty($sessionsettings)) {
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-    if (!empty($infinitesessions)) {
-        \core\notification::info(get_string('cannotadd', 'congrea'));
-    } else {
+    if (empty($infinitesessions)) { // then for timedsessions will not work. Should work ok
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
             echo $OUTPUT->single_button(
@@ -364,7 +362,7 @@ echo $OUTPUT->heading(get_string('headingschedules', 'congrea'));
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     $table = new html_table();
     $table->head = array(get_string('datetimelist', 'congrea'), get_string('sessduration', 'congrea'),
-    get_string('presenternameinschedules', 'congrea'), get_string('repeatstatus', 'congrea'),
+    get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
     get_string('action', 'congrea'));
     if (!empty($infinitesessions)) {
         foreach ($infinitesessions as $infinitesession) {
