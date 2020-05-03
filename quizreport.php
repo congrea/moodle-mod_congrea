@@ -54,7 +54,10 @@ if (!empty($quizid)&& !empty($mquizid)) {
     $userdata = $DB->get_records_sql($sql);
     if (!empty($userdata)) {
         $table = new html_table();
-        $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'), get_string('timetaken', 'congrea'), get_string('grade', 'congrea'), get_string('qattempted', 'congrea'), get_string('correct', 'congrea'), get_string('timetaken', 'congrea'));
+        $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'),
+        get_string('timetaken', 'congrea'), get_string('grade', 'congrea'),
+        get_string('qattempted', 'congrea'), get_string('correct', 'congrea'),
+        get_string('timetaken', 'congrea'));
         foreach ($userdata as $userinfo) {
             $username = $userinfo->firstname . ' ' . $userinfo->lastname;
             $email = $userinfo->email;

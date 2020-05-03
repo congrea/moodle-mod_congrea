@@ -286,7 +286,7 @@ if (!$psession) {
         $presentersobj = congrea_course_teacher_list($id);
         $presentersarray = json_decode(json_encode($presentersobj), true);
         if (array_key_exists($teacherid, $presentersarray) && ($user->deleted != 1) && ($user->suspended != 1)) {
-            echo html_writer::tag('div', get_string('teachername', 'congrea', $user));
+            echo html_writer::tag('div', get_string('livepresenter', 'congrea', $user));
         } else {
             if (has_capability('mod/congrea:managesession', $context)) {
                 echo html_writer::tag('h5', ucwords($user->firstname) . " " . ucwords($user->lastname)

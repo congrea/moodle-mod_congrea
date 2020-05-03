@@ -47,7 +47,8 @@ $questiondata = $DB->get_records_sql($sql);
 
 if (!empty($questiondata)) {
     $table = new html_table();
-    $table->head = array(get_string('pollquestions', 'congrea'), get_string('users', 'congrea'), get_string('timetaken', 'congrea'));
+    $table->head = array(get_string('pollquestions', 'congrea'),
+    get_string('users', 'congrea'), get_string('timetaken', 'congrea'));
     foreach ($questiondata as $data) {
         $questionname = html_writer::link(new moodle_url('/mod/congrea/pollreport.php?cmid=' . $cm->id,
                                             array('questionid' => $data->id)), $data->pollquestion);

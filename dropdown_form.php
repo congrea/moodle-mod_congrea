@@ -41,7 +41,8 @@ class mod_congrea_dropdown_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form;
-        $options = array(1 => get_string('sevendays', 'congrea'), 2 => get_string('thirtydays', 'congrea'), 3 => get_string('threemonths', 'congrea'), 4 => get_string('sixmonths', 'congrea'));
+        $options = array(1 => get_string('sevendays', 'congrea'), 2 => get_string('thirtydays', 'congrea'),
+        3 => get_string('threemonths', 'congrea'), 4 => get_string('sixmonths', 'congrea'));
         $mform->addElement('select', 'dropdownid', get_string('filter', 'congrea'), $options);
         $mform->addHelpButton('dropdownid', 'filter', 'congrea');
         $this->add_action_buttons();

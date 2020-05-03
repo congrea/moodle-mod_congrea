@@ -236,7 +236,6 @@ if ($mform->is_cancelled()) {
                         $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
                     }
                 }
-                // delete old one.
                 $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
             }
         } else {
@@ -256,7 +255,7 @@ congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     if (!empty($infinitesessions)) {
-        //\core\notification::info(get_string('cannotaddsession', 'congrea'));
+        \core\notification::info(get_string('cannotadd', 'congrea'));
     } else {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
@@ -364,7 +363,9 @@ if ($action == 'addsession' || $edit ) {
 echo $OUTPUT->heading(get_string('headingschedules', 'congrea'));
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     $table = new html_table();
-    $table->head = array(get_string('datetimelist', 'congrea'), get_string('sessduration', 'congrea'), get_string('presentername', 'congrea'), get_string('repeatstatus', 'congrea'), get_string('action', 'congrea'));
+    $table->head = array(get_string('datetimelist', 'congrea'), get_string('sessduration', 'congrea'),
+    get_string('presenternameinschedules', 'congrea'), get_string('repeatstatus', 'congrea'),
+    get_string('action', 'congrea'));
     if (!empty($infinitesessions)) {
         foreach ($infinitesessions as $infinitesession) {
             $buttons = array();
@@ -386,7 +387,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 ),
                 get_string('editbtn', 'congrea'),
                 array('class' => 'actionlink exportpage')
-        );
+            );
             $buttons[] = html_writer::link(
                 new moodle_url(
                     '/mod/congrea/sessionsettings.php',

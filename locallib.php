@@ -885,7 +885,9 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
 function congrea_get_records($congrea, $type) {
     global $DB, $OUTPUT;
     $table = new html_table();
-    $table->head = array(get_string('dateandtime', 'congrea'), get_string('timedur', 'congrea'), get_string('teachername', 'congrea'));
+    $table->head = array(get_string('dateandtime', 'congrea'),
+    get_string('timedur', 'congrea'),
+    get_string('teachernameupcomingsessions', 'congrea'));
     $timestart = time();
     $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id  and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);

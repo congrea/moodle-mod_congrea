@@ -73,7 +73,9 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
-        $mform->addElement('advcheckbox', 'addmultiple', '', get_string('addmultiplesessions', 'congrea'), array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'addmultiple', '',
+        get_string('addmultiplesessions', 'congrea'),
+        array('group' => 1), array(0, 1));
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
         $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
