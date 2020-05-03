@@ -717,10 +717,10 @@ if ($session) {
                 }
             }
         } else {
-            echo get_string('absentuser', 'mod_congrea');
+            echo get_string('sessionnouser', 'mod_congrea');
         }
     } else {
-        echo get_string('absentsessionuser', 'mod_congrea');
+        echo get_string('sessionnouser', 'mod_congrea');
     }
 }
 if (!empty($table->data) and !$session) {

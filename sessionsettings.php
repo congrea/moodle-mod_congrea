@@ -153,14 +153,14 @@ if ($mform->is_cancelled()) {
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
             if (!empty($timedsessions)) {
                 if ($fromform->timeduration == 0) {
-                    \core\notification::error(get_string('inifinitesessionnotallowed', 'congrea'));
+                    \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
                     $dataid = $eventobject->id; // TODO: -using api return id.
                 }
             } else {
                 if (!empty($infinitesessions)) {
-                    \core\notification::info(get_string('onlyoneopensessionallowed', 'congrea'));
+                    \core\notification::info(get_string('onlysingleinfinite', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
                     $dataid = $eventobject->id; // TODO: -using api return id.
@@ -214,7 +214,7 @@ if ($mform->is_cancelled()) {
                     $DB->delete_records('event', array('modulename' => 'congrea', 'id' => $edit));
                     $DB->delete_records('event', array('modulename' => 'congrea', 'repeatid' => $edit));
                 } else {
-                    \core\notification::error(get_string('inifinitesessionnotallowed', 'congrea'));
+                    \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
                 }
             } else {
                 $eventobject = calendar_event::create($data);

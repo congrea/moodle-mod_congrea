@@ -131,12 +131,12 @@ function congrea_online_server(
         if ($role == 't') {
             $form .= html_writer::empty_tag('input', array(
                 'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-                'value' => get_string('joinroomasteacher', 'congrea')
+                'value' => get_string('joinasteacher', 'congrea')
             ));
         } else {
             $form .= html_writer::empty_tag('input', array(
                 'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-                'value' => get_string('joinroomasstudent', 'congrea')
+                'value' => get_string('joinasstudent', 'congrea')
             ));
         }
     }
@@ -848,9 +848,9 @@ function week_between_two_dates($date1, $date2) {
  */
 function congrea_get_dropdown() {
     return array(
-        SEVEN_DAYS => get_string('sevendays', 'congrea'),
-        THIRTY_DAYS => get_string('thirtydays', 'congrea'),
-        THREE_MONTH => get_string('threemonth', 'congrea')
+        SEVEN_DAYS => get_string('7sessions', 'congrea'),
+        THIRTY_DAYS => get_string('30sessions', 'congrea'),
+        THREE_MONTH => get_string('90sessions', 'congrea')
     );
 }
 
