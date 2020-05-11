@@ -250,10 +250,10 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     exit();
 }
 
-$a = new stdClass();
+$currentsession = new stdClass();
 
-$a->timestart = userdate($sessionstarttime);
-$a->endtime = $sessionstarttime + $duration;
+$currentsession->timestart = userdate($sessionstarttime);
+$currentsession->endtime = userdate($sessionstarttime + $duration);
 $start = strtotime($sessionstarttime);
 $end = strtotime($sessionendtime);
 $time = new DateTime("now", core_date::get_user_timezone_object($pageloadstarttime));
@@ -264,14 +264,11 @@ if ($duration != 0) {
 } else {
     $timediff = 0;
 }
-if (userdate($start, '%I:%M %p') == userdate($end , '%I:%M %p')) {
-    $a->endtime = userdate($sessionendtime, '%I:%M %p');
-}
 if ($duration > 86400) {
-    $a->endtime = userdate($sessionendtime);
+    $currentsession->endtime = userdate($sessionendtime);
 }
 if ($duration == 0) {
-    $a->endtime = get_string('infinitesession', 'congrea');
+    $currentsession->endtime = get_string('infinitesession', 'congrea');
 }
 $user = $DB->get_record('user', array('id' => $teacherid));
 $classname = 'wrapper-button';
@@ -282,7 +279,7 @@ if (($sessionstarttime > time() && $sessionstarttime <= time())) {
 if (!$psession) {
     if (!empty($sessionstarttime) and !empty($sessionendtime) and !empty($teacherid)) {
         echo html_writer::start_tag('div', array('class' => $classname));
-        echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $a));
+        echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $currentsession));
         $presentersobj = congrea_course_teacher_list($id);
         $presentersarray = json_decode(json_encode($presentersobj), true);
         if (array_key_exists($teacherid, $presentersarray) && ($user->deleted != 1) && ($user->suspended != 1)) {
