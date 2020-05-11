@@ -101,20 +101,12 @@ $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings'
 $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
 usort($sessionlist, "compare_dates_scheduled_list");
 $currenttime = time();
-if (!empty($sessionlist)) {
-    foreach ($sessionlist as $dummysession) {
-        if ($dummysession->timeduration == 0) {
-            $infinitesessions[] = $dummysession; // Collecting Infinite sessions.
-        } else {
-            $timestart = ($dummysession->timestart + $dummysession->timeduration);
-            if (($timestart < $currenttime) && ($dummysession->repeatid == 0)) { // Past sessions.
-                $pastsessions[] = $dummysession;
-                continue;
-            }
-            $timedsessions[] = $dummysession; // Collecting Timed sessions.
-        }
-    }
-}
+$infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
+$timedsessionssql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";
+$timedsessions = $DB->get_records_sql($timedsessionssql);
+
+$legacysessionsql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and timeduration > 86400";
+$legacysession = $DB->get_record_sql($legacysessionsql);
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect(new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => true)));
@@ -398,45 +390,64 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             $table->data[] = $row;
         }
     }
+    if (!empty($legacysession)) {
+        $buttons = array();
+        $row = array();
+        $row[] = userdate($legacysession->timestart);
+        $row[] = get_string('legacysession', 'congrea');
+        $moderatorid = $DB->get_record('user', array('id' => $legacysession->userid));
+        if (!empty($moderatorid)) {
+            $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+        } else {
+            $username = get_string('nouser', 'mod_congrea');
+        }
+        $row[] = $username;
+        $row[] = '-';
+        $buttons[] = html_writer::link(
+            new moodle_url(
+                '/mod/congrea/sessionsettings.php',
+                array('id' => $cm->id, 'delete' => $legacysession->id, 'sessionsettings' => $sessionsettings)
+            ),
+            get_string('deletebtn', 'congrea'),
+            array('class' => 'actionlink exportpage')
+        );
+        $row[] = implode(' ', $buttons);
+        $table->data[] = $row;
+    }
     if (!empty($timedsessions)) {
-        foreach ($timedsessions as $list) {
-            if (($list->id == $list->repeatid) || ($list->repeatid == 0)) {
+        foreach ($timedsessions as $timedsession) {
+            $timeend = ($timedsession->timestart + $timedsession->timeduration);
+            if (($timeend < $currenttime) && ($timedsession->repeatid == 0)) { // Past sessions.
+                $pastsessions = $timedsession;
+                continue;
+            }
+            if (($timedsession->id == $timedsession->repeatid) || ($timedsession->repeatid == 0)) {
                 $buttons = array();
                 $row = array();
-                $row[] = userdate($list->timestart);
-                $timestart = ($list->timestart + $list->timeduration);
-                if (($timestart < $currenttime) && ($list->repeatid == 0)) { // Past sessions.
-                    $pastsessions[] = $list;
-                    continue;
+                $row[] = userdate($timedsession->timestart);
+                if ($timedsession->timeduration != 0) {
+                    $row[] = ($timedsession->timeduration / 60) . ' ' . 'mins';
                 }
-                if ($list->timeduration > 86400) {
-                    $row[] = get_string('legacysession', 'congrea');
-                    $row[] = userdate($list->timeduration);
-                } else if ($list->timeduration != 0) {
-                    $row[] = ($list->timeduration / 60) . ' ' . 'mins';
-                }
-                $moderatorid = $DB->get_record('user', array('id' => $list->userid));
+                $moderatorid = $DB->get_record('user', array('id' => $timedsession->userid));
                 if (!empty($moderatorid)) {
                     $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
                 } else {
                     $username = get_string('nouser', 'mod_congrea');
                 }
                 $row[] = $username;
-                $row[] = $list->description;
-                if ($list->timeduration < 86400) {
-                    $buttons[] = html_writer::link(
-                            new moodle_url(
-                                '/mod/congrea/sessionsettings.php',
-                                array('id' => $cm->id, 'edit' => $list->id, 'sessionsettings' => $sessionsettings)
-                            ),
-                            get_string('editbtn', 'congrea'),
-                            array('class' => 'actionlink exportpage')
-                    );
-                }
+                $row[] = $timedsession->description;
+                $buttons[] = html_writer::link(
+                        new moodle_url(
+                            '/mod/congrea/sessionsettings.php',
+                            array('id' => $cm->id, 'edit' => $timedsession->id, 'sessionsettings' => $sessionsettings)
+                        ),
+                        get_string('editbtn', 'congrea'),
+                        array('class' => 'actionlink exportpage')
+                );
                 $buttons[] = html_writer::link(
                     new moodle_url(
                         '/mod/congrea/sessionsettings.php',
-                        array('id' => $cm->id, 'delete' => $list->id, 'sessionsettings' => $sessionsettings)
+                        array('id' => $cm->id, 'delete' => $timedsession->id, 'sessionsettings' => $sessionsettings)
                     ),
                     get_string('deletebtn', 'congrea'),
                     array('class' => 'actionlink exportpage')
@@ -446,7 +457,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             }
         }
     }
-    if (!empty($table->data)) {
+	if (!empty($table->data)) {
         echo html_writer::start_tag('div', array('class'    => 'no-overflow'));
         echo html_writer::table($table);
         echo html_writer::start_tag('br');

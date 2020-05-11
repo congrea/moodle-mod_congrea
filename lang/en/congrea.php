@@ -360,3 +360,4 @@ $string['next90sessions'] = 'Next 90 sessions';
 $string['addmultiplesessions'] = 'Repeat this session';
 $string['legacyplan'] = 'Congrea Legacy plan without recording';
 $string['openended'] = 'Open-ended';
+$string['legacysession'] = 'Legacy session';

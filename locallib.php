@@ -126,7 +126,7 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => $USER->lang));
+    $form .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'language', 'value' => $USER->lang));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
         if ($role == 't') {
