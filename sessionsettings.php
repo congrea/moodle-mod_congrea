@@ -134,8 +134,7 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
-        $days = date('D', strtotime($startdate));
-        $data->description = $fromform->week . get_string('repeatedweeks', 'congrea') . $days;
+        $data->description = $fromform->week . get_string('repeatedweeks', 'congrea');
     } else { // Single Event.
         $data->repeatid = 0;
         $data->description = '-';
@@ -427,7 +426,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 $row = array();
                 $row[] = userdate($timedsession->timestart);
                 if ($timedsession->timeduration != 0) {
-                    $row[] = ($timedsession->timeduration / 60) . ' ' . 'mins';
+                    $row[] = ($timedsession->timeduration / 60) . ' ' . get_string('mins', 'congrea');
                 }
                 $moderatorid = $DB->get_record('user', array('id' => $timedsession->userid));
                 if (!empty($moderatorid)) {
@@ -436,7 +435,12 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                     $username = get_string('nouser', 'mod_congrea');
                 }
                 $row[] = $username;
-                $row[] = $timedsession->description;
+                if ($timedsession->repeatid == 0) {
+                    $row[] = $timedsession->description;
+                } else {
+                    $days = date('D', ($timedsession->timestart));
+                    $row[] = $timedsession->description . get_string(strtolower($days), 'calendar');
+                }
                 $buttons[] = html_writer::link(
                         new moodle_url(
                             '/mod/congrea/sessionsettings.php',
@@ -459,12 +463,12 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         }
     }
     if (!empty($table->data)) {
-        echo html_writer::start_tag('div', array('class'    => 'no-overflow'));
+        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
         echo html_writer::table($table);
         echo html_writer::start_tag('br');
         echo html_writer::end_tag('div');
     } else {
-        echo $OUTPUT->notification(get_string('nosession',  'mod_congrea'));
+        echo $OUTPUT->notification(get_string('nosession', 'mod_congrea'));
     }
 } else {
     \core\notification::warning(get_string('notcapabletoviewschedules', 'congrea'));
