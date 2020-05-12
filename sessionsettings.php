@@ -126,7 +126,11 @@ if ($mform->is_cancelled()) {
     } else {
         $durationinminutes = $fromform->timeduration;
         $timeduration = $durationinminutes * 60;
-        $data->timeduration = $durationinminutes * 60;
+        if ($durationinminutes >= 86400) {
+            $data->timeduration = 'Legacy session';
+        } else {
+            $data->timeduration = $durationinminutes * 60;
+        }
         $endtime = $data->timestart + $data->timeduration;
     }
     if (!empty($fromform->addmultiple)) {
@@ -151,7 +155,7 @@ if ($mform->is_cancelled()) {
                     $dataid = $eventobject->id; // TODO: -using api return id.
                 }
             } else {
-                if (!empty($infinitesessions)) {
+                if (!empty($infinitesession)) {
                     \core\notification::info(get_string('onlysingleinfinite', 'congrea'));
                 } else {
                     $eventobject = calendar_event::create($data);
@@ -246,7 +250,7 @@ if (!empty($sessionsettings)) {
 congrea_print_tabs($currenttab, $context, $cm, $congrea);
 
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-    if (empty($infinitesessions)) { // then for timedsessions will not work. Should work ok
+    if (empty($infinitesession) && empty($legacysession)) {
         $options = array();
         if ($sessionsettings && !$edit && !($action == 'addsession')) {
             echo $OUTPUT->single_button(
@@ -356,8 +360,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
     $table->head = array(get_string('datetimelist', 'congrea'), get_string('sessduration', 'congrea'),
     get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
     get_string('action', 'congrea'));
-    if (!empty($infinitesessions)) {
-        foreach ($infinitesessions as $infinitesession) {
+    if (!empty($infinitesession)) {
             $buttons = array();
             $row = array();
             $row[] = userdate($infinitesession->timestart);
@@ -388,7 +391,6 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             );
             $row[] = implode(' ', $buttons);
             $table->data[] = $row;
-        }
     }
     if (!empty($legacysession)) {
         $buttons = array();
@@ -457,7 +459,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             }
         }
     }
-	if (!empty($table->data)) {
+    if (!empty($table->data)) {
         echo html_writer::start_tag('div', array('class'    => 'no-overflow'));
         echo html_writer::table($table);
         echo html_writer::start_tag('br');
