@@ -98,11 +98,10 @@ if ($delete) {
 $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
 'edit' => $edit, 'action' => $action));
 
-/* $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
-usort($sessionlist, "compare_dates_scheduled_list"); */
 $currenttime = time();
 $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
-$timedsessionssql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";
+$timedsessionssql = "SELECT * from {event}" .
+" where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";
 $timedsessions = $DB->get_records_sql($timedsessionssql);
 
 $legacysessionsql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and timeduration > 86400";
@@ -361,36 +360,36 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
     get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
     get_string('action', 'congrea'));
     if (!empty($infinitesession)) {
-            $buttons = array();
-            $row = array();
-            $row[] = userdate($infinitesession->timestart);
-            $row[] = get_string('infinitesession', 'congrea');
-            $moderatorid = $DB->get_record('user', array('id' => $infinitesession->userid));
-            if (!empty($moderatorid)) {
-                $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
-            } else {
-                $username = get_string('nouser', 'mod_congrea');
-            }
-            $row[] = $username;
-            $row[] = $infinitesession->description;
-            $buttons[] = html_writer::link(
-                new moodle_url(
-                    '/mod/congrea/sessionsettings.php',
-                    array('id' => $cm->id, 'edit' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
-                ),
-                get_string('editbtn', 'congrea'),
-                array('class' => 'actionlink exportpage')
-            );
-            $buttons[] = html_writer::link(
-                new moodle_url(
-                    '/mod/congrea/sessionsettings.php',
-                    array('id' => $cm->id, 'delete' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
-                ),
-                get_string('deletebtn', 'congrea'),
-                array('class' => 'actionlink exportpage')
-            );
-            $row[] = implode(' ', $buttons);
-            $table->data[] = $row;
+        $buttons = array();
+        $row = array();
+        $row[] = userdate($infinitesession->timestart);
+        $row[] = get_string('infinitesession', 'congrea');
+        $moderatorid = $DB->get_record('user', array('id' => $infinitesession->userid));
+        if (!empty($moderatorid)) {
+            $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+        } else {
+            $username = get_string('nouser', 'mod_congrea');
+        }
+        $row[] = $username;
+        $row[] = $infinitesession->description;
+        $buttons[] = html_writer::link(
+            new moodle_url(
+                '/mod/congrea/sessionsettings.php',
+                array('id' => $cm->id, 'edit' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
+            ),
+            get_string('editbtn', 'congrea'),
+            array('class' => 'actionlink exportpage')
+        );
+        $buttons[] = html_writer::link(
+            new moodle_url(
+                '/mod/congrea/sessionsettings.php',
+                array('id' => $cm->id, 'delete' => $infinitesession->id, 'sessionsettings' => $sessionsettings)
+            ),
+            get_string('deletebtn', 'congrea'),
+            array('class' => 'actionlink exportpage')
+        );
+        $row[] = implode(' ', $buttons);
+        $table->data[] = $row;
     }
     if (!empty($legacysession)) {
         $buttons = array();
