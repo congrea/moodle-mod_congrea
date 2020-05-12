@@ -98,8 +98,8 @@ if ($delete) {
 $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
 'edit' => $edit, 'action' => $action));
 
-$sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
-usort($sessionlist, "compare_dates_scheduled_list");
+/* $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
+usort($sessionlist, "compare_dates_scheduled_list"); */
 $currenttime = time();
 $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
 $timedsessionssql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";

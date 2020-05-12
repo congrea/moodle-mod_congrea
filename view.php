@@ -52,7 +52,7 @@ if ($id) {
 }
 $time = time();
 $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
-usort($sessionlist, "compare_dates_scheduled_list");
+//usort($sessionlist, "compare_dates_scheduled_list");
 $currenttime = time();
 if (!empty($sessionlist)) {
     foreach ($sessionlist as $dummysession) {
@@ -153,7 +153,7 @@ if ($delete and confirm_sesskey()) {
         die;
     } else if (data_submitted()) {
         $postdata = json_encode(array('room' => $room, 'session' => $delete));
-        $result = curl_request("https://api.congrea.net/backend/deleterecording", $postdata, $key);
+        $result = congrea_curl_request("https://api.congrea.net/backend/deleterecording", $postdata, $key);
         $success = json_decode($result);
         if ($success->data == "success") {
             \core\session\manager::gc(); // Remove stale sessions.
@@ -479,7 +479,7 @@ if ($psession) {
     // Recorded session.
     echo html_writer::end_tag('div');
     echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
-    $result = curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
+    $result = congrea_curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
     $data = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
     $session, $key, $authpassword, $authusername, $room, $USER->id);
     $attendencestatus = json_decode($data);
