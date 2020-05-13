@@ -78,7 +78,6 @@ if (!empty($infinitesessions)) {
     . " where instance = $congrea->id and modulename = 'congrea' and timestart >= $time ORDER BY timestart ASC LIMIT 1";
     $upcomingdata = $DB->get_records_sql($upcomingsql);
 }
-var_dump($upcomingdata);
 $currentdata = $DB->get_records_sql($currentsql);
 
 if (empty($currentdata) and empty($upcomingdata)) { // Todo.
