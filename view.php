@@ -248,9 +248,7 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     echo $OUTPUT->footer();
     exit();
 }
-
 $currentsession = new stdClass();
-
 $currentsession->timestart = userdate($sessionstarttime);
 $currentsession->endtime = userdate($sessionstarttime + $duration);
 $start = strtotime($sessionstarttime);
@@ -278,7 +276,8 @@ if (($sessionstarttime > time() && $sessionstarttime <= time())) {
 if (!$psession) {
     if (!empty($sessionstarttime) and !empty($sessionendtime) and !empty($teacherid)) {
         echo html_writer::start_tag('div', array('class' => $classname));
-        echo html_writer::tag('div', get_string('congreatiming', 'mod_congrea', $currentsession));
+        echo html_writer::tag('div', get_string('currentsessiontime', 'congrea') .
+        $currentsession->timestart . ' - ' . $currentsession->endtime);
         $presentersobj = congrea_course_teacher_list($id);
         $presentersarray = json_decode(json_encode($presentersobj), true);
         if (array_key_exists($teacherid, $presentersarray) && ($user->deleted != 1) && ($user->suspended != 1)) {
