@@ -281,7 +281,7 @@ if ($edit) {
         } else {
             $row[] = get_string('editingsession', 'congrea') . userdate($record->timestart) .
             get_string('to', 'congrea') .
-            userdate(($record->timestart + $record->timeduration), '%I:%M %p');
+            userdate(($record->timestart + $record->timeduration));
             $timeduration = $record->timeduration;
         }
         $table->data[] = $row;
@@ -402,7 +402,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
             $username = get_string('nouser', 'mod_congrea');
         }
         $row[] = $username;
-        $row[] = '-';
+        $row[] = userdate($legacysession->timestart + $legacysession->timeduration);
         $buttons[] = html_writer::link(
             new moodle_url(
                 '/mod/congrea/sessionsettings.php',
@@ -415,6 +415,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         $table->data[] = $row;
     }
     if (!empty($timedsessions)) {
+        array_multisort(array_column($timedsessions, 'timestart'), SORT_DESC, $timedsessions);
         foreach ($timedsessions as $timedsession) {
             $timeend = ($timedsession->timestart + $timedsession->timeduration);
             if (($timeend < $currenttime) && ($timedsession->repeatid == 0)) { // Past sessions.
@@ -436,10 +437,12 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 }
                 $row[] = $username;
                 if ($timedsession->repeatid == 0) {
-                    $row[] = $timedsession->description;
+                    $row[] = '-';
                 } else {
                     $days = date('D', ($timedsession->timestart));
-                    $row[] = $timedsession->description . get_string(strtolower($days), 'calendar');
+                    $row[] = intval($timedsession->description) .
+                    get_string('weeksevery', 'congrea') .
+                    get_string(strtolower($days), 'calendar');
                 }
                 $buttons[] = html_writer::link(
                         new moodle_url(
