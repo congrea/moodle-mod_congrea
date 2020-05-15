@@ -891,13 +891,16 @@ function congrea_get_records($congrea, $type) {
     get_string('teacher', 'congrea'));
     $timestart = time();
     $repeatedsql = "SELECT * from {event}" .
-    " where instance = $congrea->id and modulename = 'congrea' and (timeduration > 10 and timeduration < 86400) and repeatid != 0 and ((timestart + timeduration) < $timestart) ORDER BY timestart ASC";
+    " where instance = $congrea->id and modulename = 'congrea' and
+    (timeduration > 10 and timeduration < 86400) and repeatid != 0
+    and ((timestart + timeduration) < $timestart) ORDER BY timestart ASC";
     $repeatedsessions = $DB->get_records_sql($repeatedsql);
     if (!empty($repeatedsessions)) {
         $count = 0;
         foreach ($repeatedsessions as $event) {
             if ($event->repeatid != 0) {
-                $events = $DB->get_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id, 'repeatid' =>  $event->id));
+                $events = $DB->get_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id,
+                'repeatid' => $event->id));
                 foreach ($events as $event) {
                     if (($event->timestart + $event->timeduration) < time()) {
                         $dataupdate = new stdClass();
