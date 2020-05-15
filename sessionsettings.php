@@ -103,7 +103,6 @@ $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'm
 $timedsessionssql = "SELECT * from {event}" .
 " where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";
 $timedsessions = $DB->get_records_sql($timedsessionssql);
-
 $legacysessionsql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and timeduration > 86400";
 $legacysession = $DB->get_record_sql($legacysessionsql);
 if ($mform->is_cancelled()) {
@@ -340,13 +339,9 @@ if ($edit) {
 
 if ($action == 'addsession' || $edit ) {
     if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
-        echo $OUTPUT->box_start();
         $mform->display();
-        echo $OUTPUT->box_end();
-        // Add a notification of some kind.
         \core\notification::info(get_string('informationtocreatesession', 'congrea'));
     } else {
-        // Add a notification of some kind.
         \core\notification::warning(get_string('notcapabletocreateevent', 'congrea'));
     }
 }
