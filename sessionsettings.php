@@ -101,9 +101,12 @@ $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings'
 $currenttime = time();
 $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
 $timedsessionssql = "SELECT * from {event}" .
-" where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)";
+" where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400) and timestart >= $currenttime";
 $timedsessions = $DB->get_records_sql($timedsessionssql);
+/* $timedsessions = $DB->get_records('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' > 0, 'timeduration' < 86400, 'timestart' > time())); */
+//$timedsessions = $DB->get_records_sql($timedsessionssql);
 $legacysessionsql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and timeduration > 86400";
+var_dump($timedsessions);
 $legacysession = $DB->get_record_sql($legacysessionsql);
 if ($mform->is_cancelled()) {
     // Do nothing.
