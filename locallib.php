@@ -890,37 +890,6 @@ function congrea_get_records($congrea, $type) {
     get_string('timedur', 'congrea'),
     get_string('teacher', 'congrea'));
     $timestart = time();
-    $repeatedsql = "SELECT * from {event}" .
-    " where instance = $congrea->id and modulename = 'congrea' and
-    (timeduration > 10 and timeduration < 86400) and repeatid != 0
-    and ((timestart + timeduration) < $timestart) ORDER BY timestart ASC";
-    $repeatedsessions = $DB->get_records_sql($repeatedsql);
-    if (!empty($repeatedsessions)) {
-        $count = 0;
-        foreach ($repeatedsessions as $event) {
-            if ($event->repeatid != 0) {
-                $events = $DB->get_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id,
-                'repeatid' => $event->id));
-                foreach ($events as $event) {
-                    if (($event->timestart + $event->timeduration) < time()) {
-                        $dataupdate = new stdClass();
-                        $dataupdate->id = $event->id;
-                        $dataupdate->repeatid = 0;
-                        $dataupdate->description = '-';
-                        $DB->update_record('event', $dataupdate);
-                        $count = $count + 1;
-                        $id = $event->repeatid + $count;
-                    } else {
-                        $dataupdate = new stdClass();
-                        $dataupdate->id = $event->id;
-                        $dataupdate->repeatid = $id;
-                        $dataupdate->description = intval($event->description) - $count;
-                        $DB->update_record('event', $dataupdate);
-                    }
-                }
-            }
-        }
-    }
     $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);
     if ($type == 1) {

@@ -102,7 +102,7 @@ $currenttime = time();
 $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
 $timedsessionssql = "SELECT * from {event}" .
 " where instance = $congrea->id and modulename = 'congrea' and (timeduration != 0 and timeduration < 86400)
-and timestart >= $currenttime";
+and (timestart + timeduration) >= $currenttime";
 $timedsessions = $DB->get_records_sql($timedsessionssql);
 $legacysessionsql = "SELECT * from {event}" . " where instance = $congrea->id and modulename = 'congrea' and timeduration > 86400";
 $legacysession = $DB->get_record_sql($legacysessionsql);
@@ -411,20 +411,12 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         $table->data[] = $row;
     }
     if (!empty($timedsessions)) {
-        array_multisort(array_column($timedsessions, 'timestart'), SORT_DESC, $timedsessions);
         foreach ($timedsessions as $timedsession) {
-            $timeend = ($timedsession->timestart + $timedsession->timeduration);
-            if (($timeend < $currenttime) && ($timedsession->repeatid == 0)) { // Past sessions.
-                $pastsessions = $timedsession;
-                continue;
-            }
-            if (($timedsession->id == $timedsession->repeatid) || ($timedsession->repeatid == 0)) {
+            if (($timedsession->repeatid == 0)) {
                 $buttons = array();
                 $row = array();
                 $row[] = userdate($timedsession->timestart);
-                if ($timedsession->timeduration != 0) {
-                    $row[] = ($timedsession->timeduration / 60) . ' ' . get_string('mins', 'congrea');
-                }
+                $row[] = ($timedsession->timeduration / 60) . ' ' . get_string('mins', 'congrea');
                 $moderatorid = $DB->get_record('user', array('id' => $timedsession->userid));
                 if (!empty($moderatorid)) {
                     $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
@@ -432,21 +424,14 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                     $username = get_string('nouser', 'mod_congrea');
                 }
                 $row[] = $username;
-                if ($timedsession->repeatid == 0) {
-                    $row[] = '-';
-                } else {
-                    $days = date('D', ($timedsession->timestart));
-                    $row[] = intval($timedsession->description) .
-                    get_string('weeksevery', 'congrea') .
-                    get_string(strtolower($days), 'calendar');
-                }
+                $row[] = '-';
                 $buttons[] = html_writer::link(
-                        new moodle_url(
-                            '/mod/congrea/sessionsettings.php',
-                            array('id' => $cm->id, 'edit' => $timedsession->id, 'sessionsettings' => $sessionsettings)
-                        ),
-                        get_string('editbtn', 'congrea'),
-                        array('class' => 'actionlink exportpage')
+                    new moodle_url(
+                        '/mod/congrea/sessionsettings.php',
+                        array('id' => $cm->id, 'edit' => $timedsession->id, 'sessionsettings' => $sessionsettings)
+                    ),
+                    get_string('editbtn', 'congrea'),
+                    array('class' => 'actionlink exportpage')
                 );
                 $buttons[] = html_writer::link(
                     new moodle_url(
@@ -458,6 +443,60 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 );
                 $row[] = implode(' ', $buttons);
                 $table->data[] = $row;
+            } else {
+                $repeatedsessions[] = $timedsession;
+            }
+        }
+        if (!empty($repeatedsessions)) {
+            foreach ($repeatedsessions as $repeatedsession) {
+                if (($repeatedsession->repeatid != 0)) {
+                    $sql = "SELECT DISTINCT id from {event}" .
+                    " where instance = $congrea->id and modulename = 'congrea' and (id = $repeatedsession->repeatid)";
+                    $repeated = $DB->get_records_sql($sql);
+                    foreach ($repeated as $record) {
+                        $keyids[] = $record->id;
+                    }
+                }
+            }
+            $uniqueids = array_unique($keyids);
+            sort($uniqueids);
+            foreach ($uniqueids as $key => $ids) {
+                $data = $DB->get_record('event', array('id' => $ids));
+                if ($data->repeatid != 0) {
+                    $buttons = array();
+                    $row = array();
+                    $row[] = userdate($data->timestart);
+                    $row[] = ($data->timeduration / 60) . ' ' . get_string('mins', 'congrea');
+                    $moderatorid = $DB->get_record('user', array('id' => $data->userid));
+                    if (!empty($moderatorid)) {
+                        $username = $moderatorid->firstname . ' ' .$moderatorid->lastname; // Todo-for function.
+                    } else {
+                        $username = get_string('nouser', 'mod_congrea');
+                    }
+                    $row[] = $username;
+                    $days = date('D', ($data->timestart));
+                    $row[] = intval($data->description) .
+                    get_string('weeksevery', 'congrea') .
+                    get_string(strtolower($days), 'calendar');
+                    $buttons[] = html_writer::link(
+                    new moodle_url(
+                        '/mod/congrea/sessionsettings.php',
+                        array('id' => $cm->id, 'edit' => $data->id, 'sessionsettings' => $sessionsettings)
+                    ),
+                    get_string('editbtn', 'congrea'),
+                    array('class' => 'actionlink exportpage')
+                    );
+                    $buttons[] = html_writer::link(
+                        new moodle_url(
+                        '/mod/congrea/sessionsettings.php',
+                        array('id' => $cm->id, 'delete' => $data->id, 'sessionsettings' => $sessionsettings)
+                    ),
+                    get_string('deletebtn', 'congrea'),
+                    array('class' => 'actionlink exportpage')
+                    );
+                    $row[] = implode(' ', $buttons);
+                    $table->data[] = $row;
+                }
             }
         }
     }
