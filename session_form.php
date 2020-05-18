@@ -74,7 +74,7 @@ class mod_congrea_session_form extends moodleform {
         $mform->addHelpButton('moderatorid', 'selectteacher', 'congrea');
         // Repeat.
         $mform->addElement('advcheckbox', 'addmultiple', '',
-        get_string('addmultiplesessions', 'congrea'),
+        get_string('repeatevent', 'calendar'),
         array('group' => 1), array(0, 1));
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
@@ -83,7 +83,7 @@ class mod_congrea_session_form extends moodleform {
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('sessions', 'congrea'));
-        $mform->addGroup($weeks, 'weeks', get_string('repeatweekly', 'congrea'), '', false);
+        $mform->addGroup($weeks, 'weeks', get_string('repeatweeksl', 'calendar'), '', false);
         $mform->hideIf('weeks', 'timeduration', 'eq', 0);
         $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
         $this->add_action_buttons();

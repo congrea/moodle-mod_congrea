@@ -126,6 +126,7 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
         if ($role == 't') {
@@ -442,7 +443,7 @@ function mod_congrea_generaterandomstring($length = 11) {
  *
  * @return string $resutl json_encoded object
  */
-function curl_request($url, $postdata, $key, $secret = false) {
+function congrea_curl_request($url, $postdata, $key, $secret = false) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -889,7 +890,7 @@ function congrea_get_records($congrea, $type) {
     get_string('timedur', 'congrea'),
     get_string('teacher', 'congrea'));
     $timestart = time();
-    $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id  and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
+    $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
     $sessionlist = $DB->get_records_sql($sql);
     if ($type == 1) {
         return $sessionlist;
@@ -1098,47 +1099,7 @@ function repeat_date_list_check($startdate, $expecteddate, $days, $duration) {
         return $nextdate;
     }
 }
-/** Function to sort the scheduled list of sessions
- * @param array $sessionlist
- * @param int $session
- * @return array
- */
-function compare_dates_scheduled_list($sessionlist, $session) {
-    if ($sessionlist->timestart == $session->timestart) {
-        return 0;
-    }
-    return ($sessionlist->timestart < $session->timestart) ? -1 : 1;
-}
-/**
- * This function authenticate the user with required
- * detail and request for sever connection
- *
- * @param string $url congrea auth server url
- * @param array $postdata
- * @param string $key
- * @param string $secret
- *
- * @return string $result json_encoded object
- */
-function congrea_curl_request($url, $postdata, $key, $secret) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
-        'x-api-key: ' . $key,
-        'x-congrea-secret: ' . $secret,
-    ));
-    curl_setopt($ch, CURLOPT_TRANSFERTEXT, 0);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_PROXY, false);
-    $result = @curl_exec($ch);
-    curl_close($ch);
-    return $result;
-}
+
 /** Function to send auth detail to server.
  * @param int $cgapi
  * @param int $cgsecret
