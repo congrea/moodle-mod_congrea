@@ -364,5 +364,14 @@ function xmldb_congrea_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_mod_savepoint(true, 2020021900, 'congrea');
     }
+    // To delete original sessions.
+    if ($oldversion < 2020051700) {
+        $originalevents = $DB->record_exists('event', array('eventtype' => 'open', 'modulename' => 'congrea', 'timeduration' => 0));
+        if (!empty($originalevents)) {
+            $DB->delete_records('event', array('modulename' => 'congrea', 'eventtype' => 'open', 'timeduration' => 0));
+        }
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020051700, 'congrea');
+    }
     return true;
 }

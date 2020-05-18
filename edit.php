@@ -63,7 +63,7 @@ if ($mform->is_cancelled()) {
 } else if ($fromform = $mform->get_data()) {
     $sessionname = $fromform->name;
     $postdata = json_encode(array('room' => $room, 'name' => $sessionname, 'session' => $update));
-    $result = curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key);
+    $result = congrea_curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key);
     $sucess = json_decode($result);
     $returnurl = redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true)));
     if ($sucess->data == "success") {
