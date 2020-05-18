@@ -551,7 +551,7 @@ if ($psession) {
                 'recname' => $record->name, 'sesskey' => sesskey()
             )), html_writer::empty_tag('img', array(
                 'src' => $imageurl,
-                'alt' => $strdelete, 'class' => 'iconsmall'
+                'alt' => $strdelete, 'class' => 'iconsmall delete'
             )), array('title' => $strdelete));
         }
         $row[] = implode(' ', $buttons);
