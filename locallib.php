@@ -1111,27 +1111,25 @@ function repeat_date_list_check($startdate, $expecteddate, $days, $duration) {
  * @return object $authdata
  */
 function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role='s') {
-    $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
-    $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
     $licensekey = $cgapi;
     $secret = $cgsecret;
     $recording = $recordingstatus;
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $authdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $role,
+    $authdata = array('role' => $role,
                 'room' => $room, 'recording' => $recording);
     $postdata = json_encode($authdata);
-    $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
+    $rid = congrea_curl_request("https://api.congrea.net/backend/authv2", $postdata, $licensekey, $secret);
     if (!$rid = json_decode($rid)) {
         echo "{\"error\": \"403\"}";
         exit;
     } else if (isset($rid->message)) {
         echo "{\"error\": \"$rid->message\"}";
         exit;
-    } else if (!isset($rid->result)) {
+    } else if (!isset($rid->url)) {
         echo "{\"error\": \"invalid\"}";
         exit;
     }
-    $rid = "wss://$rid->result";
-    $authdata = (object) array_merge( (array)$authdata, array( 'path' => $rid));
+    $rid->url = "wss://$rid->url";
+    $authdata = (object) array_merge( (array)$authdata, array('authuser' => $rid->key, 'authpass' => $rid->secret, 'path' => $rid->url));
     return $authdata;
 }
