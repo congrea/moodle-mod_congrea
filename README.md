@@ -37,7 +37,10 @@ Feel free to send bug reports (and/or patches!)
 
 support@vidyamantra.com
 
-## 3.5+ r5
+## 3.5+r6
+* Bug-fixes related to language and open-ended sessions
+
+## 3.5+r5
 * Capabilities overhaul - More specific capabilities and remove unused capabilities and other changes
 * Invalid key and secret issues in the  'Get Congrea Free Plan' feature
 * Re-introduced open-ended sessions without a closing date
