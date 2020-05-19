@@ -124,17 +124,19 @@ if ($mform->is_cancelled()) {
         $data->repeadid = 0;
     } else {
         $durationinminutes = $fromform->timeduration;
-        $timeduration = $durationinminutes * 60;
         if ($durationinminutes >= 86400) {
             $data->timeduration = 'Legacy session';
         } else {
             $data->timeduration = $durationinminutes * 60;
+            $timeduration = $durationinminutes * 60;
+            $data->uuid = uuidv4();
         }
         $endtime = $data->timestart + $data->timeduration;
     }
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
         $data->description = $fromform->week . get_string('repeatedweeks', 'congrea');
+        $data->uuid = uuidv4();
     } else { // Single Event.
         $data->repeatid = 0;
         $data->description = '-';
