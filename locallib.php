@@ -1102,12 +1102,13 @@ function repeat_date_list_check($startdate, $expecteddate, $days, $duration) {
 }
 
 /** Function to send auth detail to server.
- * @param int $cgapi
- * @param int $cgsecret
+ * @param string $cgapi
+ * @param string $cgsecret
  * @param boolean $recordingstatus
  * @param int $course
  * @param int $cm
  * @param string $role
+ * @param string $sessionuuid
  *
  * @return object $authdata
  */
@@ -1133,7 +1134,8 @@ function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role 
         exit;
     }
     $rid->url = "wss://$rid->url";
-    $authdata = (object) array_merge( (array)$authdata, array('authuser' => $rid->key, 'authpass' => $rid->secret, 'path' => $rid->url));
+    $authdata = (object) array_merge( (array)$authdata,
+    array('authuser' => $rid->key, 'authpass' => $rid->secret, 'path' => $rid->url));
     return $authdata;
 }
 
@@ -1141,11 +1143,10 @@ function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role 
  *
  * @return object $sessionid
  */
-function uuidv4()
-{
+function uuidv4() {
     $data = random_bytes(16);
 
-    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100.
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set bits 6-7 to 10.
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }

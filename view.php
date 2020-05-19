@@ -39,7 +39,6 @@ $upcomingsession = optional_param('upcomingsession', 0, PARAM_INT);
 $psession = optional_param('psession', 0, PARAM_INT);
 $sessionsettings = optional_param('sessionsettings', 0, PARAM_INT);
 $drodowndisplaymode = optional_param('drodowndisplaymode', 0, PARAM_INT);
-var_dump($session);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -234,12 +233,11 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
         if (!empty($uuid)) {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role, $uuid); // Call to authdata.
-            $session = $authdata->session;
+            $uuid = $uuid;
         } else {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
-            $session = '';
+            $uuid = '';
         }
-        var_dump($authdata);
         $authusername = $authdata->authuser;
         $authpassword = $authdata->authpass;
         $role = $authdata->role;
@@ -486,17 +484,13 @@ if ($psession) {
     echo html_writer::end_tag('div');
     echo html_writer::start_tag('div', array('class' => 'wrapper-record-list'));
     $result = congrea_curl_request("https://api.congrea.net/backend/recordings", $postdata, $key, $secret);
-    var_dump($result);
     $data = attendence_curl_request('https://api.congrea.net/data/analytics/attendance',
     $session, $key, $authpassword, $authusername, $room, $USER->id);
-    var_dump($session);
     $attendencestatus = json_decode($data);
-    var_dump($attendencestatus);
     if (!empty($result)) {
         $recdata = json_decode($result);
         $recording = json_decode($recdata->data);
     }
-    var_dump($recording);
     if (!empty($recording->Items) and !$session) {
         rsort($recording->Items);
         echo $OUTPUT->heading(get_string('recordedsessions', 'mod_congrea'));
@@ -520,7 +514,6 @@ if ($psession) {
         $row[] = $record->name . ' ' . mod_congrea_module_get_rename_action($cm, $record);
         $row[] = userdate($record->time / 1000); // Todo.
         $vcsid = $record->key_room; // Todo.
-        // Attendance button.
         if (has_capability('mod/congrea:attendance', $context)) {
             $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
             $attendancereport = html_writer::link(
@@ -588,7 +581,6 @@ if ($psession) {
 }
 // Student Report according to session.
 if ($session) {
-    var_dump($session);
     $table = new html_table();
     $table->head = array(get_string('name', 'congrea'),
     get_string('presence', 'congrea'), get_string('jointime', 'congrea'),
@@ -602,11 +594,9 @@ if ($session) {
     $apiurl = 'https://api.congrea.net/t/analytics/attendance';
     $attendancedata = attendence_curl_request($apiurl, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room);
     $attendencestatus = json_decode($attendancedata);
-    var_dump($attendencestatus);
     $apiurl2 = 'https://api.congrea.net/t/analytics/attendancerecording';
     $recordingdata = attendence_curl_request($apiurl2, $session, $key, $authdata->authpass, $authdata->authuser, $authdata->room);
     $recordingattendance = json_decode($recordingdata, true);
-    //var_dump($recordingattendance);
     $sessionstatus = get_total_session_time($attendencestatus->attendance); // Session time.
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
     $laterenrolled = 0;
