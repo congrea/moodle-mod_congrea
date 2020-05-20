@@ -38,7 +38,7 @@ $sessionname = optional_param('sessionname', '', PARAM_CLEANHTML);   // Md5 conf
 $upcomingsession = optional_param('upcomingsession', 0, PARAM_INT);
 $psession = optional_param('psession', 0, PARAM_INT);
 $sessionsettings = optional_param('sessionsettings', 0, PARAM_INT);
-$drodowndisplaymode = optional_param('drodowndisplaymode', 0, PARAM_INT);
+$drodowndisplaymode = optional_param('drodowndisplaymode', 1, PARAM_INT);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -747,16 +747,23 @@ if (!$psession) {
     echo html_writer::end_tag('div');
     echo '</br>';
 }
-if ($upcomingsession || $upcomingsession == 0 and !$psession) {
-    if (!empty(congrea_get_records($congrea, 1))) {
+if ($upcomingsession || $upcomingsession == 0 && !$psession) {
+    if (count($sessionlist) > 1) {
         congrea_print_dropdown_form($cm->id, $drodowndisplaymode);
     }
-    if ($drodowndisplaymode == 1 || $drodowndisplaymode == 0 and !$psession) {
-        congrea_get_records($congrea, 7);
-    } else if ($drodowndisplaymode == 2) {
-        congrea_get_records($congrea, 30);
-    } else if ($drodowndisplaymode == 3) {
-        congrea_get_records($congrea, 90);
+    switch ($drodowndisplaymode) {
+        case 1:
+            congrea_get_records($congrea, 7);
+            break;
+        case 2:
+            congrea_get_records($congrea, 30);
+            break;
+        case 3:
+            congrea_get_records($congrea, 90);
+            break;
+        case 4:
+            congrea_get_records($congrea, 0);
+            break;
     }
 }
 echo $OUTPUT->footer();

@@ -43,10 +43,8 @@ class mod_congrea_session_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
         $id = $this->_customdata['id'];
-        $sessionsettings = $this->_customdata['sessionsettings'];
         $edit = $this->_customdata['edit'];
         $action = $this->_customdata['action'];
-        $mform->addElement('hidden', 'sessionsettings', $sessionsettings);
         $mform->setType('sessionsettings', PARAM_INT);
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
