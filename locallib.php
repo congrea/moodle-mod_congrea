@@ -1105,8 +1105,8 @@ function repeat_date_list_check($startdate, $expecteddate, $days, $duration) {
  * @param string $cgapi
  * @param string $cgsecret
  * @param boolean $recordingstatus
- * @param int $course
- * @param int $cm
+ * @param object $course
+ * @param object $cm
  * @param string $role
  * @param string $sessionuuid
  *
