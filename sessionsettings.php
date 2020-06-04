@@ -155,7 +155,7 @@ if ($mform->is_cancelled()) {
             $conflictstatus = check_conflicts($congrea, $newsessions);
         }
     }
-    if ($action == 'addsession') {
+    if ($action == 'addsession' && $fromform->submitbutton == "Save changes") {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
             if (!empty($conflictstatus)) {
@@ -175,7 +175,7 @@ if ($mform->is_cancelled()) {
                                 $dataobject->id = $dataid;
                                 $DB->update_record('event', $dataobject);
                                 $day = date('D', $fromform->fromsessiondate);
-                                $weeks = $fromform->week;
+                                $weeks = (int)$fromform->week;
                                 $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
                                 foreach ($upcomingdates as $startdate) {
                                     repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
@@ -187,6 +187,9 @@ if ($mform->is_cancelled()) {
                     if (!empty($infinitesession)) {
                         \core\notification::info(get_string('onlysingleinfinite', 'congrea'));
                     } else {
+                        if ($fromform->fromsessiondate < time()) {
+                            \core\notification::error(get_string('timeclashed', 'congrea'));
+                        }
                         $eventobject = calendar_event::create($data);
                         $dataid = $eventobject->id; // TODO: -using api return id.
                     }
@@ -197,7 +200,7 @@ if ($mform->is_cancelled()) {
         }
     }
     // Update sessions.
-    if ($edit && $fromform->submitbutton == "Save changes" && empty($conflictstatus)) {
+    if ($edit && $fromform->submitbutton == "Save changes") {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
             if (!empty($conflictstatus)) {
@@ -209,9 +212,9 @@ if ($mform->is_cancelled()) {
                         if ($editevent->repeatid != 0) {
                             $count = (int)($editevent->description);
                             if (!empty($fromform->addmultiple)) {
-                               /*  $eventobject = calendar_event::load($edit);
+                                $eventobject = calendar_event::load($edit);
                                 $eventobject->repeatid = $edit;
-                                $eventobject->update($data); */
+                                $eventobject->update($data);
                                 $weeks = (int)$fromform->week;
                                 $startdate = $fromform->fromsessiondate;
                                 $eventduration = $fromform->timeduration * 60;
@@ -223,7 +226,6 @@ if ($mform->is_cancelled()) {
                                     foreach ($editevent as $event) {
                                         $eventobject = calendar_event::load($event->id);
                                         if ($weeks > $loopcount) {
-                                            
                                             $data->timestart = $startdate;
                                             $data->modulename = 'congrea';
                                             $data->timeduration = $fromform->timeduration * 60;
@@ -238,10 +240,9 @@ if ($mform->is_cancelled()) {
                                         }
                                     }
                                 } else if ($count < $weeks) {
-                                    $diff = $weeks - $count;                                   
+                                    $diff = $weeks - $count;
                                     foreach ($editevent as $event) {
                                         $eventobject = calendar_event::load($event->id);
-                                        
                                         $data->timestart = $startdate;
                                         $data->modulename = 'congrea';
                                         $data->timeduration = $fromform->timeduration * 60;
@@ -251,7 +252,6 @@ if ($mform->is_cancelled()) {
                                         $eventobject->update($data);
                                         $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
                                     }
-                                    //$startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
                                     $data = new stdClass();
                                     $data->timestart = $startdate;
                                     $data->name = $congrea->name;
@@ -301,7 +301,7 @@ if ($mform->is_cancelled()) {
                                         repeat_calendar($congrea, $data, $startdate, $presenter, $edit, $weeks);
                                     }
                                 } else {
-                                    $editevent = $DB->get_record('event', array('repeatid' => $edit));
+                                    $editevent = $DB->get_records('event', array('repeatid' => $edit));
                                     if (count($editevent) > 1) {
                                         foreach ($editevent as $event) {
                                             $eventobject = calendar_event::load($event->id);
@@ -310,16 +310,13 @@ if ($mform->is_cancelled()) {
                                     }
                                 }
                             } else {
-                                if (count($editevent) > 1) {
-                                    $editevent = $DB->get_records('event', array('repeatid' => $edit));
-                                    foreach ($editevent as $event) {
-                                        if ($event->id == $event->repeatid) {
-                                            $eventobject = calendar_event::load($edit);
-                                            $eventobject->repeatid = 0;
-                                            $eventobject->update($data);
-                                        }
+                                if (!empty($fromform->addmultiple)) {
+                                    $eventdate = $fromform->fromsessiondate;
+                                    $weeks = $fromform->week;
+                                    $upcomingdates = repeat_date_list($eventdate, $weeks);
+                                    foreach ($upcomingdates as $startdate) {
+                                        repeat_calendar($congrea, $data, $startdate, $presenter, $edit, $weeks);
                                     }
-                                    $DB->delete_records('event', array('repeatid' => $edit));
                                 } else {
                                     $eventobject = calendar_event::load($edit);
                                     $eventobject->repeatid = 0;
@@ -340,7 +337,9 @@ if ($mform->is_cancelled()) {
         }
     }
     redirect($returnurl);
-} // Else if end, end reading data from form.
+} else {
+    $sessionsettings = 1;
+}
 
 // Output starts here.
 echo $OUTPUT->header();
@@ -398,7 +397,6 @@ if ($edit) {
             $formdata->addmultiple = 0;
             $formdata->moderatorid = $record->userid;
             $mform->set_data($formdata);
-            //$mdata = $mform->get_data();
         } else {
             $recordlist = $DB->get_records('event', array('repeatid' => $edit));
             if (!empty($recordlist)) {
@@ -407,9 +405,6 @@ if ($edit) {
                 // Editing multiple sessions.
                 foreach ($recordlist as $record) {
                     if (($record->timestart + $record->timeduration) < time()) {
-                        $record->repeatid = 0;
-                        $record->description = 0;
-                        $DB->update_record('event', $record);
                         $weeks--;
                         continue;
                     } else {
@@ -420,7 +415,6 @@ if ($edit) {
                         $formdata->week = $weeks;
                         $formdata->moderatorid = $record->userid;
                         $mform->set_data($formdata);
-                        //$mdata = $mform->get_data();
                         break;
                     }
                 }
@@ -522,7 +516,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 $buttons = array();
                 $row = array();
                 $row[] = userdate($timedsession->timestart);
-                $row[] = secToHR($timedsession->timeduration);
+                $row[] = sectohour($timedsession->timeduration);
                 $moderatorid = $DB->get_record('user', array('id' => $timedsession->userid));
                 if (!empty($moderatorid)) {
                     $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
@@ -572,7 +566,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                     $buttons = array();
                     $row = array();
                     $row[] = userdate($data->timestart);
-                    $row[] = secToHR($data->timeduration);
+                    $row[] = sectohour($data->timeduration);
                     $moderatorid = $DB->get_record('user', array('id' => $data->userid));
                     if (!empty($moderatorid)) {
                         $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.

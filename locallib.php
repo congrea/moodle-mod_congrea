@@ -333,29 +333,6 @@ function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $we
 }
 
 /**
- * Update repeat calendar entries for this congrea.
- *
- * @param object $congrea
- * @param object $data
- * @param int $startdate
- * @param int $presenter
- * @param int $event
- * @param int $weeks
- * @return bool
- */
-/*  function update_repeat_calendar($congrea, $data, $eventduration, $presenter, $edit, $description) {
-        $eventobject = calendar_event::load($event->id);
-        $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
-        $data->timestart = $startdate;
-        $data->name = 'congrea';
-        $data->instance =  $congrea->id;
-        $data->timeduration = $fromform->timeduration * 60;
-        $data->description = $description;
-        $data->userid = $presenter;
-        $data->repeatid = $edit;
-        $eventobject->update($data);
-} */
-/**
  * Delete recorded files with folder.
  *
  * @param string $directory - Path of folder where
@@ -926,9 +903,9 @@ function congrea_get_records($congrea, $type) {
         return $rs;
     }
     $conflictedsessions = (array)check_conflicts($congrea);
-    if ($conflictedsessions) {
+    if ($conflictedsessions != false) {
         echo '<p> </p>';
-        echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-info'));
+        echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-error'));
     }
     if ($rs->valid()) {
         foreach ($rs as $records) {
@@ -939,12 +916,12 @@ function congrea_get_records($congrea, $type) {
                     'src' => $imageurl,
                     'alt' => 'Conflicted schedule', 'class' => 'conflict', 'style' => 'width:20px; padding-right:2px'
                 ))
-                . userdate($records->timestart);
+                . userdate($records->timestart) . " (" . $records->id . ")";
             } else {
-                $row[] = userdate($records->timestart);
+                $row[] = userdate($records->timestart) . " (" . $records->id . ")";
             }
             if ($records->timeduration != 0) {
-                $row[] = secToHR($records->timeduration);
+                $row[] = sectohour($records->timeduration);
             } else {
                 $row[] = get_string('openended', 'congrea');
             }
@@ -1306,8 +1283,6 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
             }
         }
         return  $conflicts;
-    } else {
-        return false;
     }
 }
 
@@ -1347,7 +1322,7 @@ function create_new_sessions($event, $hours, $mins) {
  *
  * @return string
  */
-function secToHR($seconds) {
+function sectohour($seconds) {
     $hours = floor($seconds / 3600);
     $minutes = floor(($seconds / 60) % 60);
     if (($hours > 0) && ($minutes > 0)) {
@@ -1357,6 +1332,5 @@ function secToHR($seconds) {
     } else if (($hours > 0) && ($minutes == 0)) {
         $timeformat = $hours . get_string('hours', 'congrea');
     }
-    //$seconds = $seconds % 60;
     return $timeformat;
-  }
+}

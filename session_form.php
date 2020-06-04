@@ -99,6 +99,9 @@ class mod_congrea_session_form extends moodleform {
         $durationinminutes = $data['timeduration'];
         $currentdate = time();
         $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
+        if ($data['fromsessiondate'] < $currentdate) {
+            $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
+        }
         if ($data['fromsessiondate'] < $previousday) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
         }
