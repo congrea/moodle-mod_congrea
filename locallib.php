@@ -102,7 +102,11 @@ function congrea_online_server(
 ) {
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'action' => $url, 'method' => 'post'));
+    $query_string = "?sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
+    &upload={$upload}&down={$down}&debug={$debug}&congreacolor={$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
+    &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}&settings={$hexcode}&sstart={$sstart}
+    &send={$send}&language=".current_language()."&expectedendtime=";
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' =>'popupVc', 'action' => $url, 'method' => 'get'));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
@@ -130,15 +134,17 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
         if ($role == 't') {
-            $form .= html_writer::empty_tag('input', array(
-                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-                'value' => get_string('joinasteacher', 'congrea')
-            ));
+            // $form .= html_writer::empty_tag('input', array(
+            //     'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+            //     'value' => get_string('joinasteacher', 'congrea')
+            // ));
+            $form = html_writer::tag('a', get_string('joinasteacher', 'congrea'), array('id' => 'xyz', 'class' => 'vcbutton', 'target'=> '_blank' ,'href' => $url.$query_string));
         } else {
-            $form .= html_writer::empty_tag('input', array(
-                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
-                'value' => get_string('joinasstudent', 'congrea')
-            ));
+            // $form .= html_writer::empty_tag('input', array(
+            //     'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+            //     'value' => get_string('joinasstudent', 'congrea')
+            // ));
+            $form = html_writer::tag('a', get_string('joinasstudent', 'congrea'), array('id' => 'xyz', 'class' => 'vcbutton', 'target'=> '_blank' ,'href' => $url.$query_string));
         }
     }
     $form .= html_writer::end_tag('form');
