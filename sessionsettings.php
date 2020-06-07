@@ -133,16 +133,13 @@ if ($mform->is_cancelled()) {
         } else {
             $data->timeduration = $durationinminutes * 60;
             $timeduration = $durationinminutes * 60;
-            $data->uuid = uuidv4();
         }
         $endtime = $data->timestart + $data->timeduration;
     }
     if (!empty($fromform->addmultiple)) {
         $startdate = date('Y-m-d', $data->timestart);
         $data->description = $fromform->week . get_string('repeatedweeks', 'congrea');
-        $data->uuid = uuidv4();
     } else { // Single Event.
-        $data->repeatid = 0;
         $data->description = 0;
     }
     $presenter = $fromform->moderatorid;
@@ -161,37 +158,40 @@ if ($mform->is_cancelled()) {
             if (!empty($conflictstatus)) {
                 \core\notification::error(get_string('timeclashed', 'congrea'));
             } else {
-                if (!empty($timedsessions)) {
-                    if ($fromform->timeduration == 0) {
+                if ($fromform->timeduration == 0) {
+                    if (!empty($infinitesession)) {
                         \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
                     } else {
-                        $eventobject = calendar_event::create($data);
-                        $dataid = $eventobject->id; // TODO: -using api return id.
-                        // Create multiple sessions.
-                        if (!empty($fromform->addmultiple) && $fromform->submitbutton == "Save changes") {
-                            if ($fromform->week > 0) {
-                                $dataobject = new stdClass();
-                                $dataobject->repeatid = $dataid;
-                                $dataobject->id = $dataid;
-                                $DB->update_record('event', $dataobject);
-                                $day = date('D', $fromform->fromsessiondate);
-                                $weeks = (int)$fromform->week;
-                                $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
-                                foreach ($upcomingdates as $startdate) {
-                                    repeat_calendar($congrea, $data, $startdate, $presenter, $dataobject->id, $weeks);
-                                }
-                            }
-                        } // End create multiple sessions.
+                        if (empty($timedsessions)) {
+                            $eventobject = calendar_event::create($data);
+                        } else {
+                            \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
+                        }
                     }
                 } else {
-                    if (!empty($infinitesession)) {
-                        \core\notification::info(get_string('onlysingleinfinite', 'congrea'));
-                    } else {
-                        if ($fromform->fromsessiondate < time()) {
-                            \core\notification::error(get_string('timeclashed', 'congrea'));
-                        }
+                    if ($fromform->timeduration == 0) {
+                        \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
+                    }
+                    // Create multiple sessions.
+                    if (!empty($fromform->addmultiple)) {
+                        $data->uuid = uuidv4();
                         $eventobject = calendar_event::create($data);
                         $dataid = $eventobject->id; // TODO: -using api return id.
+                        if ($fromform->week > 0) {
+                            $dataobject = new stdClass();
+                            $dataobject->repeatid = $dataid;
+                            $dataobject->id = $dataid;
+                            $DB->update_record('event', $dataobject);
+                            $day = date('D', $fromform->fromsessiondate);
+                            $weeks = (int)$fromform->week;
+                            $upcomingdates = repeat_date_list($fromform->fromsessiondate, $weeks);
+                            foreach ($upcomingdates as $startdate) {
+                                repeat_calendar($congrea, $data, $startdate, $data->id);
+                            }
+                        }
+                    } else {
+                        $data->uuid = uuidv4();
+                        $eventobject = calendar_event::create($data);
                     }
                 }
             }
@@ -210,16 +210,24 @@ if ($mform->is_cancelled()) {
                     if ($fromform->timeduration != 0) {
                         $editevent = $DB->get_record('event', array('id' => $edit));
                         if ($editevent->repeatid != 0) {
-                            $count = (int)($editevent->description);
+                            $editevent = $DB->get_records('event', array('repeatid' => $edit));
                             if (!empty($fromform->addmultiple)) {
-                                $eventobject = calendar_event::load($edit);
-                                $eventobject->repeatid = $edit;
-                                $eventobject->update($data);
+                                $pastevents = 0;
+                                $count = count($editevent);
                                 $weeks = (int)$fromform->week;
                                 $startdate = $fromform->fromsessiondate;
                                 $eventduration = $fromform->timeduration * 60;
-                                $description = $data->description;
-                                $editevent = $DB->get_records('event', array('repeatid' => $edit), '', '*');
+                                $description = $weeks;
+                                foreach ($editevent as $event) {
+                                    if (($event->timestart + $event->timeduration) < time()) {
+                                        $pastevent[] = $event->id;
+                                        $pastevents++;
+                                        $event->description = $weeks + $pastevents;
+                                        $DB->update_record('event', $event);
+                                        $past = array_shift($editevent);
+                                        continue;
+                                    }
+                                }
                                 if ($count > $weeks) {
                                     $diff = $count - $weeks;
                                     $loopcount = 0;
@@ -229,7 +237,7 @@ if ($mform->is_cancelled()) {
                                             $data->timestart = $startdate;
                                             $data->modulename = 'congrea';
                                             $data->timeduration = $fromform->timeduration * 60;
-                                            $data->description = $description;
+                                            $data->description = $description + $pastevents;
                                             $data->userid = $presenter;
                                             $data->repeatid = $edit;
                                             $eventobject->update($data);
@@ -246,27 +254,30 @@ if ($mform->is_cancelled()) {
                                         $data->timestart = $startdate;
                                         $data->modulename = 'congrea';
                                         $data->timeduration = $fromform->timeduration * 60;
-                                        $data->description = $description;
+                                        $data->description = $description + $pastevents;
                                         $data->userid = $presenter;
                                         $data->repeatid = $edit;
                                         $eventobject->update($data);
                                         $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
                                     }
-                                    $data = new stdClass();
-                                    $data->timestart = $startdate;
-                                    $data->name = $congrea->name;
-                                    $data->timeduration = $fromform->timeduration * 60;
-                                    $data->description = $description;
-                                    $data->userid = $presenter;
-                                    $data->modulename = 'congrea';
-                                    $data->instance = $congrea->id;
-                                    $data->eventtype = 'start congrea';
-                                    $data->repeatid = $edit;
                                     $eventobject = calendar_event::create($data);
+                                    $event = new stdClass();
+                                    $event->uuid = uuidv4();
+                                    $event->timestart = $startdate;
+                                    $event->name = $congrea->name;
+                                    $event->timeduration = $fromform->timeduration * 60;
+                                    $event->description = $description + $pastevents;
+                                    $event->userid = $presenter;
+                                    $event->modulename = 'congrea';
+                                    $event->instance = $congrea->id;
+                                    $event->eventtype = 'start congrea';
+                                    $event->repeatid = $edit;
+                                    $eventobject->update($event);
                                     $weeks = $diff;
+                                    $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
                                     $upcomingdates = repeat_date_list($startdate, $weeks);
                                     foreach ($upcomingdates as $startdate) {
-                                        repeat_calendar($congrea, $data, $startdate, $presenter, $edit, $weeks);
+                                        repeat_calendar($congrea, $data, $startdate, $edit);
                                     }
                                 } else {
                                     $diff = $count;
@@ -298,7 +309,7 @@ if ($mform->is_cancelled()) {
                                     $weeks = $fromform->week;
                                     $upcomingdates = repeat_date_list($eventdate, $weeks);
                                     foreach ($upcomingdates as $startdate) {
-                                        repeat_calendar($congrea, $data, $startdate, $presenter, $edit, $weeks);
+                                        repeat_calendar($congrea, $data, $startdate, $edit);
                                     }
                                 } else {
                                     $editevent = $DB->get_records('event', array('repeatid' => $edit));
@@ -315,7 +326,7 @@ if ($mform->is_cancelled()) {
                                     $weeks = $fromform->week;
                                     $upcomingdates = repeat_date_list($eventdate, $weeks);
                                     foreach ($upcomingdates as $startdate) {
-                                        repeat_calendar($congrea, $data, $startdate, $presenter, $edit, $weeks);
+                                        repeat_calendar($congrea, $data, $startdate, $edit);
                                     }
                                 } else {
                                     $eventobject = calendar_event::load($edit);
@@ -429,7 +440,6 @@ if ($edit) {
                 $formdata->week = 1;
                 $formdata->moderatorid = $record->userid;
                 $mform->set_data($formdata);
-                $mdata = $mform->get_data();
             }
         }
     } else {

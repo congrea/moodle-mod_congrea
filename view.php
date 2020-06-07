@@ -68,14 +68,14 @@ if (!empty($sessionlist)) {
     }
 }
 if (!empty($infinitesessions)) {
-    $currentsql = "SELECT id, timestart, timeduration, userid, uuid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timeduration = 0";
+    $currentsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timeduration = 0";
     $upcomingdata = '';
 } else {
-    $currentsql = "SELECT id, timestart, timeduration, userid, uuid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timestart <= $time and (timestart + (timeduration)) > $time";
-    $upcomingsql = "SELECT id, timestart, timeduration, userid, uuid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timestart >= $time ORDER BY timestart ASC";
+    $currentsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timestart <= $time AND (timestart + (timeduration)) > $time";
+    $upcomingsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timestart >= $time ORDER BY timestart ASC";
     $upcomingdata = $DB->get_records_sql($upcomingsql);
 }
 $currentdata = $DB->get_records_sql($currentsql);

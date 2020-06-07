@@ -309,12 +309,10 @@ $teacherid, $instanceid, $sessionid, $timeduration) {
  * @param object $congrea
  * @param object $data
  * @param int $startdate
- * @param int $presenter
- * @param int $repeatid
- * @param int $weeks
+ * @param int $edit
  * @return bool
  */
-function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $weeks) {
+function repeat_calendar($congrea, $data, $startdate, $edit) {
     $event = new stdClass();
     $event->name = $congrea->name;
     $event->uuid = uuidv4();
@@ -323,8 +321,8 @@ function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $we
     $event->format = 1;
     $event->courseid = $congrea->course;
     $event->groupid = 0;
-    $event->userid = $presenter;
-    $event->repeatid = $repeatid;
+    $event->userid = $data->userid;
+    $event->repeatid = $edit;
     $event->modulename = 'congrea';
     $event->instance = $congrea->id;
     $event->eventtype = 'session start';
@@ -1170,6 +1168,7 @@ function uuidv4() {
     $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100.
     $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set bits 6-7 to 10.
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
 /**
  * Compare start time to sort array in ascending order
  * @param array $a
