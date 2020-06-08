@@ -222,7 +222,7 @@ if ($mform->is_cancelled()) {
                                     if (($event->timestart + $event->timeduration) < time()) {
                                         $pastevent[] = $event->id;
                                         $pastevents++;
-                                        $event->description = $weeks + $pastevents;
+                                        $event->description = $weeks;
                                         $DB->update_record('event', $event);
                                         $past = array_shift($editevent);
                                         continue;
@@ -230,14 +230,14 @@ if ($mform->is_cancelled()) {
                                 }
                                 if ($count > $weeks) {
                                     $diff = $count - $weeks;
-                                    $loopcount = 0;
+                                    $loopcount = $pastevents;
                                     foreach ($editevent as $event) {
                                         $eventobject = calendar_event::load($event->id);
                                         if ($weeks > $loopcount) {
                                             $data->timestart = $startdate;
                                             $data->modulename = 'congrea';
                                             $data->timeduration = $fromform->timeduration * 60;
-                                            $data->description = $description + $pastevents;
+                                            $data->description = $description;
                                             $data->userid = $presenter;
                                             $data->repeatid = $edit;
                                             $eventobject->update($data);
@@ -254,7 +254,7 @@ if ($mform->is_cancelled()) {
                                         $data->timestart = $startdate;
                                         $data->modulename = 'congrea';
                                         $data->timeduration = $fromform->timeduration * 60;
-                                        $data->description = $description + $pastevents;
+                                        $data->description = $description;
                                         $data->userid = $presenter;
                                         $data->repeatid = $edit;
                                         $eventobject->update($data);
@@ -266,7 +266,7 @@ if ($mform->is_cancelled()) {
                                     $event->timestart = $startdate;
                                     $event->name = $congrea->name;
                                     $event->timeduration = $fromform->timeduration * 60;
-                                    $event->description = $description + $pastevents;
+                                    $event->description = $description;
                                     $event->userid = $presenter;
                                     $event->modulename = 'congrea';
                                     $event->instance = $congrea->id;
