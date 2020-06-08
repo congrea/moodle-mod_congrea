@@ -95,6 +95,8 @@ if (!empty($currentdata)) {
     $starttime = date("Y-m-d H:i:s", $sessionstarttime);
     $endtime = date('Y-m-d H:i:s', strtotime("+$duration seconds", strtotime($starttime)));
     $sessionendtime = strtotime($endtime);
+    sort($upcomingdata);
+    $nextsessionstarttime = $upcomingdata[0]->timestart;
 } else { // Todo.
     if (!empty($upcomingdata)) {
         $eventid = congrea_array_key_first($upcomingdata);
@@ -104,6 +106,7 @@ if (!empty($currentdata)) {
         $starttime = date("Y-m-d H:i:s", $sessionstarttime);
         $endtime = date('Y-m-d H:i:s', strtotime("+$duration seconds", strtotime($starttime)));
         $sessionendtime = strtotime($endtime);
+        
     }
 }
 require_login($course, true, $cm);
@@ -469,7 +472,8 @@ if (($sessionendtime > time() && $sessionstarttime <= time()) || (!empty($infini
         $hexcode,
         $joinbutton,
         $sessionstarttime,
-        $sessionendtime
+        $sessionendtime,
+        $nextsessionstarttime
     );
     echo $form;
 } else {
