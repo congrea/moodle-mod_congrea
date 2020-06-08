@@ -53,7 +53,7 @@ table.studentEnd tbody tr td.c4 p {
     padding-left: 15px;
 }
 
-#page-mod-congrea-view a.playbtn {
+#page-mod-congrea-view input.playbtn {
     background: transparent url([[pix:congrea|play]]) no-repeat top left;
     background-size: 14px;
     width: 17px;

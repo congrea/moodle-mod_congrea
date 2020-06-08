@@ -19,42 +19,57 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
             });
 
         },
-        congreaOnlinePopup: function() {
-            $('#overrideform').submit(function() {
-                var expected = $('input[name ="expectedendtime"]').val();
-                var newTab = window.open('', 'popupVc');
+      congreaOnlinePopup: function() {
+            $('#overrideform-btn').click(function(e) {
+                const url = $(e.target).attr('data-to');
+                const expected = $(e.target).attr('data-expected');
                 if (Date.now() > expected && expected != 0) {
-                    $('.vcbutton').hide();
-                    window.location.reload();
-                    return false;
+                  $('.vcbutton').hide();
+                  window.location.reload();
                 } else {
-                    if (window.newTab && window.newTab.closed === false) {
-                        newTab.focus();
-                        return false;
-                    }
-                    $(this).attr('target', 'popupVc');
-                    if (newTab) {
-                        newTab.focus();
-                        return newTab;
-                    }
-                    return true;
+                  window.open(url, 'popupVc');
                 }
             });
+            // $('#overrideform').submit(function() {
+            //     var expected = $('input[name ="expectedendtime"]').val();
+            //     var newTab = window.open('', 'popupVc');
+            //     if (Date.now() > expected && expected != 0) {
+            //         $('.vcbutton').hide();
+            //         window.location.reload();
+            //         return false;
+            //     } else {
+            //         if (window.newTab && window.newTab.closed === false) {
+            //             newTab.focus();
+            //             return false;
+            //         }
+            //         $(this).attr('target', 'popupVc');
+            //         if (newTab) {
+            //             newTab.focus();
+            //             return newTab;
+            //         }
+            //         return true;
+            //     }
+            // });
         },
-        congreaPlayRecording: function() {
-            $('.playAct').submit(function() {
-                var newTab = window.open('', 'popupVc');
-                if (window.newTab && window.newTab.closed === false) {
-                    newTab.focus();
-                    return false;
-                }
-                $(this).attr('target', 'popupVc');
-                if (newTab) {
-                    newTab.focus();
-                    return newTab;
-                }
-                return true;
+      congreaPlayRecording: function() {
+            $('.playAct-Btn').click(function(e) {
+                const url = $(e.target).attr('data-to');
+                window.open(url, 'popupVc');
             });
+
+            // $('.playAct').submit(function() {
+            //     var newTab = window.open('', 'popupVc');
+            //     if (window.newTab && window.newTab.closed === false) {
+            //         newTab.focus();
+            //         return false;
+            //     }
+            //     $(this).attr('target', 'popupVc');
+            //     if (newTab) {
+            //         newTab.focus();
+            //         return newTab;
+            //     }
+            //     return true;
+            // });
         },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function() {
