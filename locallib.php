@@ -127,7 +127,8 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
-    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextsessionstarttime', 'value' => $nextsessionstarttime));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextsessionstarttime',
+    'value' => $nextsessionstarttime));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
@@ -888,7 +889,8 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
 function congrea_get_records($congrea, $type) {
     global $DB, $OUTPUT, $CFG;
     $table = new html_table();
-    $table->head = array(get_string('dateandtime', 'congrea'),
+    $table->head = array(get_string('sessionid', 'congrea'),
+    get_string('dateandtime', 'congrea'),
     get_string('timedur', 'congrea'),
     get_string('teacher', 'congrea'));
     $timestart = time();
@@ -910,15 +912,20 @@ function congrea_get_records($congrea, $type) {
     if ($rs->valid()) {
         foreach ($rs as $records) {
             $row = array();
+            if ($records->repeatid != 0) {
+                $row[] = "#" . $records->repeatid;
+            } else {
+                $row[] = "#" . $records->id;
+            }
             if (in_array($records->id, $conflictedsessions)) {
                 $imageurl = "$CFG->wwwroot/mod/congrea/pix/alarm-clock.png";
                 $row[] = html_writer::empty_tag('img', array(
                     'src' => $imageurl,
                     'alt' => 'Conflicted schedule', 'class' => 'conflict', 'style' => 'width:20px; padding-right:2px'
                 ))
-                . userdate($records->timestart) . " (" . $records->id . ")";
+                . userdate($records->timestart);
             } else {
-                $row[] = userdate($records->timestart) . " (" . $records->id . ")";
+                $row[] = userdate($records->timestart);
             }
             if ($records->timeduration != 0) {
                 $row[] = sectohour($records->timeduration);
@@ -1245,7 +1252,6 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
         $conflicts = array();
         for ($i = 0; $i < $arrlength; $i++) {
             if (($mergedarray[$i]->endtime > $mergedarray[$i + 1]->starttime)) {
-                array_push($conflicts, $mergedarray[$i]);
                 if ($newsessions) {
                     if (($mergedarray[$i]->status == 'existing') && ($mergedarray[$i + 1]->status == 'existing')) {
                         continue;

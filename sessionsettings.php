@@ -156,7 +156,11 @@ if ($mform->is_cancelled()) {
         if (has_capability('mod/congrea:managesession', $context) &&
         has_capability('moodle/calendar:manageentries', $coursecontext)) {
             if (!empty($conflictstatus)) {
-                \core\notification::error(get_string('timeclashed', 'congrea'));
+                if ($fromform->timeduration == 0) {
+                    \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
+                } else {
+                    \core\notification::error(get_string('timeclashed', 'congrea'));
+                }
             } else {
                 if ($fromform->timeduration == 0) {
                     if (!empty($infinitesession)) {
@@ -460,9 +464,17 @@ if ($action == 'addsession' || $edit) {
 echo $OUTPUT->heading(get_string('headingschedules', 'congrea'));
 if (has_capability('mod/congrea:managesession', $context) && has_capability('moodle/calendar:manageentries', $coursecontext)) {
     $table = new html_table();
-    $table->head = array(get_string('datetimelist', 'congrea'), get_string('sessduration', 'congrea'),
-    get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
-    get_string('action', 'congrea'));
+    if ($infinitesession) {
+        $table->head = array(get_string('datetimelist', 'congrea'),
+        get_string('sessduration', 'congrea'),
+        get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
+        get_string('action', 'congrea'));
+    } else {
+        $table->head = array(get_string('sessionid', 'congrea'), get_string('datetimelist', 'congrea'),
+        get_string('sessduration', 'congrea'),
+        get_string('teacher', 'congrea'), get_string('repeatstatus', 'congrea'),
+        get_string('action', 'congrea'));
+    }
     if (!empty($infinitesession)) {
         $buttons = array();
         $row = array();
@@ -523,36 +535,7 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         array_multisort(array_column($timedsessions, 'timestart'), SORT_DESC, $timedsessions);
         foreach ($timedsessions as $timedsession) {
             if (($timedsession->repeatid == 0)) {
-                $buttons = array();
-                $row = array();
-                $row[] = userdate($timedsession->timestart);
-                $row[] = sectohour($timedsession->timeduration);
-                $moderatorid = $DB->get_record('user', array('id' => $timedsession->userid));
-                if (!empty($moderatorid)) {
-                    $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
-                } else {
-                    $username = get_string('nouser', 'mod_congrea');
-                }
-                $row[] = $username;
-                $row[] = '-';
-                $buttons[] = html_writer::link(
-                    new moodle_url(
-                        '/mod/congrea/sessionsettings.php',
-                        array('id' => $cm->id, 'edit' => $timedsession->id, 'sessionsettings' => $sessionsettings)
-                    ),
-                    get_string('editbtn', 'congrea'),
-                    array('class' => 'actionlink exportpage')
-                );
-                $buttons[] = html_writer::link(
-                    new moodle_url(
-                        '/mod/congrea/sessionsettings.php',
-                        array('id' => $cm->id, 'delete' => $timedsession->id, 'sessionsettings' => $sessionsettings)
-                    ),
-                    get_string('deletebtn', 'congrea'),
-                    array('class' => 'actionlink exportpage')
-                );
-                $row[] = implode(' ', $buttons);
-                $table->data[] = $row;
+                $singlesessions[] = $timedsession;
             } else {
                 $repeatedsessions[] = $timedsession;
             }
@@ -569,45 +552,61 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
                 }
             }
             $uniqueids = array_unique($keyids);
-            rsort($uniqueids);
-            foreach ($uniqueids as $key => $ids) {
-                $data = $DB->get_record('event', array('id' => $ids));
-                if ($data->repeatid != 0) {
-                    $buttons = array();
-                    $row = array();
-                    $row[] = userdate($data->timestart);
-                    $row[] = sectohour($data->timeduration);
-                    $moderatorid = $DB->get_record('user', array('id' => $data->userid));
-                    if (!empty($moderatorid)) {
-                        $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
-                    } else {
-                        $username = get_string('nouser', 'mod_congrea');
-                    }
-                    $row[] = $username;
-                    $days = date('D', ($data->timestart));
-                    $row[] = intval($data->description) .
-                    get_string('weeksevery', 'congrea') .
-                    get_string(strtolower($days), 'calendar');
-                    $buttons[] = html_writer::link(
-                    new moodle_url(
-                        '/mod/congrea/sessionsettings.php',
-                        array('id' => $cm->id, 'edit' => $data->id, 'sessionsettings' => $sessionsettings)
-                    ),
-                    get_string('editbtn', 'congrea'),
-                    array('class' => 'actionlink exportpage')
-                    );
-                    $buttons[] = html_writer::link(
-                        new moodle_url(
-                        '/mod/congrea/sessionsettings.php',
-                        array('id' => $cm->id, 'delete' => $data->id, 'sessionsettings' => $sessionsettings)
-                    ),
-                    get_string('deletebtn', 'congrea'),
-                    array('class' => 'actionlink exportpage')
-                    );
-                    $row[] = implode(' ', $buttons);
-                    $table->data[] = $row;
-                }
+            sort($uniqueids);
+            for ($k = 0; $k < count($uniqueids); $k++) {
+                $repeatedarray[] = $DB->get_record('event', array('id' => $uniqueids[$k]),
+                $fields = 'id, timestart, timeduration, userid, description, repeatid');
             }
+        }
+        if (empty($singlesessions)) {
+            $mergedarray = $repeatedarray;
+        } else if (empty($repeatedarray)) {
+            $mergedarray = $singlesessions;
+        } else {
+            $mergedarray = array_merge($singlesessions, $repeatedarray);
+        }
+        usort($mergedarray, function($a, $b) {
+            return $a->timestart <=> $b->timestart;
+        });
+        foreach ($mergedarray as $sessiondata) {
+            $buttons = array();
+            $row = array();
+            $row[] = "#" . $sessiondata->id;
+            $row[] = userdate($sessiondata->timestart);
+            $row[] = sectohour($sessiondata->timeduration);
+            $moderatorid = $DB->get_record('user', array('id' => $sessiondata->userid));
+            if (!empty($moderatorid)) {
+                $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+            } else {
+                $username = get_string('nouser', 'mod_congrea');
+            }
+            $row[] = $username;
+            if ($sessiondata->repeatid != 0) {
+                $days = date('D', ($sessiondata->timestart));
+                $row[] = (int)($sessiondata->description) .
+                get_string('weeksevery', 'congrea') .
+                get_string(strtolower($days), 'calendar');
+            } else {
+                $row[] = '-';
+            }
+            $buttons[] = html_writer::link(
+                new moodle_url(
+                    '/mod/congrea/sessionsettings.php',
+                    array('id' => $cm->id, 'edit' => $sessiondata->id, 'sessionsettings' => $sessionsettings)
+                ),
+                get_string('editbtn', 'congrea'),
+                array('class' => 'actionlink exportpage')
+            );
+            $buttons[] = html_writer::link(
+                new moodle_url(
+                    '/mod/congrea/sessionsettings.php',
+                    array('id' => $cm->id, 'delete' => $sessiondata->id, 'sessionsettings' => $sessionsettings)
+                ),
+                get_string('deletebtn', 'congrea'),
+                array('class' => 'actionlink exportpage')
+            );
+            $row[] = implode(' ', $buttons);
+            $table->data[] = $row;
         }
     }
     if (!empty($table->data)) {

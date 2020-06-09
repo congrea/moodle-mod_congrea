@@ -64,8 +64,8 @@ class mod_congrea_session_form extends moodleform {
         $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('mins', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
-        $mform->addRule('timeduration', null, 'required', null, 'client');
-        $mform->addRule('timeduration', null, 'numeric', null, 'client');
+        $mform->addRule('timeduration', get_string('blankduration', 'congrea'), 'required', null, 'client');
+        $mform->addRule('timeduration', get_string('blankduration', 'congrea'), 'numeric', null, 'client');
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
@@ -98,13 +98,8 @@ class mod_congrea_session_form extends moodleform {
         $errors = parent::validation($data, $files);
         $durationinminutes = $data['timeduration'];
         $currentdate = time();
-        $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
-        if ($data['fromsessiondate'] < $previousday) {
+        if ($data['fromsessiondate'] < $currentdate - 600) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
-        }
-        $expr = '/^[0-9][0-9]*$/';
-        if (!preg_match($expr, $durationinminutes)) {
-            $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
         }
         if (($durationinminutes != 0) || ($durationinminutes != '')) {
             if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
@@ -114,13 +109,9 @@ class mod_congrea_session_form extends moodleform {
         if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
         }
-        $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
-        $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-        if (!empty($data['week'])) {
-            $repeat = $data['week'];
-        } else {
-            $repeat = 0;
-        }
+/*         if (trim($data['timeduration']) == null) {
+            $errors['timeduration'] = get_string('invalidtimedurationminutes', 'calendar');
+        } */
         return $errors;
     }
 }

@@ -160,3 +160,7 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 #page-mod-congrea-sessionsettings #page-content .mform fieldset.error {
     border: 1px solid #fff;
 }
+div#id_error_timeduration.form-control-feedback.invalid-feedback {
+    width: 0%;
+	display:none!important;
+}

@@ -366,3 +366,5 @@ $string['timeclashed'] = 'There is a scheduling conflict with existing session(s
 $string['allsessions'] = 'All upcoming sessions';
 $string['conflicts'] = 'There are some conflicted sessions in upcoming session(s) list.';
 $string['hours'] = ' hr ';
+$string['sessionid'] = 'Session ID';
+$string['blankduration'] = 'Invalid input!';
