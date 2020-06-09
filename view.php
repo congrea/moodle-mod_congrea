@@ -301,7 +301,7 @@ if ($congrea->intro) {
 }
 echo html_writer::empty_tag('br');
 // Serve online at vidya.io.
-$url = "https://live.congrea.net"; // Online url.
+$url = "https://live.congrea.net/mobile/"; // Online url.
 $info = false; // Debugging off.
 if ($USER->picture) {
     $userpicture = moodle_url::make_pluginfile_url(context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f2');
