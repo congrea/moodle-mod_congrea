@@ -18,7 +18,6 @@
 }
 
 #page-mod-congrea-quizreport table.flexible thead th,
-.generaltable thead th.header.c4,
 .generaltable thead th.header.c5,
 #page-mod-congrea-quizreport .generaltable td.cell.c4,
 #page-mod-congrea-quizreport .generaltable td.cell.c5 {
@@ -162,5 +161,5 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 }
 div#id_error_timeduration.form-control-feedback.invalid-feedback {
     width: 0%;
-	display:none!important;
+    display:none!important;
 }

@@ -75,6 +75,7 @@ function congrea_course_teacher_list($cmid) {
  * @param boolean $joinbutton
  * @param integer $sstart
  * @param integer $send
+ * @param integer $nextsessionstarttime
  * @return string
  */
 function congrea_online_server(
@@ -889,10 +890,11 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
 function congrea_get_records($congrea, $type) {
     global $DB, $OUTPUT, $CFG;
     $table = new html_table();
-    $table->head = array(get_string('sessionid', 'congrea'),
+    $table->head = array(get_string('scheduleid', 'congrea'),
     get_string('dateandtime', 'congrea'),
     get_string('timedur', 'congrea'),
-    get_string('teacher', 'congrea'));
+    get_string('teacher', 'congrea'),
+    get_string('repeatstatus', 'congrea'));
     $timestart = time();
     $sql = "SELECT * FROM {event} WHERE modulename = 'congrea' AND instance = $congrea->id AND timestart >= $timestart ORDER BY timestart ASC"; // TODO:.
     if (($type > 1)) {
@@ -905,9 +907,12 @@ function congrea_get_records($congrea, $type) {
         return $rs;
     }
     $conflictedsessions = (array)check_conflicts($congrea);
-    if ($conflictedsessions != false) {
+    if (!empty($conflictedsessions)) {
         echo '<p> </p>';
         echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-error'));
+        foreach ($conflictedsessions as $conflictedsession) {
+            $conflictedids[] = $conflictedsession->id;
+        }
     }
     if ($rs->valid()) {
         foreach ($rs as $records) {
@@ -917,13 +922,17 @@ function congrea_get_records($congrea, $type) {
             } else {
                 $row[] = "#" . $records->id;
             }
-            if (in_array($records->id, $conflictedsessions)) {
-                $imageurl = "$CFG->wwwroot/mod/congrea/pix/alarm-clock.png";
-                $row[] = html_writer::empty_tag('img', array(
-                    'src' => $imageurl,
-                    'alt' => 'Conflicted schedule', 'class' => 'conflict', 'style' => 'width:20px; padding-right:2px'
-                ))
-                . userdate($records->timestart);
+            if (!empty($conflictedids)) {
+                if (in_array($records->id, $conflictedids)) {
+                    $imageurl = "$CFG->wwwroot/mod/congrea/pix/alarm-clock.png";
+                    $row[] = html_writer::empty_tag('img', array(
+                        'src' => $imageurl,
+                        'alt' => 'Conflicted schedule', 'class' => 'conflict', 'style' => 'width:20px; padding-right:2px'
+                    ))
+                    . userdate($records->timestart);
+                } else {
+                    $row[] = userdate($records->timestart);
+                }
             } else {
                 $row[] = userdate($records->timestart);
             }
@@ -939,6 +948,11 @@ function congrea_get_records($congrea, $type) {
                 $username = get_string('nouser', 'mod_congrea');
             }
             $row[] = $username;
+            if ($records->repeatid == 0) {
+                $row[] = '-';
+            } else {
+                $row[] = $records->description;
+            }
             $table->data[] = $row;
         }
         $rs->close();
@@ -1230,14 +1244,22 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
             $endtime = $data->timestart + $data->timeduration;
             $moderator = $data->userid;
             $courseid = $data->courseid;
+            $moderatorid = $DB->get_record('user', array('id' => $moderator));
+            if (!empty($moderatorid)) {
+                $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+            } else {
+                $username = get_string('nouser', 'mod_congrea');
+            }
             if ($edit) {
                 if (!in_array($data->id, $editid)) {
                     $existingsessions[] = (object) array('id' => $data->id, 'starttime' => $starttime, 'endtime' => $endtime,
-                    'status' => 'existing', 'presenter' => $moderator, 'course' => $courseid);
+                    'status' => 'existing', 'presenter' => $username, 'course' => $courseid,
+                    'repeatid' => $data->repeatid, 'description' => $data->description, 'courseid' => $courseid);
                 }
             } else {
                 $existingsessions[] = (object) array('id' => $data->id, 'starttime' => $starttime, 'endtime' => $endtime,
-                'status' => 'existing', 'presenter' => $moderator, 'course' => $courseid);
+                'status' => 'existing', 'presenter' => $username, 'course' => $courseid,
+                'repeatid' => $data->repeatid, 'description' => $data->description, 'courseid' => $courseid);
             }
         }
     }
@@ -1248,40 +1270,39 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
             $mergedarray = $existingsessions;
         }
         usort($mergedarray, 'comparestarttime');
-        $arrlength = (count($mergedarray)) - 1;
+        $arrlength = count($mergedarray);
         $conflicts = array();
-        for ($i = 0; $i < $arrlength; $i++) {
+        for ($i = 0; $i < ($arrlength - 1); $i++) {
             if (($mergedarray[$i]->endtime > $mergedarray[$i + 1]->starttime)) {
                 if ($newsessions) {
-                    if (($mergedarray[$i]->status == 'existing') && ($mergedarray[$i + 1]->status == 'existing')) {
+                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
                         continue;
-                    }
-                    if ($edit) {
-                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                            continue;
-                        }
-                    }
-                    $var = $mergedarray[$i]->endtime;
-                    $j = ($arrlength - $i - 1);
-                    for ($i = $i; $i < $j; $i++) {
-                        if (($var > $mergedarray[$i + 1]->starttime)) {
-                            if (($mergedarray[$i]->status == 'existing') && ($mergedarray[$i + 1]->status == 'existing')) {
-                                array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                    } else if (($mergedarray[$i]->status == 'existing') && ($mergedarray[$i + 1]->status == 'existing')) {
+                        continue;
+                    } else {
+                        $var = $mergedarray[$i]->endtime;
+                        $j = ($arrlength - $i);
+                        for ($i = $i; $i < $j - 1; $i++) {
+                            if ($var > $mergedarray[$i + 1]->starttime) {
+                                if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                    continue;
+                                } else if ($mergedarray[$i]->status == 'existing') {
+                                    array_push($conflicts, $mergedarray[$i]);
+                                } else if ($mergedarray[$i + 1]->status == 'existing') {
+                                    array_push($conflicts, $mergedarray[$i + 1]);
+                                }
                             } else {
-                                array_push($conflicts, $mergedarray[$i]);
+                                continue;
                             }
-                        } else {
-                            continue;
                         }
                     }
                 } else {
                     $var = $mergedarray[$i]->endtime;
-                    array_push($conflicts, $mergedarray[$i]->id);
                     $l = ($arrlength - $i);
-                    for ($i = $i; $i < $l; $i++) {
+                    for ($i = $i; $i < $l - 1; $i++) {
                         $var = $mergedarray[$i]->endtime;
                         if (($var > $mergedarray[$i + 1]->starttime)) {
-                            array_push($conflicts, $mergedarray[$i + 1]->id);
+                            array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
                         } else {
                             continue;
                         }

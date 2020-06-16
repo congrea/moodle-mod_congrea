@@ -45,6 +45,7 @@ class mod_congrea_session_form extends moodleform {
         $id = $this->_customdata['id'];
         $edit = $this->_customdata['edit'];
         $action = $this->_customdata['action'];
+        $conflictstatus = $this->_customdata['conflictstatus'];
         $mform->setType('sessionsettings', PARAM_INT);
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
@@ -52,10 +53,11 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'action', $action);
         $mform->setType('action', PARAM_CLEANHTML);
+        $mform->addElement('hidden', 'conflictstatus', $conflictstatus);
+        $mform->setType('conflictstatus', PARAM_CLEANHTML);
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
         }
-
         $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
         $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
         $mform->setType('timeduration', PARAM_INT);
@@ -84,6 +86,40 @@ class mod_congrea_session_form extends moodleform {
         $mform->addGroup($weeks, 'weeks', get_string('repeatweeksl', 'calendar'), '', false);
         $mform->hideIf('weeks', 'timeduration', 'eq', 0);
         $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
+        if (!empty($conflictstatus)) {
+            $sortedconflicts = array();
+            foreach ($conflictstatus as $value) {
+                $sortedconflicts[serialize($value)] = $value;
+            }
+            $conflictstatus = array_values($sortedconflicts);
+            $mform->addElement('html', '<div class="alert alert-error">' . get_string('thereare', 'congrea') .
+            count($conflictstatus) . get_string('timeclashed', 'congrea'). '</div>');
+            $mform->addElement('html', '<div class="overflow"><table class="generaltable" >
+            <tr><th>' . get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
+            '</th><th>' . get_string('timedur', 'congrea') . '</th><th>' . get_string('teacher', 'congrea') .
+            '</th><th>' . get_string('repeatstatus', 'congrea') . '</th></tr>');
+            foreach ($conflictstatus as $conflictedevent) {
+                $schedule = userdate($conflictedevent->starttime);
+                $duration = $conflictedevent->endtime - $conflictedevent->starttime;
+                if ($conflictedevent->repeatid == 0) {
+                    $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
+                    '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                    '</td><td> - </td></tr>');
+                } else {
+                    if ($conflictedevent->repeatid == $conflictedevent->id) {
+                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
+                        '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                        '</td><td>' . $conflictedevent->description . '</td></tr>');
+                    }
+                    if ($conflictedevent->repeatid != $conflictedevent->id) {
+                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->repeatid . '</td><td>' .
+                        $schedule . '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                        '</td><td>' . $conflictedevent->description . '</td></tr>');
+                    }
+                }
+            }
+            $mform->addElement('html', '</table></div>');
+        }
         $this->add_action_buttons();
     }
 
@@ -109,9 +145,6 @@ class mod_congrea_session_form extends moodleform {
         if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
         }
-/*         if (trim($data['timeduration']) == null) {
-            $errors['timeduration'] = get_string('invalidtimedurationminutes', 'calendar');
-        } */
         return $errors;
     }
 }
