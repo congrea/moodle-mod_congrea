@@ -111,10 +111,12 @@ function congrea_online_server(
     # expectedendtime removed from query_string
     # expectedendtime is pending
     $username = $USER->firstname . ' ' . $USER->lastname;
-    $query_string = "?sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
+    $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
     &upload={$upload}&down={$down}&debug={$debug}&congreacolor={$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
     &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}&settings={$hexcode}&sstart={$sstart}&send={$send}&language=".current_language();
-
+    
+    //encrypt query string to base64
+    $query_string = b64link_encode($query_string);
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' =>'_blank', 'action' => $url, 'method' => 'get'));
 
     // * Form doesn't redirect to PWA
@@ -156,7 +158,7 @@ function congrea_online_server(
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
                 'type' => 'button',
-                'data-to' => $url.$query_string,
+                'data-to' => $url.'?'.$query_string,
                 'data-expected' => 0,
                 'class' => 'vcbutton',
                 'value' => get_string('joinasteacher', 'congrea')
@@ -172,7 +174,7 @@ function congrea_online_server(
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
                 'type' => 'button',
-                'data-to' => $url.$query_string,
+                'data-to' => $url.'?'.$query_string,
                 'data-expected' => 0,
                 'class' => 'vcbutton',
                 'value' => get_string('joinasstudent', 'congrea')
@@ -237,10 +239,12 @@ function congrea_online_server_play(
     global $USER;
     
     $username = $USER->firstname . ' ' . $USER->lastname;
-    $query_string = "?sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
+    $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
     &upload={$upload}&down={$down}&debug={$debug}&congreacolor={$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
     &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}&settings={$hexcode}&play=1";
-
+    //encrypt query string to base64
+    $query_string = b64link_encode($query_string);
+    
     $form = html_writer::start_tag('form', array(
         'id' => 'playRec' . $vcsid, 'class' => 'playAct',
         'action' => $url, 'method' => 'post'
@@ -278,7 +282,7 @@ function congrea_online_server_play(
     $form .= html_writer::empty_tag('input', array(
         'class' => 'vcbutton playbtn playAct-Btn',
         'type' => 'button',
-        'data-to' => $url.$query_string,
+        'data-to' => $url.'?'.$query_string,
         'value' => '',
         'title' => 'Play'
     ));
