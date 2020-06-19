@@ -92,40 +92,51 @@ class mod_congrea_session_form extends moodleform {
                 $sortedconflicts[serialize($value)] = $value;
             }
             $conflictstatus = array_values($sortedconflicts);
-            $mform->addElement('html', '<div class="alert alert-error">' . get_string('thereare', 'congrea') .
-            count($conflictstatus) . get_string('timeclashed', 'congrea'). '</div>');
+            var_dump($conflictstatus);
+            $mform->addElement('html', '<div class="alert alert-error">' . get_string('timeclashed', 'congrea') . '</div>');
             $mform->addElement('html', '<div class="overflow"><table class="generaltable" >
             <tr><th>' . get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
             '</th><th>' . get_string('timedur', 'congrea') . '</th><th>' . get_string('teacher', 'congrea') .
             '</th><th>' . get_string('repeatstatus', 'congrea') . '</th></tr>');
+            $count = 0;
             foreach ($conflictstatus as $conflictedevent) {
                 $schedule = userdate($conflictedevent->starttime);
+                $day = date('D', $conflictedevent->starttime);
                 $duration = $conflictedevent->endtime - $conflictedevent->starttime;
                 if ($conflictedevent->repeatid == 0) {
                     $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
                     '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
                     '</td><td> - </td></tr>');
+                    $count++;
                 } else {
                     if ($conflictedevent->repeatid == $conflictedevent->id) {
                         $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
                         '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
-                        '</td><td>' . $conflictedevent->description . '</td></tr>');
-                    }
-                    if ($conflictedevent->repeatid != $conflictedevent->id) {
-                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->repeatid . '</td><td>' .
-                        $schedule . '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
-                        '</td><td>' . $conflictedevent->description . '</td></tr>');
+                        '</td><td>' . $conflictedevent->description . ' ' . $day . '</td></tr>');
+                        $count++;
+                    } else {
+                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->repeatid . '</td><td>' . $schedule .
+                        '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                        '</td><td>' . $conflictedevent->description . ' ' . $day . '</td></tr>');
                     }
                 }
             }
             $mform->addElement('html', '</table></div>');
+           /*  $mform->addElement('html', '<h5 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '</h5>');
+            $mform->addElement('advcheckbox',
+            'conflicts',
+            get_string('conflicts', 'congrea'),
+            null,
+            null,
+            array(0, $conflict));
+            $mform->setDefault('conflicts', 0); */
         }
         $this->add_action_buttons();
     }
 
     /**
      * Validate this form.
-     *
+    *
      * @param array $data submitted data
      * @param array $files not used
      * @return array errors
