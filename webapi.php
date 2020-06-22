@@ -40,7 +40,7 @@ function set_header() {
         header("access-control-allow-origin:" . $_SERVER["HTTP_ORIGIN"]);
         header("Access-Control-Allow-Credentials: true");
     } else {
-        header("access-control-allow-origin: https://live.congrea.net/mobile/");
+        header("access-control-allow-origin: https://live.congrea.net/");
         header("Access-Control-Allow-Credentials: true");
     }
 }
