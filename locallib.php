@@ -951,7 +951,10 @@ function congrea_get_records($congrea, $type) {
             if ($records->repeatid == 0) {
                 $row[] = '-';
             } else {
-                $row[] = $records->description;
+                $days = date('D', ($records->timestart));
+                $row[] = (int)$records->description .
+                get_string('weeksevery', 'congrea') .
+                get_string(strtolower($days), 'calendar');
             }
             $table->data[] = $row;
         }
@@ -1216,21 +1219,17 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
     global $DB;
     if (!empty($newsessions)) {
         if (count($newsessions) > 1) {
-            $endtime = $newsessions[count($newsessions)-1]->endtime;
+            $endtime = $newsessions[count($newsessions) - 1]->endtime;
         } else {
             $endtime = $newsessions[0]->endtime;
         }
-		$dbsessions = $DB->get_records_sql(
-            'SELECT * FROM {event} WHERE (instance = ? AND modulename = ? AND courseid = ?) AND ((timestart + timeduration) > ? AND timestart < ?)',
-            [$congrea->id, 'congrea', $congrea->course, $newsessions[0]->starttime, $endtime]);
-            var_dump(userdate($newsessions[0]->starttime));
-            var_dump(userdate($newsessions[0]->endtime));
-            var_dump(userdate($endtime));
+        $dbsessions = $DB->get_records_sql('SELECT * FROM {event}
+        WHERE (instance = ? AND modulename = ? AND courseid = ?) AND ((timestart + timeduration) > ?
+        AND timestart < ?)', [$congrea->id, 'congrea', $congrea->course, $newsessions[0]->starttime, $endtime]);
     } else {
-        $dbsessions = $DB->get_records_sql(
-            'SELECT * FROM {event} WHERE (instance = ? AND modulename = ? AND courseid = ?) AND (timestart + timeduration) > ?',
-            [$congrea->id, 'congrea', $congrea->course, time()]
-        );
+        $dbsessions = $DB->get_records_sql('SELECT * FROM {event}
+        WHERE (instance = ? AND modulename = ? AND courseid = ?) AND (timestart + timeduration) > ?',
+        [$congrea->id, 'congrea', $congrea->course, time()]);
     }
     if ($edit) {
         $editsession = $DB->get_record('event', array('id' => $edit));
@@ -1271,7 +1270,7 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
     }
     if (!empty($existingsessions)) {
         if (!empty($newsessions)) {
-            $day = date('D', $newsessions[0]->starttime);
+            $day = date('D', strtotime("+1 week", $newsessions[0]->starttime));
             $mergedarray = array_merge($existingsessions, $newsessions);
         } else {
             $mergedarray = $existingsessions;
@@ -1279,68 +1278,31 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
         usort($mergedarray, 'comparestarttime');
         $arrlength = count($mergedarray);
         $conflicts = array();
-        $repeatedconflicts = array();
         for ($i = 0; $i < ($arrlength - 1); $i++) {
-            if (!empty($newsessions)) {
+            if (!empty($newsessions) || $edit) {
                 if ($newsessions[0]->endtime != 0) {
                     if (($mergedarray[$i]->endtime > $mergedarray[$i + 1]->starttime)) {
-                        if ($mergedarray[$i]->status == 'existing') {
-                            if (!empty($newsessions)) {
-                                if (count($newsessions) > 1) {
-                                    $daycheck = date('D', $mergedarray[$i + 1]->starttime);
-                                    if ($day === $daycheck) {
-                                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                                            continue;
-                                        } else {
-                                            array_push($conflicts, $mergedarray[$i]);
-                                        }
-                                    }
-                                } else {
-                                    array_push($conflicts, $mergedarray[$i]);
-                                }
-                            }
-                        } else if ($mergedarray[$i + 1]->status == 'existing') {
-                            if (!empty($newsessions)) {
-                                if (count($newsessions) > 1) {
-                                    $daycheck = date('D', $mergedarray[$i + 1]->starttime);
-                                    if ($day === $daycheck) {
-                                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                                            continue;
-                                        } else {
-                                            array_push($conflicts, $mergedarray[$i + 1]);
-                                        }
-                                    }
-                                } else {
-                                    array_push($conflicts, $mergedarray[$i + 1]);
-                                }
-                            }
-                        }
-
                         if (count($newsessions) > 1) {
                             if ($mergedarray[$i]->status == 'existing') {
-                                if (count($newsessions) > 1) {
-                                    $daycheck = date('D', $mergedarray[$i + 1]->starttime);
-                                    if ($day === $daycheck) {
-                                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                                            continue;
-                                        } else {
-                                            array_push($repeatedconflicts, $mergedarray[$i]);
-                                        }
+                                $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                if ($day === $daycheck) {
+                                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                        continue;
+                                    } else if (($mergedarray[$i]->status == 'existing') &&
+                                    ($mergedarray[$i + 1]->status == 'existing')) {
+                                        continue;
+                                    } else {
+                                        array_push($conflicts, $mergedarray[$i]);
                                     }
-                                } else {
-                                    array_push($conflicts, $mergedarray[$i]);
                                 }
                             } else if ($mergedarray[$i + 1]->status == 'existing') {
-                                if (!empty($newsessions)) {
-                                    if (count($newsessions) > 1) {
-                                        $daycheck = date('D', $mergedarray[$i + 1]->starttime);
-                                        if ($day === $daycheck) {
-                                            if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                                                continue;
-                                            } else {
-                                                array_push($repeatedconflicts, $mergedarray[$i + 1]);
-                                            }
-                                        }
+                                $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                if ($day === $daycheck) {
+                                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                        continue;
+                                    } else if (($mergedarray[$i]->status == 'existing') &&
+                                    ($mergedarray[$i + 1]->status == 'existing')) {
+                                        continue;
                                     } else {
                                         array_push($conflicts, $mergedarray[$i + 1]);
                                     }
@@ -1350,12 +1312,20 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
                             $j = ($arrlength - $i);
                             for ($i = $i; $i < $j - 1; $i++) {
                                 if ($var > $mergedarray[$i + 1]->starttime) {
-                                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
-                                        continue;
-                                    } else if ($mergedarray[$i]->status == 'existing') {
-                                        array_push($conflicts, $mergedarray[$i]);
-                                    } else if ($mergedarray[$i + 1]->status == 'existing') {
-                                        array_push($conflicts, $mergedarray[$i + 1]);
+                                    $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                    if ($day === $daycheck) {
+                                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                            continue;
+                                        } else {
+                                            if ($mergedarray[$i]->status == 'existing' &&
+                                            $mergedarray[$i + 1]->status == 'existing') {
+                                                array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                                            } else if ($mergedarray[$i]->status == 'existing') {
+                                                array_push($conflicts, $mergedarray[$i]);
+                                            } else {
+                                                array_push($conflicts, $mergedarray[$i + 1]);
+                                            }
+                                        }
                                     }
                                 } else {
                                     continue;
@@ -1367,7 +1337,13 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
                             for ($i = $i; $i < $l - 1; $i++) {
                                 $var = $mergedarray[$i]->endtime;
                                 if (($var > $mergedarray[$i + 1]->starttime)) {
-                                    array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                                    if ($mergedarray[$i]->status == 'existing' && $mergedarray[$i + 1]->status == 'existing') {
+                                        array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                                    } else if ($mergedarray[$i]->status == 'existing') {
+                                        array_push($conflicts, $mergedarray[$i]);
+                                    } else {
+                                        array_push($conflicts, $mergedarray[$i + 1]);
+                                    }
                                 } else {
                                     continue;
                                 }
@@ -1378,8 +1354,30 @@ function check_conflicts($congrea, $newsessions = false, $edit = false) {
                     \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
                     break;
                 }
+            } else {
+                $var = $mergedarray[$i]->endtime;
+                $l = ($arrlength - $i);
+                for ($i = $i; $i < $l - 1; $i++) {
+                    $var = $mergedarray[$i]->endtime;
+                    if (($var > $mergedarray[$i + 1]->starttime)) {
+                        if ($mergedarray[$i]->status == 'existing' && $mergedarray[$i + 1]->status == 'existing') {
+                            array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                        } else if ($mergedarray[$i]->status == 'existing') {
+                            array_push($conflicts, $mergedarray[$i]);
+                        } else {
+                            array_push($conflicts, $mergedarray[$i + 1]);
+                        }
+                    } else {
+                        continue;
+                    }
+                }
             }
         }
+        $sortedconflicts = array();
+        foreach ($conflicts as $value) {
+            $sortedconflicts[serialize($value)] = $value;
+        }
+        $conflicts = array_values($sortedconflicts);
         return  $conflicts;
     }
 }

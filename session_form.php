@@ -41,6 +41,7 @@ class mod_congrea_session_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
+        global $DB;
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $edit = $this->_customdata['edit'];
@@ -57,9 +58,19 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('conflictstatus', PARAM_CLEANHTML);
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
+            $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
+            $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
+            $mform->setType('fromsessiondate', PARAM_CLEANHTML);
+        } else {
+            $record = $DB->get_record('event', array('id' => $edit));
+            $startdate = $record->timestart;
+            $attributes = array(
+            'optional'  => $record->timestart
+            );
+            $mform->addElement('hidden', 'fromsessiondate', get_string('fromsessiondate', 'congrea'), $attributes);
+            $mform->setType('fromsessiondate', PARAM_CLEANHTML);
+            $mform->setDefault( 'fromsessiondate', $startdate);
         }
-        $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
-        $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
@@ -76,10 +87,12 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('advcheckbox', 'addmultiple', '',
         get_string('repeatevent', 'calendar'),
         array('group' => 1), array(0, 1));
+        if ($edit) {
+            $mform->hideIf('fromsessiondate', 'edit', 'notchecked');
+        }
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
         $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('sessions', 'congrea'));
@@ -92,10 +105,9 @@ class mod_congrea_session_form extends moodleform {
                 $sortedconflicts[serialize($value)] = $value;
             }
             $conflictstatus = array_values($sortedconflicts);
-            var_dump($conflictstatus);
             $mform->addElement('html', '<div class="alert alert-error">' . get_string('timeclashed', 'congrea') . '</div>');
-            $mform->addElement('html', '<div class="overflow"><table class="generaltable" >
-            <tr><th>' . get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
+            $mform->addElement('html', '<div class="overflow"><table class="generaltable"><tr><th>' .
+            get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
             '</th><th>' . get_string('timedur', 'congrea') . '</th><th>' . get_string('teacher', 'congrea') .
             '</th><th>' . get_string('repeatstatus', 'congrea') . '</th></tr>');
             $count = 0;
@@ -112,31 +124,25 @@ class mod_congrea_session_form extends moodleform {
                     if ($conflictedevent->repeatid == $conflictedevent->id) {
                         $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
                         '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
-                        '</td><td>' . $conflictedevent->description . ' ' . $day . '</td></tr>');
+                        '</td><td>' . (int)$conflictedevent->description .
+                        get_string('weeksevery', 'congrea') . $day . '</td></tr>');
                         $count++;
                     } else {
                         $mform->addElement('html', '<tr><td>#' . $conflictedevent->repeatid . '</td><td>' . $schedule .
                         '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
-                        '</td><td>' . $conflictedevent->description . ' ' . $day . '</td></tr>');
+                        '</td><td>' . (int)$conflictedevent->description .
+                        get_string('weeksevery', 'congrea') . $day . '</td></tr>');
+                        $count++;
                     }
                 }
             }
             $mform->addElement('html', '</table></div>');
-           /*  $mform->addElement('html', '<h5 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '</h5>');
-            $mform->addElement('advcheckbox',
-            'conflicts',
-            get_string('conflicts', 'congrea'),
-            null,
-            null,
-            array(0, $conflict));
-            $mform->setDefault('conflicts', 0); */
+            $mform->addElement('html', '<h6 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '<h6>');
         }
         $this->add_action_buttons();
     }
-
     /**
      * Validate this form.
-    *
      * @param array $data submitted data
      * @param array $files not used
      * @return array errors

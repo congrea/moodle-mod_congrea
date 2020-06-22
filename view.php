@@ -620,7 +620,8 @@ if ($session) {
                 }
                 $connect = json_decode($sattendence->connect);
                 $disconnect = json_decode($sattendence->disconnect);
-                $studentsstatus = calctime($connect, $disconnect, $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                $studentsstatus = (object)calctime($connect, $disconnect, $sessionstatus->sessionstarttime,
+                $sessionstatus->sessionendtime);
                 if (
                     !empty($studentsstatus->totalspenttime)
                     and $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime
