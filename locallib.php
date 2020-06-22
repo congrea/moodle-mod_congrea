@@ -114,7 +114,7 @@ function congrea_online_server(
     # expectedendtime is pending
     $username = $USER->firstname . ' ' . $USER->lastname;
     $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
-    &upload={$upload}&down={$down}&debug={$debug}&congreacolor={$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
+    &upload={$upload}&down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
     &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}&settings={$hexcode}&sstart={$sstart}&send={$send}&language=".current_language();
     
     //encrypt query string to base64
@@ -242,7 +242,7 @@ function congrea_online_server_play(
     
     $username = $USER->firstname . ' ' . $USER->lastname;
     $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
-    &upload={$upload}&down={$down}&debug={$debug}&congreacolor={$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
+    &upload={$upload}&down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
     &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}&settings={$hexcode}&play=1";
     //encrypt query string to base64
     $query_string = b64link_encode($query_string);
