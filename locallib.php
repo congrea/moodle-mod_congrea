@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 define('SEVEN_DAYS', 1);
 define('THIRTY_DAYS', 2);
 define('THREE_MONTH', 3);
-
+define('ALL', 4);
 /**
  * Get list of teacher of current course
  * serving for virtual class
@@ -75,6 +75,7 @@ function congrea_course_teacher_list($cmid) {
  * @param boolean $joinbutton
  * @param integer $sstart
  * @param integer $send
+ * @param integer $nextsessionstarttime
  * @return string
  */
 function congrea_online_server(
@@ -98,7 +99,8 @@ function congrea_online_server(
     $hexcode,
     $joinbutton = false,
     $sstart,
-    $send
+    $send,
+    $nextsessionstarttime
 ) {
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
@@ -126,6 +128,8 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextsessionstarttime',
+    'value' => $nextsessionstarttime));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     if (!$joinbutton) {
@@ -309,21 +313,20 @@ $teacherid, $instanceid, $sessionid, $timeduration) {
  * @param object $congrea
  * @param object $data
  * @param int $startdate
- * @param int $presenter
- * @param int $repeatid
- * @param int $weeks
+ * @param int $edit
  * @return bool
  */
-function repeat_calendar($congrea, $data, $startdate, $presenter, $repeatid, $weeks) {
+function repeat_calendar($congrea, $data, $startdate, $edit) {
     $event = new stdClass();
     $event->name = $congrea->name;
+    $event->uuid = uuidv4();
     $event->description = $data->description;
     $event->timestart = $startdate;
     $event->format = 1;
     $event->courseid = $congrea->course;
     $event->groupid = 0;
-    $event->userid = $presenter;
-    $event->repeatid = $repeatid;
+    $event->userid = $data->userid;
+    $event->repeatid = $edit;
     $event->modulename = 'congrea';
     $event->instance = $congrea->id;
     $event->eventtype = 'session start';
@@ -851,7 +854,8 @@ function congrea_get_dropdown() {
     return array(
         SEVEN_DAYS => get_string('next7sessions', 'congrea'),
         THIRTY_DAYS => get_string('next30sessions', 'congrea'),
-        THREE_MONTH => get_string('next90sessions', 'congrea')
+        THREE_MONTH => get_string('next90sessions', 'congrea'),
+        ALL => get_string('allsessions', 'congrea')
     );
 }
 
@@ -884,35 +888,77 @@ function congrea_print_dropdown_form($id, $drodowndisplaymode) {
  * @param int $type
  */
 function congrea_get_records($congrea, $type) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $CFG;
     $table = new html_table();
-    $table->head = array(get_string('dateandtime', 'congrea'),
+    $table->head = array(get_string('scheduleid', 'congrea'),
+    get_string('dateandtime', 'congrea'),
     get_string('timedur', 'congrea'),
-    get_string('teacher', 'congrea'));
+    get_string('teacher', 'congrea'),
+    get_string('repeatstatus', 'congrea'));
     $timestart = time();
-    $sql = "SELECT * FROM {event} where modulename = 'congrea' and instance = $congrea->id and timestart >= $timestart ORDER BY timestart ASC LIMIT $type"; // To do.
-    $sessionlist = $DB->get_records_sql($sql);
-    if ($type == 1) {
-        return $sessionlist;
+    $sql = "SELECT * FROM {event} WHERE modulename = 'congrea' AND instance = $congrea->id AND timestart >= $timestart ORDER BY timestart ASC"; // TODO:.
+    if (($type > 1)) {
+        $rs = (object)$DB->get_recordset_sql($sql, null, 0, $type);
+    } else {
+        $rs = (object)$DB->get_recordset_sql($sql);
     }
-    if (!empty($sessionlist)) {
-        foreach ($sessionlist as $list) {
+    if ($type == 1) {
+        $rs = (object)$DB->get_recordset_sql($sql);
+        return $rs;
+    }
+    $conflictedsessions = (array)check_conflicts($congrea);
+    if (!empty($conflictedsessions)) {
+        echo '<p> </p>';
+        echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-error'));
+        foreach ($conflictedsessions as $conflictedsession) {
+            $conflictedids[] = $conflictedsession->id;
+        }
+    }
+    if ($rs->valid()) {
+        foreach ($rs as $records) {
             $row = array();
-            $row[] = userdate($list->timestart);
-            if ($list->timeduration != 0) {
-                $row[] = round($list->timeduration / 60) . get_string('mins', 'congrea');
+            if ($records->repeatid != 0) {
+                $row[] = "#" . $records->repeatid;
+            } else {
+                $row[] = "#" . $records->id;
+            }
+            if (!empty($conflictedids)) {
+                if (in_array($records->id, $conflictedids)) {
+                    $imageurl = "$CFG->wwwroot/mod/congrea/pix/alarm-clock.png";
+                    $row[] = html_writer::empty_tag('img', array(
+                        'src' => $imageurl,
+                        'alt' => 'Conflicted schedule', 'class' => 'conflict', 'style' => 'width:20px; padding-right:2px'
+                    ))
+                    . userdate($records->timestart);
+                } else {
+                    $row[] = userdate($records->timestart);
+                }
+            } else {
+                $row[] = userdate($records->timestart);
+            }
+            if ($records->timeduration != 0) {
+                $row[] = sectohour($records->timeduration);
             } else {
                 $row[] = get_string('openended', 'congrea');
             }
-            $presenter = $DB->get_record('user', array('id' => $list->userid));
+            $presenter = $DB->get_record('user', array('id' => $records->userid));
             if (!empty($presenter)) {
                 $username = $presenter->firstname . ' ' . $presenter->lastname; // Todo-for function.
             } else {
                 $username = get_string('nouser', 'mod_congrea');
             }
             $row[] = $username;
+            if ($records->repeatid == 0) {
+                $row[] = '-';
+            } else {
+                $days = date('D', ($records->timestart));
+                $row[] = (int)$records->description .
+                get_string('weeksevery', 'congrea') .
+                get_string(strtolower($days), 'calendar');
+            }
             $table->data[] = $row;
         }
+        $rs->close();
         if (!empty($table->data)) {
             echo html_writer::start_tag('div', array('class' => 'no-overflow'));
             echo html_writer::table($table);
@@ -1101,37 +1147,286 @@ function repeat_date_list_check($startdate, $expecteddate, $days, $duration) {
 }
 
 /** Function to send auth detail to server.
- * @param int $cgapi
- * @param int $cgsecret
+ * @param string $cgapi
+ * @param string $cgsecret
  * @param boolean $recordingstatus
- * @param int $course
- * @param int $cm
+ * @param object $course
+ * @param object $cm
  * @param string $role
+ * @param string $sessionuuid
  *
  * @return object $authdata
  */
-function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role='s') {
-    $authusername = substr(str_shuffle(md5(microtime())), 0, 20);
-    $authpassword = substr(str_shuffle(md5(microtime())), 0, 20);
+function get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role = 's', $sessionuuid = false) {
     $licensekey = $cgapi;
     $secret = $cgsecret;
-    $recording = $recordingstatus;
     $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
-    $authdata = array('authuser' => $authusername, 'authpass' => $authpassword, 'role' => $role,
-                'room' => $room, 'recording' => $recording);
+    if (empty($sessionuuid)) {
+        $authdata = array('role' => $role, 'room' => $room, 'recording' => $recordingstatus);
+    } else {
+        $authdata = array('role' => $role, 'room' => $room, 'recording' => $recordingstatus, 'session' => $sessionuuid);
+    }
     $postdata = json_encode($authdata);
-    $rid = congrea_curl_request("https://api.congrea.net/backend/auth", $postdata, $licensekey, $secret);
+    $rid = congrea_curl_request("https://api.congrea.net/backend/authv2", $postdata, $licensekey, $secret);
     if (!$rid = json_decode($rid)) {
         echo "{\"error\": \"403\"}";
         exit;
     } else if (isset($rid->message)) {
         echo "{\"error\": \"$rid->message\"}";
         exit;
-    } else if (!isset($rid->result)) {
+    } else if (!isset($rid->url)) {
         echo "{\"error\": \"invalid\"}";
         exit;
     }
-    $rid = "wss://$rid->result";
-    $authdata = (object) array_merge( (array)$authdata, array( 'path' => $rid));
+    $rid->url = "wss://$rid->url";
+    $authdata = (object) array_merge( (array)$authdata,
+    array('authuser' => $rid->key, 'authpass' => $rid->secret, 'path' => $rid->url));
     return $authdata;
+}
+
+/** Function to create UUID for sessions.
+ *
+ * @return object $sessionid
+ */
+function uuidv4() {
+    $data = random_bytes(16);
+
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100.
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set bits 6-7 to 10.
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
+/**
+ * Compare start time to sort array in ascending order
+ * @param object $a
+ * @param object $b
+ *
+ * @return boolean
+ */
+function comparestarttime($a, $b) {
+    return $a->starttime - $b->starttime;
+}
+
+/**
+ * Get conflicts.
+ * @param object $congrea
+ * @param array $newsessions
+ * @param integer $edit
+ *
+ * @return array
+ */
+function check_conflicts($congrea, $newsessions = false, $edit = false) {
+    // TODO: later will need more parameters.
+    global $DB;
+    if (!empty($newsessions)) {
+        if (count($newsessions) > 1) {
+            $endtime = $newsessions[count($newsessions) - 1]->endtime;
+        } else {
+            $endtime = $newsessions[0]->endtime;
+        }
+        $dbsessions = $DB->get_records_sql('SELECT * FROM {event}
+        WHERE (instance = ? AND modulename = ? AND courseid = ?) AND ((timestart + timeduration) > ?
+        AND timestart < ?)', [$congrea->id, 'congrea', $congrea->course, $newsessions[0]->starttime, $endtime]);
+    } else {
+        $dbsessions = $DB->get_records_sql('SELECT * FROM {event}
+        WHERE (instance = ? AND modulename = ? AND courseid = ?) AND (timestart + timeduration) > ?',
+        [$congrea->id, 'congrea', $congrea->course, time()]);
+    }
+    if ($edit) {
+        $editsession = $DB->get_record('event', array('id' => $edit));
+        if ($editsession->repeatid != 0) {
+            $editsession = $DB->get_records('event', array('repeatid' => $edit));
+            foreach ($editsession as $session) {
+                $editid[] = $session->id;
+            }
+        } else {
+            $editsession = $DB->get_record('event', array('id' => $edit));
+            $editid[] = $editsession->id;
+        }
+    }
+    foreach ($dbsessions as $data) {
+        if (($data->timestart + $data->timeduration) > time()) {
+            $starttime = (int)($data->timestart);
+            $endtime = $data->timestart + $data->timeduration;
+            $moderator = $data->userid;
+            $courseid = $data->courseid;
+            $moderatorid = $DB->get_record('user', array('id' => $moderator));
+            if (!empty($moderatorid)) {
+                $username = $moderatorid->firstname . ' ' . $moderatorid->lastname; // Todo-for function.
+            } else {
+                $username = get_string('nouser', 'mod_congrea');
+            }
+            if ($edit) {
+                if (!in_array($data->id, $editid)) {
+                    $existingsessions[] = (object) array('id' => $data->id, 'starttime' => $starttime, 'endtime' => $endtime,
+                    'status' => 'existing', 'presenter' => $username, 'course' => $courseid,
+                    'repeatid' => $data->repeatid, 'description' => $data->description, 'courseid' => $courseid);
+                }
+            } else {
+                $existingsessions[] = (object) array('id' => $data->id, 'starttime' => $starttime, 'endtime' => $endtime,
+                'status' => 'existing', 'presenter' => $username, 'course' => $courseid,
+                'repeatid' => $data->repeatid, 'description' => $data->description, 'courseid' => $courseid);
+            }
+        }
+    }
+    if (!empty($existingsessions)) {
+        if (!empty($newsessions)) {
+            $day = date('D', strtotime("+1 week", $newsessions[0]->starttime));
+            $mergedarray = array_merge($existingsessions, $newsessions);
+        } else {
+            $mergedarray = $existingsessions;
+        }
+        usort($mergedarray, 'comparestarttime');
+        $arrlength = count($mergedarray);
+        $conflicts = array();
+        for ($i = 0; $i < ($arrlength - 1); $i++) {
+            if (!empty($newsessions) || $edit) {
+                if ($newsessions[0]->endtime != 0) {
+                    if (($mergedarray[$i]->endtime > $mergedarray[$i + 1]->starttime)) {
+                        if (count($newsessions) > 1) {
+                            if ($mergedarray[$i]->status == 'existing') {
+                                $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                if ($day === $daycheck) {
+                                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                        continue;
+                                    } else if (($mergedarray[$i]->status == 'existing') &&
+                                    ($mergedarray[$i + 1]->status == 'existing')) {
+                                        continue;
+                                    } else {
+                                        array_push($conflicts, $mergedarray[$i]);
+                                    }
+                                }
+                            } else if ($mergedarray[$i + 1]->status == 'existing') {
+                                $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                if ($day === $daycheck) {
+                                    if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                        continue;
+                                    } else if (($mergedarray[$i]->status == 'existing') &&
+                                    ($mergedarray[$i + 1]->status == 'existing')) {
+                                        continue;
+                                    } else {
+                                        array_push($conflicts, $mergedarray[$i + 1]);
+                                    }
+                                }
+                            }
+                            $var = $mergedarray[$i]->endtime;
+                            $j = ($arrlength - $i);
+                            for ($i = $i; $i < $j - 1; $i++) {
+                                if ($var > $mergedarray[$i + 1]->starttime) {
+                                    $daycheck = date('D', strtotime("+1 week", $mergedarray[$i + 1]->starttime) );
+                                    if ($day === $daycheck) {
+                                        if (($mergedarray[$i]->status == 'new') && ($mergedarray[$i + 1]->status == 'new')) {
+                                            continue;
+                                        } else {
+                                            if ($mergedarray[$i]->status == 'existing' &&
+                                            $mergedarray[$i + 1]->status == 'existing') {
+                                                array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                                            } else if ($mergedarray[$i]->status == 'existing') {
+                                                array_push($conflicts, $mergedarray[$i]);
+                                            } else {
+                                                array_push($conflicts, $mergedarray[$i + 1]);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    continue;
+                                }
+                            }
+                        } else { // For Single sessions conflicts.
+                            $var = $mergedarray[$i]->endtime;
+                            $l = ($arrlength - $i);
+                            for ($i = $i; $i < $l - 1; $i++) {
+                                $var = $mergedarray[$i]->endtime;
+                                if (($var > $mergedarray[$i + 1]->starttime)) {
+                                    if ($mergedarray[$i]->status == 'existing' && $mergedarray[$i + 1]->status == 'existing') {
+                                        array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                                    } else if ($mergedarray[$i]->status == 'existing') {
+                                        array_push($conflicts, $mergedarray[$i]);
+                                    } else {
+                                        array_push($conflicts, $mergedarray[$i + 1]);
+                                    }
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    \core\notification::error(get_string('onlysingleinfinite', 'congrea'));
+                    break;
+                }
+            } else {
+                $var = $mergedarray[$i]->endtime;
+                $l = ($arrlength - $i);
+                for ($i = $i; $i < $l - 1; $i++) {
+                    $var = $mergedarray[$i]->endtime;
+                    if (($var > $mergedarray[$i + 1]->starttime)) {
+                        if ($mergedarray[$i]->status == 'existing' && $mergedarray[$i + 1]->status == 'existing') {
+                            array_push($conflicts, $mergedarray[$i], $mergedarray[$i + 1]);
+                        } else if ($mergedarray[$i]->status == 'existing') {
+                            array_push($conflicts, $mergedarray[$i]);
+                        } else {
+                            array_push($conflicts, $mergedarray[$i + 1]);
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        $sortedconflicts = array();
+        foreach ($conflicts as $value) {
+            $sortedconflicts[serialize($value)] = $value;
+        }
+        $conflicts = array_values($sortedconflicts);
+        return  $conflicts;
+    }
+}
+
+/**
+ * Returns array of new sessions list to be created
+ * @param object $event
+ * @param integer $hours
+ * @param integer $mins
+ *
+ * @return array $newevents
+ */
+function create_new_sessions($event, $hours, $mins) {
+    $starttime = $event->timestart;
+    $endtime = $starttime + $event->timeduration;
+    $sessions = (int)$event->description;
+    $newevents[] = (object) array('starttime' => $starttime, 'endtime' => $endtime,
+    'status' => 'new', 'presenter' => $event->userid, 'course' => $event->courseid, 'week' => $sessions);
+    $nextdate = $event->timestart;
+    while ($sessions > 1) {
+        $nextdate = date("Y-m-d", strtotime("+1 week", $nextdate));
+        $time = new DateTime('now', core_date::get_user_timezone_object());
+        $time->setTimestamp(strtotime($nextdate));
+        $time->setTime($hours, $mins, 0);
+        $nextdate = $time->getTimestamp();
+        $starttime = $nextdate;
+        $endtime = $starttime + $event->timeduration;
+        $newevents[] = (object) array('starttime' => $starttime, 'endtime' => $endtime,
+        'status' => 'new', 'presenter' => $event->userid, 'course' => $event->courseid, 'week' => $sessions);
+        $sessions = $sessions - 1;
+    }
+    return $newevents;
+}
+
+/**
+ * Convert seconds to readable time
+ * @param integer $seconds
+ *
+ * @return string
+ */
+function sectohour($seconds) {
+    $hours = floor($seconds / 3600);
+    $minutes = floor(($seconds / 60) % 60);
+    if (($hours > 0) && ($minutes > 0)) {
+        $timeformat = $hours . get_string('hours', 'congrea') . $minutes . get_string('mins', 'congrea');
+    } else if (($hours == 0) && ($minutes > 0)) {
+        $timeformat = $minutes . get_string('mins', 'congrea');
+    } else if (($hours > 0) && ($minutes == 0)) {
+        $timeformat = $hours . get_string('hours', 'congrea');
+    }
+    return $timeformat;
 }

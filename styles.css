@@ -18,7 +18,6 @@
 }
 
 #page-mod-congrea-quizreport table.flexible thead th,
-.generaltable thead th.header.c4,
 .generaltable thead th.header.c5,
 #page-mod-congrea-quizreport .generaltable td.cell.c4,
 #page-mod-congrea-quizreport .generaltable td.cell.c5 {
@@ -60,7 +59,6 @@ table.studentEnd tbody tr td.c4 p {
     border: none;
     padding-top: 1px;
     float: left;
-    margin-right: 0px;
     box-shadow: unset;
     height: 20px;
     margin-top: 3px;
@@ -160,4 +158,8 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 
 #page-mod-congrea-sessionsettings #page-content .mform fieldset.error {
     border: 1px solid #fff;
+}
+div#id_error_timeduration.form-control-feedback.invalid-feedback {
+    width: 0%;
+    display:none!important;
 }

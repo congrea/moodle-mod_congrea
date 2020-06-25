@@ -38,7 +38,7 @@ $sessionname = optional_param('sessionname', '', PARAM_CLEANHTML);   // Md5 conf
 $upcomingsession = optional_param('upcomingsession', 0, PARAM_INT);
 $psession = optional_param('psession', 0, PARAM_INT);
 $sessionsettings = optional_param('sessionsettings', 0, PARAM_INT);
-$drodowndisplaymode = optional_param('drodowndisplaymode', 0, PARAM_INT);
+$drodowndisplaymode = optional_param('drodowndisplaymode', 1, PARAM_INT);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -68,18 +68,18 @@ if (!empty($sessionlist)) {
     }
 }
 if (!empty($infinitesessions)) {
-    $currentsql = "SELECT id, timestart, timeduration, userid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timeduration = 0";
+    $currentsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timeduration = 0";
     $upcomingdata = '';
 } else {
-    $currentsql = "SELECT id, timestart, timeduration, userid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timestart <= $time and (timestart + (timeduration)) > $time";
-    $upcomingsql = "SELECT id, timestart, timeduration, userid from {event}"
-    . " where instance = $congrea->id and modulename = 'congrea' and timestart >= $time ORDER BY timestart ASC LIMIT 1";
+    $currentsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timestart <= $time AND (timestart + (timeduration)) > $time";
+    $upcomingsql = "SELECT id, timestart, timeduration, userid, uuid FROM {event}
+    WHERE instance = $congrea->id AND modulename = 'congrea' AND timestart >= $time ORDER BY timestart ASC";
     $upcomingdata = $DB->get_records_sql($upcomingsql);
 }
 $currentdata = $DB->get_records_sql($currentsql);
-
+$nextsessionstarttime = 0;
 if (empty($currentdata) and empty($upcomingdata)) { // Todo.
     $duration = 0;
     $teacherid = 0;
@@ -91,9 +91,16 @@ if (!empty($currentdata)) {
     $sessionstarttime = $currentdata[$eventid]->timestart;
     $duration = $currentdata[$eventid]->timeduration;
     $teacherid = $currentdata[$eventid]->userid;
+    $uuid = $currentdata[$eventid]->uuid;
     $starttime = date("Y-m-d H:i:s", $sessionstarttime);
     $endtime = date('Y-m-d H:i:s', strtotime("+$duration seconds", strtotime($starttime)));
     $sessionendtime = strtotime($endtime);
+    if ($duration != 0) {
+        sort($upcomingdata);
+        if (count($upcomingdata) > 1) {
+            $nextsessionstarttime = $upcomingdata[0]->timestart;
+        }
+    }
 } else { // Todo.
     if (!empty($upcomingdata)) {
         $eventid = congrea_array_key_first($upcomingdata);
@@ -230,7 +237,13 @@ if (has_capability('mod/congrea:sessionpresent', $context) && ($USER->id == $tea
 if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = get_config('mod_congrea', 'cgsecretpassword'))) {
     $cgcolor = get_config('mod_congrea', 'colorpicker');
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
-        $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
+        if (!empty($uuid)) {
+            $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role, $uuid); // Call to authdata.
+            $uuid = $uuid;
+        } else {
+            $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
+            $uuid = '';
+        }
         $authusername = $authdata->authuser;
         $authpassword = $authdata->authpass;
         $role = $authdata->role;
@@ -462,7 +475,8 @@ if (($sessionendtime > time() && $sessionstarttime <= time()) || (!empty($infini
         $hexcode,
         $joinbutton,
         $sessionstarttime,
-        $sessionendtime
+        $sessionendtime,
+        $nextsessionstarttime
     );
     echo $form;
 } else {
@@ -484,7 +498,6 @@ if ($psession) {
         $recdata = json_decode($result);
         $recording = json_decode($recdata->data);
     }
-
     if (!empty($recording->Items) and !$session) {
         rsort($recording->Items);
         echo $OUTPUT->heading(get_string('recordedsessions', 'mod_congrea'));
@@ -508,7 +521,6 @@ if ($psession) {
         $row[] = $record->name . ' ' . mod_congrea_module_get_rename_action($cm, $record);
         $row[] = userdate($record->time / 1000); // Todo.
         $vcsid = $record->key_room; // Todo.
-        // Attendance button.
         if (has_capability('mod/congrea:attendance', $context)) {
             $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
             $attendancereport = html_writer::link(
@@ -608,7 +620,8 @@ if ($session) {
                 }
                 $connect = json_decode($sattendence->connect);
                 $disconnect = json_decode($sattendence->disconnect);
-                $studentsstatus = calctime($connect, $disconnect, $sessionstatus->sessionstarttime, $sessionstatus->sessionendtime);
+                $studentsstatus = (object)calctime($connect, $disconnect, $sessionstatus->sessionstarttime,
+                $sessionstatus->sessionendtime);
                 if (
                     !empty($studentsstatus->totalspenttime)
                     and $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime
@@ -742,16 +755,23 @@ if (!$psession) {
     echo html_writer::end_tag('div');
     echo '</br>';
 }
-if ($upcomingsession || $upcomingsession == 0 and !$psession) {
-    if (!empty(congrea_get_records($congrea, 1))) {
+if ($upcomingsession || $upcomingsession == 0 && !$psession) {
+    if (count($sessionlist) > 1) {
         congrea_print_dropdown_form($cm->id, $drodowndisplaymode);
     }
-    if ($drodowndisplaymode == 1 || $drodowndisplaymode == 0 and !$psession) {
-        congrea_get_records($congrea, 7);
-    } else if ($drodowndisplaymode == 2) {
-        congrea_get_records($congrea, 30);
-    } else if ($drodowndisplaymode == 3) {
-        congrea_get_records($congrea, 90);
+    switch ($drodowndisplaymode) {
+        case 1:
+            congrea_get_records($congrea, 7);
+            break;
+        case 2:
+            congrea_get_records($congrea, 30);
+            break;
+        case 3:
+            congrea_get_records($congrea, 90);
+            break;
+        case 4:
+            congrea_get_records($congrea, 0);
+            break;
     }
 }
 echo $OUTPUT->footer();

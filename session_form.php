@@ -41,12 +41,12 @@ class mod_congrea_session_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
+        global $DB;
         $mform = $this->_form;
         $id = $this->_customdata['id'];
-        $sessionsettings = $this->_customdata['sessionsettings'];
         $edit = $this->_customdata['edit'];
         $action = $this->_customdata['action'];
-        $mform->addElement('hidden', 'sessionsettings', $sessionsettings);
+        $conflictstatus = $this->_customdata['conflictstatus'];
         $mform->setType('sessionsettings', PARAM_INT);
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
@@ -54,20 +54,31 @@ class mod_congrea_session_form extends moodleform {
         $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'action', $action);
         $mform->setType('action', PARAM_CLEANHTML);
+        $mform->addElement('hidden', 'conflictstatus', $conflictstatus);
+        $mform->setType('conflictstatus', PARAM_CLEANHTML);
         if (!$edit) {
             $mform->addElement('header', 'sessionsheader', get_string('sessionsettings', 'mod_congrea'));
+            $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
+            $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
+            $mform->setType('fromsessiondate', PARAM_CLEANHTML);
+        } else {
+            $record = $DB->get_record('event', array('id' => $edit));
+            $startdate = $record->timestart;
+            $attributes = array(
+            'optional'  => $record->timestart
+            );
+            $mform->addElement('hidden', 'fromsessiondate', get_string('fromsessiondate', 'congrea'), $attributes);
+            $mform->setType('fromsessiondate', PARAM_CLEANHTML);
+            $mform->setDefault( 'fromsessiondate', $startdate);
         }
-
-        $mform->addElement('date_time_selector', 'fromsessiondate', get_string('fromsessiondate', 'congrea'));
-        $mform->addHelpButton('fromsessiondate', 'fromsessiondate', 'congrea');
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
         $durationfield[] =& $mform->createElement('text', 'timeduration', '', array('size' => 4));
         $durationfield[] =& $mform->createElement('static', 'repeattext', '', get_string('mins', 'congrea'));
         $mform->addGroup($durationfield, 'timeduration', get_string('timeduration', 'congrea'), array(' '), false);
         $mform->addHelpButton('timeduration', 'timeduration', 'congrea');
-        $mform->addRule('timeduration', null, 'required', null, 'client');
-        $mform->addRule('timeduration', null, 'numeric', null, 'client');
+        $mform->addRule('timeduration', get_string('blankduration', 'congrea'), 'required', null, 'client');
+        $mform->addRule('timeduration', get_string('blankduration', 'congrea'), 'numeric', null, 'client');
         // Select teacher.
         $teacheroptions = congrea_course_teacher_list($id);
         $mform->addElement('select', 'moderatorid', get_string('selectteacher', 'congrea'), $teacheroptions);
@@ -76,22 +87,62 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('advcheckbox', 'addmultiple', '',
         get_string('repeatevent', 'calendar'),
         array('group' => 1), array(0, 1));
+        if ($edit) {
+            $mform->hideIf('fromsessiondate', 'edit', 'notchecked');
+        }
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
         $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
         $weeks = array();
         $weeks[] = $mform->createElement('select', 'week', '', $week, false, true);
         $weeks[] = $mform->createElement('static', 'weekdesc', '', get_string('sessions', 'congrea'));
         $mform->addGroup($weeks, 'weeks', get_string('repeatweeksl', 'calendar'), '', false);
         $mform->hideIf('weeks', 'timeduration', 'eq', 0);
         $mform->hideIf('weeks', 'addmultiple', 'eq', 0);
+        if (!empty($conflictstatus)) {
+            $sortedconflicts = array();
+            foreach ($conflictstatus as $value) {
+                $sortedconflicts[serialize($value)] = $value;
+            }
+            $conflictstatus = array_values($sortedconflicts);
+            $mform->addElement('html', '<div class="alert alert-error">' . get_string('timeclashed', 'congrea') . '</div>');
+            $mform->addElement('html', '<div class="overflow"><table class="generaltable"><tr><th>' .
+            get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
+            '</th><th>' . get_string('timedur', 'congrea') . '</th><th>' . get_string('teacher', 'congrea') .
+            '</th><th>' . get_string('repeatstatus', 'congrea') . '</th></tr>');
+            $count = 0;
+            foreach ($conflictstatus as $conflictedevent) {
+                $schedule = userdate($conflictedevent->starttime);
+                $day = date('D', $conflictedevent->starttime);
+                $duration = $conflictedevent->endtime - $conflictedevent->starttime;
+                if ($conflictedevent->repeatid == 0) {
+                    $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
+                    '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                    '</td><td> - </td></tr>');
+                    $count++;
+                } else {
+                    if ($conflictedevent->repeatid == $conflictedevent->id) {
+                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->id . '</td><td>' . $schedule .
+                        '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                        '</td><td>' . (int)$conflictedevent->description .
+                        get_string('weeksevery', 'congrea') . $day . '</td></tr>');
+                        $count++;
+                    } else {
+                        $mform->addElement('html', '<tr><td>#' . $conflictedevent->repeatid . '</td><td>' . $schedule .
+                        '</td><td>' . sectohour($duration) . '</td><td>' . $conflictedevent->presenter .
+                        '</td><td>' . (int)$conflictedevent->description .
+                        get_string('weeksevery', 'congrea') . $day . '</td></tr>');
+                        $count++;
+                    }
+                }
+            }
+            $mform->addElement('html', '</table></div>');
+            $mform->addElement('html', '<h6 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '<h6>');
+        }
         $this->add_action_buttons();
     }
-
     /**
      * Validate this form.
-     *
      * @param array $data submitted data
      * @param array $files not used
      * @return array errors
@@ -100,13 +151,8 @@ class mod_congrea_session_form extends moodleform {
         $errors = parent::validation($data, $files);
         $durationinminutes = $data['timeduration'];
         $currentdate = time();
-        $previousday = strtotime(date('Y-m-d H:i:s', strtotime("-24 hours", $currentdate)));
-        if ($data['fromsessiondate'] < $previousday) {
+        if ($data['fromsessiondate'] < $currentdate - 600) {
             $errors['fromsessiondate'] = get_string('esessiondate', 'congrea');
-        }
-        $expr = '/^[0-9][0-9]*$/';
-        if (!preg_match($expr, $durationinminutes)) {
-            $errors['timeduration'] = get_string('onlyintegerallowed', 'congrea');
         }
         if (($durationinminutes != 0) || ($durationinminutes != '')) {
             if ((($durationinminutes >= 1) && ($durationinminutes < 10)) || ($durationinminutes > 1439 )) {
@@ -115,13 +161,6 @@ class mod_congrea_session_form extends moodleform {
         }
         if (empty($data['moderatorid'])) {
             $errors['moderatorid'] = get_string('enrolteacher', 'congrea');
-        }
-        $starttime = date("Y-m-d H:i:s", $data['fromsessiondate']);
-        $endtime = strtotime(date('Y-m-d H:i:s', strtotime("+$durationinminutes minutes", strtotime($starttime))));
-        if (!empty($data['week'])) {
-            $repeat = $data['week'];
-        } else {
-            $repeat = 0;
         }
         return $errors;
     }
