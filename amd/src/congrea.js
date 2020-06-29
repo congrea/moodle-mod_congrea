@@ -47,7 +47,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     interval = (timeDiff - 30) * 1000;
                     expected = Date.now() + interval;
                 }
-                $('input[name="expectedendtime"]').val(expected);
+                $("#overrideform-btn").attr('data-expected' , expected);
             });
         },
     };
