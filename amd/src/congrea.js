@@ -20,40 +20,21 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
 
         },
         congreaOnlinePopup: function() {
-            $('#overrideform').submit(function() {
-                var expected = $('input[name ="expectedendtime"]').val();
-                var newTab = window.open('', 'popupVc');
+            $('#overrideform-btn').click(function(e) {
+                const url = $(e.target).attr('data-to');
+                const expected = $(e.target).attr('data-expected');
                 if (Date.now() > expected && expected != 0) {
                     $('.vcbutton').hide();
                     window.location.reload();
-                    return false;
                 } else {
-                    if (window.newTab && window.newTab.closed === false) {
-                        newTab.focus();
-                        return false;
-                    }
-                    $(this).attr('target', 'popupVc');
-                    if (newTab) {
-                        newTab.focus();
-                        return newTab;
-                    }
-                    return true;
-                }
-            });
+                    window.open(url, "popupVc");
+            }
+        });
         },
         congreaPlayRecording: function() {
-            $('.playAct').submit(function() {
-                var newTab = window.open('', 'popupVc');
-                if (window.newTab && window.newTab.closed === false) {
-                    newTab.focus();
-                    return false;
-                }
-                $(this).attr('target', 'popupVc');
-                if (newTab) {
-                    newTab.focus();
-                    return newTab;
-                }
-                return true;
+            $('.playAct-Btn').click(function(e) {
+                const url = $(e.target).attr('data-to');
+                window.open(url, "popupVc");
             });
         },
         congreaHideJoin: function(timeDiff) {
@@ -65,7 +46,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                     interval = (timeDiff - 30) * 1000;
                     expected = Date.now() + interval;
                 }
-                $('input[name="expectedendtime"]').val(expected);
+                $("#overrideform-btn").attr('data-expected' , expected);
             });
         },
     };
