@@ -21,19 +21,19 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaOnlinePopup: function() {
             $('#overrideform-btn').click(function(e) {
-                const url = $(e.target).attr('data-to');
-                const expected = $(e.target).attr('data-expected');
+                var url = $(e.target).attr('data-to');
+                var expected = $(e.target).attr('data-expected');
                 if (Date.now() > expected && expected != 0) {
                     $('.vcbutton').hide();
                     window.location.reload();
                 } else {
                     window.open(url, "popupVc");
-            }
-        });
+                }
+            });
         },
         congreaPlayRecording: function() {
             $('.playAct-Btn').click(function(e) {
-                const url = $(e.target).attr('data-to');
+                var url = $(e.target).attr('data-to');
                 window.open(url, "popupVc");
             });
         },

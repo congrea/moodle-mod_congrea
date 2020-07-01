@@ -102,7 +102,7 @@ function congrea_online_server(
     $send,
     $nextsessionstarttime
 ) {
-    # boolean converter into integer
+    // Boolean converter into integer.
     $debug = (int)$debug;
     $recording = (int)$recording;
     $joinbutton = (int)$joinbutton;
@@ -110,34 +110,35 @@ function congrea_online_server(
 
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
-    
-    $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
-    &upload={$upload}&down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
-    &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}&settings={$hexcode}&sstart={$sstart}
-    &send={$send}&language=".current_language();
+    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
+    &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}&down={$down}
+    &debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
+    &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}
+    &settings={$hexcode}&sstart={$sstart}&send={$send}&nextsessionstarttime={$nextsessionstarttime}&language=".current_language();
 
-    //encrypt query string to base64
-    $query_string = b64link_encode($query_string);
+    // Encrypt query string to base64.
+    $querystring = b64link_encode($querystring);
 
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' =>'_blank', 'action' => $url, 'method' => 'get'));
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' => '_blank',
+    'action' => $url, 'method' => 'get'));
 
     if (!$joinbutton) {
         if ($role == 't') {
-            // Button to dynamically load URL -> needed for PWA
+            // Button to dynamically load URL -> needed for PWA.
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
                 'type' => 'button',
-                'data-to' => $url.'?'.$query_string,
+                'data-to' => $url.'?'.$querystring,
                 'data-expected' => 0,
                 'class' => 'vcbutton',
                 'value' => get_string('joinasteacher', 'congrea')
             ));
         } else {
-            // Button to dynamically load URL -> needed for PWA
+            // Button to dynamically load URL -> needed for PWA.
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
                 'type' => 'button',
-                'data-to' => $url.'?'.$query_string,
+                'data-to' => $url.'?'.$querystring,
                 'data-expected' => 0,
                 'class' => 'vcbutton',
                 'value' => get_string('joinasstudent', 'congrea')
@@ -194,7 +195,7 @@ function congrea_online_server_play(
     $recording = false,
     $hexcode
 ) {
-    # boolean converter into integer
+    // Boolean converter into integer.
     $debug = (int)$debug;
     $recordingsession = $recordingsession == false ? (int)$recordingsession : $recordingsession;
     $recording = (int)$recording;
@@ -203,18 +204,21 @@ function congrea_online_server_play(
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
 
-    $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
-    &upload={$upload}&down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
-    &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}&settings={$hexcode}&play=1&language=".current_language();
+    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
+    &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}
+    &down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
+    &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}
+    &settings={$hexcode}&play=1&language=".current_language();
 
-    //encrypt query string to base64
-    $query_string = b64link_encode($query_string);
-    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' =>'_blank', 'action' => $url, 'method' => 'get'));
-    // * Button to dynamically load URL -> needed for PWA
+    // Encrypt query string to base64.
+    $querystring = b64link_encode($querystring);
+    $form = html_writer::start_tag('form', array('id' => 'playbtnform', 'target' => '_blank',
+    'action' => $url, 'method' => 'get'));
+    // Button to dynamically load URL -> needed for PWA.
     $form .= html_writer::empty_tag('input', array(
         'class' => 'vcbutton playbtn playAct-Btn',
         'type' => 'button',
-        'data-to' => $url.'?'.$query_string,
+        'data-to' => $url.'?'.$querystring,
         'value' => '',
         'title' => 'Play'
     ));
