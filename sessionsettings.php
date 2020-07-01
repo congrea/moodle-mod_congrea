@@ -153,7 +153,6 @@ if ($mform->is_cancelled()) {
             $conflictstatus = check_conflicts($congrea, $newsessions);
         }
     }
-    var_dump($conflictstatus);
     if (!empty($conflictstatus)) {
         usort($conflictstatus, 'comparestarttime');
         $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
