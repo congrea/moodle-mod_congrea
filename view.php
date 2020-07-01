@@ -650,7 +650,7 @@ if ($session) {
             if (has_capability('mod/congrea:attendance', $context)) {
                 if ((!empty($studentsstatus->totalspenttime)) || ($studentsstatus->totalspenttime == 0)) {
                     $table->data[] = array(
-                        $username, $studentsstatus->totalspenttime . ' ' .
+                        $username, round($studentsstatus->totalspenttime / 60) . ' ' .
                         get_string('mins', 'congrea'), date('g:i A', $studentsstatus->starttime),
                         date('g:i A', $studentsstatus->endtime), $recviewed
                     );
