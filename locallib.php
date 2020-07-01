@@ -205,11 +205,11 @@ function congrea_online_server_play(
 
     $query_string = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}&sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}
     &upload={$upload}&down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
-    &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}&settings={$hexcode}&play=1";
+    &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}&settings={$hexcode}&play=1&language=".current_language();
 
     //encrypt query string to base64
     $query_string = b64link_encode($query_string);
-
+    $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' =>'_blank', 'action' => $url, 'method' => 'get'));
     // * Button to dynamically load URL -> needed for PWA
     $form .= html_writer::empty_tag('input', array(
         'class' => 'vcbutton playbtn playAct-Btn',
@@ -902,7 +902,7 @@ function congrea_get_records($congrea, $type) {
     $conflictedsessions = (array)check_conflicts($congrea);
     if (!empty($conflictedsessions)) {
         echo '<p> </p>';
-        echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-error'));
+        echo html_writer::tag('div', get_string('conflicts', 'congrea'), array('class' => 'alert alert-danger'));
         foreach ($conflictedsessions as $conflictedsession) {
             $conflictedids[] = $conflictedsession->id;
         }
