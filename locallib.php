@@ -734,7 +734,7 @@ function calc_student_time($connect, $disconnect) {
     $sum = 0;
     for ($i = 0; $i < count($connect); $i++) {
         if ($disconnect[$i] >= $connect[$i]) {
-            $studenttime = round((abs($disconnect[$i] - $connect[$i]) / 60));
+            $studenttime = (abs($disconnect[$i] - $connect[$i]));
             $sum = $studenttime + $sum;
         }
     }
