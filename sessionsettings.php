@@ -242,7 +242,7 @@ if ($mform->is_cancelled()) {
                                             $data->repeatid = $edit;
                                             $eventobject->update($data);
                                             $loopcount++;
-                                            $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
+                                            $startdate = strtotime("+1 week", $startdate);
                                         } else {
                                             $DB->delete_records('event', array('id' => $event->id));
                                         }
@@ -258,7 +258,7 @@ if ($mform->is_cancelled()) {
                                         $data->userid = $presenter;
                                         $data->repeatid = $edit;
                                         $eventobject->update($data);
-                                        $startdate = strtotime(date('Y-m-d H:i:s', strtotime("+1 week", $startdate)));
+                                        $startdate = strtotime("+1 week", $startdate);
                                     }
                                     $eventobject = calendar_event::create($data);
                                     $event = new stdClass();
@@ -289,6 +289,8 @@ if ($mform->is_cancelled()) {
                                         $data->repeatid = $edit;
                                         $eventobject = calendar_event::load($event->id);
                                         $eventobject->update($data);
+                                        $startdate = strtotime("+1 week", $startdate);
+
                                     }
                                 }
                             } else {
