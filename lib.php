@@ -188,6 +188,7 @@ function congrea_delete_instance($id) {
     // TODO: Currently all events are deleted, past events should not get deleted.
     $DB->delete_records('event', array('modulename' => 'congrea', 'instance' => $congrea->id));
     $DB->delete_records('congrea', array('id' => $congrea->id));
+    $DB->delete_records('congrea_attendance_report', array('instanceid' => $congrea->id));
     return true;
 }
 
