@@ -212,6 +212,16 @@ function congrea_user_outline($course, $user, $mod, $congrea) {
     $return->info = '';
     return $return;
 }
+/**
+ * Base64 encoding
+ * @param string $string
+ * @return string
+ */
+function b64link_encode($string) {
+    $string = base64_encode($string);
+    $string = urlencode($string);
+    return $string;
+}
 
 /**
  * Creates or updates grade item for the give congrea instance

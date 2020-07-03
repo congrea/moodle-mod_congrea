@@ -55,15 +55,31 @@ $PAGE->set_context($context);
 
 $room = !empty($course->id) && !empty($cm->id) ? $course->id . '_' . $cm->id : 0;
 $key = get_config('mod_congrea', 'cgapi');
+$secret = get_config('mod_congrea', 'cgsecretpassword');
+if (get_config('mod_congrea', 'enablerecording')) {
+    $recordingstatus = true;
+} else {
+    $recordingstatus = false;
+}
+if (has_capability('mod/congrea:sessionpresent', $context)) {
+    $role = 't';
+} else {
+    $role = 's';
+}
 $mform = new mod_congrea_edit_name($CFG->wwwroot . '/mod/congrea/edit.php?id=' . $cm->id . '&update=' . $update);
 
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true)));
 } else if ($fromform = $mform->get_data()) {
+    $authdata = get_auth_data($key, $secret, $recordingstatus, $course, $cm, $role, $update); // Call to authdata.
+    $authusername = $authdata->authuser;
+    $authpassword = $authdata->authpass;
+    $room = $authdata->room;
     $sessionname = $fromform->name;
     $postdata = json_encode(array('room' => $room, 'name' => $sessionname, 'session' => $update));
-    $result = congrea_curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key);
+    $result = congrea_curl_request("https://api.congrea.net/backend/updaterecordingname", $postdata, $key,
+    $secret, $authusername, $authpassword);
     $sucess = json_decode($result);
     $returnurl = redirect(new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true)));
     if ($sucess->data == "success") {

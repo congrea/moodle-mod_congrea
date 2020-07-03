@@ -69,7 +69,6 @@ class mod_congrea_session_form extends moodleform {
             );
             $mform->addElement('hidden', 'fromsessiondate', get_string('fromsessiondate', 'congrea'), $attributes);
             $mform->setType('fromsessiondate', PARAM_CLEANHTML);
-            $mform->setDefault( 'fromsessiondate', $startdate);
         }
         $mform->setType('timeduration', PARAM_INT);
         $durationfield = array();
@@ -87,9 +86,6 @@ class mod_congrea_session_form extends moodleform {
         $mform->addElement('advcheckbox', 'addmultiple', '',
         get_string('repeatevent', 'calendar'),
         array('group' => 1), array(0, 1));
-        if ($edit) {
-            $mform->hideIf('fromsessiondate', 'edit', 'notchecked');
-        }
         $mform->disabledIf('addmultiple', 'timeduration', 'eq', 0);
         $mform->disabledIf('repeattext', 'timeduration', 'eq', 0);
         $week = array(2 => 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -105,7 +101,7 @@ class mod_congrea_session_form extends moodleform {
                 $sortedconflicts[serialize($value)] = $value;
             }
             $conflictstatus = array_values($sortedconflicts);
-            $mform->addElement('html', '<div class="alert alert-error">' . get_string('timeclashed', 'congrea') . '</div>');
+            $mform->addElement('html', '<div class="alert alert-danger">' . get_string('timeclashed', 'congrea') . '</div>');
             $mform->addElement('html', '<div class="overflow"><table class="generaltable"><tr><th>' .
             get_string('scheduleid', 'congrea') . '</th><th>' . get_string('dateandtime', 'congrea') .
             '</th><th>' . get_string('timedur', 'congrea') . '</th><th>' . get_string('teacher', 'congrea') .
@@ -137,7 +133,7 @@ class mod_congrea_session_form extends moodleform {
                 }
             }
             $mform->addElement('html', '</table></div>');
-            $mform->addElement('html', '<h6 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '<h6>');
+            $mform->addElement('html', '<h5 class="overflow">' . get_string('totalconflicts', 'congrea') . $count . '</h5>');
         }
         $this->add_action_buttons();
     }

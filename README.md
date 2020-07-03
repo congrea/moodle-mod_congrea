@@ -37,6 +37,11 @@ Feel free to send bug reports (and/or patches!)
 
 support@vidyamantra.com
 
+## 3.5+r7
+* Progressive Web App Browser Support.
+* Conflict handling while creating or editing schedules.
+* Language and other bug fixes.
+
 ## 3.5+r6
 * Bug-fixes related to language and open-ended sessions
 

@@ -161,5 +161,5 @@ body#page-mod-congrea-sessionsettings .generaltable th.header.c5,
 }
 div#id_error_timeduration.form-control-feedback.invalid-feedback {
     width: 0%;
-    display:none!important;
+    display: none;
 }
