@@ -158,7 +158,7 @@ if ($mform->is_cancelled()) {
         $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings' => $sessionsettings,
         'edit' => $edit, 'action' => $action, 'conflictstatus' => $conflictstatus, 'congreaid' => $congrea->id));
     } else {
-        if ($action == 'addsession' && $fromform->submitbutton == "Save changes" && empty($conflictstatus)) {
+        if ($action == 'addsession' && empty($conflictstatus)) {
             if (has_capability('mod/congrea:managesession', $context) &&
             has_capability('moodle/calendar:manageentries', $coursecontext)) {
                 if ($fromform->timeduration == 0) {
@@ -202,7 +202,7 @@ if ($mform->is_cancelled()) {
             }
         }
         // Update sessions.
-        if ($edit && $fromform->submitbutton == "Save changes" && empty($conflictstatus)) {
+        if ($edit && empty($conflictstatus)) {
             if (has_capability('mod/congrea:managesession', $context) &&
             has_capability('moodle/calendar:manageentries', $coursecontext)) {
                 if (!empty($timedsessions)) {
