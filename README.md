@@ -37,6 +37,9 @@ Feel free to send bug reports (and/or patches!)
 
 support@vidyamantra.com
 
+## 3.5+r8
+* Joining issue for non-English locales
+
 ## 3.5+r7
 * Progressive Web App Browser Support.
 * Conflict handling while creating or editing schedules.
