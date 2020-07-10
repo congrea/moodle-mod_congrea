@@ -13,7 +13,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
     return {
         presetColor: function() {
             $(".form-select.defaultsnext #id_s_mod_congrea_preset").change(function() {
-                var val = this.value;
+                let val = this.value;
                 $('.admin_colourpicker .currentcolour').css('background-color', val);
                 $('#id_s_mod_congrea_colorpicker').val(val);
             });
@@ -21,8 +21,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaOnlinePopup: function() {
             $('#overrideform-btn').click(function(e) {
-                var url = $(e.target).attr('data-to');
-                var expected = $(e.target).attr('data-expected');
+                let url = $(e.target).attr('data-to');
+                let expected = $(e.target).attr('data-expected');
                 if (Date.now() > expected && expected != 0) {
                     $('.vcbutton').hide();
                     window.location.reload();
@@ -33,20 +33,20 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
         },
         congreaPlayRecording: function() {
             $('.playAct-Btn').click(function(e) {
-                var url = $(e.target).attr('data-to');
+                let url = $(e.target).attr('data-to');
                 window.open(url, "popupVc");
             });
         },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function() {
-                var expected, interval;
+                let expected, interval;
                 if (timeDiff == 0) {
                     expected = 0;
                 } else {
                     interval = (timeDiff - 30) * 1000;
                     expected = Date.now() + interval;
                 }
-                $("#overrideform-btn").attr('data-expected' , expected);
+                $("#overrideform-btn").attr('data-expected', expected);
             });
         },
     };
