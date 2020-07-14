@@ -376,31 +376,31 @@ function xmldb_congrea_upgrade($oldversion) {
     if ($oldversion < 2020062500) {
         // Define table congrea_attendance_report to be created.
          // Define table congrea_attendance_report to be created.
-    $table = new xmldb_table('congrea_attendance_report');
+        $table = new xmldb_table('congrea_attendance_report');
 
-    // Adding fields to table congrea_attendance_report.
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    $table->add_field('sessionid', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('attendance', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('sessionduration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('jointime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('exittime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    $table->add_field('recordingviewed', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        // Adding fields to table congrea_attendance_report.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('sessionid', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('attendance', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sessionduration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('jointime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('exittime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('recordingviewed', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
-    // Adding keys to table congrea_attendance_report.
-    $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        // Adding keys to table congrea_attendance_report.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-    // Conditionally launch create table for congrea_attendance_report.
-    if (!$dbman->table_exists($table)) {
-        $dbman->create_table($table);
+        // Conditionally launch create table for congrea_attendance_report.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+            // Congrea savepoint reached.
+            upgrade_mod_savepoint(true, 2020062500, 'congrea');
     }
-        // Congrea savepoint reached.
-        upgrade_mod_savepoint(true, 2020062500, 'congrea');
-}
     return true;
 }

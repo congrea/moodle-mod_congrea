@@ -623,7 +623,7 @@ function get_total_session_time($attendance) {
     if (!empty($connecttime) and !empty($disconnecttime)) {
         $sessionstarttime = min($connecttime);
         $sessionendtime = max($disconnecttime);
-        $totaltime = round(($sessionendtime - $sessionstarttime) / 60); // Total session time in minutes.
+        $totaltime = ($sessionendtime - $sessionstarttime); // Total session time in minutes.
         return (object) array(
             'totalsessiontime' => $totaltime,
             'sessionstarttime' => $sessionstarttime, 'sessionendtime' => $sessionendtime
