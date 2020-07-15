@@ -662,7 +662,7 @@ if ($session) {
                     $attendancedbdata->exittime = (int)$studentsstatus->endtime;
                     $attendancedbdata->timecreated = time();
                     $attendancedbdata->timemodified = $attendancedbdata->timecreated;
-                    if (!empty($recview->totalviewd)) {
+                    if (!empty($recview->totalviewd) && $recviewed != 0) {
                         $attendancedbdata->recordingviewed = $recview->totalviewd;
                     } else {
                         $attendancedbdata->recordingviewed = $recviewed;
@@ -748,7 +748,7 @@ if ($session) {
                         $attendancedbdata->exittime = 0;
                         $attendancedbdata->timecreated = time();
                         $attendancedbdata->timemodified = $attendancedbdata->timecreated;
-                        if (!empty($recview->totalviewd)) {
+                        if (!empty($recview->totalviewd) && $recviewed != 0) {
                             $attendancedbdata->recordingviewed = $recview->totalviewd;
                         } else {
                             $attendancedbdata->recordingviewed = $recviewed;
@@ -758,7 +758,7 @@ if ($session) {
                         $recviewedupdate = $DB->get_record('congrea_attendance_report', array('sessionid' => $session ,
                         'userid' => $studentname->id));
                         if ($recviewed != 0) {
-                            $recviewedupdate->recordingview = $recview->totalviewd;
+                            $recviewedupdate->recordingviewed = $recview->totalviewd;
                         }
                         $recviewedupdate->timemodified = time();
                         $DB->update_record('congrea_attendance_report', $recviewedupdate);
