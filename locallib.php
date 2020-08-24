@@ -73,8 +73,8 @@ function congrea_course_teacher_list($cmid) {
  * @param string $recording
  * @param string $hexcode
  * @param boolean $joinbutton
- * @param integer $sstart
- * @param integer $send
+ * @param integer $sessionstarttime
+ * @param integer $sessionendtime
  * @param integer $nextsessionstarttime
  * @return string
  */
@@ -98,8 +98,8 @@ function congrea_online_server(
     $recording = false,
     $hexcode,
     $joinbutton = false,
-    $sstart,
-    $send,
+    $sessionstarttime,
+    $sessionendtime,
     $nextsessionstarttime
 ) {
     // Boolean converter into integer.
@@ -110,11 +110,11 @@ function congrea_online_server(
 
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
-    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
+    $querystring = "uid={$USER->id}&name={$username}&role={$role}&room={$room}
     &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}&down={$down}
     &debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
     &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}
-    &settings={$hexcode}&sstart={$sstart}&send={$send}&nextsessionstarttime={$nextsessionstarttime}&language=".current_language();
+    &settings={$hexcode}&sessionstarttime={$sessionstarttime}&sessionendtime={$sessionendtime}&nextsessionstarttime={$nextsessionstarttime}&language=".current_language();
 
     // Encrypt query string to base64.
     $querystring = b64link_encode($querystring);
@@ -204,7 +204,7 @@ function congrea_online_server_play(
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
 
-    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
+    $querystring = "uid={$USER->id}&name={$username}&role={$role}&room={$room}
     &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}
     &down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
     &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}
