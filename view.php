@@ -665,7 +665,7 @@ if ($session) {
                     if (!empty($recview->totalviewd) && $recviewed != 0) {
                         $attendancedbdata->recordingviewed = $recview->totalviewd;
                     } else {
-                        $attendancedbdata->recordingviewed = $recviewed;
+                        $attendancedbdata->recordingviewed = (int)$recviewed;
                     }
                     $DB->insert_record('congrea_attendance_report', $attendancedbdata);
                 } else {
@@ -751,7 +751,7 @@ if ($session) {
                         if (!empty($recview->totalviewd) && $recviewed != 0) {
                             $attendancedbdata->recordingviewed = $recview->totalviewd;
                         } else {
-                            $attendancedbdata->recordingviewed = $recviewed;
+                            $attendancedbdata->recordingviewed = (int)$recviewed;
                         }
                         $DB->insert_record('congrea_attendance_report', $attendancedbdata);
                     } else {
