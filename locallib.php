@@ -224,7 +224,7 @@ function congrea_online_server_play(
     ));
 
     $form .= html_writer::end_tag('form');
-    return $form;
+    return (object) array('form' => $form, 'recordinglink' => $querystring);
 }
 
 /**

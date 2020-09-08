@@ -39,6 +39,7 @@ $upcomingsession = optional_param('upcomingsession', 0, PARAM_INT);
 $psession = optional_param('psession', 0, PARAM_INT);
 $sessionsettings = optional_param('sessionsettings', 0, PARAM_INT);
 $drodowndisplaymode = optional_param('drodowndisplaymode', 1, PARAM_INT);
+$share = optional_param('share', '', PARAM_CLEANHTML);
 if ($id) {
     $cm = get_coursemodule_from_id('congrea', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -141,6 +142,7 @@ $completion->set_module_viewed($cm);
 // Output starts here.
 $strdelete = get_string('delete');
 $strplay = get_string('play', 'congrea');
+$strshare = get_string('share', 'congrea');
 $returnurl = new moodle_url('/mod/congrea/view.php', array('id' => $cm->id, 'psession' => true));
 // Delete a selected recording, after confirmation.
 if ($delete and confirm_sesskey()) {
@@ -165,11 +167,10 @@ if ($delete and confirm_sesskey()) {
             redirect($returnurl);
         } else {
             \core\session\manager::gc(); // Remove stale sessions.
-            $OUTPUT->notification($returnurl, get_string('deletednot', '', $recname));
+            $OUTPUT->notification($returnurl, get_string('deletednot', '', $recname));            
         }
     }
 }
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading($congrea->name);
 
@@ -498,6 +499,8 @@ if ($psession) {
         $recdata = json_decode($result);
         $recording = json_decode($recdata->data);
     }
+    // Share a selected recording, after confirmation.
+
     if (!empty($recording->Items) and !$session) {
         rsort($recording->Items);
         echo $OUTPUT->heading(get_string('recordedsessions', 'mod_congrea'));
@@ -517,6 +520,7 @@ if ($psession) {
         $buttons = array();
         $attendence = array();
         $lastcolumn = '';
+        $count = 0;
         $row = array();
         $row[] = $record->name . ' ' . mod_congrea_module_get_rename_action($cm, $record);
         $row[] = userdate($record->time / 1000); // Todo.
@@ -534,7 +538,7 @@ if ($psession) {
             $row[] = $attendancereport;
         }
         if (has_capability('mod/congrea:playrecording', $context)) {
-            $buttons[] = congrea_online_server_play(
+            $playlink = (object)congrea_online_server_play(
                 $url,
                 $authusername,
                 $authpassword,
@@ -554,6 +558,66 @@ if ($psession) {
                 $recordingstatus,
                 $hexcode
             );
+            $buttons[] = $playlink->form;
+        }
+        //Share button.
+        if (has_capability('mod/congrea:sharerecording', $context)) {
+            if (!$DB->record_exists('block_share_recording', array('recordingname' => $record->name, 'sessionid' => $record->session))) {
+                $imageurl = "$CFG->wwwroot/mod/congrea/pix/share.png";
+            } else {
+                $imageurl = "$CFG->wwwroot/mod/congrea/pix/tick.png";
+            }
+            $buttonshare = html_writer::link(new moodle_url($returnurl, array(
+                'share' => $record->session,
+                'recname' => $record->name, 'sesskey' => sesskey()
+            )), html_writer::empty_tag('img', array(
+                'src' => $imageurl,
+                'alt' => $strshare, 'class' => 'iconsmall share'
+            )), array('title' => $strshare));
+            $row[] = $buttonshare;
+        }
+        if ($share and confirm_sesskey()) {
+            require_capability('mod/congrea:sharerecording', $context);
+            if ($confirm != md5($share)) {
+                // echo $OUTPUT->header();
+                echo $OUTPUT->heading($strshare . " " . $congrea->name);
+                $optionsyes = array('share' => $share, 'confirm' => md5($share), 'sesskey' => sesskey(), 'recname' => $recname);
+                echo $OUTPUT->confirm(
+                    get_string('sharerecordingfile', 'mod_congrea', $recname),
+                    new moodle_url($returnurl, $optionsyes),
+                    $returnurl
+                );
+                echo $OUTPUT->footer();
+                die;
+            } else if (data_submitted()) {
+                if (has_capability('mod/congrea:sharerecording', $context)) {
+                    $recordinglink = (object)congrea_online_server_play(
+                        $url,
+                        $authusername,
+                        $authpassword,
+                        $role,
+                        $rid,
+                        $room,
+                        $upload,
+                        $down,
+                        $info,
+                        $cgcolor,
+                        $webapi,
+                        $userpicturesrc,
+                        $licensekey,
+                        $id,
+                        $vcsid,
+                        $record->session,
+                        $recordingstatus,
+                        $hexcode
+                    );
+                }
+                if ($recname == $record->name && !$DB->record_exists('block_share_recording',
+                array('recordingname' => $record->name, 'sessionid' => $record->session))) {
+                    require_once($CFG->dirroot . '/blocks/share_recording/lib.php');
+                    sharerecordingdetail($url, $share, $record->name, $recordinglink->recordinglink, $course->id, $congrea->id);
+                }
+            }
         }
         // Delete button.
         if (has_capability('mod/congrea:recordingdelete', $context)) {
@@ -741,7 +805,7 @@ if (!empty($table) and $session and $sessionstatus) {
     $attendancereport = '<h5><strong>' . userdate($sessionstatus->sessionstarttime) .
     ' to ' . userdate($sessionstatus->sessionendtime) .
     '</strong></h5><strong>' .
-    get_string('sessionduration', 'congrea') . '</strong>' . $sessionstatus->totalsessiontime . ' ' .
+    get_string('sessionduration', 'congrea') . '</strong>' . round($sessionstatus->totalsessiontime / 60) . ' ' .
     get_string('mins', 'congrea') . '</br>' . '<strong>' .
     get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' .
     get_string('present', 'congrea') . '</strong>'
