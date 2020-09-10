@@ -76,6 +76,12 @@ table.studentEnd tbody tr td.c4 p {
     opacity: 0.6;
 }
 
+table#recorded_data a img.share.iconsmall {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+}
+
 table#recorded_data a img.delete.iconsmall {
     padding: 0;
     width: 20px;

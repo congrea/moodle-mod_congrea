@@ -560,21 +560,29 @@ if ($psession) {
             );
             $buttons[] = $playlink->form;
         }
-        //Share button.
-        if (has_capability('mod/congrea:sharerecording', $context)) {
-            if (!$DB->record_exists('block_share_recording', array('recordingname' => $record->name, 'sessionid' => $record->session))) {
-                $imageurl = "$CFG->wwwroot/mod/congrea/pix/share.png";
-            } else {
-                $imageurl = "$CFG->wwwroot/mod/congrea/pix/tick.png";
-            }
-            $buttonshare = html_writer::link(new moodle_url($returnurl, array(
-                'share' => $record->session,
-                'recname' => $record->name, 'sesskey' => sesskey()
-            )), html_writer::empty_tag('img', array(
+       //Share button.
+       if (has_capability('mod/congrea:sharerecording', $context)) {
+           if (!$DB->record_exists('block_share_recording', array('recordingname' => $record->name, 'sessionid' => $record->session))) {
+               $imageurl = "$CFG->wwwroot/mod/congrea/pix/share.png";
+               $buttonshare = html_writer::link(new moodle_url($returnurl, array(
+               'share' => $record->session,
+               'recname' => $record->name, 'sesskey' => sesskey()
+                )), html_writer::empty_tag('img', array(
                 'src' => $imageurl,
                 'alt' => $strshare, 'class' => 'iconsmall share'
-            )), array('title' => $strshare));
-            $row[] = $buttonshare;
+                 )), array('title' => $strshare));
+                 $row[] = $buttonshare;
+                } else {
+                $imageurl = "$CFG->wwwroot/mod/congrea/pix/tick.png";
+                $buttonshare = html_writer::link(new moodle_url($returnurl, array(
+                    'share' => $record->session,
+                    'recname' => $record->name, 'sesskey' => sesskey()
+                )), html_writer::empty_tag('img', array(
+                    'src' => $imageurl,
+                    'alt' => 'shared', 'class' => 'iconsmall share'
+                )), array('title' => 'shared'));
+                $row[] = $buttonshare;
+            }
         }
         if ($share and confirm_sesskey()) {
             require_capability('mod/congrea:sharerecording', $context);
