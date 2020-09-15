@@ -369,3 +369,6 @@ $string['hours'] = ' hr ';
 $string['scheduleid'] = 'Schedule ID';
 $string['blankduration'] = 'Invalid input!';
 $string['totalconflicts'] = 'Total conflicts = ';
+$string['prepareclass'] = 'Prepare for class';
+$string['prep_header'] = 'Preparation time prior to class';
+$string['prep'] = 'Preparation time in mins';

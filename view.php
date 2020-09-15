@@ -193,7 +193,7 @@ $videostatus = $congrea->video;
 // Get congrea api key and Secret key from congrea setting.
 $a = $CFG->wwwroot . "/admin/settings.php?section=modsettingcongrea";
 $role = 's'; // Default role.
-
+$prep = 0;
 if (get_config('mod_congrea', 'allowoverride')) { // If override on.
     if (
         has_capability('mod/congrea:addinstance', $context) && ($USER->id == $teacherid)
@@ -239,7 +239,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
         if (!empty($uuid)) {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role, $uuid); // Call to authdata.
-            $uuid = $uuid;
         } else {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
             $uuid = '';
@@ -445,7 +444,7 @@ if ($psession) {
 } else {
     $joinbutton = false;
 }
-if (($sessionendtime > time() && $sessionstarttime <= time()) || (!empty($infinitesessions))) {
+if (($sessionendtime > time() && ($sessionstarttime - 1800) <= time()) || (!empty($infinitesessions))) {
     $murl = parse_url($CFG->wwwroot);
     if ($murl['scheme'] == 'https') {
         $sendmurl = $CFG->wwwroot;
@@ -476,7 +475,8 @@ if (($sessionendtime > time() && $sessionstarttime <= time()) || (!empty($infini
         $joinbutton,
         $sessionstarttime,
         $sessionendtime,
-        $nextsessionstarttime
+        $nextsessionstarttime,
+        $prep
     );
     echo $form;
 } else {

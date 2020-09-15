@@ -76,6 +76,7 @@ function congrea_course_teacher_list($cmid) {
  * @param integer $sessionstarttime
  * @param integer $sessionendtime
  * @param integer $nextsessionstarttime
+ * @param boolean $prep
  * @return string
  */
 function congrea_online_server(
@@ -100,21 +101,26 @@ function congrea_online_server(
     $joinbutton = false,
     $sessionstarttime,
     $sessionendtime,
-    $nextsessionstarttime
+    $nextsessionstarttime,
+    $prep
 ) {
     // Boolean converter into integer.
     $debug = (int)$debug;
     $recording = (int)$recording;
     $joinbutton = (int)$joinbutton;
     $cgcolor = ltrim($cgcolor, '#');
-
+    if (time() < (int)$sessionstarttime) {
+        $prep = 1;
+        $recording = 0;
+    }
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
     $querystring = "uid={$USER->id}&name={$username}&role={$role}&room={$room}
     &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}&down={$down}
     &debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
     &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}
-    &settings={$hexcode}&sessionstarttime={$sessionstarttime}&sessionendtime={$sessionendtime}&nextsessionstarttime={$nextsessionstarttime}&language=".current_language();
+    &settings={$hexcode}&sessionstarttime={$sessionstarttime}&sessionendtime={$sessionendtime}
+    &nextsessionstarttime={$nextsessionstarttime}&prep={$prep}&language=".current_language();
 
     // Encrypt query string to base64.
     $querystring = b64link_encode($querystring);
@@ -125,25 +131,36 @@ function congrea_online_server(
     if (!$joinbutton) {
         if ($role == 't') {
             // Button to dynamically load URL -> needed for PWA.
+            if ((time() < (int)$sessionstarttime) && (time() < (int)$sessionendtime)) {
+                $value = get_string('prepareclass', 'congrea');
+            } else {
+                $value = get_string('joinasteacher', 'congrea');
+            }
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
                 'type' => 'button',
                 'data-to' => $url.'?'.$querystring,
                 'data-expected' => 0,
                 'class' => 'vcbutton',
-                'value' => get_string('joinasteacher', 'congrea')
+                'value' => $value
             ));
         } else {
             // Button to dynamically load URL -> needed for PWA.
-            $form .= html_writer::empty_tag('input', array(
-                'id' => 'overrideform-btn',
-                'type' => 'button',
-                'data-to' => $url.'?'.$querystring,
-                'data-expected' => 0,
-                'class' => 'vcbutton',
-                'value' => get_string('joinasstudent', 'congrea')
-            ));
-
+            if ((time() >= (int)$sessionstarttime) && (time() < (int)$sessionendtime)) {
+                $value = get_string('joinasstudent', 'congrea');
+                $form .= html_writer::empty_tag('input', array(
+                    'id' => 'overrideform-btn',
+                    'type' => 'button',
+                    'data-to' => $url.'?'.$querystring,
+                    'data-expected' => 0,
+                    'class' => 'vcbutton',
+                    'value' => $value
+                ));
+            } else {
+                echo html_writer::start_tag('div', array('class' => 'sessionclosed'));
+                echo html_writer::tag('h2', get_string('sessionclosed', 'congrea'));
+                echo html_writer::end_tag('div');
+            }
         }
     }
     $form .= html_writer::end_tag('form');
@@ -222,7 +239,6 @@ function congrea_online_server_play(
         'value' => '',
         'title' => 'Play'
     ));
-
     $form .= html_writer::end_tag('form');
     return $form;
 }

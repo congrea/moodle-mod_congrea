@@ -146,6 +146,14 @@ class mod_congrea_mod_form extends moodleform_mod {
                 $mform->setDefault('qaupvote', 0);
             }
             $mform->disabledIf('qaupvote', 'askquestion', 'notchecked');
+            // Congrea preparation time.
+            $mform->addElement('header', 'general', get_string('prep_header', 'congrea'));
+            $mform->addElement('text', 'preptime', get_string('prep', 'congrea'), array('size' => '10'));
+            if ($preptime = get_config('mod_congrea', 'preptime')) {
+                $mform->setDefault('preptime', $preptime);
+            } else {
+                $mform->setDefault('preptime', 30);
+            }
             // Congrea recording settings.
             $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));
             $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null); // Enablerecording.
