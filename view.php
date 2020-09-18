@@ -559,71 +559,75 @@ if ($psession) {
                 $hexcode
             );
             $buttons[] = $playlink->form;
-        }
+        }        
        //Share button.
-       if (has_capability('mod/congrea:sharerecording', $context)) {
-           if (!$DB->record_exists('block_share_recording', array('recordingname' => $record->name, 'sessionid' => $record->session))) {
-               $imageurl = "$CFG->wwwroot/mod/congrea/pix/share.png";
-               $buttonshare = html_writer::link(new moodle_url($returnurl, array(
-               'share' => $record->session,
-               'recname' => $record->name, 'sesskey' => sesskey()
-                )), html_writer::empty_tag('img', array(
-                'src' => $imageurl,
-                'alt' => $strshare, 'class' => 'iconsmall share'
-                 )), array('title' => $strshare));
-                 $row[] = $buttonshare;
-                } else {
-                $imageurl = "$CFG->wwwroot/mod/congrea/pix/tick.png";
-                $buttonshare = html_writer::link(new moodle_url($returnurl, array(
+       $installblocklists = $PAGE->blocks->get_installed_blocks();
+       foreach($installblocklists as $installblocklist) {
+           if($installblocklist->name == 'share_recording') {
+                if (has_capability('mod/congrea:sharerecording', $context) &&
+                !$DB->record_exists('block_share_recording', array('recordingname' => $record->name, 'sessionid' => $record->session))) {
+                    $imageurl = "$CFG->wwwroot/mod/congrea/pix/share.png";
+                    $buttonshare = html_writer::link(new moodle_url($returnurl, array(
                     'share' => $record->session,
                     'recname' => $record->name, 'sesskey' => sesskey()
-                )), html_writer::empty_tag('img', array(
-                    'src' => $imageurl,
-                    'alt' => 'shared', 'class' => 'iconsmall share'
-                )), array('title' => 'shared'));
-                $row[] = $buttonshare;
-            }
-        }
-        if ($share and confirm_sesskey()) {
-            require_capability('mod/congrea:sharerecording', $context);
-            if ($confirm != md5($share)) {
-                // echo $OUTPUT->header();
-                echo $OUTPUT->heading($strshare . " " . $congrea->name);
-                $optionsyes = array('share' => $share, 'confirm' => md5($share), 'sesskey' => sesskey(), 'recname' => $recname);
-                echo $OUTPUT->confirm(
-                    get_string('sharerecordingfile', 'mod_congrea', $recname),
-                    new moodle_url($returnurl, $optionsyes),
-                    $returnurl
-                );
-                echo $OUTPUT->footer();
-                die;
-            } else if (data_submitted()) {
-                if (has_capability('mod/congrea:sharerecording', $context)) {
-                    $recordinglink = (object)congrea_online_server_play(
-                        $url,
-                        $authusername,
-                        $authpassword,
-                        $role,
-                        $rid,
-                        $room,
-                        $upload,
-                        $down,
-                        $info,
-                        $cgcolor,
-                        $webapi,
-                        $userpicturesrc,
-                        $licensekey,
-                        $id,
-                        $vcsid,
-                        $record->session,
-                        $recordingstatus,
-                        $hexcode
-                    );
+                        )), html_writer::empty_tag('img', array(
+                        'src' => $imageurl,
+                        'alt' => $strshare, 'class' => 'iconsmall share'
+                        )), array('title' => $strshare));
+                        $row[] = $buttonshare;
+                } else {
+                    $imageurl = "$CFG->wwwroot/mod/congrea/pix/tick.png";
+                    $buttonshare = html_writer::link(new moodle_url($returnurl, array(
+                        'share' => $record->session,
+                        'recname' => $record->name, 'sesskey' => sesskey()
+                    )), html_writer::empty_tag('img', array(
+                        'src' => $imageurl,
+                        'alt' => 'shared', 'class' => 'iconsmall share'
+                    )), array('title' => 'shared'));
+                    $row[] = $buttonshare;
                 }
-                if ($recname == $record->name && !$DB->record_exists('block_share_recording',
-                array('recordingname' => $record->name, 'sessionid' => $record->session))) {
-                    require_once($CFG->dirroot . '/blocks/share_recording/lib.php');
-                    sharerecordingdetail($url, $share, $record->name, $recordinglink->recordinglink, $course->id, $congrea->id);
+                if ($share and confirm_sesskey()) {
+                    require_capability('mod/congrea:sharerecording', $context);
+                    if ($confirm != md5($share)) {
+                        echo $OUTPUT->header();
+                        echo $OUTPUT->heading($strshare . " " . $congrea->name);
+                        $optionsyes = array('share' => $share, 'confirm' => md5($share), 'sesskey' => sesskey(), 'recname' => $recname);
+                        echo $OUTPUT->confirm(
+                            get_string('sharerecordingfile', 'mod_congrea', $recname),
+                            new moodle_url($returnurl, $optionsyes),
+                            $returnurl
+                        );
+                        echo $OUTPUT->footer();
+                        die;
+                    } else if (data_submitted()) {
+                        if (has_capability('mod/congrea:sharerecording', $context)) {
+                            $recordinglink = (object)congrea_online_server_play(
+                                $url,
+                                $authusername,
+                                $authpassword,
+                                $role,
+                                $rid,
+                                $room,
+                                $upload,
+                                $down,
+                                $info,
+                                $cgcolor,
+                                $webapi,
+                                $userpicturesrc,
+                                $licensekey,
+                                $id,
+                                $vcsid,
+                                $record->session,
+                                $recordingstatus,
+                                $hexcode
+                            );
+                        }
+                        if ($recname == $record->name && !$DB->record_exists('block_share_recording',
+                        array('recordingname' => $record->name, 'sessionid' => $record->session))) {
+                            require_once($CFG->dirroot . '/blocks/share_recording/lib.php');
+                            sharerecordingdetail($url, $share, $record->name, $recordinglink->recordinglink, $course->id, $congrea->id);
+                        }
+                    }
                 }
             }
         }
