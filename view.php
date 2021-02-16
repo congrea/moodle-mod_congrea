@@ -520,7 +520,10 @@ if ($psession) {
         $lastcolumn = '';
         $row = array();
         $row[] = $record->name . ' ' . mod_congrea_module_get_rename_action($cm, $record);
-        $row[] = userdate($record->time / 1000); // Todo.
+        if (has_capability('mod/congrea:attendance', $context)) {
+            $row[] = userdate($record->time / 1000); // Todo.
+        }
+            
         $vcsid = $record->key_room; // Todo.
         if (has_capability('mod/congrea:attendance', $context)) {
             $imageurl = "$CFG->wwwroot/mod/congrea/pix/attendance.png";
@@ -568,12 +571,14 @@ if ($psession) {
             )), array('title' => $strdelete));
         }
         $row[] = implode(' ', $buttons);
-        $row[] = $lastcolumn;
+        if (has_capability('mod/congrea:attendance', $context)) {
+            $row[] = $lastcolumn;
+        }
         if (!has_capability('mod/congrea:attendance', $context)) { // Report view for student.
             $table->head = array(get_string('filename', 'congrea'),
-            get_string('timecreated', 'congrea'),
             get_string('action', 'congrea'),
-            get_string('attendance', 'congrea'));
+            get_string('attendance', 'congrea'),
+            get_string('timecreated', 'congrea'));
             $table->attributes['class'] = 'admintable generaltable studentEnd';
             $apiurl = 'https://api.congrea.net/data/analytics/attendance';
             $data = attendence_curl_request($apiurl, $record->session, $key, $authpassword, $authusername, $room, $USER->id);
@@ -583,6 +588,10 @@ if ($psession) {
             } else {
                 $row[] = '<p style="color:red;">A</p>';
             }
+        }
+        if (!has_capability('mod/congrea:attendance', $context)) {
+            $row[] = $lastcolumn;
+            $row[] = userdate($record->time / 1000); // Todo.
         }
         $table->data[] = $row;
     }
