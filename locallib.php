@@ -738,10 +738,6 @@ function calc_student_time($connect, $disconnect) {
             $sum = $studenttime + $sum;
         }
     }
-/*     $sum = ($sum / count($connect));
-    $hours = ceil($sum / 60);
-    $min = ceil($sum - ($hours * 60));
-    $time = $hours . get_string('hours', 'congrea') . $min . get_string('mins', 'congrea'); */
     return $sum;
 }
 
