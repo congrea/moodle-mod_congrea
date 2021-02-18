@@ -790,19 +790,11 @@ if (!empty($table->data) and !$session) {
 }
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    $sessiontiming = round(($sessionstatus->sessionendtime - $sessionstatus->sessionstarttime) / 60);
-    if ($sessiontiming >= 60) {
-        $hours = ceil($sessiontiming / 60);
-        $min = ceil($sessiontiming - ($hours * 60));
-        $totaltime = $hours . get_string('hours', 'congrea') . $min . get_string('mins', 'congrea');
-    } else {
-        $totaltime = $sessiontiming . get_string('mins', 'congrea');
-    }
     $presentusers = count($enrolusers) - $absentstudents - $laterenrolled;
     $attendancereport = '<h5><strong>' . userdate($sessionstatus->sessionstarttime) .
     ' to ' . userdate($sessionstatus->sessionendtime) .
     '</strong></h5><strong>' .
-    get_string('sessionduration', 'congrea') . '</strong>' . $totaltime . '</br>' . '<strong>' .
+    get_string('sessionduration', 'congrea') . '</strong>' . ceil($sessionstatus->totalsessiontime / 60) . get_string('mins', 'congrea') . '</br>' . '<strong>' .
     get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' .
     get_string('present', 'congrea') . '</strong>'
     . $presentusers . '</br></br>';
