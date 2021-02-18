@@ -65,7 +65,9 @@ table.studentEnd tbody tr td.c4 p {
     opacity: 0.6;
     cursor: pointer;
 }
-
+#recorded_data form#playbtnform {
+    padding-left: 1.5em;
+}    
 #page-mod-congrea-view #recorded_data.studentEnd input.playbtn {
     float: none;
     margin-right: 0;
