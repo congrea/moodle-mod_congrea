@@ -373,7 +373,7 @@ function xmldb_congrea_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_mod_savepoint(true, 2020051700, 'congrea');
     }
-    if ($oldversion < 2020062500) {
+    if ($oldversion < 2021091507) {
         // Define table congrea_attendance_report to be created.
          // Define table congrea_attendance_report to be created.
         $table = new xmldb_table('congrea_attendance_report');
@@ -399,8 +399,8 @@ function xmldb_congrea_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-        // Congrea savepoint reached.
-        upgrade_mod_savepoint(true, 2020062500, 'congrea');
+            // Congrea savepoint reached.
+            upgrade_mod_savepoint(true, 2021091507, 'congrea');
     }
     return true;
 }

@@ -240,7 +240,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
         if (!empty($uuid)) {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role, $uuid); // Call to authdata.
-            $uuid = $uuid;
         } else {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
             $uuid = '';
@@ -618,7 +617,7 @@ if ($session) {
     $enrolusers = congrea_get_enrolled_users($id, $COURSE->id); // Enrolled users.
     $laterenrolled = 0;
     $absentstudents = 0;
-    if (!empty($attendencestatus) and !empty($sessionstatus)) {
+    if (!empty($attendencestatus) and !empty($sessionstatus)) { // Attendance of Attendees List.
         foreach ($attendencestatus->attendance as $sattendence) {
             if (!empty($sattendence->connect) || !empty($sattendence->disconnect)) { // TODO for isset and uid.
                 $attendence[] = $sattendence->uid; // Collect present user id for calculate absent user.
@@ -632,78 +631,41 @@ if ($session) {
                 $disconnect = json_decode($sattendence->disconnect);
                 $studentsstatus = (object)calctime($connect, $disconnect, $sessionstatus->sessionstarttime,
                 $sessionstatus->sessionendtime);
-                if (
-                    !empty($studentsstatus->totalspenttime)
-                    and $sessionstatus->totalsessiontime >= $studentsstatus->totalspenttime
-                ) {
-                    $presence = ($studentsstatus->totalspenttime * 100) / $sessionstatus->totalsessiontime;
-                } else if ($studentsstatus->totalspenttime > $sessionstatus->totalsessiontime) {
-                    $presence = 100; // Special case handle.
-                } else {
-                    $presence = '-';
+                $sessiontiming = (float)($sessionstatus->sessionendtime - $sessionstatus->sessionstarttime);
+                $hours = ceil($studentsstatus->totalspenttime / 60);
+                $min = ceil($studentsstatus->totalspenttime - ($hours * 60));
+                $time = $hours . get_string('hours', 'congrea') . $min . get_string('mins', 'congrea');
+                if (!empty($studentsstatus->totalspenttime) and
+                (($sessiontiming) >= ($studentsstatus->totalspenttime))) {
+                    $timeattended = $studentsstatus->totalspenttime;
+                    $presence = round($studentsstatus->totalspenttime / 60) . get_string('mins', 'congrea');
+                } else if ((int)$studentsstatus->totalspenttime > $sessiontiming) {
+                    $timeattended = $sessiontiming;
+                    $presence = round($sessiontiming / 60) . get_string('mins', 'congrea'); // Special case handle.
                 }
             }
-            if (!empty(recording_view($sattendence->uid, $recordingattendance))) {
+            if (!empty(recording_view($sattendence->uid, $recordingattendance))) { // Recording viewed status of Attendees list.
                 $recview = recording_view($sattendence->uid, $recordingattendance);
-                if ($recview->totalviewd < 60) {
+                if (($recview->totalviewd < 60) && ($recview->totalviewd > 0)) {
                     $totalseconds = $recview->recodingtime;
                     $rectotalviewedpercent = round(($recview->totalviewd * 100) / $totalseconds);
+                    $fetchviewed = $recview->totalviewd;
                     $recviewed = $recview->totalviewd . ' ' . get_string('secs', 'congrea');
-                } else {
-                    $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
+                } else if ($recview->totalviewd >= 60) {
                     $rectotalviewedpercent = $recview->totalviewedpercent;
+                    $fetchviewed = $recview->totalviewd;
+                    $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
+                } else {
+                    $fetchviewed = 0;
                 }
             } else {
                 $rectotalviewedpercent = 0;
+                $fetchviewed = 0;
                 $recviewed = 0;
             }
-            if (!empty($studentname->id)) {
-                if (!$DB->record_exists('congrea_attendance_report', array('sessionid' => $session ,
-                'userid' => $studentname->id))) {
-                    $attendancedbdata = new stdClass();
-                    $attendancedbdata->sessionid = $session;
-                    $attendancedbdata->courseid = $course->id;
-                    $attendancedbdata->instanceid = $congrea->id;
-                    $attendancedbdata->userid = $studentname->id;
-                    $attendancedbdata->attendance = $studentsstatus->totalspenttime;
-                    $attendancedbdata->sessionduration = $sessionstatus->totalsessiontime;
-                    $attendancedbdata->jointime = (int)$studentsstatus->starttime;
-                    $attendancedbdata->exittime = (int)$studentsstatus->endtime;
-                    $attendancedbdata->timecreated = time();
-                    $attendancedbdata->timemodified = $attendancedbdata->timecreated;
-                    if (!empty($recview->totalviewd) && $recviewed != 0) {
-                        $attendancedbdata->recordingviewed = $recview->totalviewd;
-                    } else {
-                        $attendancedbdata->recordingviewed = $recviewed;
-                    }
-                    $DB->insert_record('congrea_attendance_report', $attendancedbdata);
-                } else {
-                    $recviewedupdate = $DB->get_record('congrea_attendance_report', array('sessionid' => $session ,
-                    'userid' => $studentname->id));
-                    if ($recviewed != 0) {
-                        $recviewedupdate->recordingviewed = $recview->totalviewd;
-                    }
-                    $recviewedupdate->timemodified = time();
-                    $DB->update_record('congrea_attendance_report', $recviewedupdate);
-                }
-            }
             if (has_capability('mod/congrea:attendance', $context)) {
-                if ((!empty($studentsstatus->totalspenttime)) || ($studentsstatus->totalspenttime == 0)) {
-                    $table->data[] = array(
-                        $username, round($studentsstatus->totalspenttime / 60) . ' ' .
-                        get_string('mins', 'congrea'), date('g:i A', $studentsstatus->starttime),
-                        date('g:i A', $studentsstatus->endtime), $recviewed
-                    );
-                } else {
-                    $table->data[] = array(
-                        $username,  '<p style = "color: red;">A</p>', date('g:i A', $studentsstatus->starttime),
-                        date('g:i A', $studentsstatus->endtime), $recviewed
-                    );
-                    $absentstudents++;
-                }
-            } else {
                 if (!empty($studentsstatus->totalspenttime)) {
-                    $table->data[] = array($username, $studentsstatus->totalspenttime . ' ' . get_string('mins', 'congrea'),
+                    $table->data[] = array($username, $presence,
                     date('g:i A', $studentsstatus->starttime),
                     date('g:i A', $studentsstatus->endtime), $recviewed
                     );
@@ -715,14 +677,42 @@ if ($session) {
                     $absentstudents++;
                 }
             }
-        }
+            if (!$DB->record_exists('congrea_attendance_report', array('sessionid' => $session ,
+            'userid' => $studentname->id))) {
+                $attendancedbdata = new stdClass();
+                $attendancedbdata->sessionid = $session;
+                $attendancedbdata->courseid = $course->id;
+                $attendancedbdata->instanceid = $congrea->id;
+                $attendancedbdata->userid = $studentname->id;
+                $attendancedbdata->attendance = $timeattended;
+                $attendancedbdata->sessionduration = $sessionstatus->totalsessiontime;
+                $attendancedbdata->jointime = $studentsstatus->starttime;
+                $attendancedbdata->exittime = $studentsstatus->endtime;
+                $attendancedbdata->timecreated = time();
+                $attendancedbdata->timemodified = 0;
+                $attendancedbdata->recordingviewed = $fetchviewed;
+                $DB->insert_record('congrea_attendance_report', $attendancedbdata);
+            } else {
+                $recviewedupdate = $DB->get_record('congrea_attendance_report', array('sessionid' => $session,
+                'userid' => $studentname->id));
+                $storedview = (int)$recviewedupdate->recordingviewed;
+                $fetchedview = (int)$fetchviewed;
+                if ($storedview !== $fetchedview) {
+                    $updaterow = new stdClass();
+                    $updaterow->id = $recviewedupdate->id;
+                    $updaterow->recordingviewed = $fetchedview;
+                    $updaterow->timemodified = time();
+                    $DB->update_record('congrea_attendance_report', $updaterow);
+                }
+            }
+        } // All attendees who attend the session.
         if (!empty($attendence)) {
             if (!empty($enrolusers)) {
                 $result = array_diff($enrolusers, $attendence);
             } else {
                 echo get_string('notenrol', 'mod_congrea');
             }
-            foreach ($result as $data) {
+            foreach ($result as $data) { // Absentees list.
                 $studentname = $DB->get_record('user', array('id' => $data));
                 if (!empty($studentname)) {
                     $username = $studentname->firstname . ' ' . $studentname->lastname;
@@ -731,47 +721,22 @@ if ($session) {
                 }
                 if (!empty(recording_view($data,  $recordingattendance))) {
                     $recview = recording_view($data, $recordingattendance);
-                    if ($recview->totalviewd < 60) {
+                    if (($recview->totalviewd < 60) && ($recview->totalviewd > 0)) {
                         $totalseconds = $recview->recodingtime;
                         $rectotalviewedpercent = round(($recview->totalviewd * 100) / $totalseconds);
+                        $fetchviewed = $recview->totalviewd;
                         $recviewed = $recview->totalviewd . ' ' . get_string('secs', 'congrea');
-                    } else {
-                        $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
+                    } else if ($recview->totalviewd >= 60) {
                         $rectotalviewedpercent = $recview->totalviewedpercent;
+                        $fetchviewed = $recview->totalviewd;
+                        $recviewed = round($recview->totalviewd / 60) . get_string('mins', 'congrea');
+                    } else {
+                        $fetchviewed = 0;
                     }
                 } else {
                     $rectotalviewedpercent = 0;
+                    $fetchviewed = 0;
                     $recviewed = 0;
-                }
-                if (!empty($studentname->id)) {
-                    if (!$DB->record_exists('congrea_attendance_report', array('sessionid' => $session ,
-                    'userid' => $studentname->id))) {
-                        $attendancedbdata = new stdClass();
-                        $attendancedbdata->sessionid = $session;
-                        $attendancedbdata->courseid = $course->id;
-                        $attendancedbdata->instanceid = $congrea->id;
-                        $attendancedbdata->userid = $studentname->id;
-                        $attendancedbdata->attendance = 0;
-                        $attendancedbdata->sessionduration = $sessionstatus->totalsessiontime;
-                        $attendancedbdata->jointime = 0;
-                        $attendancedbdata->exittime = 0;
-                        $attendancedbdata->timecreated = time();
-                        $attendancedbdata->timemodified = $attendancedbdata->timecreated;
-                        if (!empty($recview->totalviewd) && $recviewed != 0) {
-                            $attendancedbdata->recordingviewed = $recview->totalviewd;
-                        } else {
-                            $attendancedbdata->recordingviewed = $recviewed;
-                        }
-                        $DB->insert_record('congrea_attendance_report', $attendancedbdata);
-                    } else {
-                        $recviewedupdate = $DB->get_record('congrea_attendance_report', array('sessionid' => $session ,
-                        'userid' => $studentname->id));
-                        if ($recviewed != 0) {
-                            $recviewedupdate->recordingviewed = $recview->totalviewd;
-                        }
-                        $recviewedupdate->timemodified = time();
-                        $DB->update_record('congrea_attendance_report', $recviewedupdate);
-                    }
                 }
                 if (in_array($studentname->id, $enrolusers)) {
                     if ($DB->record_exists('user_enrolments', array('userid' => $studentname->id))) {
@@ -788,13 +753,40 @@ if ($session) {
                             $laterenrolled++;
                         } else {
                             $table->data[] = array($username, '<p style = "color: red;">A</p>', '-', '-', $recviewed);
+
                             $absentstudents++;
                         }
                     }
                 }
+                if (!$DB->record_exists('congrea_attendance_report', array('sessionid' => $session ,
+                'userid' => $studentname->id))) {
+                    $attendancedbdata = new stdClass();
+                    $attendancedbdata->sessionid = $session;
+                    $attendancedbdata->courseid = $course->id;
+                    $attendancedbdata->instanceid = $congrea->id;
+                    $attendancedbdata->userid = $studentname->id;
+                    $attendancedbdata->attendance = 0;
+                    $attendancedbdata->sessionduration = $sessionstatus->totalsessiontime;
+                    $attendancedbdata->jointime = 0;
+                    $attendancedbdata->exittime = 0;
+                    $attendancedbdata->timecreated = time();
+                    $attendancedbdata->timemodified = 0;
+                    $attendancedbdata->recordingviewed = $fetchviewed;
+                    $DB->insert_record('congrea_attendance_report', $attendancedbdata);
+                } else {
+                    $recviewedupdate = $DB->get_record('congrea_attendance_report', array('sessionid' => $session,
+                    'userid' => $studentname->id));
+                    $storedview = (int)$recviewedupdate->recordingviewed;
+                    $fetchviewed = (int)$fetchviewed;
+                    if ($storedview !== $fetchviewed) {
+                        $updaterow = new stdClass();
+                        $updaterow->id = $recviewedupdate->id;
+                        $updaterow->recordingviewed = $fetchviewed;
+                        $updaterow->timemodified = time();
+                        $DB->update_record('congrea_attendance_report', $updaterow);
+                    }
+                }
             }
-        } else {
-            echo get_string('sessionnouser', 'mod_congrea');
         }
     } else {
         echo get_string('sessionnouser', 'mod_congrea');
@@ -807,12 +799,19 @@ if (!empty($table->data) and !$session) {
 }
 if (!empty($table) and $session and $sessionstatus) {
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+    $sessiontiming = round(($sessionstatus->sessionendtime - $sessionstatus->sessionstarttime) / 60);
+    if ($sessiontiming >= 60) {
+        $hours = ceil($sessiontiming / 60);
+        $min = ceil($sessiontiming - ($hours * 60));
+        $totaltime = $hours . get_string('hours', 'congrea') . $min . get_string('mins', 'congrea');
+    } else {
+        $totaltime = $sessiontiming . get_string('mins', 'congrea');
+    }
     $presentusers = count($enrolusers) - $absentstudents - $laterenrolled;
     $attendancereport = '<h5><strong>' . userdate($sessionstatus->sessionstarttime) .
     ' to ' . userdate($sessionstatus->sessionendtime) .
     '</strong></h5><strong>' .
-    get_string('sessionduration', 'congrea') . '</strong>' . round($sessionstatus->totalsessiontime / 60) . ' ' .
-    get_string('mins', 'congrea') . '</br>' . '<strong>' .
+    get_string('sessionduration', 'congrea') . '</strong>' . $totaltime . '</br>' . '<strong>' .
     get_string('absent', 'congrea') . '</strong>' . $absentstudents . '</br><strong>' .
     get_string('present', 'congrea') . '</strong>'
     . $presentusers . '</br></br>';

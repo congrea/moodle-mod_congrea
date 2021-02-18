@@ -717,7 +717,7 @@ function calctime($connect, $disconnect, $x, $y) {
     if (!empty($connect) and !empty($disconnect)) {
         $starttime = min($connect); // Student start time.
         $endtime = max($disconnect); // Student exit time.
-        $totaltime = calc_student_time($connect, $disconnect); // Total time of student.
+        $totaltime = ceil(calc_student_time($connect, $disconnect)); // Total time of student.
         return (object) array('totalspenttime' => $totaltime, 'starttime' => $starttime, 'endtime' => $endtime);
     }
 }
@@ -734,7 +734,7 @@ function calc_student_time($connect, $disconnect) {
     $sum = 0;
     for ($i = 0; $i < count($connect); $i++) {
         if ($disconnect[$i] >= $connect[$i]) {
-            $studenttime = (abs($disconnect[$i] - $connect[$i]));
+            $studenttime = ($disconnect[$i] - $connect[$i]);
             $sum = $studenttime + $sum;
         }
     }
