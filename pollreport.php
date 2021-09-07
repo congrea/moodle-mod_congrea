@@ -45,8 +45,8 @@ echo $OUTPUT->header();
 if ($questionid) {
     $questionname = $DB->get_field('congrea_poll', 'pollquestion', array('id' => $questionid));
     echo $OUTPUT->heading(get_string('pollquestionis', 'congrea') . $questionname);
-    $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $questionid";
-    $optiondata = $DB->get_records_sql($sql);
+    $sql = "SELECT id, options from {congrea_poll_question_option} where qid = ?";
+    $optiondata = $DB->get_records_sql($sql,array('qid'=>$questionid));
     foreach ($optiondata as $data) {
         $sql = "SELECT count(userid) from {congrea_poll_attempts} where optionid = ?";
         $userid = $DB->count_records_sql($sql, array('optionid' => $data->id));

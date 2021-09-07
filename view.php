@@ -707,7 +707,7 @@ if ($session) {
                     if ($DB->record_exists('user_enrolments', array('userid' => $studentname->id))) {
                         $enrol = $DB->get_record('enrol', array('courseid' => $course->id), 'id', $strictness = IGNORE_MULTIPLE);
                         $enrolledontimestamp = $DB->get_record_sql("SELECT timestart from {user_enrolments}" .
-                        " where enrolid = $enrol->id and userid = $studentname->id");
+                        " where enrolid = ? and userid = ?",[$enrol->id,$studentname->id]);
                         $dbuserenrolled = $DB->get_record('user_enrolments',
                         array('userid' => $studentname->id, 'enrolid' => $enrol->id), 'timestart',
                         $strictness = IGNORE_MULTIPLE);

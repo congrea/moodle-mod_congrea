@@ -32,9 +32,7 @@ if ($id) {
 } else {
     print_error(get_string('invalidcmidorinsid', 'congrea'));
 }
-
 require_login($course, true, $cm);
-
 $context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/congrea/quizoverview.php', array('cmid' => $cm->id));
 $PAGE->set_title(format_string($congrea->name));
@@ -48,7 +46,6 @@ $sql = "SELECT q.id As mquizid, q.name, cq.id
                     {quiz} q
                 ON cq.quizid = q.id where congreaid = $cm->instance";
 $quizdata = $DB->get_records_sql($sql);
-
 if (!empty($quizdata)) {
     $table = new html_table();
     $table->head = array(get_string('quizname', 'congrea'), get_string('users', 'congrea'));
