@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2020071000; // The current module version (Date: YYYYMMDDXX).
+$plugin->version  = 2021092101; // The current module version (Date: YYYYMMDDXX).
 $plugin->release = 'v3.5+r8';
 $plugin->requires = 2018051700;      // Requires this Moodle version.(3.5+).
 $plugin->cron = 0;               // Period for cron to check this module (secs).

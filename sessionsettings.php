@@ -46,7 +46,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $congrea->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('congrea', $congrea->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
 
 require_login($course, true, $cm);
@@ -101,12 +101,12 @@ $mform = new mod_congrea_session_form(null, array('id' => $id, 'sessionsettings'
 
 $currenttime = time();
 $infinitesession = $DB->get_record('event', array('instance' => $congrea->id, 'modulename' => 'congrea', 'timeduration' => 0));
-$timedsessionssql = "SELECT * FROM {event} WHERE instance = $congrea->id AND modulename = 'congrea' AND
+$timedsessionssql = "SELECT * FROM {event} WHERE instance = ? AND modulename = 'congrea' AND
 (timeduration != 0 AND timeduration < 86400)
 AND (timestart + timeduration) >= $currenttime";
-$timedsessions = $DB->get_records_sql($timedsessionssql);
-$legacysessionsql = "SELECT * FROM {event} WHERE instance = $congrea->id AND modulename = 'congrea' AND timeduration > 86400";
-$legacysession = $DB->get_record_sql($legacysessionsql);
+$timedsessions = $DB->get_records_sql($timedsessionssql, array('instance' => $congrea->id));
+$legacysessionsql = "SELECT * FROM {event} WHERE instance = ? AND modulename = 'congrea' AND timeduration > 86400";
+$legacysession = $DB->get_record_sql($legacysessionsql, array('instance' => $congrea->id));
 if ($mform->is_cancelled()) {
     // Do nothing.
     redirect(new moodle_url('/mod/congrea/sessionsettings.php', array('id' => $cm->id, 'sessionsettings' => true)));
@@ -541,9 +541,9 @@ if (has_capability('mod/congrea:managesession', $context) && has_capability('moo
         if (!empty($repeatedsessions)) {
             foreach ($repeatedsessions as $repeatedsession) {
                 if (($repeatedsession->repeatid != 0)) {
-                    $sql = "SELECT DISTINCT id FROM {event} WHERE instance = $congrea->id AND modulename = 'congrea'
-                    AND (id = $repeatedsession->repeatid)";
-                    $repeated = $DB->get_records_sql($sql);
+                    $sql = "SELECT DISTINCT id FROM {event} WHERE instance = ? AND modulename = 'congrea'
+                    AND (id =? )";
+                    $repeated = $DB->get_records_sql($sql, array('instance' => $congrea->id, 'id' => $repeatedsession->repeatid));
                     foreach ($repeated as $record) {
                         $keyids[] = $record->id;
                     }

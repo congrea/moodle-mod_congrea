@@ -48,7 +48,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $congrea->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('congrea', $congrea->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
 $time = time();
 $sessionlist = $DB->get_records('event', array('modulename' => 'congrea', 'courseid' => $course->id, 'instance' => $congrea->id));
@@ -239,7 +239,6 @@ if (!empty($cgapi = get_config('mod_congrea', 'cgapi')) && !empty($cgsecret = ge
     if (strlen($cgsecret) >= 64 && strlen($cgapi) > 32) {
         if (!empty($uuid)) {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role, $uuid); // Call to authdata.
-            $uuid = $uuid;
         } else {
             $authdata = get_auth_data($cgapi, $cgsecret, $recordingstatus, $course, $cm, $role); // Call to authdata.
             $uuid = '';
@@ -271,7 +270,7 @@ if ($duration != 0) {
     $sessendtime = $sessionstarttime + $duration;
     $timediff = round($sessendtime - $timestamppageload);
 } else {
-    $timediff = 0;
+    $timediff = 2547268526000;
 }
 if ($duration > 86400) {
     $currentsession->endtime = userdate($sessionendtime);
@@ -707,7 +706,7 @@ if ($session) {
                     if ($DB->record_exists('user_enrolments', array('userid' => $studentname->id))) {
                         $enrol = $DB->get_record('enrol', array('courseid' => $course->id), 'id', $strictness = IGNORE_MULTIPLE);
                         $enrolledontimestamp = $DB->get_record_sql("SELECT timestart from {user_enrolments}" .
-                        " where enrolid = $enrol->id and userid = $studentname->id");
+                        " where enrolid = ? and userid = ?", [$enrol->id, $studentname->id]);
                         $dbuserenrolled = $DB->get_record('user_enrolments',
                         array('userid' => $studentname->id, 'enrolid' => $enrol->id), 'timestart',
                         $strictness = IGNORE_MULTIPLE);

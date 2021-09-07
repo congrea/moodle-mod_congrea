@@ -112,7 +112,6 @@ function validate_request() {
     return $qstring;
 }
 
-
 /**
  * The function is executed which is passed by get
  * serving for virtual class

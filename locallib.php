@@ -106,44 +106,50 @@ function congrea_online_server(
     $debug = (int)$debug;
     $recording = (int)$recording;
     $joinbutton = (int)$joinbutton;
-    $cgcolor = ltrim($cgcolor, '#');
-
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
-    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
-    &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}&down={$down}
-    &debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}&fromcms={$fromcms}
-    &licensekey={$licensekey}&audio={$audiostatus}&video={$videostatus}&recording={$recording}
-    &settings={$hexcode}&sstart={$sstart}&send={$send}&nextsessionstarttime={$nextsessionstarttime}&language=".current_language();
-
-    // Encrypt query string to base64.
-    $querystring = b64link_encode($querystring);
-
     $form = html_writer::start_tag('form', array('id' => 'overrideform', 'target' => '_blank',
-    'action' => $url, 'method' => 'get'));
-
+     'action' => $url, 'method' => 'post'));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'user', 'value' => $authusername));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pass', 'value' => $authpassword));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'rid', 'value' => $rid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'upload', 'value' => $upload));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'fromcms', 'value' => $fromcms));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'audio', 'value' => $audiostatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'video', 'value' => $videostatus));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' =>
+    'nextsessionstarttime', 'value' => $nextsessionstarttime));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     if (!$joinbutton) {
         if ($role == 't') {
-            // Button to dynamically load URL -> needed for PWA.
             $form .= html_writer::empty_tag('input', array(
                 'id' => 'overrideform-btn',
-                'type' => 'button',
-                'data-to' => $url.'?'.$querystring,
-                'data-expected' => 0,
+                'type' => 'submit', 'name' => 'submit',
                 'class' => 'vcbutton',
                 'value' => get_string('joinasteacher', 'congrea')
             ));
-        } else {
-            // Button to dynamically load URL -> needed for PWA.
+        } else if ($role == 's') {
             $form .= html_writer::empty_tag('input', array(
-                'id' => 'overrideform-btn',
-                'type' => 'button',
-                'data-to' => $url.'?'.$querystring,
-                'data-expected' => 0,
-                'class' => 'vcbutton',
+                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
                 'value' => get_string('joinasstudent', 'congrea')
             ));
-
         }
     }
     $form .= html_writer::end_tag('form');
@@ -195,34 +201,40 @@ function congrea_online_server_play(
     $recording = false,
     $hexcode
 ) {
-    // Boolean converter into integer.
     $debug = (int)$debug;
     $recordingsession = $recordingsession == false ? (int)$recordingsession : $recordingsession;
     $recording = (int)$recording;
-    $cgcolor = ltrim($cgcolor, '#');
-
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
-
-    $querystring = "sesskey=".sesskey()."&uid={$USER->id}&name={$username}&role={$role}&room={$room}
-    &sid={$USER->sesskey}&user={$authusername}&pass={$authpassword}&rid={$rid}&upload={$upload}
-    &down={$down}&debug={$debug}&congreacolor=#{$cgcolor}&webapi={$webapi}&userpicture={$userpicturesrc}
-    &licensekey={$licensekey}&id={$id}&vcSid={$vcsid}&session={$recordingsession}&recording={$recording}
-    &settings={$hexcode}&play=1&language=".current_language();
-
-    // Encrypt query string to base64.
-    $querystring = b64link_encode($querystring);
-    $form = html_writer::start_tag('form', array('id' => 'playbtnform', 'target' => '_blank',
-    'action' => $url, 'method' => 'get'));
-    // Button to dynamically load URL -> needed for PWA.
+    $form = html_writer::start_tag('form', array('id' => 'playRec' . $vcsid,
+    'class' => 'playAct', 'action' => $url, 'method' => 'post'));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'uid', 'value' => $USER->id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'name', 'value' => $username));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'role', 'value' => $role));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'room', 'value' => $room));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sid', 'value' => $USER->sesskey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'user', 'value' => $authusername));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pass', 'value' => $authpassword));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'rid', 'value' => $rid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'upload', 'value' => $upload));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'down', 'value' => $down));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'debug', 'value' => $debug));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'congreacolor', 'value' => $cgcolor));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'webapi', 'value' => $webapi));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userpicture', 'value' => $userpicturesrc));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'licensekey', 'value' => $licensekey));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $id));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'vcSid', 'value' => $vcsid));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array(
-        'class' => 'vcbutton playbtn playAct-Btn',
-        'type' => 'button',
-        'data-to' => $url.'?'.$querystring,
-        'value' => '',
-        'title' => 'Play'
+        'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',
+        'value' => '', 'title' => 'Play'
     ));
-
     $form .= html_writer::end_tag('form');
     return $form;
 }
@@ -528,7 +540,7 @@ function congrea_get_enrolled_users($cmid, $courseid) {
     global $DB, $OUTPUT, $CFG;
     if (!empty($cmid)) {
         if (!$cm = get_coursemodule_from_id('congrea', $cmid)) {
-            print_error(get_string('incorrectcmid', 'congrea'));
+            moodle_exception(get_string('incorrectcmid', 'congrea'));
         }
         $context = context_module::instance($cm->id);
         $withcapability = '';
@@ -682,7 +694,7 @@ function calctime($connect, $disconnect, $x, $y) {
                 $connect[$i] = $lastdis;
             }
             if (empty($disconnect[$i])) { // If disconnect pair is empty.
-                // TODO handle this case
+                // TODO handle this case.
                 $disconnect[$i] = $y; // Max value of session.
             }
             if ($disconnect[$i] < $connect[$i]) { // If connect larger than disconnect.
@@ -700,7 +712,7 @@ function calctime($connect, $disconnect, $x, $y) {
             }
 
             if (empty($connect[$i])) { // If connect pair is empty.
-                // TODO handle this case
+                // TODO handle this case.
                 unset($disconnect[$i - 1]); // Becoz of array sort.
             }
             if ($disconnect[$i] > $y) {
@@ -893,7 +905,8 @@ function congrea_get_records($congrea, $type) {
     get_string('teacher', 'congrea'),
     get_string('repeatstatus', 'congrea'));
     $timestart = time();
-    $sql = "SELECT * FROM {event} WHERE modulename = 'congrea' AND instance = $congrea->id AND timestart >= $timestart ORDER BY timestart ASC"; // TODO:.
+    $sql = "SELECT * FROM {event} WHERE modulename = 'congrea'
+    AND instance = $congrea->id AND timestart >= $timestart ORDER BY timestart ASC"; // TODO:.
     if (($type > 1)) {
         $rs = (object)$DB->get_recordset_sql($sql, null, 0, $type);
     } else {
