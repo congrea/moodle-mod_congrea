@@ -148,7 +148,8 @@ class mod_congrea_mod_form extends moodleform_mod {
             $mform->disabledIf('qaupvote', 'askquestion', 'notchecked');
             // Congrea recording settings.
             $mform->addElement('header', 'general', get_string('recordingsection', 'congrea'));
-            $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null); // Enablerecording.
+            // Enablerecording.
+            $mform->addElement('advcheckbox', 'enablerecording', get_string('cgrecording', 'congrea'), ' ', null);
             $mform->addHelpButton('enablerecording', 'cgrecording', 'congrea');
             if (get_config('mod_congrea', 'enablerecording')) {
                 $mform->setDefault('enablerecording', 1);

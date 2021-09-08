@@ -31,7 +31,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
 require_login($course, true, $cm);
 
@@ -46,7 +46,7 @@ if ($questionid) {
     $questionname = $DB->get_field('congrea_poll', 'pollquestion', array('id' => $questionid));
     echo $OUTPUT->heading(get_string('pollquestionis', 'congrea') . $questionname);
     $sql = "SELECT id, options from {congrea_poll_question_option} where qid = ?";
-    $optiondata = $DB->get_records_sql($sql,array('qid'=>$questionid));
+    $optiondata = $DB->get_records_sql($sql, array('qid' => $questionid));
     foreach ($optiondata as $data) {
         $sql = "SELECT count(userid) from {congrea_poll_attempts} where optionid = ?";
         $userid = $DB->count_records_sql($sql, array('optionid' => $data->id));
@@ -93,7 +93,7 @@ if (!empty($graphdata)) {
         </body>
     </html>
 
-<?php
+    <?php
 }
 if (!empty($questionid) && !empty($optiondata)) {
     $sql = "SELECT cpa.*, u.firstname, u.lastname, u.email

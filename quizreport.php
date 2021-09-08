@@ -32,7 +32,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
 require_login($course, true, $cm);
 
@@ -50,8 +50,8 @@ if (!empty($quizid)&& !empty($mquizid)) {
                 FROM {congrea_quiz_grade} cqg
                 INNER JOIN
                     {user} u
-                ON cqg.userid = u.id where congreaquiz = '" . $quizid . "'";
-    $userdata = $DB->get_records_sql($sql);
+                ON cqg.userid = u.id where congreaquiz =?";
+    $userdata = $DB->get_records_sql($sql, array('congreaquiz' => $quizid));
     if (!empty($userdata)) {
         $table = new html_table();
         $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'),
