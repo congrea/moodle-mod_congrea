@@ -100,8 +100,8 @@ if (!empty($questionid) && !empty($optiondata)) {
                 FROM {congrea_poll_attempts} cpa
                 INNER JOIN
                     {user} u
-                ON cpa.userid = u.id where qid = '" . $questionid . "'";
-    $userdata = $DB->get_records_sql($sql);
+                ON cpa.userid = u.id where qid = ?";
+    $userdata = $DB->get_records_sql($sql, array('qid' => $questionid));
     if (!empty($userdata)) {
         $table = new html_table();
         $table->head = array(get_string('username', 'congrea'), get_string('email', 'congrea'), get_string('options', 'congrea'));

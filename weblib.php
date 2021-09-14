@@ -137,8 +137,8 @@ function poll_data_retrieve($valparams) {
                     $username = get_string('nouser', 'mod_congrea');
                 }
                 $result = $DB->record_exists('congrea_poll_attempts', array('qid' => $data->id));
-                $sql = "SELECT id, options from {congrea_poll_question_option} where qid = $data->id";
-                $optiondata = $DB->get_records_sql($sql);
+                $sql = "SELECT id, options from {congrea_poll_question_option} where qid = ?";
+                $optiondata = $DB->get_records_sql($sql, array('qid' => $data->id));
                 if ($data->courseid) { // Category not zero.
                     $getcm = get_coursemodule_from_instance('congrea', $data->instanceid, $data->courseid, false, MUST_EXIST);
                     $datacategory = $getcm->id;
