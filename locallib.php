@@ -133,13 +133,16 @@ function congrea_online_server(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sstart', 'value' => $sstart));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'send', 'value' => $send));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'expectedendtime'));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' =>
     'nextsessionstarttime', 'value' => $nextsessionstarttime));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     if (!$joinbutton) {
         if ($role == 't') {
             $form .= html_writer::empty_tag('input', array(
-                'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton',
+                'id' => 'overrideform-btn',
+                'type' => 'submit', 'name' => 'submit',
+                'class' => 'vcbutton',
                 'value' => get_string('joinasteacher', 'congrea')
             ));
         } else if ($role == 's') {
@@ -198,6 +201,10 @@ function congrea_online_server_play(
     $recording = false,
     $hexcode
 ) {
+    $debug = (int)$debug;
+    $recordingsession = $recordingsession == false ? (int)$recordingsession : $recordingsession;
+    $recording = (int)$recording;
+    $cgcolor = ltrim($cgcolor, '#');
     global $USER;
     $username = $USER->firstname . ' ' . $USER->lastname;
     $form = html_writer::start_tag('form', array('id' => 'playRec' . $vcsid,
@@ -223,6 +230,7 @@ function congrea_online_server_play(
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'session', 'value' => $recordingsession));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recording', 'value' => $recording));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'settings', 'value' => $hexcode));
+    $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'language', 'value' => current_language()));
     $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'play', 'value' => 1));
     $form .= html_writer::empty_tag('input', array(
         'type' => 'submit', 'name' => 'submit', 'class' => 'vcbutton playbtn',

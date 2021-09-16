@@ -20,33 +20,47 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
 
         },
         congreaOnlinePopup: function() {
-            $('#overrideform-btn').click(function(e) {
-                let url = $(e.target).attr('data-to');
-                let expected = $(e.target).attr('data-expected');
-                if (Date.now() > expected && expected != 0) {
+            $('#overrideform').submit(function () {
+                let expected = $('input[name ="expectedendtime"]').val();
+                if (Date.now() > expected) {
                     $('.vcbutton').hide();
                     window.location.reload();
+                    return false;
                 } else {
-                    window.open(url, "popupVc");
+                    let newTab = window.open('', 'popupVc');
+                    if (window.newTab && window.newTab.closed === false) {
+                        newTab.focus();
+                        return false;
+                    }
+                    $(this).attr('target', 'popupVc');
+                    if (newTab) {
+                        newTab.focus();
+                        return newTab;
+                    }
+                    return true;
                 }
             });
         },
         congreaPlayRecording: function() {
-            $('.playAct-Btn').click(function(e) {
-                let url = $(e.target).attr('data-to');
-                window.open(url, "popupVc");
-            });
-        },
-        congreaHideJoin: function(timeDiff) {
-            $(document).ready(function() {
-                let expected, interval;
-                if (timeDiff == 0) {
-                    expected = 0;
-                } else {
-                    interval = (timeDiff - 30) * 1000;
-                    expected = Date.now() + interval;
+            $('.playAct').submit(function () {
+                let newTab = window.open('', 'popupVc');
+                if (window.newTab && window.newTab.closed === false) {
+                    newTab.focus();
+                    return false;
                 }
-                $("#overrideform-btn").attr('data-expected', expected);
+                $(this).attr('target', 'popupVc');
+                if (newTab) {
+                    newTab.focus();
+                    return newTab;
+                }
+                return true;
+            });
+        },   
+        congreaHideJoin: function(timeDiff) {
+            $(document).ready(function () {
+                let interval = (timeDiff - 30) * 1000;
+                let expected = Date.now() + interval;
+                $('input[name="expectedendtime"]').val(expected);
             });
         },
     };
