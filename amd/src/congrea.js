@@ -55,7 +55,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
                 }
                 return true;
             });
-        },   
+        },
         congreaHideJoin: function(timeDiff) {
             $(document).ready(function () {
                 let interval = (timeDiff - 30) * 1000;
