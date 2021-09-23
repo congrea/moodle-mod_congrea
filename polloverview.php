@@ -30,7 +30,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
 
 require_login($course, true, $cm);
@@ -42,8 +42,8 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('polloverview', 'congrea'));
-$sql = "SELECT id, pollquestion, timecreated from {congrea_poll} where instanceid = $cm->instance";
-$questiondata = $DB->get_records_sql($sql);
+$sql = "SELECT id, pollquestion, timecreated from {congrea_poll} where instanceid = ?";
+$questiondata = $DB->get_records_sql($sql, array('instanceid' => $cm->instance));
 
 if (!empty($questiondata)) {
     $table = new html_table();

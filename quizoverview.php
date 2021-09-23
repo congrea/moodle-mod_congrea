@@ -30,11 +30,9 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $congrea = $DB->get_record('congrea', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error(get_string('invalidcmidorinsid', 'congrea'));
+    moodle_exception(get_string('invalidcmidorinsid', 'congrea'));
 }
-
 require_login($course, true, $cm);
-
 $context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/congrea/quizoverview.php', array('cmid' => $cm->id));
 $PAGE->set_title(format_string($congrea->name));
@@ -46,9 +44,8 @@ $sql = "SELECT q.id As mquizid, q.name, cq.id
                 FROM {congrea_quiz} cq
                 INNER JOIN
                     {quiz} q
-                ON cq.quizid = q.id where congreaid = $cm->instance";
-$quizdata = $DB->get_records_sql($sql);
-
+                ON cq.quizid = q.id where congreaid = ?";
+$quizdata = $DB->get_records_sql($sql, array('congreaid' => $cm->instance));
 if (!empty($quizdata)) {
     $table = new html_table();
     $table->head = array(get_string('quizname', 'congrea'), get_string('users', 'congrea'));
