@@ -20,7 +20,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
 
         },
         congreaOnlinePopup: function() {
-            $('#overrideform').submit(function () {
+            $('#overrideform').submit(function() {
                 let expected = $('input[name ="expectedendtime"]').val();
                 if (Date.now() > expected) {
                     $('.vcbutton').hide();
@@ -42,7 +42,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
             });
         },
         congreaPlayRecording: function() {
-            $('.playAct').submit(function () {
+            $('.playAct').submit(function() {
                 let newTab = window.open('', 'popupVc');
                 if (window.newTab && window.newTab.closed === false) {
                     newTab.focus();
@@ -57,7 +57,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($) {
             });
         },
         congreaHideJoin: function(timeDiff) {
-            $(document).ready(function () {
+            $(document).ready(function() {
                 let interval = (timeDiff - 30) * 1000;
                 let expected = Date.now() + interval;
                 $('input[name="expectedendtime"]').val(expected);
