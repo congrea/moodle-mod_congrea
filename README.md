@@ -37,6 +37,9 @@ Feel free to send bug reports (and/or patches!)
 
 support@vidyamantra.com
 
+## 3.5+r10
+* Linting corrections.
+
 ## 3.5+r9
 * Some security fixes.
 
