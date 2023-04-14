@@ -430,12 +430,22 @@ function congrea_quiz($valparams) {
  * @return boolean
  */
 function congrea_question_type($quizid, $type = 'multichoice') {
-    global $DB;
-    $sql = "SELECT qs.questionid, q.qtype
+    global $DB, $CFG;
+    if ($CFG->version < 2022020800) {
+        $sql = "SELECT qs.questionid, q.qtype
                 FROM {quiz_slots} qs
                 INNER JOIN
                     {question} q
                 ON qs.questionid = q.id where quizid = ?";
+    } else {
+        $sql = "SELECT qs.id, q.qtype
+        FROM {quiz_slots} qs
+        JOIN {question_references} qr ON qr.itemid = qs.id
+        JOIN {question_versions} qv ON qv.questionid = qr.questionbankentryid
+        INNER JOIN
+            {question} q
+        ON qv.questionid = q.id where quizid = ?";
+    }
     $questions = $DB->get_records_sql($sql, array('quizid' => $quizid));
     if (!empty($questions)) {
         foreach ($questions as $questiondata) {
